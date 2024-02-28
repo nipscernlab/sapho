@@ -1,0 +1,297 @@
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.Cache
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\TabStrip.dll
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\asm2mif.exe
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\myccomp.exe
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+F:\Dropbox\SAFO-IDE\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csprojResolveAssemblyReference.cache
+G:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+G:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+G:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csprojResolveAssemblyReference.cache
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.Cache
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\Usuario\Desktop\backup pen drive\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csprojResolveAssemblyReference.cache
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.Cache
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\asm2mif.exe
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\myccomp.exe
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+E:\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csprojResolveAssemblyReference.cache
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.Cache
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\Usuario\Desktop\SAPHO_v2.0\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\melis\OneDrive\Projeto SAPHO\SAPHO_v2.0 [Editado]\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho_IDE\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\melis\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\Usuário\Desktop\Sapho_v3\Sapho Novo\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Documents\Sapho_v3\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\nipscernufjf\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_V4\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\Sapho_assembly_funcionando\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+E:\UFJF\IC\VIC_CERN\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\Manso_Reuniao_280520\SAPHO-sapho_lucca\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb

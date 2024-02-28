@@ -1,0 +1,9 @@
+LOAD nbmant
+ADD 1
+SET nbmantp1
+LOAD nbexp
+ADD 1
+SET nbexpp1
+LOAD nbmant
+ADD nbexp
+SET float_nbits
