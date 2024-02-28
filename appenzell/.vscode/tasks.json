@@ -1,0 +1,71 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "clean-files",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "del",
+                "/Q",
+                "${workspaceFolder}\\obj\\Debug\\*.o",
+                "${workspaceFolder}\\bin\\Debug\\*.exe",
+                //"${workspaceFolder}\\Source\\lex.yy.c"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "lex",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "flex",
+                "-o",
+                "${workspaceFolder}\\Source\\lex.yy.c",
+                "${workspaceFolder}\\Source\\asm2mif.l"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "makefile",
+            "type": "shell",
+            "command": "make",
+            "isBackground": true,
+            "problemMatcher": [],
+            "options": {
+                "env": {
+                    "SLEEP_SECONDS": "2"
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated"
+            }
+        },
+        {
+            "label": "build-all",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "clean-files",
+                "lex",
+                "makefile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

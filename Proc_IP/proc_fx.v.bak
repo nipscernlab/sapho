@@ -1,0 +1,89 @@
+module proc
+#(
+	// parametros para serem configurados externamente -------------------------
+
+	parameter NUBITS = 16,              // Numero de bits de dados
+	parameter MDATAS = 56,              // Numero de enderecos da memoria de dados
+	parameter MINSTS = 410,             // Numero de enderecos da memoria de intrucoes
+	parameter SDEPTH = 5,               // Numero de bits de endereco da pilha de subrotinas
+	parameter NUMEIO = 8,               // Numero de enderecos de IO
+	parameter DFILE = "data.mif",       // Inicializacao da memoria de dados
+	parameter IFILE = "inst.mif",       // Inicializacao da memoria de programa
+
+	// parametros configurados internamente ------------------------------------
+
+	parameter NBOPCO = 5,               // Numero de bits de opcode
+	parameter MDATAW = $clog2(MDATAS),  // Numero de bits de endereco da memoria de dados
+	parameter MINSTW = $clog2(MINSTS)   // Numero de bits de endereco da memoria de instrucao
+)
+(
+	input                              clk, rst,
+	input         [NUBITS        -1:0] io_in,
+	output        [NUBITS        -1:0] io_out,
+	output        [$clog2(NUMEIO)-1:0] io_addr,
+	output                             req_in, out_en
+);
+
+// Processador e Mem de instrucao ---------------------------------------------
+
+wire        [MINSTW-1:0] instr_addr;
+wire                     mem_wr;
+wire        [MDATAW-1:0] mem_addr_w, mem_addr_r;
+wire signed [NUBITS-1:0] mem_data_in;
+wire signed [NUBITS-1:0] mem_data_out;
+
+assign io_out = mem_data_out;
+
+generate
+
+if (MDATAW > MINSTW) begin
+
+wire [NBOPCO+MDATAW-1:0] instr;
+
+core #(.NUBITS(NUBITS),
+       .NBOPCO(NBOPCO),
+       .MDATAW(MDATAW),
+       .MINSTW(MINSTW),
+       .SDEPTH(SDEPTH),
+       .NBOPER(MDATAW),
+       .MDATAS(MDATAS),
+       .NUMEIO(NUMEIO)) core(clk, rst,
+                             instr, instr_addr,
+                             mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
+                             io_in, io_addr, req_in, out_en);
+
+mem_instr # (.NADDRE(MINSTS),
+             .NBDATA(NBOPCO+MDATAW),
+             .FNAME(IFILE)) minstr(clk, instr_addr, instr);
+
+end else begin
+
+wire [NBOPCO+MINSTW-1:0] instr;
+
+core #(.NUBITS(NUBITS),
+       .NBOPCO(NBOPCO),
+       .MDATAW(MDATAW),
+       .MINSTW(MINSTW),
+       .SDEPTH(SDEPTH),
+       .NBOPER(MINSTW),
+       .MDATAS(MDATAS),
+       .NUMEIO(NUMEIO)) core(clk, rst,
+                             instr, instr_addr,
+                             mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
+                             io_in, io_addr, req_in, out_en);
+
+mem_instr # (.NADDRE(MINSTS),
+             .NBDATA(NBOPCO+MINSTW),
+             .FNAME(IFILE)) minstr(clk, instr_addr, instr);
+
+end
+
+endgenerate
+
+// Memoria de dados -----------------------------------------------------------
+
+mem_data # (.NADDRE(MDATAS),
+            .NBDATA(NUBITS),
+            .FNAME (DFILE)) mdata(clk, mem_wr, mem_addr_w, mem_addr_r, mem_data_out, mem_data_in);
+
+endmodule 
