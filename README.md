@@ -22,7 +22,7 @@ Welcome to Sapho, an project developed by the Nips Cern Lab! SAPHO (Scalable Arc
 
 To start using Sapho, follow these simple steps:
 
-1. **Installation**: Clone the Sapho repository to your local machine '''git clone https://github.com/nipscernlab/sapho''';
+1. **Installation**: Clone the Sapho repository to your local machine ```git clone https://github.com/nipscernlab/sapho```;
 3. **Configuration**: Customize Sapho according to your preferences and environment;
 4. **Usage**: Explore the rich features and functionalities of Sapho for data analysis;
 5. **Contribution**: Contribute to the Sapho project by submitting bug reports, feature requests, or pull requests.
@@ -30,7 +30,7 @@ To start using Sapho, follow these simple steps:
 
 ## Links:
 
-   - Website: '''https://www.sapho.nipscern.com/''';
+   - Website: https://www.sapho.nipscern.com/;
    - For detailed instructions on how to use Sapho, refer to the [documentation](https://github.com/nipscernlab/websapho/blob/main/files/documentation.pdf);
    - GitHub: https://github.com/nipscernlab/sapho.
 
