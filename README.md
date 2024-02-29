@@ -30,7 +30,7 @@ To start using Sapho, follow these simple steps:
 
 ## Links:
 
-   - Website: https://www.sapho.nipscern.com/;
+   - Website: https://sapho.nipscern.com/;
    - For detailed instructions on how to use Sapho, refer to the [documentation](https://github.com/nipscernlab/websapho/blob/main/files/documentation.pdf);
    - GitHub: https://github.com/nipscernlab/sapho.
 
