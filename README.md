@@ -1,7 +1,6 @@
-# SAPHO
-SAPHO: Scalable Architecture Processor for Hardware Optimization
+# SAPHO ![Sapho Logo](https://github.com/nipscernlab/websapho/blob/main/icons/icon_site_memory_128.svg)
 
-![Sapho Logo](https://github.com/nipscernlab/websapho/blob/main/icons/icon_site_memory_128.svg)
+SAPHO: Scalable Architecture Processor for Hardware Optimization
 
 ## Introduction:
 
