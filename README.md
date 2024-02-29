@@ -47,7 +47,7 @@ To start using Sapho, follow these simple steps:
 
 ## Colors:
 
-  1. Primary Blue (#036000)
+  1. Primary Blue (#0033A0)
   2. Yellow (#FFD700)
   3. Secondary Blue (#3861AA)
 
