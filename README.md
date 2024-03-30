@@ -62,3 +62,4 @@ A group of physicists is using SAPHO to perform complex simulations of particle 
 SAPHO is a powerful tool for scientific computing that can be used to solve complex problems in various fields. If you are looking for a way to accelerate your research and get better results, SAPHO is a great option.
 
 ## License
+- Access [License CC BY-NC-SA 4.0 - SAPHO](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.txt)
