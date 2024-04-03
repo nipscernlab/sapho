@@ -1,0 +1,86 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\documents\\github\\sapho\\sapho_atual\\sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\documents\\github\\sapho\\sapho_atual\\sapho_ide\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\sapho_ide\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
+              "ToolTip": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeToolTip": "Sapho_IDE\\Form1.cs",
+              "ViewState": "AQIAAGcAAAAAAAAAAAAAAHIAAAA6AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-03T12:03:24.109Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Form1.resx",
+              "DocumentMoniker": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.resx",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.resx",
+              "ToolTip": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.resx",
+              "RelativeToolTip": "Sapho_IDE\\Form1.resx",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2024-04-03T11:45:11.975Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
+              "ToolTip": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs [Design]",
+              "RelativeToolTip": "Sapho_IDE\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-03T11:44:40.584Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.Designer.cs",
+              "ToolTip": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.Designer.cs",
+              "RelativeToolTip": "Sapho_IDE\\Form1.Designer.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-03T11:43:29.417Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

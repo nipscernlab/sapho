@@ -12,6 +12,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using FastColoredTextBoxNS;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using static System.Windows.Forms.LinkLabel;
+
 
 namespace Sapho_IDE
 {
@@ -40,7 +42,7 @@ namespace Sapho_IDE
         public Form_Main()
         {
             InitializeComponent();
-
+            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             bt_AddProc.Enabled = false;
             bt_build.Enabled = false;
             bt_copy.Enabled = false;
@@ -59,6 +61,90 @@ namespace Sapho_IDE
             Properties.Settings.Default.flag_create_project = false;
 
         }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShowHelpMenu();
+        }
+
+        private void ShowHelpMenu()
+        {
+            // Crie um novo formulário para exibir o menu de ajuda
+            Form helpForm = new Form();
+            helpForm.Text = "SAPHO | Help";
+            helpForm.StartPosition = FormStartPosition.CenterScreen;
+            helpForm.Size = new System.Drawing.Size(600, 250);
+            helpForm.MaximizeBox = false;
+            helpForm.FormBorderStyle = FormBorderStyle.FixedSingle;
+
+            // Adicione um ícone ao formulário
+            helpForm.Icon = new Icon(@"C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\Resources\bt_help.Image.ico");
+
+            // Adicione um rótulo para exibir o título
+            Label titleLabel = new Label();
+            titleLabel.Text = "SAPHO | Help";
+            titleLabel.Font = new System.Drawing.Font("Arial", 18, System.Drawing.FontStyle.Bold);
+            titleLabel.TextAlign = ContentAlignment.MiddleCenter;
+            titleLabel.Location = new System.Drawing.Point(10, 10);
+            titleLabel.Size = new Size(helpForm.ClientSize.Width - 20, 30);
+            helpForm.Controls.Add(titleLabel);
+
+            // Adicione ícones clicáveis
+            int iconSize = 50;
+            int iconSpacing = 100;
+            int initialX = (helpForm.ClientSize.Width - (3 * iconSize + 2 * iconSpacing)) / 2;
+            int iconY = titleLabel.Bottom + 20;
+
+            // Função para aumentar o tamanho do ícone ao passar o mouse sobre ele
+            Action<PictureBox> iconMouseEnter = (PictureBox icon) =>
+            {
+                icon.Size = new Size(iconSize + 10, iconSize + 10);
+                icon.Location = new Point(icon.Location.X - 5, icon.Location.Y - 5); // Reposiciona o ícone para manter o centro
+            };
+
+            // Função para restaurar o tamanho original do ícone ao retirar o mouse de cima dele
+            Action<PictureBox> iconMouseLeave = (PictureBox icon) =>
+            {
+                icon.Size = new Size(iconSize, iconSize);
+                icon.Location = new Point(icon.Location.X + 5, icon.Location.Y + 5); // Reposiciona o ícone para manter o centro
+            };
+
+            PictureBox emailIcon = new PictureBox();
+            emailIcon.Image = Image.FromFile(@"C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\Resources\email_icon(1).png");
+            emailIcon.SizeMode = PictureBoxSizeMode.Zoom;
+            emailIcon.Size = new Size(iconSize, iconSize);
+            emailIcon.Location = new Point(initialX, iconY);
+            emailIcon.Click += (s, ev) => { System.Diagnostics.Process.Start("mailto:contact@nipscern.com"); };
+            emailIcon.MouseEnter += (s, ev) => { iconMouseEnter(emailIcon); };
+            emailIcon.MouseLeave += (s, ev) => { iconMouseLeave(emailIcon); };
+            helpForm.Controls.Add(emailIcon);
+
+            PictureBox websiteIcon = new PictureBox();
+            websiteIcon.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Resources", "processor_icon(1).png"));
+            websiteIcon.SizeMode = PictureBoxSizeMode.Zoom;
+            websiteIcon.Size = new Size(iconSize, iconSize);
+            websiteIcon.Location = new Point(initialX + iconSize + iconSpacing, iconY);
+            websiteIcon.Click += (s, ev) => { System.Diagnostics.Process.Start("https://nipscern.com"); };
+            websiteIcon.MouseEnter += (s, ev) => { iconMouseEnter(websiteIcon); };
+            websiteIcon.MouseLeave += (s, ev) => { iconMouseLeave(websiteIcon); };
+            helpForm.Controls.Add(websiteIcon);
+
+            PictureBox githubIcon = new PictureBox();
+            githubIcon.Image = Image.FromFile(@"C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\Resources\github_icon(1).png");
+            githubIcon.SizeMode = PictureBoxSizeMode.Zoom;
+            githubIcon.Size = new Size(iconSize, iconSize);
+            githubIcon.Location = new Point(initialX + 2 * (iconSize + iconSpacing), iconY);
+            githubIcon.Click += (s, ev) => { System.Diagnostics.Process.Start("https://github.com/nipscernlab"); };
+            githubIcon.MouseEnter += (s, ev) => { iconMouseEnter(githubIcon); };
+            githubIcon.MouseLeave += (s, ev) => { iconMouseLeave(githubIcon); };
+            helpForm.Controls.Add(githubIcon);
+
+            // Exiba o formulário de menu de ajuda
+            helpForm.ShowDialog();
+        }
+
+
+
 
         private void CodeSyntaxHighlight(TextChangedEventArgs e)
         {
@@ -748,6 +834,16 @@ namespace Sapho_IDE
         }
 
         private void Hierarchy_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void helpToolStripMenuItem_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void typeWhatToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
