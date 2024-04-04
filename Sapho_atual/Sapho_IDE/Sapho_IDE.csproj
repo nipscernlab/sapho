@@ -43,6 +43,9 @@
     <Reference Include="FastColoredTextBox">
       <HintPath>.\FastColoredTextBox.dll</HintPath>
     </Reference>
+    <Reference Include="FastColoredTextBox">
+      <HintPath>.\FastColoredTextBox.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -129,6 +132,7 @@
     <Content Include="myccomp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+<<<<<<< Updated upstream
     <Content Include="Resources\bt_help.Image.ico" />
     <Content Include="Resources\email_icon%281%29.png" />
     <Content Include="Resources\email_icon.ico" />
@@ -136,6 +140,12 @@
     <Content Include="Resources\github_icon.ico" />
     <Content Include="Resources\processor_icon%281%29.png" />
     <Content Include="Resources\processor_icon.ico" />
+=======
+    <None Include="Resources\bt_help_github_icon.png" />
+    <None Include="Resources\bt_help.Image.ico" />
+    <None Include="Resources\bt_help_email_icon.png" />
+    <None Include="Resources\bt_help_processor_icon.png" />
+>>>>>>> Stashed changes
     <None Include="Resources\SAPHO2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

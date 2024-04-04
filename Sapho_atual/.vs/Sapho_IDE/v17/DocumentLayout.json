@@ -1,5 +1,6 @@
 {
   "Version": 1,
+<<<<<<< Updated upstream
   "WorkspaceRootPath": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\",
   "Documents": [
     {
@@ -17,6 +18,37 @@
     {
       "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+=======
+  "WorkspaceRootPath": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\properties\\resources.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\properties\\resources.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\properties\\resources.resx||{FF4D6ACA-9352-4A5F-821E-F4D6EBDCAB11}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\properties\\assemblyinfo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|c:\\users\\chrys\\desktop\\github\\sapho\\sapho_atual\\sapho_ide\\properties\\resources.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\properties\\resources.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+>>>>>>> Stashed changes
     }
   ],
   "DocumentGroupContainers": [
@@ -26,6 +58,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
+<<<<<<< Updated upstream
           "SelectedChildIndex": 0,
           "Children": [
             {
@@ -39,11 +72,34 @@
               "ViewState": "AQIAAGcAAAAAAAAAAAAAAHIAAAA6AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-03T12:03:24.109Z",
+=======
+          "SelectedChildIndex": 8,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{75188d03-9892-4ae2-abf1-207126247ce5}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.resx",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.resx",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.resx",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.resx",
+              "RelativeToolTip": "Sapho_IDE\\Form1.resx",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2024-04-04T15:19:24.084Z",
+>>>>>>> Stashed changes
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
+<<<<<<< Updated upstream
               "Title": "Form1.resx",
               "DocumentMoniker": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.resx",
               "RelativeDocumentMoniker": "Sapho_IDE\\Form1.resx",
@@ -51,11 +107,22 @@
               "RelativeToolTip": "Sapho_IDE\\Form1.resx",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
               "WhenOpened": "2024-04-03T11:45:11.975Z",
+=======
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.Designer.cs",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.Designer.cs",
+              "RelativeToolTip": "Sapho_IDE\\Form1.Designer.cs",
+              "ViewState": "AQIAABAAAAAAAAAAAAAgwAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-04T15:18:35.898Z",
+>>>>>>> Stashed changes
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+<<<<<<< Updated upstream
               "Title": "Form1.cs [Design]",
               "DocumentMoniker": "C:\\Users\\chrys\\Documents\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
               "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
@@ -76,6 +143,67 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAWAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-03T11:43:29.417Z",
+=======
+              "Title": "Resources.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.Designer.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Properties\\Resources.Designer.cs",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.Designer.cs",
+              "RelativeToolTip": "Sapho_IDE\\Properties\\Resources.Designer.cs",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAUwBgAAAAcAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-04T15:18:12.963Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AssemblyInfo.cs",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\AssemblyInfo.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Properties\\AssemblyInfo.cs",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\AssemblyInfo.cs",
+              "RelativeToolTip": "Sapho_IDE\\Properties\\AssemblyInfo.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-04T15:18:12.12Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Resources.resx",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Properties\\Resources.resx",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx",
+              "RelativeToolTip": "Sapho_IDE\\Properties\\Resources.resx",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2024-04-04T15:18:09.963Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Resources.resx",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Properties\\Resources.resx",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx",
+              "RelativeToolTip": "Sapho_IDE\\Properties\\Resources.resx",
+              "ViewState": "AQIAAGMAAAAAAAAAAAApwHcAAACKAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
+              "WhenOpened": "2024-04-04T14:53:18.088Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
+              "ToolTip": "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeToolTip": "Sapho_IDE\\Form1.cs",
+              "ViewState": "AQIAAD4AAAAAAAAAAAAiwEwAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-04T12:56:30.116Z",
+>>>>>>> Stashed changes
               "EditorCaption": ""
             }
           ]
