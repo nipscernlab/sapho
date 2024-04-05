@@ -43,7 +43,6 @@ namespace Sapho_IDE
         public Form_Main()
         {
             InitializeComponent();
-            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             bt_AddProc.Enabled = false;
             bt_build.Enabled = false;
             bt_copy.Enabled = false;
@@ -64,6 +63,7 @@ namespace Sapho_IDE
 
         }
 
+<<<<<<< Updated upstream
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowHelpMenu();
@@ -169,6 +169,8 @@ namespace Sapho_IDE
 
 <<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         private void CodeSyntaxHighlight(TextChangedEventArgs e)
@@ -865,6 +867,8 @@ namespace Sapho_IDE
 
         private void helpToolStripMenuItem_Click_1(object sender, EventArgs e)
         {
+            Form5 form5 = new Form5();
+            form5.ShowDialog();
 
         }
 
