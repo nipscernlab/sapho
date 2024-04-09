@@ -63,7 +63,7 @@ namespace Sapho_IDE
 
         }
 
-<<<<<<< Updated upstream
+
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ShowHelpMenu();
@@ -80,20 +80,20 @@ namespace Sapho_IDE
             helpForm.FormBorderStyle = FormBorderStyle.FixedSingle;
 
             // Adicione um ícone ao formulário
-<<<<<<< Updated upstream
+
             helpForm.Icon = new Icon(@"C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\Resources\bt_help.Image.ico");
-=======
+
             helpForm.Icon = new Icon(GetType(), "bt_help.Image");
->>>>>>> Stashed changes
+
 
             // Adicione um rótulo para exibir o título
             Label titleLabel = new Label();
             titleLabel.Text = "SAPHO | Help";
-<<<<<<< Updated upstream
+
             titleLabel.Font = new System.Drawing.Font("Arial", 18, System.Drawing.FontStyle.Bold);
-=======
+
             titleLabel.Font = new System.Drawing.Font("Arial", 14, System.Drawing.FontStyle.Regular);
->>>>>>> Stashed changes
+
             titleLabel.TextAlign = ContentAlignment.MiddleCenter;
             titleLabel.Location = new System.Drawing.Point(10, 10);
             titleLabel.Size = new Size(helpForm.ClientSize.Width - 20, 30);
@@ -120,11 +120,11 @@ namespace Sapho_IDE
             };
 
             PictureBox emailIcon = new PictureBox();
-<<<<<<< Updated upstream
+
             emailIcon.Image = Image.FromFile(@"C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\Resources\email_icon(1).png");
-=======
+
             emailIcon.Image = Image.FromFile(@"C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Icons\bt_help_email_icon.png");
->>>>>>> Stashed changes
+
             emailIcon.SizeMode = PictureBoxSizeMode.Zoom;
             emailIcon.Size = new Size(iconSize, iconSize);
             emailIcon.Location = new Point(initialX, iconY);
@@ -134,11 +134,11 @@ namespace Sapho_IDE
             helpForm.Controls.Add(emailIcon);
 
             PictureBox websiteIcon = new PictureBox();
-<<<<<<< Updated upstream
+
             websiteIcon.Image = Image.FromFile(Path.Combine(Application.StartupPath, "Resources", "processor_icon(1).png"));
-=======
+
             websiteIcon.Image = Image.FromFile(@"C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Icons\bt_help_processor_icon.png");
->>>>>>> Stashed changes
+
             websiteIcon.SizeMode = PictureBoxSizeMode.Zoom;
             websiteIcon.Size = new Size(iconSize, iconSize);
             websiteIcon.Location = new Point(initialX + iconSize + iconSpacing, iconY);
@@ -148,11 +148,11 @@ namespace Sapho_IDE
             helpForm.Controls.Add(websiteIcon);
 
             PictureBox githubIcon = new PictureBox();
-<<<<<<< Updated upstream
+
             githubIcon.Image = Image.FromFile(@"C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\Resources\github_icon(1).png");
-=======
+
             githubIcon.Image = Image.FromFile(@"C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Icons\bt_help_github_icon.png");
->>>>>>> Stashed changes
+
             githubIcon.SizeMode = PictureBoxSizeMode.Zoom;
             githubIcon.Size = new Size(iconSize, iconSize);
             githubIcon.Location = new Point(initialX + 2 * (iconSize + iconSpacing), iconY);
@@ -167,12 +167,12 @@ namespace Sapho_IDE
 
 
 
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+
+
+
+
+
         private void CodeSyntaxHighlight(TextChangedEventArgs e)
         {
             FastColoredTextBox fctb = ((FastColoredTextBox)(tabControl1.SelectedTab.Controls[0]));
@@ -555,9 +555,9 @@ namespace Sapho_IDE
 
             AppendText(console_tb, Color.Green, "Compiling Processor " + pname[0] + "\n\n");
 
-            //============================================================
+            //====
             // C Compiler
-            //============================================================
+            //====
 
             proc1.StartInfo.FileName = "myccomp.exe";
 
@@ -797,9 +797,9 @@ namespace Sapho_IDE
 
             Process proc2 = new Process();
 
-            //============================================================
+            //====
             // Assembler
-            //============================================================
+            //====
 
             proc2.StartInfo.FileName = "asm2mif.exe";
 

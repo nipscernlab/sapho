@@ -126,13 +126,8 @@
   </data>
   <data name="bt_save.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAkVJREFUOE+d0k1PE0EYB/D5EFDSbl922y5raaHU0nbZFhd5KZhSQDmo4eBFb3TB
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAkVJREFUOE+d0k1PE0EYB/D5EFDSbl922y5raaHU0nbZFhd5KZhSQDmo4eBFb3TB
->>>>>>> Stashed changes
         JphoDM6JWlK9NJKmIcZwwAgH00BjDBETgtaYaPCqgEDLS2vQj/A4MxfThDSNm/wyh+f5Pzszu4g+fX1X
         Otov+m5Ho9H78fi9t1Wm/5mcnFpQFGW8Lxy+MzR89a4sd/lRTzjsjw4PV0bHrsPSy1dQKh3B5uYHKJcr
         cHb2u8r6+juQZRVujt8C2i8ragwNREbwYGQEqEwmCxsb78HjCUCh8Am2t79VWVl5zWrXxm6wfp8voKHL
@@ -147,7 +142,6 @@
   </data>
   <data name="bt_saveall.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAuxJREFUOE+NU2tIk1EY/nKI8zLmdG6Gi7l0lpvrh0sx0ElzIstdQFzYD/EGRiDC
         SvRHP6QfiuCqpUNNlDDBvKTRfglTk2AtmjmZiGCB7JJjqGhERUU+nW/7qMCQHnjhnPOe53kv5z3USdjd
@@ -162,28 +156,11 @@
         bBzNz88HrVarbXZ2tuCfI97Z2ZmSnZ1tFgqFOpFIdC81NfUnGecju92+R0p7Sp7SSGYmldyLYSh/QJ4y
         lsvl8ths9hmylXI4HAOPx1vh8/lzAoHgOovFukzOC4jlJSQkpE9PT7No3m/QqnV1dWylUsmVSCTC5ORk
         McmgICkp6XxcXJyEiEtIdiLi55vN5vhjf+Jv0E5akDY6Em30+jiJon4BI5yCGDCeC9EAAAAASUVORK5C
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAuxJREFUOE+NU11Ik1EY/lLE+TN0bm6GC12ppdu6cCkGbtKcyNofiAu7EKeCEYiw
-        knnRhXShCK5ac6iJEiaYujTaleBP3piSprJdJCuQubUxpmhERUU+nW/7qMCQHnjhnPOe53l/znuokxCJ
-        RNgAEpjt/2Nra4tvt9tN7e3tLywWy92VlRUB4zoZm5ub2SMjIzcHBgaWu7u7v3Z1deGqWv2jqanJOjY2
-        pl9YWBCTjE4x12MgB3EkQq7Var01Pj6+vrq6+s3j8WB0dBQdHR1obm6GRCL50tra+lmtVr/t7++vZqgx
-        9Pb2Xquvr3drtdrvExMTCIfDIJlgcnISJDIqKiqQd+5cdH29rg46nc5F94ahU9Tw8LCmpqYmotfr0dLS
-        gsXFRTgcDpAzSCUSnC8owFmRCFKpFMbaWhQVFn4cHBzUMHSK2t3dTSLEJ1VVVahUKqHTanFJJoNYLIbB
-        YIiK3bNacTorCzk5ORBmZ0OpVE7SPEaCokiDKhUKxX5paSmKi4uj0UmtWFtbg/fde7xxe6HR6JDB4UAh
-        lyMzM3Of+JUMPZaF0Wh8Ki4qQltbG9xuN3w+H/x+P/wfQnjt/YQH9ke4SMro6+sDfe9yWdnjnZ0dFiNB
-        UUNDQ9X5+fkHJpMJgUAApFFR8/l28WplFTMzzzE3/xLLnjBuW+4gJSUhSGZFztApKhQKpahUKmcuqdPp
-        dCIYDGJpaQnz8/PY3NiIie7tY3nDe9TTYwuoVMqHc3NzBQw9BpKFltR5IC8vDzc2Nu4RwWgfDg8Psb29
-        fTQ7Oxuw2WyO6enpkn+OeGdnZ0ZeXp5ZIBBohULhfS6X+5OM85HL5dojpT0jT2kgM8Ml9+IYyh+Qp0xI
-        S0vjsFisM2Sbz2az9RwOZ53H483w+fwb8fHxV8h5CTFJcnJy1tTUVDzN+w1ataGhgSWTydJEIpEgPT09
-        h2RQkpqaeiExMVFExEUkOyHx88xmc9KxP/E3aCctSBsdiTZ6fZxEUb8AaYCCOQGLIF0AAAAASUVORK5C
->>>>>>> Stashed changes
         YII=
 </value>
   </data>
   <data name="bt_cut.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAdpJREFUOE+NkE9oE0EUxiMVaSkKXpoiaTb7J92ZDeQuhEaUQlVaFA/FQ2+CUHrR
         Q499syk5lPYqPbSH1oMXEUSK2dkIBRHxICLJwYuHYqHnFv9QL43fbB+hkMTmB8POe983877Z1Fkcx6la
@@ -194,23 +171,10 @@
         V/q38bY9gurjiPfOxJOhvg3TkUW7g4l4BqMn6cL4Fj9zN091JyVUVA1I3zQmRLtr3pqc6IJ5ogijSbMP
         KJpCiiVcoFf9MHoQ0M6oT7VPshLnE3cXCpVY4n98LJIeESp+aIanCsvRGH7MB7y/4Yd6mr09EaG+L9Xb
         JtK89ym+9g9Kk69hyKNLuwAAAABJRU5ErkJggg==
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAdlJREFUOE+NkD9IHEEUxi8YgiIJ2HhiLre3f86d2QN74ciFBMEkKAkpgkW6gCA2
-        Wlj6Zk8sgrZioUWSwkYCIUhuZy8gBBGLEIIWaVIEBWtDEtHG85v1cQh3p/5g2Hnv+2beN5u6iOM4c5Zl
-        CS4bcF23YNt2mctGIA7igt1MJtPBrTrpdLoTA37mcrkSt5qDC3ZgXOSyDnrLOPyNy9bA9ArmGuIOccsk
-        G+beS261plQq3YT5N5Lse553J5vNdqE+wMW/ILedu64AE8fNRHyX8F3h/WuWrwbT281UrFOzkGIvCIJb
-        LF8P23UnHNc9TVY+P8bta1Kr3RCqsubeH/lhP3j2XVK0anqsXo7/5uNtqfQ7rJpXfLLgFUcWzN6naKV/
-        XneyrZGAqkWf9HuHPvyTpI+F0pMspVBP31X6xFLrfyVV3oqwMsDSOYL0lKRPh4h6ZKYJiiZYqpN4oPUp
-        /d946x5B1T7E+2LiyVA/humPRRvtiXgBoyfpwvgRP3MjT1UnJVQ0F5B+aEyI9tS8NTnRBPNEEUaDZh9Q
-        NIQUM7hAz/th9CKg9R6fKtuyHOcTdxMK5Vjif2z1k+4WKh41w1OF2egefswm3r/jh3qYvS0RoX4u1edd
-        pPnqU9x7Bk6qr2RPtWv6AAAAAElFTkSuQmCC
->>>>>>> Stashed changes
 </value>
   </data>
   <data name="bt_copy.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAASJJREFUOE9joDrQq98pptaw87Zq/c4HyFizYVc+VAl+oFW/QwWkQb1+uwIcN+xc
         L9+w4rdGw85CqDJMIC8vb6CkpJSAhj1Bchr1O5do1O+oALlMvWFHMVgDOgAqXgzEhxQVFReAsIKCwlog
@@ -218,26 +182,12 @@
         B2TPgSpDAGwGAMUeALENyCCQISBxjfpdKUQZAOSLgWyHGgLCf4B8CaINQAdAuScqKioyQ9wA9bhGR2AU
         HtVs2DEbKowAxBigEVZgBIpKzabt2lBhBAAZAMQFwJBWwIaBcs9BXoAqxwRAGxqBimBRhg3fBGJ+qHJq
         AQYGAJHelWh8KEIXAAAAAElFTkSuQmCC
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAASJJREFUOE9joDrQq98pptaw87Zq/c4HyFizYVc+VAl+oFW/QwWkQb1+uwIcN+xc
-        L9+w+rdGw85CqDJMIC8vb6CkpJSAhj1Bchr1O5do1O+oALlMvWFHMVgDOgAqXgzEhxQVFReAsIKCwlog
-        /z+QLtGq3+Wn0bB9L9AluzUbdv4H4mSoNgQAKl4C1BgD5TIoKyuryMnJvQK67DbIEPX6HVbq9TsTgK6Z
-        B2TPgSpDAGwGAMUeALENyCCQISBxjfpdKUQZAOSLgWyHGgLCf4B8CaINQAdAuScqKioyQ9wA9bhGR2AU
-        HtVs2DEbKowAxBigEVZgBIpKzabt2lBhBAAZAMQFwJBWwIaBcs9BXoAqxwRAGxqBimBRhg3fBGJ+qHJq
-        AQYGAJwHlWutPmNlAAAAAElFTkSuQmCC
->>>>>>> Stashed changes
 </value>
   </data>
   <data name="bt_paste.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAfFJREFUOE91kstLG1EUhw/d2D+h664EV92ooCsXRQhd+ESKjiGiAR9VESulKC6K
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAfFJREFUOE91kstLG1EUhw/d2D+h664EV92ooCsXRQhd+ESKjiGiAR9VESulKC6K
->>>>>>> Stashed changes
         pFAQTNRA0SCIUAQVWqF24UbR+ACxL1GiGMQH0aodq9HRzM975k5mHGt+8HEv55z7cedB99P5IYi7mOXU
         CVYTAm5CbyXB2/oeE5NhJMN7rnGPZ3jWPGaHG9gfA35IwUEMiO5IeM817vEMz5rH7PhZEO2HHibkvqjH
         02fPHeS4agHR4xm/uIl5zI4h2PZBnSZos4TEHEGfF7VFwZJgQdRnxLrbhX4llWCrDUdfCX++Sf4JWaG7
@@ -250,7 +200,6 @@
   </data>
   <data name="bt_undo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAgtJREFUOE9joBpQTdwSaW+/nwXKZdAKXcWmELvOXi1xW7Jy7BZ/lcSVolAp7MCp
         /so744LDmxkY/jNqZ+7Osm+58TVq1of/CQu+/4+b9/W/b/3Ff4b5R5bKx8/ngGpBAqGrmO3bzv4Nn/7h
@@ -262,24 +211,10 @@
         UDVj7y2TsvP/DYtO/VdK3OQJlcIOVBI3h6gmb52jmrJzl0bSnpe6uYf/GxSe+K+bd+S/SsKWeqgy7ACU
         B9RTV/7TzjrwH4a1Mvf9l4/f8VoxYb0vVBl+oJiwably3IYHinHrzyrFbZorl7DRCT1RUQkwMAAAKaL1
         MOpd/+sAAAAASUVORK5CYII=
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAgtJREFUOE9joBpQTdwSaW+/nwXKZdAKXcWmELvOXi1xW7Jy7BZ/lcSVolAp7MCp
-        /so744LDmxkY/jNqZ+7Osm+58TVq1of/CQu+/4+b9/W/b/2Vf4b5R5bKx8/ngGpBAqGrmO3bLvwNn/7h
-        v2nxiduhU9/+j5nz9X/w5Nf/7Vtv//Ssv/Avatbn/9GzP/83LTlxDtmlYCAbsUHKq/vJ//CZn+HYtOrC
-        U5X4jRYgF4nH7OTWzdrf6zfhxf+QaR/+a2fubYBqhQD56LUWvv2v/gdN/QjGgVM+/NfPO7yXob6eCaoE
-        DICGzAmaCnRlycnPKHJKcVsifSe9+4+MvYAG6mTtXwBVAgZKMWvFnFru/XfrfPJfMWq9LlQYGAOpOxvs
-        Gu/816m58sew4uxbw6IzN/Tzju1Vy9g9GeQFqDIwMKw8+8mj5/V/hegNflAhBgb1pA28MskrhdAVYwOm
-        FRe/OHU8+y8XvdYbKkQ8kIveoGVZc/2/RfXV/3IxGxWhwsQBldxt7NrpB65Y1d74r5tz+BFUmDggH7vB
-        UDVj7y2TsvP/DYtO/VdK3OQJlcIOVBI3h6gmb52jmrJzl0bSnpe6uYf/GxSe+K+bd+S/SsKWeqgy7ACU
-        B9RT1/zTzjrwH4a1Mvf9l4/f8VoxYb0vVBl+oJiwably3IYHinHrzyrFbZorl7DRCT1RUQkwMAAATX/1
-        Punn3aQAAAAASUVORK5CYII=
->>>>>>> Stashed changes
 </value>
   </data>
   <data name="bt_redo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAhNJREFUOE9joAlQi9wkohC70V81ZXOqfPR6B63QVWxQKQbjtJmsygmbwqFcVCAf
         P5/DqPDIMt/6C//i5n35n7Dg+/+omR/+W9bf+KKVuTuNob6eyajw6DaHykuvoVoQAGSyecmpC9GzP/+P
@@ -291,55 +226,26 @@
         UQqVIB4oxG3wMyo+/d+k7Px/jdRdNxTjNupBpYgHKonbWnXzjvw3KDzxXzf38H/VlJ3P1VK271RJ2jZb
         OX5TAFQZfiAfuzFIOWXjW63Mff+1sw7AsVrIzr+gWIEqIwCACuWiNrgoxG+cpxi3/qxy4ub7SnEbFkFl
         qQkYGAAWvPVwE3rQ9AAAAABJRU5ErkJggg==
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAhFJREFUOE9joAlQi9wkohC70V81ZXOqfPR6B63QVWxQKQbjtJmsygmbwqFcVCAf
-        P5/DqPDIMt/6y//i5n35n7Dg+/+omR/+W9bf+KKVuTuNob6eyajw6DaHykuvoVoQAGSyecmpC9GzP/+P
-        mvX5v2f9hX/2Lbd+Bk9+/T9mztf/oVPf/jctOHEnYjrIwCt/GBj+M0K1QoBO9t7W0Gkf/vv1P/+vk7W7
-        WzxmJzdIkVL8RmuL6gvPwmd+/g/Dnl2P/qskrhSFagWC0FXMNkVXvgZO+fBfJ/vANKgoBACdrZd/5ABI
-        LmjqRzD26XvxXy5+vTFUBQODXPRaI/euZ/8d68//k4pdJwwVBgPtnINLvfpf/fed9A6OfSa+/a+UsDEI
-        qgRoQMz6YM/eN/9NCk69gwpBANBlmpm7p+jmH9tnVHLqpmHF2bc61Vf+2DXe+a+WvK0CqoqBQSF2nb9z
-        5/P/umXnP0KF8ID/jCBXAqOWByoANCB6g7plzbX/FtXX/ivGrlODCpMC/jPqZB9+ZlV7479Wxt5LoCiF
-        ShAPFOI2+BkVn/5vUnb+v0bqrhuKcRv1oFLEA5XEba26eUf+GxSe+K+be/i/asrO52op23eqJG2brRy/
-        KQCqDD+Qj90YpJyy8a1W5r7/2lkH4FgtfOdfUKxAlREAQIVyURtcFOI3zlOMW39WOXHzfaW4DYugstQE
-        DAwAQWv1gSvWsYsAAAAASUVORK5CYII=
->>>>>>> Stashed changes
 </value>
   </data>
   <data name="bt_build.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAeZJREFUOE9jwAaKiop8ivOL9zVWNr5cu2rth8ePHl99+vTp/OfPn5tBleAHISEh
         xxPiE7bl5ubuaGlueT1r1qz/f//8+X/vzp1/Z0+d2ldaWsoLVUocWLtm7edfP3/+v3P79r/z587/j4mJ
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAeZJREFUOE9jwAaKiop8ivOL9zVWNr5cu2rth8ePHl99+vTp/OfPn5tBleAHISEh
-        xxPiE7bl5ubuaGlueT1r1qz/f//8+f/w/v1/Z0+d2ldaWsoLVUocWLtm7edfP3/+v3/v3r/z587/j4mJ
->>>>>>> Stashed changes
         2RIaGsoMlcYPysvL5e7cufPk8ePHH+vrOz+kp6e/nzt33v8NGzZ+a2xszIAqww3Wr16/6+yJE2/nzZtX
         aW9vzwKyOTIy6n5xcem/iRMnNkGVYQft7e2Zz548+Q+0aQpUCAyAYSAVHh7eD+ViB8dncRf9eHXjzd4d
         Oy7V19dzQIWJAwtrGTJ+n1D//3ILz9fOUoNIqDBxYGIhg8WHHXzf3u8W+396FsPzwhAGIagUYdBTxCDy
         ZAPn3e9HFP/fXcHwvzSSIR8qRRxY18Kw8e9p7f/PN3H8n5DHcBoqTByYUcqQ8mm/zP93u4T/75/C8DM/
         hMESKkUYzKlmkH+xlf3d10Ny/68vYfgP1NwHlSIM/v9nYLy9nGHXn1Oa/59uYP2/vIHhZL09AwtUmjCY
-<<<<<<< Updated upstream
         mcbA/+yQwp/X2wX+75jM8C3KlcEOKCyOhMWAWBSIhYGYD4g5gZgViJmAGALWtQv7b+9hOJ/ux9AD5DoB
         sTkQawKxDBALAjFIE0IDHDAwAABPwcuoFMZuKAAAAABJRU5ErkJggg==
-=======
-        mcbA//KQwp/X2wX+75jM8C3KlcEOKCyOhMWAWBSIhYGYD4g5gZgViJmAGALWtQv7b+9hOJ/ux9AD5DoB
-        sTkQawKxDBALAjFIE0IDHDAwAACQQcu9HYchsAAAAABJRU5ErkJggg==
->>>>>>> Stashed changes
 </value>
   </data>
   <data name="bt_assembler.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAAglJREFUSEvNlbFKA0EQhkfU0icQK8FCY1RipURQENLFlGKRSpAUmkIJGCGFjUhE
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAAglJREFUSEvNlbFKA0EQhkfU0icQK8FCY1RipURQENLFlGKRSpAUmkIJGCGFjUhE
->>>>>>> Stashed changes
         BEERBTUgaFqJjXYKErCQtAq+gI1g6zj/3uxlE+IZjYUDw+7O7vzfzB7s0b+xXC7HyWTSeDabZQ3/3tLp
         NMMxHxps571t4usi8c0p8d4acai30+xlMhn/XFMGsfw6cXGfuLBJvDRLvLNCzK/iL8QfzzI+SmyReHFB
         zuwSn4vnl4mH+zqCQWi9dOyJWSF+IK6c6dwCbEzWLrS0RcHXh82rVU8ASSbxTke3A+zfqGMNkACucgGA
@@ -353,13 +259,8 @@
   </data>
   <data name="bt_AddProc.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
-<<<<<<< Updated upstream
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
         wQAADsEBuJFr7QAAARRJREFUOE+l00tKA0EQgOHxsYiKICRHcJHEhV7EhZgH0W2W4ioBTS7gwiOIeAvB
-=======
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAS
-        cwAAEnMBjCK5BwAAARRJREFUOE+l00tKA0EQgOHxsYiKICRHcJHEhV7EhZgH0W2W4ioBTS7gwiOIeAvB
->>>>>>> Stashed changes
         K+ih8v/FFDQTgyE2fJmZ7pqa7upO1WiHOMYp9nFS894+xw6wsXUxwwc6eMErzvCGJ5xjY9spgdP2RbVx
         iSv066t69dUxYzI+luO6/KqGeC+em5zZbfHcQhTHAY0xwXfRl35wBz+SfX48Kux6dQODXHuzWYt7XCPj
         fTe2yRc0wl8JBsj4I0QCB7VtgoyPBE7DbdK2S8j4PUQR3WNZRBN8YtrwBRNYxIyPIvrjAZGDDzDRbx7h
@@ -381,11 +282,7 @@
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="$this.TrayHeight" type="System.Int32, mscorlib">
-<<<<<<< Updated upstream
     <value>83</value>
-=======
-    <value>58</value>
->>>>>>> Stashed changes
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -1613,16 +1510,4 @@
   <data name="bt_help.Image" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\bt_help.Image.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-<<<<<<< Updated upstream
-=======
-  <data name="bt_help_email_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\bt_help_email_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bt_help_github_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\bt_help_github_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="bt_help_processor_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\bt_help_processor_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
->>>>>>> Stashed changes
 </root>

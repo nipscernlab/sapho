@@ -332,8 +332,6 @@ C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.
 C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.Up2Date
 C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
 C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-<<<<<<< Updated upstream
-=======
 =======
 >>>>>>> Stashed changes
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
@@ -348,17 +346,10 @@ C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Fo
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
-<<<<<<< Updated upstream
-=======
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form5.resources
->>>>>>> Stashed changes
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.Up2Date
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
