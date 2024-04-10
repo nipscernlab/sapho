@@ -33,18 +33,22 @@ namespace Sapho_IDE
         {
             PictureBox pictureBox = (PictureBox)sender;
             int increaseAmount = 10; // Ajuste a quantidade de aumento desejada
+            int deltaX = increaseAmount / 2;
+            int deltaY = increaseAmount / 2;
             pictureBox.Size = new Size(originalSize.Width + increaseAmount, originalSize.Height + increaseAmount);
-            pictureBox.Anchor = AnchorStyles.None; // Desativa o ancoramento para evitar reposicionamento
-            pictureBox.Location = new Point(pictureBox.Location.X - increaseAmount / 2, pictureBox.Location.Y - increaseAmount / 2);
+            pictureBox.Location = new Point(pictureBox.Location.X - deltaX, pictureBox.Location.Y - deltaY);
         }
 
         private void Icon_MouseLeave(object sender, EventArgs e)
         {
             PictureBox pictureBox = (PictureBox)sender;
+            int increaseAmount = 10; // Ajuste a quantidade de aumento desejada
+            int deltaX = increaseAmount / 2;
+            int deltaY = increaseAmount / 2;
             pictureBox.Size = originalSize;
-            pictureBox.Anchor = AnchorStyles.Top | AnchorStyles.Left; // Restaura o ancoramento
-            pictureBox.Location = new Point(pictureBox.Location.X + (originalSize.Width - pictureBox.Size.Width) / 2, pictureBox.Location.Y + (originalSize.Height - pictureBox.Size.Height) / 2);
+            pictureBox.Location = new Point(pictureBox.Location.X + deltaX, pictureBox.Location.Y + deltaY);
         }
+
 
         private void github_icon_Click(object sender, EventArgs e)
         {

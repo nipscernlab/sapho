@@ -295,47 +295,16 @@ C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\
 C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
 C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
 C:\Users\LuccaViccini\Desktop\UFJF\IC\IC_Luciano\nipscernufjf\SAPHO\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-<<<<<<< Updated upstream
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.AssemblyReference.cache
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.Up2Date
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
-C:\Users\chrys\Desktop\teste\SAPHO-master\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.AssemblyReference.cache
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.Up2Date
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
-C:\Users\chrys\Documents\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> Stashed changes
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.AssemblyReference.cache
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config
@@ -343,22 +312,5 @@ C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.ex
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.AssemblyReference.cache
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form4.resources
-<<<<<<< Updated upstream
-=======
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form5.resources
->>>>>>> Stashed changes
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Properties.Resources.resources
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.GenerateResource.cache
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CoreCompileInputs.cache
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.Up2Date
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form5.resources
