@@ -36,6 +36,7 @@
             this.sapho_help_title = new System.Windows.Forms.Label();
             this.email_icon = new System.Windows.Forms.PictureBox();
             this.website_link = new System.Windows.Forms.LinkLabel();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.processor_icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.github_icon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.email_icon)).BeginInit();
@@ -53,8 +54,7 @@
             this.processor_icon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.processor_icon.TabIndex = 1;
             this.processor_icon.TabStop = false;
- 
-
+            this.processor_icon.Click += new System.EventHandler(this.processor_icon_Click);
             // 
             // github_icon
             // 
@@ -68,6 +68,7 @@
             this.github_icon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.github_icon.TabIndex = 3;
             this.github_icon.TabStop = false;
+            this.github_icon.Click += new System.EventHandler(this.github_icon_Click);
             // 
             // email_link
             // 
@@ -139,12 +140,23 @@
             this.website_link.Text = "Website";
             this.website_link.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.website_LinkClicked);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(241, 254);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(167, 18);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "contact@nipscern.com";
+            // 
             // Form5
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(634, 311);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.website_link);
             this.Controls.Add(this.github_link);
             this.Controls.Add(this.email_link);
@@ -176,5 +188,6 @@
         private System.Windows.Forms.Label sapho_help_title;
         private System.Windows.Forms.PictureBox email_icon;
         private System.Windows.Forms.LinkLabel website_link;
+        private System.Windows.Forms.Label label1;
     }
 }

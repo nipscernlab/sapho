@@ -12,9 +12,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 using FastColoredTextBoxNS;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using static System.Windows.Forms.LinkLabel;
-
-
 
 namespace Sapho_IDE
 {
@@ -43,6 +40,7 @@ namespace Sapho_IDE
         public Form_Main()
         {
             InitializeComponent();
+
             bt_AddProc.Enabled = false;
             bt_build.Enabled = false;
             bt_copy.Enabled = false;
@@ -60,9 +58,10 @@ namespace Sapho_IDE
 
             Properties.Settings.Default.flag_create_project = false;
 
-
         }
 
+<<<<<<< HEAD
+=======
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -173,6 +172,7 @@ namespace Sapho_IDE
 
 
 
+>>>>>>> 4eef4e579e9576bada22f60442e33e2dd132db72
         private void CodeSyntaxHighlight(TextChangedEventArgs e)
         {
             FastColoredTextBox fctb = ((FastColoredTextBox)(tabControl1.SelectedTab.Controls[0]));
@@ -865,16 +865,10 @@ namespace Sapho_IDE
 
         }
 
-        private void helpToolStripMenuItem_Click_1(object sender, EventArgs e)
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Form5 form5 = new Form5();
-            form5.ShowDialog();
-
-        }
-
-        private void typeWhatToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
+            form5.Show();
         }
 
         private static void SortErrorHandler(object sendingProcess, DataReceivedEventArgs outLine)

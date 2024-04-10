@@ -59,6 +59,8 @@ namespace Sapho_IDE.Properties {
                 resourceCulture = value;
             }
         }
+<<<<<<< HEAD
+=======
         
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
@@ -119,5 +121,6 @@ namespace Sapho_IDE.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+>>>>>>> 4eef4e579e9576bada22f60442e33e2dd132db72
     }
 }
