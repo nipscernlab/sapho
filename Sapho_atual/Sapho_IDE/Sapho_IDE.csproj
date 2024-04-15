@@ -8,10 +8,9 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Sapho_IDE</RootNamespace>
     <AssemblyName>Sapho_IDE</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -137,20 +136,6 @@
     <Content Include="myccomp.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-<<<<<<< HEAD
-=======
-    <Content Include="Resources\bt_help.Image.ico" />
-    <Content Include="Resources\email_icon.png" />
-    <Content Include="Resources\email_icon.ico" />
-    <Content Include="Resources\github_icon.png" />
-    <Content Include="Resources\github_icon.ico" />
-    <Content Include="Resources\processor_icon.png" />
-    <Content Include="Resources\processor_icon.ico" />
-    <None Include="Resources\bt_help_github_icon.png" />
-    <None Include="Resources\bt_help.Image.ico" />
-    <None Include="Resources\bt_help_email_icon.png" />
-    <None Include="Resources\bt_help_processor_icon.png" />
->>>>>>> 4eef4e579e9576bada22f60442e33e2dd132db72
     <None Include="Resources\SAPHO2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
