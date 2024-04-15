@@ -48,7 +48,7 @@
             this.processor_icon.AccessibleName = "processor_icon";
             this.processor_icon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.processor_icon.Image = ((System.Drawing.Image)(resources.GetObject("processor_icon.Image")));
-            this.processor_icon.Location = new System.Drawing.Point(266, 121);
+            this.processor_icon.Location = new System.Drawing.Point(266, 120);
             this.processor_icon.Name = "processor_icon";
             this.processor_icon.Size = new System.Drawing.Size(82, 66);
             this.processor_icon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -62,7 +62,7 @@
             this.github_icon.AccessibleName = "github_icon";
             this.github_icon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.github_icon.Image = ((System.Drawing.Image)(resources.GetObject("github_icon.Image")));
-            this.github_icon.Location = new System.Drawing.Point(440, 121);
+            this.github_icon.Location = new System.Drawing.Point(440, 120);
             this.github_icon.Name = "github_icon";
             this.github_icon.Size = new System.Drawing.Size(82, 66);
             this.github_icon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -118,7 +118,7 @@
             this.email_icon.AccessibleName = "email_icon";
             this.email_icon.Cursor = System.Windows.Forms.Cursors.Hand;
             this.email_icon.Image = ((System.Drawing.Image)(resources.GetObject("email_icon.Image")));
-            this.email_icon.Location = new System.Drawing.Point(92, 121);
+            this.email_icon.Location = new System.Drawing.Point(92, 120);
             this.email_icon.Name = "email_icon";
             this.email_icon.Size = new System.Drawing.Size(82, 66);
             this.email_icon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;

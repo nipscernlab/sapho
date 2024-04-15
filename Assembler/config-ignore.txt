@@ -1,0 +1,29 @@
+{
+    "files.exclude": {
+        "c2aux.asm": true,
+        "float_div.asm": true,
+        "float_i2f.asm": true,
+        "float_f2i.asm": true,
+        "float_gen.asm": true,
+        "float_init.asm": true,
+        "float_mult.asm": true,
+        "float_soma.asm": true,
+        "README.md": true,
+        "libfl.a": true,
+        "liby.a": true,
+        "**/*.gch": true,
+        "**/*.depend": true,
+        "**/*.layout": true,
+        "**/*.md": true,
+    },
+    "cmake.configureOnOpen": true,
+    "workbench.iconTheme": "material-icon-theme",
+    "git.autofetch": true,
+    "[c]": {
+        "editor.wordBasedSuggestions": "off",
+        "editor.suggest.insertMode": "replace",
+        "editor.semanticHighlighting.enabled": true
+    },
+    "diffEditor.ignoreTrimWhitespace": false,
+    "git.enableSmartCommit": true
+}
