@@ -28,7 +28,7 @@ AllowNoIcons=yes
 InfoBeforeFile=C:\Users\chrys\Desktop\GitHub\sapho\Licenses\partnership.txt
 LicenseFile=C:\Users\chrys\Desktop\GitHub\sapho\Licenses\LICENSE-en.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
+PrivilegesRequired=lowest
 OutputDir=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Setup\inno
 OutputBaseFilename=SAPHO
 SetupIconFile=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Icons\1498583471_kcmprocessor.ico
