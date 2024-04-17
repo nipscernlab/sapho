@@ -1,6 +1,6 @@
-#line 2 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\lex.yy.c"
+#line 2 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
-#line 4 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\lex.yy.c"
+#line 4 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -369,8 +369,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 43
-#define YY_END_OF_BUFFER 44
+#define YY_NUM_RULES 44
+#define YY_END_OF_BUFFER 45
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -378,23 +378,23 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static yyconst flex_int16_t yy_accept[136] =
+static yyconst flex_int16_t yy_accept[138] =
     {   0,
-        0,    0,   44,   42,   39,   38,   27,   42,   42,   27,
-       27,   42,   27,   25,   27,   27,   27,   24,   24,   24,
-       24,   24,   24,   24,   24,   24,   24,   27,   39,   34,
-        0,   23,    0,    0,    0,    0,    0,   35,   26,    0,
-       41,   37,    0,   25,   28,   32,   33,   31,   29,   24,
-       24,   24,   24,   21,   15,   24,   24,   24,   24,   24,
-       36,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-       41,   30,   17,   24,   24,   13,   16,   24,   24,   24,
-       24,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,   40,   22,   24,   24,   18,   14,   24,    0,    0,
+        0,    0,   45,   43,   40,   39,   28,   43,   43,   28,
+       28,   43,   28,   26,   28,   28,   28,   25,   25,   25,
+       25,   25,   25,   25,   25,   25,   25,   28,   40,   35,
+        0,   24,    0,    0,    0,    0,    0,   36,   27,    0,
+       42,   38,    0,   26,   29,   33,   34,   32,   30,   25,
+       25,   25,   25,   25,   21,   15,   25,   25,   25,   25,
+       25,   37,    0,    0,    0,    0,    0,    0,    0,    0,
+        0,   42,   31,   17,   25,   25,   23,   13,   16,   25,
+       25,   25,   25,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,   41,   22,   25,   25,   18,   14,   25,
 
-        0,    0,    0,    0,    0,    0,    0,    0,   12,   24,
-       20,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-        0,    0,   19,    3,    2,    6,    5,    7,    4,   11,
-        9,   10,    1,    8,    0
+        0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+       12,   25,   20,    0,    0,    0,    0,    0,    0,    0,
+        0,    0,    0,    0,   19,    3,    2,    6,    5,    7,
+        4,   11,    9,   10,    1,    8,    0
     } ;
 
 static yyconst flex_int32_t yy_ec[256] =
@@ -439,45 +439,47 @@ static yyconst flex_int32_t yy_meta[54] =
         3,    3,    1
     } ;
 
-static yyconst flex_int16_t yy_base[140] =
+static yyconst flex_int16_t yy_base[142] =
     {   0,
-        0,    0,  175,  176,  172,  176,  159,   49,   36,  176,
-      164,  159,   48,   46,   47,  156,   53,    0,  132,  124,
-      123,   25,  116,  126,  121,  117,  120,  108,  158,  176,
-       64,  176,  156,   55,   55,  129,  138,  176,  144,  146,
-        0,  176,  142,   63,  176,  176,  176,  176,  138,    0,
-      104,  103,  104,    0,  100,   99,   98,  105,  102,  101,
-      176,  112,  113,   56,  111,   61,  114,  119,  129,   71,
-        0,  176,    0,   98,  100,    0,    0,   85,   89,   95,
-       88,   97,  104,   96,  112,   96,  102,  109,   97,  107,
-       94,  176,    0,   72,   73,    0,    0,   80,   90,  101,
+        0,    0,  177,  178,  174,  178,  161,   49,   36,  178,
+      166,  161,   48,   46,   47,  158,   53,    0,  134,  126,
+       25,   25,  119,  129,  124,  120,  123,  111,  161,  178,
+       67,  178,  159,   57,   57,  132,  141,  178,  147,  149,
+        0,  178,  145,   65,  178,  178,  178,  178,  141,    0,
+      107,  106,  107,  105,    0,  102,  101,  100,  107,  104,
+      103,  178,  114,  115,   58,  113,   63,  116,  121,  131,
+       77,    0,  178,    0,  100,  102,    0,    0,    0,   87,
+       91,   97,   90,   99,  106,   98,  114,   98,  104,  111,
+       99,  109,   96,  178,    0,   74,   75,    0,    0,   82,
 
-       88,   89,   98,   82,   88,   62,   86,   79,    0,   64,
-        0,   87,   73,   70,   65,   77,   64,   67,   66,   59,
-       70,   65,    0,  176,  176,  176,  176,  176,  176,  176,
-      176,  176,  176,  176,  176,   99,   74,  102,  105
+       92,  103,   90,   91,  100,   84,   90,   55,   88,   81,
+        0,   65,    0,   81,   75,   72,   67,   79,   66,   69,
+       68,   61,   72,   68,    0,  178,  178,  178,  178,  178,
+      178,  178,  178,  178,  178,  178,  178,  102,   87,  105,
+      108
     } ;
 
-static yyconst flex_int16_t yy_def[140] =
+static yyconst flex_int16_t yy_def[142] =
     {   0,
-      135,    1,  135,  135,  135,  135,  135,  136,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  137,  137,  137,
-      137,  137,  137,  137,  137,  137,  137,  135,  135,  135,
-      136,  135,  136,  135,  135,  135,  135,  135,  135,  138,
-      139,  135,  135,  135,  135,  135,  135,  135,  135,  137,
+      137,    1,  137,  137,  137,  137,  137,  138,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  139,  139,  139,
+      139,  139,  139,  139,  139,  139,  139,  137,  137,  137,
+      138,  137,  138,  137,  137,  137,  137,  137,  137,  140,
+      141,  137,  137,  137,  137,  137,  137,  137,  137,  139,
+      139,  139,  139,  139,  139,  139,  139,  139,  139,  139,
+      139,  137,  137,  137,  137,  137,  137,  137,  137,  140,
+      140,  141,  137,  139,  139,  139,  139,  139,  139,  139,
+      139,  139,  139,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  139,  139,  139,  139,  139,  139,
+
       137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
-      135,  135,  135,  135,  135,  135,  135,  135,  138,  138,
-      139,  135,  137,  137,  137,  137,  137,  137,  137,  137,
-      137,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  137,  137,  137,  137,  137,  137,  135,  135,
-
-      135,  135,  135,  135,  135,  135,  135,  135,  137,  137,
-      137,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  137,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,    0,  135,  135,  135,  135
+      139,  139,  139,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  139,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,    0,  137,  137,  137,
+      137
     } ;
 
-static yyconst flex_int16_t yy_nxt[230] =
+static yyconst flex_int16_t yy_nxt[232] =
     {   0,
         4,    5,    6,    7,    8,    9,   10,   11,   10,   12,
        13,   14,   15,   16,   17,   18,   18,   18,   18,   18,
@@ -485,28 +487,29 @@ static yyconst flex_int16_t yy_nxt[230] =
        18,   18,   18,   18,    4,   19,   18,   18,   20,   21,
        18,   18,   22,   18,   18,   23,   24,   25,   18,   18,
        26,   27,   28,   32,   34,   43,   40,   44,   41,   45,
-       46,   35,   42,   36,   54,   37,   48,   49,   32,   55,
-       62,   64,   43,   65,   44,   84,   50,   87,   63,   70,
-       85,   92,   88,   33,   89,  119,   66,  134,  120,  133,
-      132,  131,  130,  129,  128,  127,  126,  125,   33,   31,
+       46,   35,   42,   36,   55,   37,   48,   49,   53,   56,
+       54,   32,   63,   65,   43,   66,   44,   86,  121,   89,
+       64,  122,   87,   33,   90,   71,   91,   94,   67,   50,
+      136,  135,  134,  133,  132,  131,  130,  129,  128,  127,
 
-       31,   31,   69,   69,   69,   71,  124,   71,  123,  122,
-      121,  118,  117,  116,  115,  114,  113,  112,  111,  110,
-      109,  108,  107,  106,  105,  104,  103,  102,  101,  100,
-       99,   98,   97,   96,   95,   94,   93,   70,   91,   90,
-       86,   83,   82,   81,   80,   79,   78,   77,   76,   75,
-       74,   73,   72,   39,   70,   39,   68,   67,  135,   29,
-       61,   60,   59,   58,   57,   56,   53,   52,   51,   47,
-       39,   38,   30,   29,  135,    3,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      126,   33,   31,   31,   31,   70,   70,   70,   72,  125,
+       72,  124,  123,  120,  119,  118,  117,  116,  115,  114,
+      113,  112,  111,  110,  109,  108,  107,  106,  105,  104,
+      103,  102,  101,  100,   99,   98,   97,   96,   95,   71,
+       93,   92,   88,   85,   84,   83,   82,   81,   80,   79,
+       78,   77,   76,   75,   74,   73,   39,   71,   39,   69,
+       68,  137,   29,   62,   61,   60,   59,   58,   57,   52,
+       51,   47,   39,   38,   30,   29,  137,    3,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
 
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137
     } ;
 
-static yyconst flex_int16_t yy_chk[230] =
+static yyconst flex_int16_t yy_chk[232] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -514,25 +517,26 @@ static yyconst flex_int16_t yy_chk[230] =
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    8,    9,   14,   13,   14,   13,   15,
-       15,    9,   13,    9,   22,    9,   17,   17,   31,   22,
-       34,   35,   44,   35,   44,   64,  137,   66,   34,   70,
-       64,   70,   66,    8,   66,  106,   35,  122,  106,  121,
-      120,  119,  118,  117,  116,  115,  114,  113,   31,  136,
+       15,    9,   13,    9,   22,    9,   17,   17,   21,   22,
+       21,   31,   34,   35,   44,   35,   44,   65,  108,   67,
+       34,  108,   65,    8,   67,   71,   67,   71,   35,  139,
+      124,  123,  122,  121,  120,  119,  118,  117,  116,  115,
 
-      136,  136,  138,  138,  138,  139,  112,  139,  110,  108,
-      107,  105,  104,  103,  102,  101,  100,   99,   98,   95,
-       94,   91,   90,   89,   88,   87,   86,   85,   84,   83,
-       82,   81,   80,   79,   78,   75,   74,   69,   68,   67,
-       65,   63,   62,   60,   59,   58,   57,   56,   55,   53,
-       52,   51,   49,   43,   40,   39,   37,   36,   33,   29,
-       28,   27,   26,   25,   24,   23,   21,   20,   19,   16,
-       12,   11,    7,    5,    3,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
+      114,   31,  138,  138,  138,  140,  140,  140,  141,  112,
+      141,  110,  109,  107,  106,  105,  104,  103,  102,  101,
+      100,   97,   96,   93,   92,   91,   90,   89,   88,   87,
+       86,   85,   84,   83,   82,   81,   80,   76,   75,   70,
+       69,   68,   66,   64,   63,   61,   60,   59,   58,   57,
+       56,   54,   53,   52,   51,   49,   43,   40,   39,   37,
+       36,   33,   29,   28,   27,   26,   25,   24,   23,   20,
+       19,   16,   12,   11,    7,    5,    3,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
 
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135,  135,
-      135,  135,  135,  135,  135,  135,  135,  135,  135
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137,  137,  137,  137,  137,  137,  137,  137,  137,  137,
+      137
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -549,8 +553,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-#line 2 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 1 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 2 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 #include <string.h>
 #include "y.tab.h"
 #include "variaveis.h"
@@ -558,7 +562,7 @@ char *yytext;
 
 void yyerror(char *);
 
-#line 562 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\lex.yy.c"
+#line 566 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
 #define INITIAL 0
 
@@ -745,10 +749,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 14 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 14 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 
 
-#line 752 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\lex.yy.c"
+#line 756 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -801,13 +805,13 @@ yy_match:
 			while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
-				if ( yy_current_state >= 136 )
+				if ( yy_current_state >= 138 )
 					yy_c = yy_meta[(unsigned int) yy_c];
 				}
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 176 );
+		while ( yy_base[yy_current_state] != 178 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -833,127 +837,132 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 16 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 16 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return PRNAME;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 17 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 17 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return DIRNAM;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 18 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 18 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return DATYPE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 19 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 19 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUBITS;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 20 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 20 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NBMANT;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 21 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 21 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NBEXPO;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 22 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 22 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NDSTAC;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 23 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 23 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return SDEPTH;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 24 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 24 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUIOIN;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 25 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 25 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUIOOU;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 26 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 26 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUGAIN;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 28 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {fgen = 1; type_tmp = 2; yylval = 2; return TYPE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 29 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {type_tmp = 1; yylval = 1; return TYPE;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 30 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {              yylval = 0; return TYPE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 32 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 32 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return IN;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 33 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 33 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return OUT;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 34 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 34 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return ABS;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 35 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 35 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return SIGN;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 36 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 36 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return RETURN;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 37 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 37 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return WHILE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 38 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 38 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return IF;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 39 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 39 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return ELSE;
 	YY_BREAK
 case 23:
-/* rule 23 can match eol */
 YY_RULE_SETUP
-#line 41 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 40 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return FOR;
+	YY_BREAK
+case 24:
+/* rule 24 can match eol */
+YY_RULE_SETUP
+#line 42 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               if (find_var(yytext) == -1) add_var(yytext);
                               yylval = find_var(yytext);
                               return STRING;
                            }
 	YY_BREAK
-case 24:
+case 25:
 YY_RULE_SETUP
-#line 47 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 48 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               char var_name[64];
                               if (find_var(yytext) == -1)
@@ -970,18 +979,18 @@ YY_RULE_SETUP
                               return ID;
                            }
 	YY_BREAK
-case 25:
+case 26:
 YY_RULE_SETUP
-#line 63 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 64 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               if (find_var(yytext) == -1) add_var(yytext);
                               yylval = find_var(yytext);
                               return INUM;
                            }
 	YY_BREAK
-case 26:
+case 27:
 YY_RULE_SETUP
-#line 69 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 70 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               if (find_var(yytext) == -1) add_var(yytext);
                               yylval = find_var(yytext);
@@ -989,94 +998,94 @@ YY_RULE_SETUP
                               return FNUM;
                            }
 	YY_BREAK
-case 27:
-YY_RULE_SETUP
-#line 76 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return *yytext;
-	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 78 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return  SHIFTL;
+#line 77 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return *yytext;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 79 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return  SHIFTR;
+#line 79 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return  SHIFTL;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 80 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return SSHIFTR;
+#line 80 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return  SHIFTR;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 81 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return   GREQU;
+#line 81 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return SSHIFTR;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 82 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return   LESEQ;
+#line 82 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return   GREQU;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 83 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return     EQU;
+#line 83 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return   LESEQ;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 84 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return     DIF;
+#line 84 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return     EQU;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 85 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return    LAND;
+#line 85 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return     DIF;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 86 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return     LOR;
+#line 86 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return    LAND;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 87 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-return    NORM;
+#line 87 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return     LOR;
 	YY_BREAK
 case 38:
-/* rule 38 can match eol */
 YY_RULE_SETUP
-#line 89 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-line_num++;
+#line 88 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+return    NORM;
 	YY_BREAK
 case 39:
+/* rule 39 can match eol */
 YY_RULE_SETUP
-#line 91 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-;       /* ignore whitespace   */
+#line 90 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+line_num++;
 	YY_BREAK
 case 40:
-/* rule 40 can match eol */
 YY_RULE_SETUP
-#line 92 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-;       /* comentario em bloco */
+#line 92 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+;       /* ignore whitespace   */
 	YY_BREAK
 case 41:
+/* rule 41 can match eol */
 YY_RULE_SETUP
-#line 93 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-;       /* comentario em linha */
+#line 93 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+;       /* comentario em bloco */
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 95 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
-{yyerror("");}
+#line 94 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+;       /* comentario em linha */
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 96 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 96 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+{yyerror("");}
+	YY_BREAK
+case 44:
+YY_RULE_SETUP
+#line 97 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 ECHO;
 	YY_BREAK
-#line 1080 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\lex.yy.c"
+#line 1089 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1368,7 +1377,7 @@ static int yy_get_next_buffer (void)
 		while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
-			if ( yy_current_state >= 136 )
+			if ( yy_current_state >= 138 )
 				yy_c = yy_meta[(unsigned int) yy_c];
 			}
 		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
@@ -1396,11 +1405,11 @@ static int yy_get_next_buffer (void)
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
-		if ( yy_current_state >= 136 )
+		if ( yy_current_state >= 138 )
 			yy_c = yy_meta[(unsigned int) yy_c];
 		}
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
-	yy_is_jam = (yy_current_state == 135);
+	yy_is_jam = (yy_current_state == 137);
 
 	return yy_is_jam ? 0 : yy_current_state;
 }
@@ -2074,7 +2083,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 96 "C:\\Users\\chrys\\Desktop\\helsinki\\Source\\c2asm.l"
+#line 97 "C:\\Users\\chrys\\Desktop\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 
 
 

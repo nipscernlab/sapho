@@ -1,10 +1,18 @@
-#PRNAME atualizacao
-#DIRNAM "C:\Users\Lucca\Documents\Iniciacao\atualizacao\Hardware\atualizacao_H"
-#DATYPE 1
-#NBMANT 19
-#NBEXPO 8
+#PRNAME testeProc
+#DIRNAM "C:\Users\chrys\Desktop\teste\Hardware\testeProc_H"
+#DATYPE 0
+#NUBITS 16
+#NUGAIN 4
 #NDSTAC 4
 #SDEPTH 4
-#NUIOIN 4
-#NUIOOU 4
-@main 
+#NUIOIN 2
+#NUIOOU 2
+@main LOAD 0
+SET maini
+LOAD 0
+SET maina
+LOAD 2
+PLD 6
+LES maini
+PLD 1
+ADD maini

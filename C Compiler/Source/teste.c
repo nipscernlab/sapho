@@ -1,35 +1,20 @@
-#PRNAME atualizacao
-#DIRNAM "C:\Users\Lucca\Documents\Iniciacao\atualizacao\Hardware\atualizacao_H"
-#DATYPE 1
-#NBMANT 19
-#NBEXPO 8
+#PRNAME testeProc
+#DIRNAM "C:\Users\chrys\Desktop\teste\Hardware\testeProc_H"
+#DATYPE 0
+#NUBITS 16
+#NUGAIN 4
 #NDSTAC 4
 #SDEPTH 4
-#NUIOIN 4
-#NUIOOU 4
+#NUIOIN 2
+#NUIOOU 2
 
+void main() 
+{   int i = 0;
+    int a = 0;
 
-
-    void main()
-    {
-<<<<<<< HEAD
-
-        int a = 2;
-        int b = 3;
-        int c = a + b;
+    for(i = 2; i<6; i=i+1){
         
-=======
-        float a;
-        float array[2];
-        array[0] = -22.3;
-        float soma0 = - 88.3;
-
-        //float b = sign(a,array[0]);
-
-        //a = array[0];
-        //if (soma0 < 0)
-            // a = -a;
-        a = sign(array[0],soma0);  
-
->>>>>>> eaec011f43a5b130c4c5ba88a5a9b7c53c35c6ce
-    }
+            a = a+1;
+        
+        }
+}

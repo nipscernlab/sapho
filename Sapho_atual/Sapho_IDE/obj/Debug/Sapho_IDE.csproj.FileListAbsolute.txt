@@ -302,6 +302,7 @@ C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.ex
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll
+C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_Main.resources
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_AddProc.resources
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.Form_NP.resources
@@ -313,4 +314,3 @@ C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.cs
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csproj.CopyComplete
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.exe
 C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.pdb
-C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\obj\Debug\Sapho_IDE.csprojAssemblyReference.cache

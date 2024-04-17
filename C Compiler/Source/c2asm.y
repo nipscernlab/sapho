@@ -49,6 +49,7 @@ void  exec_out1  (int et);
 void  exec_out2  (int et);
 %}
 
+%token FOR
 %token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH NUIOIN NUIOOU NUGAIN
 %token TYPE
 %token INUM FNUM ID STRING
@@ -130,6 +131,7 @@ stmt_full: ';'                  // statment vazio
          | '{' stmt_list '}'    // bloco de statments
          | declar_full          // declaracoes de variaveis
          | assignment           // atribuicao de expressoes a uma variavel
+         | for_stmt             // loop for
          | while_stmt           // loop while
          | ifelse_stmt          // if com else
          | std_out              // output de dados
@@ -168,6 +170,12 @@ if_exp_stmt: if_exp stmt_full              {acc_id = -1; fprintf(f_asm, "JMP L%d
 
 if_exp:   IF '(' exp ')'                   {load_check($3, 0); fprintf(f_asm, "JZ L%delse\n", push_lab()); acc_ok = 0; acc_id = -1;};
 
+// for ----------------------------------------------------------------------
+for_stmt: for_exp stmt_full                {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
+
+for_exp: FOR                          {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());} 
+           '(' exp ';' exp ';' exp ')' stmt_full {load_check($8, 0); fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
+
 // while ----------------------------------------------------------------------
 
 while_stmt: while_exp stmt_full            {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
@@ -175,6 +183,8 @@ while_if  : while_exp stmt_if              {acc_id = -1; fprintf(f_asm, "JMP L%d
 
 while_exp: WHILE                           {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());}
           '(' exp ')'                      {load_check($4, 0); fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
+
+
 
 // declaracoes de variaveis ---------------------------------------------------
 
@@ -191,7 +201,7 @@ assignment: ID '=' exp ';'                 {var_set($1,$3,0,0);}
           | ID '@' exp ';'                 {var_set($1,$3,0,1);}
           | ID NORM exp ';'                 {var_set($1,$3,0,2);}
           | ID '[' exp ']' '='             {array_check($1,$3);}
-            exp ';'                        {var_set($1,$7,1,0);};
+            exp ';'                        {var_set($1,$6,1,0);};
 
 
 
@@ -222,6 +232,7 @@ exp:       const
          | exp '^' exp                     {$$ = int_oper ($1,$3, "^"  ,  "XOR", 0);}
          | exp LAND exp                    {$$ = int_oper ($1,$3, "&&" , "LAND", 1);}
          | exp LOR exp                     {$$ = int_oper ($1,$3, "||" , "LOR" , 1);}
+         | exp '=' exp                     {     var_set($1,$3,0,0);$$ = $1;}
          | exp '*' exp                     {$$ = operacoes($1,$3, "MLT", "CALL float_mult"                             , &fmlt);}
          | exp '/' exp                     {$$ = operacoes($1,$3, "DIV", "CALL float_div"                              , &fdiv);}
          | exp '+' exp                     {$$ = operacoes($1,$3, "ADD", "CALL denorm\nCALL float_add"                 , &fadd);}

@@ -37,6 +37,7 @@ LETRA  [A-Za-z_]
 "while"                         return WHILE;
 "if"                            return IF;
 "else"                          return ELSE;
+"for"                           return FOR;
 
 \"(\\.|[^\\"])*\"	       {
                               if (find_var(yytext) == -1) add_var(yytext);
