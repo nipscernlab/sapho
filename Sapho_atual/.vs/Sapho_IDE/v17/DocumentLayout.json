@@ -3,20 +3,28 @@
   "WorkspaceRootPath": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|d:\\chrysthofer\\github\\sapho\\sapho_atual\\sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|d:\\chrysthofer\\github\\sapho\\sapho_atual\\sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|d:\\chrysthofer\\github\\sapho\\sapho_atual\\sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Properties\\Resources.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Form5.Designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Properties\\Resources.resx||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|d:\\chrysthofer\\github\\sapho\\sapho_atual\\sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -37,48 +45,71 @@
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
+              "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeToolTip": "Sapho_IDE\\Form1.cs",
+              "ViewState": "AQIAAK4BAAAAAAAAAAAgwMIBAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-29T19:55:25.589Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
+              "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
+              "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs [Design]",
+              "RelativeToolTip": "Sapho_IDE\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-29T19:55:21.881Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "Form5.cs",
               "DocumentMoniker": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs",
               "RelativeDocumentMoniker": "Sapho_IDE\\Form5.cs",
               "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs",
               "RelativeToolTip": "Sapho_IDE\\Form5.cs",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAADAAAAArAAAA",
+              "ViewState": "AQIAAAcAAAAAAAAAAAAiwDAAAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-10T16:29:42.383Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Form5.cs [Design]",
               "DocumentMoniker": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs",
               "RelativeDocumentMoniker": "Sapho_IDE\\Form5.cs",
               "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs [Design]",
               "RelativeToolTip": "Sapho_IDE\\Form5.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-10T16:29:42.365Z"
+              "WhenOpened": "2024-04-10T16:29:42.365Z",
+              "EditorCaption": " [Design]"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Form5.Designer.cs",
               "DocumentMoniker": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.Designer.cs",
               "RelativeDocumentMoniker": "Sapho_IDE\\Form5.Designer.cs",
               "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.Designer.cs",
               "RelativeToolTip": "Sapho_IDE\\Form5.Designer.cs",
-              "ViewState": "AQIAACIAAAAAAAAAAAAWwDgAAABPAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-10T16:29:42.383Z"
+              "WhenOpened": "2024-04-10T16:29:42.383Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "Resources.resx",
               "DocumentMoniker": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Properties\\Resources.resx",
               "RelativeDocumentMoniker": "Sapho_IDE\\Properties\\Resources.resx",
@@ -86,7 +117,8 @@
               "RelativeToolTip": "Sapho_IDE\\Properties\\Resources.resx",
               "ViewState": "AQIAAGgAAAAAAAAAAAAkwGgAAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2024-04-10T16:29:42.383Z"
+              "WhenOpened": "2024-04-10T16:29:42.383Z",
+              "EditorCaption": ""
             }
           ]
         }

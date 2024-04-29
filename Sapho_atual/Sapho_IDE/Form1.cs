@@ -41,6 +41,9 @@ namespace Sapho_IDE
         {
             InitializeComponent();
 
+            this.KeyPreview = true;
+            this.KeyDown += new KeyEventHandler(Form_KeyDown);
+
             bt_AddProc.Enabled = false;
             bt_build.Enabled = false;
             bt_copy.Enabled = false;
@@ -434,6 +437,17 @@ namespace Sapho_IDE
             File.WriteAllText(projdirect + "\\Software\\" + pname[0] + "_S\\" + fName, fctb.Text);
 
             tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+        }
+
+
+        private void Form_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Verifique se as teclas Ctrl, Shift e C foram pressionadas
+            if (e.Control && e.Shift && e.KeyCode == Keys.C)
+            {
+                // Execute o método bt_build_Click
+                bt_build_Click(sender, e);
+            }
         }
 
         private void bt_build_Click(object sender, EventArgs e)
