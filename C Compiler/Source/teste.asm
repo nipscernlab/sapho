@@ -15,12 +15,10 @@ SET maina
 SET maini
 LOAD 6
 LES maini
-PLD 1
-ADD maini
+PLD maina
 SET maini
 JZ L1end
-LOAD 1
-ADD maina
+LOAD 6
 SET maina
 JMP L1
 @L1end @fim JMP fim
