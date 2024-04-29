@@ -171,10 +171,11 @@ if_exp_stmt: if_exp stmt_full              {acc_id = -1; fprintf(f_asm, "JMP L%d
 if_exp:   IF '(' exp ')'                   {load_check($3, 0); fprintf(f_asm, "JZ L%delse\n", push_lab()); acc_ok = 0; acc_id = -1;};
 
 // for ----------------------------------------------------------------------
-for_stmt: for_exp stmt_full                {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
+for_stmt: for_exp stmt_full            {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
 
-for_exp: FOR                          {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());} 
-           '(' exp ';' exp ';' exp ')' stmt_full {load_check($8, 0); fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
+for_exp: FOR                           {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());}
+          '(' exp ';' exp ';' exp ')'  { fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
+
 
 // while ----------------------------------------------------------------------
 
@@ -199,7 +200,7 @@ declar_full: declar
 
 assignment: ID '=' exp ';'                 {var_set($1,$3,0,0);}
           | ID '@' exp ';'                 {var_set($1,$3,0,1);}
-          | ID NORM exp ';'                 {var_set($1,$3,0,2);}
+          | ID NORM exp ';'                {var_set($1,$3,0,2);}
           | ID '[' exp ']' '='             {array_check($1,$3);}
             exp ';'                        {var_set($1,$6,1,0);};
 
@@ -214,6 +215,7 @@ exp:       const
          | FNUM                            {                    $$ = load($1,1,2         ,0);}
          | ID                              {                    $$ = load($1,0,v_type[$1],0);}
          | ID '[' exp ']'                  {array_check($1,$3); $$ = load($1,0,v_type[$1],1);}
+         
          | std_in                          {$$ =     $1*OFST;}
          | std_abs                         {$$ =     $1*OFST;}
          | std_sign                        {$$ =     $1*OFST;}

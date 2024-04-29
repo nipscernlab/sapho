@@ -9,12 +9,12 @@
 #NUIOOU 2
 
 void main() 
-{   int i = 0;
-    int a = 0;
+{
+        
+        int i = 0;
+        int a = 0;
 
-    for(i = 2; i<6; i=i+1){
-        
-            a = a+1;
-        
+        for(i = 2; i<6; i=i+1){
+                a = a+1;
         }
 }

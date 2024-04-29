@@ -25,19 +25,19 @@ DefaultDirName={autopf}\{#MyAppName}
 ChangesAssociations=yes
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-InfoBeforeFile=C:\Users\chrys\Desktop\GitHub\sapho\Licenses\partnership.txt
-LicenseFile=C:\Users\chrys\Desktop\GitHub\sapho\Licenses\LICENSE-en.txt
+InfoBeforeFile=D:\CHRYSTHOFER\GitHub\sapho\Licenses\partnership.txt
+LicenseFile=D:\CHRYSTHOFER\GitHub\sapho\Licenses\LICENSE-en.txt
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 PrivilegesRequired=lowest
-OutputDir=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Setup\inno
+OutputDir=D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Setup\inno
 OutputBaseFilename=SAPHO
-SetupIconFile=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Icons\1498583471_kcmprocessor.ico
+SetupIconFile=D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Icons\1498583471_kcmprocessor.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-UninstallIconFile=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Setup\inno\128x128-BMP(32-bit).ico
-WizardSmallImageFile=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Setup\inno\128x128-BMP(32-bit).bmp
-WizardImageFile=C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Setup\inno\template.bmp
+UninstallIconFile=D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Setup\inno\128x128-BMP(32-bit).ico
+WizardSmallImageFile=D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Setup\inno\128x128-BMP(32-bit).bmp
+WizardImageFile=D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Setup\inno\template.bmp
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -71,19 +71,25 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.vshost.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.vshost.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.vshost.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\chrys\Desktop\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\teste"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\asm2mif.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\FastColoredTextBox.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\myccomp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.pdb"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.vshost.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.vshost.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\Sapho_IDE.vshost.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\TabStrip.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\teste"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+[Dirs]
+Name: "{app}\proc_ip"
+
+[Files]
+Source: "D:\CHRYSTHOFER\GitHub\sapho\Sapho_atual\Sapho_IDE\bin\Debug\proc_ip\*"; DestDir: "{app}\proc_ip"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
