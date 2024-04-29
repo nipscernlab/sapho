@@ -174,7 +174,7 @@ if_exp:   IF '(' exp ')'                   {load_check($3, 0); fprintf(f_asm, "J
 for_stmt: for_exp stmt_full            {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
 
 for_exp: FOR                           {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());}
-          '(' exp ';' exp ';' exp ')'  { fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
+          '(' assignment exp ';' assignment ')'  { fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
 
 
 // while ----------------------------------------------------------------------
@@ -199,11 +199,13 @@ declar_full: declar
 // assignments ----------------------------------------------------------------
 
 assignment: ID '=' exp ';'                 {var_set($1,$3,0,0);}
+          | ID '=' exp                     {var_set($1,$3,0,0);}
           | ID '@' exp ';'                 {var_set($1,$3,0,1);}
           | ID NORM exp ';'                {var_set($1,$3,0,2);}
           | ID '[' exp ']' '='             {array_check($1,$3);}
+          | ID '+' '+'                     {$$ = $1 + 1; var_set($1,$$,0,0)}
             exp ';'                        {var_set($1,$6,1,0);};
-
+        
 
 
 // expressoes -----------------------------------------------------------------
@@ -215,7 +217,6 @@ exp:       const
          | FNUM                            {                    $$ = load($1,1,2         ,0);}
          | ID                              {                    $$ = load($1,0,v_type[$1],0);}
          | ID '[' exp ']'                  {array_check($1,$3); $$ = load($1,0,v_type[$1],1);}
-         
          | std_in                          {$$ =     $1*OFST;}
          | std_abs                         {$$ =     $1*OFST;}
          | std_sign                        {$$ =     $1*OFST;}
@@ -234,7 +235,6 @@ exp:       const
          | exp '^' exp                     {$$ = int_oper ($1,$3, "^"  ,  "XOR", 0);}
          | exp LAND exp                    {$$ = int_oper ($1,$3, "&&" , "LAND", 1);}
          | exp LOR exp                     {$$ = int_oper ($1,$3, "||" , "LOR" , 1);}
-         | exp '=' exp                     {     var_set($1,$3,0,0);$$ = $1;}
          | exp '*' exp                     {$$ = operacoes($1,$3, "MLT", "CALL float_mult"                             , &fmlt);}
          | exp '/' exp                     {$$ = operacoes($1,$3, "DIV", "CALL float_div"                              , &fdiv);}
          | exp '+' exp                     {$$ = operacoes($1,$3, "ADD", "CALL denorm\nCALL float_add"                 , &fadd);}

@@ -12,10 +12,12 @@ SET maini
 LOAD 0
 SET maina
 @L1 LOAD 2
-PLD 6
+SET maini
+LOAD 6
 LES maini
 PLD 1
 ADD maini
+SET maini
 JZ L1end
 LOAD 1
 ADD maina
