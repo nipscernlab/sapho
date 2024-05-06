@@ -1,6 +1,6 @@
-#line 2 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
+#line 2 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
-#line 4 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
+#line 4 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -553,8 +553,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
-#line 2 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 1 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 2 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 #include <string.h>
 #include "y.tab.h"
 #include "variaveis.h"
@@ -562,7 +562,7 @@ char *yytext;
 
 void yyerror(char *);
 
-#line 566 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
+#line 566 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
 #define INITIAL 0
 
@@ -749,10 +749,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 14 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 14 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 
 
-#line 756 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
+#line 756 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -837,123 +837,123 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 16 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 16 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return PRNAME;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 17 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 17 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return DIRNAM;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 18 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 18 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return DATYPE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 19 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 19 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUBITS;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 20 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 20 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NBMANT;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 21 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 21 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NBEXPO;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 22 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 22 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NDSTAC;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 23 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 23 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return SDEPTH;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 24 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 24 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUIOIN;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 25 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 25 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUIOOU;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 26 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 26 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return NUGAIN;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 28 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 28 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {fgen = 1; type_tmp = 2; yylval = 2; return TYPE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 29 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 29 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {type_tmp = 1; yylval = 1; return TYPE;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 30 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 30 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {              yylval = 0; return TYPE;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 32 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 32 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return IN;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 33 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 33 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return OUT;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 34 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 34 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return ABS;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 35 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 35 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return SIGN;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 36 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 36 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return RETURN;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 37 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 37 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return WHILE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 38 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 38 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return IF;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 39 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 39 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return ELSE;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 40 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 40 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return FOR;
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 42 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 42 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               if (find_var(yytext) == -1) add_var(yytext);
                               yylval = find_var(yytext);
@@ -962,7 +962,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 48 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 48 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               char var_name[64];
                               if (find_var(yytext) == -1)
@@ -981,7 +981,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 64 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 64 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               if (find_var(yytext) == -1) add_var(yytext);
                               yylval = find_var(yytext);
@@ -990,7 +990,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 70 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 70 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {
                               if (find_var(yytext) == -1) add_var(yytext);
                               yylval = find_var(yytext);
@@ -1000,92 +1000,92 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 77 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 77 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return *yytext;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 79 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 79 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return  SHIFTL;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 80 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 80 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return  SHIFTR;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 81 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 81 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return SSHIFTR;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 82 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 82 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return   GREQU;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 83 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 83 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return   LESEQ;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 84 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 84 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return     EQU;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 85 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 85 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return     DIF;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 86 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 86 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return    LAND;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 87 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 87 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return     LOR;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 88 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 88 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 return    NORM;
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 90 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 90 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 line_num++;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 92 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 92 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 ;       /* ignore whitespace   */
 	YY_BREAK
 case 41:
 /* rule 41 can match eol */
 YY_RULE_SETUP
-#line 93 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 93 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 ;       /* comentario em bloco */
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 94 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 94 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 ;       /* comentario em linha */
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 96 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 96 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 {yyerror("");}
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 97 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 97 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 ECHO;
 	YY_BREAK
-#line 1089 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
+#line 1089 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2083,7 +2083,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 97 "D:\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
+#line 97 "C:\\Downloads\\CHRYSTHOFER\\GitHub\\sapho\\C Compiler\\Source\\c2asm.l"
 
 
 

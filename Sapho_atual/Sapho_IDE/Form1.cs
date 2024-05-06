@@ -430,14 +430,30 @@ namespace Sapho_IDE
         {
             string fName = tabControl1.SelectedTab.Text;
 
-            string[] pname = fName.Split('.');
+            // Verifica se o nome do arquivo contém caracteres inválidos
+            if (fName.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+            {
+                // Trate o caso em que o nome do arquivo é inválido
+                MessageBox.Show("Please save the current file!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
+            string[] pname = fName.Split('.');
             FastColoredTextBox fctb = ((FastColoredTextBox)(tabControl1.SelectedTab.Controls[0]));
 
-            File.WriteAllText(projdirect + "\\Software\\" + pname[0] + "_S\\" + fName, fctb.Text);
-
-            tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            // Tenta salvar o conteúdo do FastColoredTextBox
+            try
+            {
+                File.WriteAllText(Path.Combine(projdirect, "Software", pname[0] + "_S", fName), fctb.Text);
+                tabControl1.TabPages.Remove(tabControl1.SelectedTab);
+            }
+            catch (Exception ex)
+            {
+                // Lidar com exceções ao tentar salvar o arquivo
+                MessageBox.Show("Erro ao salvar o arquivo: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
 
 
         private void Form_KeyDown(object sender, KeyEventArgs e)

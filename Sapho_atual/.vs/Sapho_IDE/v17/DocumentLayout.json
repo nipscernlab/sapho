@@ -7,7 +7,7 @@
       "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|d:\\chrysthofer\\github\\sapho\\sapho_atual\\sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
@@ -23,7 +23,7 @@
       "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:Sapho_IDE\\Form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|d:\\chrysthofer\\github\\sapho\\sapho_atual\\sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{C92154CB-C71F-4228-AB90-900FE5DC390C}|Sapho_IDE\\Sapho_IDE.csproj|solutionrelative:sapho_ide\\form5.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -52,7 +52,7 @@
               "RelativeDocumentMoniker": "Sapho_IDE\\Form1.cs",
               "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs",
               "RelativeToolTip": "Sapho_IDE\\Form1.cs",
-              "ViewState": "AQIAAK4BAAAAAAAAAAAgwMIBAAAJAAAA",
+              "ViewState": "AQIAAKQBAAAAAAAAAAAswLQBAAA+AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-04-29T19:55:25.589Z",
               "EditorCaption": ""
@@ -66,8 +66,7 @@
               "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form1.cs [Design]",
               "RelativeToolTip": "Sapho_IDE\\Form1.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-29T19:55:21.881Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2024-04-29T19:55:21.881Z"
             },
             {
               "$type": "Document",
@@ -79,8 +78,7 @@
               "RelativeToolTip": "Sapho_IDE\\Form5.cs",
               "ViewState": "AQIAAAcAAAAAAAAAAAAiwDAAAAArAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-10T16:29:42.383Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-10T16:29:42.383Z"
             },
             {
               "$type": "Document",
@@ -91,8 +89,7 @@
               "ToolTip": "D:\\CHRYSTHOFER\\GitHub\\sapho\\Sapho_atual\\Sapho_IDE\\Form5.cs [Design]",
               "RelativeToolTip": "Sapho_IDE\\Form5.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-10T16:29:42.365Z",
-              "EditorCaption": " [Design]"
+              "WhenOpened": "2024-04-10T16:29:42.365Z"
             },
             {
               "$type": "Document",
@@ -104,8 +101,7 @@
               "RelativeToolTip": "Sapho_IDE\\Form5.Designer.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-04-10T16:29:42.383Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-10T16:29:42.383Z"
             },
             {
               "$type": "Document",
@@ -117,8 +113,7 @@
               "RelativeToolTip": "Sapho_IDE\\Properties\\Resources.resx",
               "ViewState": "AQIAAGgAAAAAAAAAAAAkwGgAAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001005|",
-              "WhenOpened": "2024-04-10T16:29:42.383Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-04-10T16:29:42.383Z"
             }
           ]
         }
