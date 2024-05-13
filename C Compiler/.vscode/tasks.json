@@ -72,12 +72,30 @@
             "dependsOn": [
                 "clean-files",
                 "lex-yacc",
-                "makefile"
+                "makefile",
+                "replace-exe"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
-        }
+        },
+
+        {
+            "label": "replace-exe",
+            "command": "cmd",
+            "args": [
+                "/C",
+                "copy",
+                "/Y",
+                "${workspaceFolder}\\bin\\Debug\\myccomp.exe",
+                "..\\Sapho_atual\\Sapho_IDE\\bin\\Debug\\myccomp.exe",
+                
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
     ]
 }

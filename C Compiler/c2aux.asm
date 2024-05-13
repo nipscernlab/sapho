@@ -1,31 +1,38 @@
-#PRNAME detetor_top
-#DIRNAM "C:"
+#PRNAME testeProc
+#DIRNAM "C:\Users\chrys\Desktop\teste\Hardware\testeProc_H"
 #DATYPE 0
-#NUBITS 29
-#NDSTAC 16
-#SDEPTH 16
+#NUBITS 16
+#NUGAIN 4
+#NDSTAC 4
+#SDEPTH 4
 #NUIOIN 2
 #NUIOOU 2
-#NUGAIN 2
-@main LOAD 1 // 33.4
-PLD 1
-PLD float_nbits
-SSHL
-SADD
-SET maina
-#array mainarray 2
+@main LOAD 0
+SET maini
 LOAD 0
-PLD 1 // 22.3
-SRF
-SET mainarray
-LOAD maina
+SET maina
+@L1 LOAD 1 // 4.0
 CALL float2int
-PLD 0
-PUSH
-SRF
-LOAD mainarray
-CALL float2int
-SIGN
+SET maini
+LOAD maini
 CALL int2float
-SET mainb
-@fim JMP fim
+PLD 1 // 8.0
+CALL denorm
+LOAD float_aux3
+LES float_aux1
+PLD maini
+CALL int2float
+PLD 1 // 1.0
+CALL denorm
+CALL float_add
+CALL float2int
+SET maini
+LOAD maina
+CALL int2float
+PLD 1 // 1.0
+CALL denorm
+CALL float_add
+CALL float2int
+SET maina
+LOAD maini
+JZ L1end

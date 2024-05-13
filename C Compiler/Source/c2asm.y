@@ -174,7 +174,7 @@ if_exp:   IF '(' exp ')'                   {load_check($3, 0); fprintf(f_asm, "J
 for_stmt: for_exp stmt_full            {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
 
 for_exp: FOR                           {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());}
-            '(' assignment exp ';' assignment ')'  { fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
+            '(' assignment exp ';' assignment ')'  {load_check($6, 0); fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;};
 
 
 // while ----------------------------------------------------------------------
@@ -199,11 +199,7 @@ declar_full: declar
 // assignments ----------------------------------------------------------------
 
 assignment: ID '=' exp ';'                 {var_set($1,$3,0,0);}
-          | ID '+' '+' ';'                 {$$ = $1 + 1; var_set($1,$$,0,0);}
-          | ID '+' '+'                     {$$ = $1 + 1; var_set($1,$$,0,0);}
-          | ID '-' '-' ';'                 {$$ = $1 + 1; var_set($1,$$,0,0);}
-          | ID '-' '-'                     {$$ = $1 + 1; var_set($1,$$,0,0);}
-          | ID '=' exp                     {var_set($1,$3,0,0);}
+          | ID '=' exp                     {var_set($1,$3,0,3);}
           | ID '@' exp ';'                 {var_set($1,$3,0,1);}
           | ID NORM exp ';'                {var_set($1,$3,0,2);}
           | ID '[' exp ']' '='             {array_check($1,$3);}    

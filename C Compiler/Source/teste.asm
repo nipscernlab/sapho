@@ -1,24 +1,46 @@
-#PRNAME testeProc
-#DIRNAM "C:\Users\chrys\Desktop\teste\Hardware\testeProc_H"
-#DATYPE 0
-#NUBITS 16
-#NUGAIN 4
-#NDSTAC 4
-#SDEPTH 4
-#NUIOIN 2
-#NUIOOU 2
+#PRNAME proc
+#DIRNAM "C:\Users\LCOM\Downloads\Quartus 22.1.2\Atividade1_SAPHO\Hardware\proc_H"
+#DATYPE 1
+#NBMANT 23
+#NBEXPO 8
+#NDSTAC 100
+#SDEPTH 100
+#NUIOIN 5
+#NUIOOU 5
 @main LOAD 0
-SET maini
-LOAD 0
-SET maina
-@L1 LOAD 2
-SET maini
-LOAD 6
-LES maini
-PLD maina
-SET maini
-JZ L1end
-LOAD 6
-SET maina
-JMP L1
-@L1end @fim JMP fim
+PUSH
+IN
+PLD 0
+SEQU
+JZ L1else
+LOAD 3
+PLD 1.0
+OUT
+JMP L1end
+@L1else LOAD 1.0
+SET i
+LOAD 2.0
+SET a
+@L2 LOAD 4.0
+SET i
+LOAD 8.0
+LES i
+PLD 1.0
+ADD i
+SET i
+LOAD 8.0
+JZ L2end
+LOAD 1
+PLD i
+OUT
+LOAD 1.0
+ADD a
+SET a
+JMP L2
+@L2end LOAD 3
+PLD 2.0
+OUT
+@L1end LOAD 0
+PLD 1.0
+OUT
+@fim JMP fim
