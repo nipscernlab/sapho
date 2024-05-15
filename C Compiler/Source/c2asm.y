@@ -127,6 +127,7 @@ stmt_list: stmt      | stmt_list stmt;
 stmt     : stmt_full | stmt_if;
 
 stmt_full: ';'                  // statment vazio
+         | ID '+''+' ';'                      {var_set($1,$1+1.0,0,0);}
          | '{' '}'              // statment vazio
          | '{' stmt_list '}'    // bloco de statments
          | declar_full          // declaracoes de variaveis
@@ -201,7 +202,7 @@ declar_full: declar
 // assignments ----------------------------------------------------------------
 
 assignment: ID '=' exp ';'                 {var_set($1,$3,0,0);}
-          | ID '+''+'                      {$$ = ($1 + 1.0); var_set($1,$$,0,0);} 
+          | ID '+''+'                      {var_set($1,$1+1,0,0);}
           | ID '=' exp                     {var_set($1,$3,0,0);}
           | ID '@' exp ';'                 {var_set($1,$3,0,1);}
           | ID NORM exp ';'                {var_set($1,$3,0,2);}

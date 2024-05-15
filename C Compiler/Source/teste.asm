@@ -17,29 +17,29 @@ LOAD 3
 PLD 1.0
 OUT
 JMP L1end
-@L1else LOAD 4.0
+@L1else LOAD 5.0
 SET i
-LOAD 2.0
-SET a
-LOAD 4.0
+LOAD main
 SET i
-@L2 LOAD 8.0
-LES i
-JZ L2end
-LOAD a
-SET i
-LOAD i
-PLD 1
+LOAD 4
 PLD i
 OUT
-LOAD 1.0
-ADD a
-SET a
+LOAD main
+SET i
 LOAD 4
-PLD a
+PLD i
 OUT
-JMP L2
-@L2end LOAD 3
+LOAD main
+SET i
+LOAD 4
+PLD i
+OUT
+LOAD main
+SET i
+LOAD 4
+PLD i
+OUT
+LOAD 3
 PLD 2.0
 OUT
 @L1end LOAD 0

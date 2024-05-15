@@ -13,6 +13,9 @@ using FastColoredTextBoxNS;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 
+
+
+
 namespace Sapho_IDE
 {
     public partial class Form_Main : Form

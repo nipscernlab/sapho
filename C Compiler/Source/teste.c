@@ -9,7 +9,6 @@
 #NUIOOU 5
 
 float i;
-float a;
 
 void main() 
 {
@@ -21,15 +20,18 @@ void main()
     else
     {
         
-        i = 4.0;
-        a = 2.0;
+           i = 5.0;
 
-        for(i = 4.0; i<8.0; i++){
-                out(1,i);
-                a = a + 1.0;
-                out(4,a);
-                }
+           i++
+           out(4, i);
+           i++
+           out(4, i);
+           i++
+           out(4, i);
+           i++
+           out(4, i);
+                
         out(3,2.0);
     }
-    out(0,1.0);
+    out(0,1.0); //finalização
 }
