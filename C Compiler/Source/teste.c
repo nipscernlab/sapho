@@ -1,5 +1,5 @@
 #PRNAME proc
-#DIRNAM "C:\Users\LCOM\Downloads\Quartus 22.1.2\Atividade1_SAPHO\Hardware\proc_H"
+#DIRNAM "C:\Users\LCOM\Desktop\Atividade1_SAPHO\Hardware\proc_H"
 #DATYPE 1
 #NBMANT 23
 #NBEXPO 8
@@ -7,31 +7,24 @@
 #SDEPTH 100
 #NUIOIN 5
 #NUIOOU 5
-
-float i;
+float a;
+float b;
 
 void main() 
 {
-
-        if(in(0)==0) // Inicialização
+    if(in(0)==0) // Inicialização
     {
-        out(3,1.0);
+        out(3,88.0);
     }
     else
     {
-        
-           i = 5.0;
-
-           i++
-           out(4, i);
-           i++
-           out(4, i);
-           i++
-           out(4, i);
-           i++
-           out(4, i);
-                
-        out(3,2.0);
+      
+        for(a = 33.0; a < 10; a = a + 1.0)
+        {
+            out(46,a);
+            b = b + 1.0;
+        }
+        out(3,66.0);
     }
-    out(0,1.0); //finalização
+    out(0,77.0);
 }

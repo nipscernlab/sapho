@@ -1,5 +1,5 @@
 #PRNAME proc
-#DIRNAM "C:\Users\LCOM\Desktop\Atividade1_SAPHO\Hardware\proc_H"
+#DIRNAM "C:\Users\LAPTELUSER\Documents\Igor\Atividades_SAPHO\Atividade1_SAPHO\Hardware\proc_H"
 #DATYPE 1
 #NBMANT 23
 #NBEXPO 8
@@ -14,29 +14,25 @@ PLD 0
 SEQU
 JZ L1else
 LOAD 3
-PLD 88.0
+PLD 1.0
 OUT
 JMP L1end
-@L1else LOAD 33.0
+@L1else LOAD 1.0
 SET a
 @L2 LOAD 10
 LES a
-JZ L3end
+JZ L2end
 LOAD 1.0
-ADD a
-SET a
-Teste 3
-LOAD 46
 PLD a
 OUT
 LOAD 1.0
-ADD b
-SET b
-JMP L3
-@L3end LOAD 3
-PLD 66.0
+ADD a
+SET a
+JMP L2
+@L2end LOAD 3
+PLD 2.0
 OUT
-@L2end LOAD 0
-PLD 77.0
+@L1end LOAD 0
+PLD 1.0
 OUT
 @fim JMP fim

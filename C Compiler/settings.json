@@ -26,4 +26,8 @@
     },
     "diffEditor.ignoreTrimWhitespace": false,
     "git.enableSmartCommit": true
+
+    "cmake.showOptionsMovedNotification": false,
+    "workbench.iconTheme": "material-icon-theme",
+    "cmake.configureOnOpen": true
 }
