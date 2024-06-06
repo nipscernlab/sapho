@@ -47,8 +47,6 @@ int   exec_sign2 (int et);
 int   get_type   (int et);
 void  exec_out1  (int et);
 void  exec_out2  (int et);
-int frst_loop = 0;
-int temp_loop = 0;
 %}
 
 %token FOR
@@ -177,17 +175,9 @@ if_exp:   IF '(' exp ')'                   {load_check($3, 0); fprintf(f_asm, "J
 for_stmt: for_exp stmt_full                         {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());};
 
 for_exp: FOR                           
-            '(' assignment                          {acc_id = 0; fprintf(f_asm, "@L%d ", push_lab()); temp_loop = $3;} 
+            '(' assignment                          {acc_id = 0; fprintf(f_asm, "@L%d ", push_lab());} 
                           exp                       {fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;} 
-                             ';' assignment ')'     {
-                                                        if(frst_loop == 0){
-                                                            $6 = temp_loop;
-                                                            fprintf(f_asm, "Teste %d\n", temp_loop);
-                                                            frst_loop = 1;
-                                                        } else{};
-                                
-                                
-                                /*load_check($0, 0);*/                                  };
+                             ';' assignment ')'     {/*load_check($0, 0);*/                                  };
 
 
 // while ----------------------------------------------------------------------

@@ -117,12 +117,10 @@ int   exec_sign2 (int et);
 int   get_type   (int et);
 void  exec_out1  (int et);
 void  exec_out2  (int et);
-float frst_loop = 0;
-float temp_loop = 0;
 
 
 /* Line 189 of yacc.c  */
-#line 126 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\y.tab.c"
+#line 124 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -201,7 +199,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 205 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\y.tab.c"
+#line 203 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\y.tab.c"
 
 #ifdef short
 # undef short
@@ -536,20 +534,20 @@ static const yytype_int8 yyrhs[] =
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint16 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,    86,    86,    86,    87,    87,    87,    91,    92,    93,
-      94,    95,    96,    97,    98,    99,   100,   101,   105,   106,
-     108,   109,   111,   112,   116,   117,   116,   119,   119,   123,
-     124,   128,   128,   129,   129,   131,   132,   133,   134,   135,
-     136,   137,   138,   139,   140,   141,   142,   146,   146,   148,
-     148,   150,   152,   153,   154,   158,   158,   160,   161,   162,
-     162,   167,   168,   169,   171,   172,   174,   177,   180,   181,
-     179,   195,   196,   198,   198,   205,   206,   207,   214,   215,
-     216,   217,   218,   219,   219,   225,   226,   228,   229,   230,
+       0,    84,    84,    84,    85,    85,    85,    89,    90,    91,
+      92,    93,    94,    95,    96,    97,    98,    99,   103,   104,
+     106,   107,   109,   110,   114,   115,   114,   117,   117,   121,
+     122,   126,   126,   127,   127,   129,   130,   131,   132,   133,
+     134,   135,   136,   137,   138,   139,   140,   144,   144,   146,
+     146,   148,   150,   151,   152,   156,   156,   158,   159,   160,
+     160,   165,   166,   167,   169,   170,   172,   175,   178,   179,
+     177,   185,   186,   188,   188,   195,   196,   197,   204,   205,
+     206,   207,   208,   209,   209,   215,   216,   218,   219,   220,
+     221,   222,   223,   224,   225,   226,   227,   228,   229,   230,
      231,   232,   233,   234,   235,   236,   237,   238,   239,   240,
-     241,   242,   243,   244,   245,   246,   247,   248,   249,   250,
-     251,   252,   253,   254,   255,   256,   257,   258,   259,   260
+     241,   242,   243,   244,   245,   246,   247,   248,   249,   250
 };
 #endif
 
@@ -570,7 +568,7 @@ static const char *const yytname[] =
   "stmt_full", "void_call", "$@4", "func_call", "$@5", "return_call",
   "exp_list", "std_out", "$@6", "std_in", "std_abs", "std_sign", "$@7",
   "stmt_if", "ifelse_stmt", "if_exp_stmt", "if_exp", "for_stmt", "for_exp",
-  "$@8", "@9", "while_stmt", "while_if", "while_exp", "$@10",
+  "$@8", "$@9", "while_stmt", "while_if", "while_exp", "$@10",
   "declar_full", "assignment", "@11", "const", "exp", 0
 };
 #endif
@@ -1749,652 +1747,644 @@ yyreduce:
         case 7:
 
 /* Line 1464 of yacc.c  */
-#line 91 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 89 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#PRNAME %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 8:
 
 /* Line 1464 of yacc.c  */
-#line 92 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 90 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#DIRNAM %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 93 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 91 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#DATYPE %s\n", v_name[(yyvsp[(2) - (2)])]); prtype = atoi(v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 94 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 92 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NUBITS %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 95 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 93 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NBMANT %s\n", v_name[(yyvsp[(2) - (2)])]); nbmant = atoi(v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 96 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 94 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NBEXPO %s\n", v_name[(yyvsp[(2) - (2)])]); nbexpo = atoi(v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 13:
 
 /* Line 1464 of yacc.c  */
-#line 97 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 95 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NDSTAC %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 14:
 
 /* Line 1464 of yacc.c  */
-#line 98 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 96 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#SDEPTH %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 15:
 
 /* Line 1464 of yacc.c  */
-#line 99 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 97 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NUIOIN %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 16:
 
 /* Line 1464 of yacc.c  */
-#line 100 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 98 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NUIOOU %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 17:
 
 /* Line 1464 of yacc.c  */
-#line 101 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 99 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "#NUGAIN %s\n", v_name[(yyvsp[(2) - (2)])]);;}
     break;
 
   case 19:
 
 /* Line 1464 of yacc.c  */
-#line 106 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 104 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_var((yyvsp[(2) - (7)]),(yyvsp[(4) - (7)]),(yyvsp[(6) - (7)])); v_asgn[(yyvsp[(2) - (7)])] = 1;;}
     break;
 
   case 22:
 
 /* Line 1464 of yacc.c  */
-#line 111 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 109 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_var((yyvsp[(1) - (1)]),-1,-1);;}
     break;
 
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 112 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 110 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_var((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]),-1); v_asgn[(yyvsp[(1) - (4)])] = 1;;}
     break;
 
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 116 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 114 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_fun((yyvsp[(1) - (3)]),(yyvsp[(2) - (3)]));;}
     break;
 
   case 25:
 
 /* Line 1464 of yacc.c  */
-#line 117 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 115 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "SET %s\n", v_name[(yyvsp[(5) - (6)])]); acc_id = (yyvsp[(5) - (6)]);;}
     break;
 
   case 26:
 
 /* Line 1464 of yacc.c  */
-#line 118 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 116 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {func_ret((yyvsp[(2) - (10)]));;}
     break;
 
   case 27:
 
 /* Line 1464 of yacc.c  */
-#line 119 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 117 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_fun((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]));;}
     break;
 
   case 28:
 
 /* Line 1464 of yacc.c  */
-#line 120 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 118 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {func_ret((yyvsp[(2) - (8)]));;}
     break;
 
   case 29:
 
 /* Line 1464 of yacc.c  */
-#line 123 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 121 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = declar_par((yyvsp[(1) - (2)]),(yyvsp[(2) - (2)]));;}
     break;
 
   case 30:
 
 /* Line 1464 of yacc.c  */
-#line 124 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 122 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "SETP %s\n", v_name[(yyvsp[(3) - (3)])]);;}
     break;
 
   case 36:
 
 /* Line 1464 of yacc.c  */
-#line 132 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 130 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (4)]),(yyvsp[(1) - (4)])+1.0,0,0);;}
     break;
 
   case 47:
 
 /* Line 1464 of yacc.c  */
-#line 146 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 144 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     { fun_id2 = (yyvsp[(1) - (2)]);;}
     break;
 
   case 48:
 
 /* Line 1464 of yacc.c  */
-#line 147 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 145 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     vcall((yyvsp[(1) - (6)]));;}
     break;
 
   case 49:
 
 /* Line 1464 of yacc.c  */
-#line 148 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 146 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     { fun_id2 = (yyvsp[(1) - (2)]);;}
     break;
 
   case 50:
 
 /* Line 1464 of yacc.c  */
-#line 149 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 147 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = fcall((yyvsp[(1) - (5)]));;}
     break;
 
   case 51:
 
 /* Line 1464 of yacc.c  */
-#line 150 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 148 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_ret((yyvsp[(2) - (3)]));;}
     break;
 
   case 53:
 
 /* Line 1464 of yacc.c  */
-#line 153 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 151 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {p_test = get_type((yyvsp[(1) - (1)]));             par_check((yyvsp[(1) - (1)]));;}
     break;
 
   case 54:
 
 /* Line 1464 of yacc.c  */
-#line 154 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 152 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {p_test = p_test*10 + get_type((yyvsp[(3) - (3)])); par_check((yyvsp[(3) - (3)]));;}
     break;
 
   case 55:
 
 /* Line 1464 of yacc.c  */
-#line 158 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 156 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {exec_out1((yyvsp[(3) - (4)]));     ;}
     break;
 
   case 56:
 
 /* Line 1464 of yacc.c  */
-#line 159 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 157 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {exec_out2((yyvsp[(6) - (8)]));     ;}
     break;
 
   case 57:
 
 /* Line 1464 of yacc.c  */
-#line 160 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 158 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = exec_in((yyvsp[(3) - (4)]));  ;}
     break;
 
   case 58:
 
 /* Line 1464 of yacc.c  */
-#line 161 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 159 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = exec_abs((yyvsp[(3) - (4)])); ;}
     break;
 
   case 59:
 
 /* Line 1464 of yacc.c  */
-#line 162 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 160 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {exec_sign1((yyvsp[(3) - (4)]));     ;}
     break;
 
   case 60:
 
 /* Line 1464 of yacc.c  */
-#line 163 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 161 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = exec_sign2((yyvsp[(6) - (7)]));;}
     break;
 
   case 61:
 
 /* Line 1464 of yacc.c  */
-#line 167 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 165 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "@L%delse ", pop_lab());;}
     break;
 
   case 62:
 
 /* Line 1464 of yacc.c  */
-#line 168 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 166 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "@L%dend " , pop_lab());;}
     break;
 
   case 64:
 
 /* Line 1464 of yacc.c  */
-#line 171 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 169 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "@L%dend ", pop_lab());;}
     break;
 
   case 65:
 
 /* Line 1464 of yacc.c  */
-#line 172 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 170 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "JMP L%dend\n@L%delse ", get_lab(), get_lab());;}
     break;
 
   case 66:
 
 /* Line 1464 of yacc.c  */
-#line 174 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 172 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {load_check((yyvsp[(3) - (4)]), 0); fprintf(f_asm, "JZ L%delse\n", push_lab()); acc_ok = 0; acc_id = -1;;}
     break;
 
   case 67:
 
 /* Line 1464 of yacc.c  */
-#line 177 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 175 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());;}
     break;
 
   case 68:
 
 /* Line 1464 of yacc.c  */
-#line 180 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
-    {acc_id = 0; fprintf(f_asm, "@L%d ", push_lab()); temp_loop = load_check((yyvsp[(3) - (3)]), 0);;}
+#line 178 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+    {acc_id = 0; fprintf(f_asm, "@L%d ", push_lab());;}
     break;
 
   case 69:
 
 /* Line 1464 of yacc.c  */
-#line 181 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 179 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;;}
     break;
 
   case 70:
 
 /* Line 1464 of yacc.c  */
-#line 182 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
-    {
-                                                        if(frst_loop == 0){
-                                                            (yyvsp[(6) - (9)]) = temp_loop;
-                                                            fprintf(f_asm, "Teste %f\n", temp_loop);
-                                                            frst_loop = 1;
-                                                        } else{};
-                                
-                                
-                                /*load_check($0, 0);*/                                  ;}
+#line 180 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+    {/*load_check($0, 0);*/                                  ;}
     break;
 
   case 71:
 
 /* Line 1464 of yacc.c  */
-#line 195 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 185 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());;}
     break;
 
   case 72:
 
 /* Line 1464 of yacc.c  */
-#line 196 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 186 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "JMP L%d\n@L%dend ", pop_lab(), get_lab());;}
     break;
 
   case 73:
 
 /* Line 1464 of yacc.c  */
-#line 198 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 188 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {acc_id = -1; fprintf(f_asm, "@L%d ", push_lab());;}
     break;
 
   case 74:
 
 /* Line 1464 of yacc.c  */
-#line 199 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 189 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {load_check((yyvsp[(4) - (5)]), 0); fprintf(f_asm, "JZ L%dend\n", get_lab()); acc_ok = 0;;}
     break;
 
   case 76:
 
 /* Line 1464 of yacc.c  */
-#line 206 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 196 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_var((yyvsp[(2) - (5)]),-1,-1); var_set((yyvsp[(2) - (5)]),(yyvsp[(4) - (5)]),0,0);;}
     break;
 
   case 77:
 
 /* Line 1464 of yacc.c  */
-#line 207 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 197 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {declar_var((yyvsp[(2) - (5)]),-1,-1); var_set((yyvsp[(2) - (5)]),(yyvsp[(4) - (5)]),0,1);;}
     break;
 
   case 78:
 
 /* Line 1464 of yacc.c  */
-#line 214 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 204 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]),0,0);;}
     break;
 
   case 79:
 
 /* Line 1464 of yacc.c  */
-#line 215 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 205 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (3)]),(yyvsp[(1) - (3)])+1,0,0);;}
     break;
 
   case 80:
 
 /* Line 1464 of yacc.c  */
-#line 216 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 206 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]),0,0);;}
     break;
 
   case 81:
 
 /* Line 1464 of yacc.c  */
-#line 217 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 207 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]),0,1);;}
     break;
 
   case 82:
 
 /* Line 1464 of yacc.c  */
-#line 218 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 208 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]),0,2);;}
     break;
 
   case 83:
 
 /* Line 1464 of yacc.c  */
-#line 219 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 209 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {array_check((yyvsp[(1) - (5)]),(yyvsp[(3) - (5)]));;}
     break;
 
   case 84:
 
 /* Line 1464 of yacc.c  */
-#line 220 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 210 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {var_set((yyvsp[(1) - (8)]),(yyvsp[(6) - (8)]),1,0);;}
     break;
 
   case 85:
 
 /* Line 1464 of yacc.c  */
-#line 225 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 215 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {                    (yyval) = load((yyvsp[(1) - (1)]),1,1         ,0);;}
     break;
 
   case 86:
 
 /* Line 1464 of yacc.c  */
-#line 226 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 216 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = neg((yyvsp[(2) - (2)]));;}
     break;
 
   case 88:
 
 /* Line 1464 of yacc.c  */
-#line 229 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 219 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {                    (yyval) = load((yyvsp[(1) - (1)]),1,2         ,0);;}
     break;
 
   case 89:
 
 /* Line 1464 of yacc.c  */
-#line 230 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 220 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {                    (yyval) = load((yyvsp[(1) - (1)]),0,v_type[(yyvsp[(1) - (1)])],0);;}
     break;
 
   case 90:
 
 /* Line 1464 of yacc.c  */
-#line 231 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 221 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {array_check((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)])); (yyval) = load((yyvsp[(1) - (4)]),0,v_type[(yyvsp[(1) - (4)])],1);;}
     break;
 
   case 91:
 
 /* Line 1464 of yacc.c  */
-#line 232 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 222 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) =     (yyvsp[(1) - (1)])*OFST;;}
     break;
 
   case 92:
 
 /* Line 1464 of yacc.c  */
-#line 233 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 223 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) =     (yyvsp[(1) - (1)])*OFST;;}
     break;
 
   case 93:
 
 /* Line 1464 of yacc.c  */
-#line 234 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 224 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) =     (yyvsp[(1) - (1)])*OFST;;}
     break;
 
   case 94:
 
 /* Line 1464 of yacc.c  */
-#line 235 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 225 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) =     (yyvsp[(1) - (1)])*OFST;;}
     break;
 
   case 95:
 
 /* Line 1464 of yacc.c  */
-#line 236 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 226 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) =         (yyvsp[(2) - (3)]) ;;}
     break;
 
   case 96:
 
 /* Line 1464 of yacc.c  */
-#line 237 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 227 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) =         (yyvsp[(2) - (2)]) ;;}
     break;
 
   case 97:
 
 /* Line 1464 of yacc.c  */
-#line 238 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 228 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = negacao((yyvsp[(2) - (2)]));;}
     break;
 
   case 98:
 
 /* Line 1464 of yacc.c  */
-#line 239 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 229 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(2) - (2)]), 0, "!"  , "LINV", 1);;}
     break;
 
   case 99:
 
 /* Line 1464 of yacc.c  */
-#line 240 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 230 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(2) - (2)]), 0, "~"  ,  "INV", 0);;}
     break;
 
   case 100:
 
 /* Line 1464 of yacc.c  */
-#line 241 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 231 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "%"  ,  "MOD", 0);;}
     break;
 
   case 101:
 
 /* Line 1464 of yacc.c  */
-#line 242 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 232 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "<<" ,  "SHL", 0);;}
     break;
 
   case 102:
 
 /* Line 1464 of yacc.c  */
-#line 243 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 233 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), ">>" ,  "SHR", 0);;}
     break;
 
   case 103:
 
 /* Line 1464 of yacc.c  */
-#line 244 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 234 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), ">>>",  "SRS", 0);;}
     break;
 
   case 104:
 
 /* Line 1464 of yacc.c  */
-#line 245 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 235 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "&"  ,  "AND", 0);;}
     break;
 
   case 105:
 
 /* Line 1464 of yacc.c  */
-#line 246 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 236 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "|"  ,  "OR" , 0);;}
     break;
 
   case 106:
 
 /* Line 1464 of yacc.c  */
-#line 247 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 237 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "^"  ,  "XOR", 0);;}
     break;
 
   case 107:
 
 /* Line 1464 of yacc.c  */
-#line 248 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 238 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "&&" , "LAND", 1);;}
     break;
 
   case 108:
 
 /* Line 1464 of yacc.c  */
-#line 249 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 239 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "||" , "LOR" , 1);;}
     break;
 
   case 109:
 
 /* Line 1464 of yacc.c  */
-#line 250 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 240 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "MLT", "CALL float_mult"                             , &fmlt);;}
     break;
 
   case 110:
 
 /* Line 1464 of yacc.c  */
-#line 251 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 241 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "DIV", "CALL float_div"                              , &fdiv);;}
     break;
 
   case 111:
 
 /* Line 1464 of yacc.c  */
-#line 252 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 242 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "ADD", "CALL denorm\nCALL float_add"                 , &fadd);;}
     break;
 
   case 112:
 
 /* Line 1464 of yacc.c  */
-#line 253 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 243 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {int r=negacao((yyvsp[(3) - (3)])); (yyval) = operacoes((yyvsp[(1) - (3)]), r, "ADD", "CALL denorm\nCALL float_add"                 , &fadd);;}
     break;
 
   case 113:
 
 /* Line 1464 of yacc.c  */
-#line 254 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 244 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "LES", "CALL denorm\nLOAD float_aux3\nLES float_aux1", &fgen); (yyval) = OFST;;}
     break;
 
   case 114:
 
 /* Line 1464 of yacc.c  */
-#line 255 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 245 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "GRE", "CALL denorm\nLOAD float_aux3\nGRE float_aux1", &fgen); (yyval) = OFST;;}
     break;
 
   case 115:
 
 /* Line 1464 of yacc.c  */
-#line 256 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 246 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "LES", "CALL denorm\nLOAD float_aux3\nLES float_aux1", &fgen); (yyval) = OFST; fprintf(f_asm, "LINV\n");;}
     break;
 
   case 116:
 
 /* Line 1464 of yacc.c  */
-#line 257 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 247 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "GRE", "CALL denorm\nLOAD float_aux3\nGRE float_aux1", &fgen); (yyval) = OFST; fprintf(f_asm, "LINV\n");;}
     break;
 
   case 117:
 
 /* Line 1464 of yacc.c  */
-#line 258 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 248 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "EQU", "CALL denorm\nLOAD float_aux3\nEQU float_aux1", &fgen); (yyval) = OFST;;}
     break;
 
   case 118:
 
 /* Line 1464 of yacc.c  */
-#line 259 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 249 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {     operacoes((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), "EQU", "CALL denorm\nLOAD float_aux3\nEQU float_aux1", &fgen); (yyval) = OFST; fprintf(f_asm, "LINV\n");;}
     break;
 
   case 119:
 
 /* Line 1464 of yacc.c  */
-#line 260 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 250 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
     {(yyval) = int_oper ((yyvsp[(2) - (2)]), 0, "/>"  , "NORM", 0);;}
     break;
 
 
 
 /* Line 1464 of yacc.c  */
-#line 2398 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\y.tab.c"
+#line 2388 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2606,7 +2596,7 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 264 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
+#line 254 "C:\\Users\\LCOM\\Desktop\\Github\\sapho\\C Compiler\\Source\\c2asm.y"
 
 
 int main(int argc, char *argv[])
