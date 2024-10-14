@@ -19,7 +19,7 @@
     - Atribuicao =-   : seta uma variavel com o negativo do valor passado (ex: x =- exp;) (evita x = -exp;)
 
     - Array inicializavel por arquivo. A memoria do array ja eh preenchida em tempo de compilacao. (ex: int x[128] "valores.txt";)
-    - Array com indice invertido. Usado em FFT (ex: x[i| = exp;) os bits de i sao invertidos. (usar com arrays complexos - real seguido do imaginario)
+    - Array com indice invertido. Usado em FFT (ex: x[i) = exp;) os bits de i sao invertidos. (usar com arrays complexos - real seguido do imaginario)
 */
 
 %{
@@ -93,7 +93,7 @@ void  yyerror(char const *s);
 
 %%
 
-fim : prog                          {$$ = $1; xuxa($$);}
+fim : prog                          {$$ = $1; /*xuxa($$);*/}
 
 // Programa e seus elementos --------------------------------------------------
 
@@ -243,7 +243,7 @@ assignment : ID  '='    exp ';'              {var_set($1,$3->ival,0,0); $$ = cre
            // incremento e decremento
            | ID PPLUS       ';'              {pplus_assign($1); $$ = create(52,0,NULL,NULL,NULL,NULL);}
            // array normal
-           | ID  '[' exp ']'  '='            {array_1d_check($1,$3->ival,0                                     );}
+           | ID  '[' exp ']'  '='            {array_1d_check($1,$3->ival,0 /*baguncou o array essa separacao*/ );}
                      exp ';'                 {var_set       ($1,$7->ival,1,0); $$ = create(81,0,NULL,$3,$7,NULL);}
            | ID  '[' exp ']'  '@'            {array_1d_check($1,$3->ival,0                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,1); $$ = create(82,0,NULL,$3,$7,NULL);}
@@ -254,15 +254,15 @@ assignment : ID  '='    exp ';'              {var_set($1,$3->ival,0,0); $$ = cre
            | ID  '[' exp ']' EQNE            {array_1d_check($1,$3->ival,0                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,4); $$ = create(85,0,NULL,$3,$7,NULL);}
            // array invertido
-           | ID  '[' exp '|'  '='            {array_1d_check($1,$3->ival,1                                     );}
+           | ID  '[' exp ')'  '='            {array_1d_check($1,$3->ival,2                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,0); $$ = create(86,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp '|'  '@'            {array_1d_check($1,$3->ival,1                                     );}
+           | ID  '[' exp ')'  '@'            {array_1d_check($1,$3->ival,2                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,1); $$ = create(87,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp '|' NORM            {array_1d_check($1,$3->ival,1                                     );}
+           | ID  '[' exp ')' NORM            {array_1d_check($1,$3->ival,2                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,2); $$ = create(88,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp '|'  '$'            {array_1d_check($1,$3->ival,1                                     );}
+           | ID  '[' exp ')'  '$'            {array_1d_check($1,$3->ival,2                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,3); $$ = create(89,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp '|' EQNE            {array_1d_check($1,$3->ival,1                                     );}
+           | ID  '[' exp ')' EQNE            {array_1d_check($1,$3->ival,2                                     );}
                      exp ';'                 {var_set       ($1,$7->ival,1,4); $$ = create(90,0,NULL,$3,$7,NULL);}
            // array 2D (completar)
            | ID  '[' exp ']' '[' exp ']' '=' {array_2d_check($1, $3->ival,$6->ival);                             }
@@ -282,7 +282,7 @@ exp:       INUM                               {int ival = num2exp($1,1); $$ = cr
          // variaveis
          | ID                                 {int ival =      id2exp($1                  ); $$ = create(28,ival,NULL,NULL,NULL,NULL);}
          | ID '[' exp ']'                     {int ival = array1d2exp($1,$3->ival,0       ); $$ = create(29,ival,NULL,NULL,  $3,NULL);}
-         | ID '[' exp '|'                     {int ival = array1d2exp($1,$3->ival,1       ); $$ = create(30,ival,NULL,NULL,  $3,NULL);}
+         | ID '[' exp ')'                     {int ival = array1d2exp($1,$3->ival,1       ); $$ = create(30,ival,NULL,NULL,  $3,NULL);}
          | ID '[' exp ']' '[' exp ']'         {int ival = array2d2exp($1,$3->ival,$6->ival); $$ = create(31,ival,NULL,  $3,  $6,NULL);}
          // std library
          | std_in                             {$$ = $1;}
@@ -329,12 +329,17 @@ int main(int argc, char *argv[])
     yyin   = fopen(argv[1], "r");
     f_asm  = fopen(argv[2], "w");
 
-    using_macro = 0;
-    exec_fft    = 0;
-    prtype      = 0;
-    acc_ok      = 0;
-    ret_ok      = 0;
-    mainok      = 0;
+    // da problema com o reset se nao colocar isso se
+    // a primeira instrucao for CALL main. Resolver ...
+    fprintf(f_asm, "LOAD 0\n");
+
+    using_macro  = 0;
+    exec_fft_use = 0;
+    exec_fft_set = 0;
+    prtype       = 0;
+    acc_ok       = 0;
+    ret_ok       = 0;
+    mainok       = 0;
 
     float_init (); // inicializa variaveis de estado (t2t.c)
 	yyparse    (); // aqui a magica acontece!!

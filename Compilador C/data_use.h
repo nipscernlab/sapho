@@ -23,7 +23,8 @@ int   array2d2exp(int id, int et1, int et2);
 int     exp_pplus(int et);
 
 // variaeis de estado
-int acc_ok;   // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
-int exec_fft; // diz se a ultima chamada de um array foi ou nao com bit invertido
+int acc_ok;       // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
+int exec_fft_use; // diz se a ultima chamada de um array foi ou nao com bit invertido
+int exec_fft_set;
 
 #endif // DATA_USE_H_INCLUDED

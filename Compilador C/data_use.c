@@ -43,10 +43,10 @@ void load_check(int et, int neg)
 
     // prepara o tipo de acesso, caso seja array
     char srf[10];
-    if ((v_isar[id] > 0) && (exec_fft == 1))
+    if ((v_isar[id] > 0) && (exec_fft_use == 1))
     {
          strcpy(srf,"ISRF");
-         exec_fft = 0;
+         exec_fft_use = 0;
     }
     else strcpy(srf,"SRF");
 
@@ -87,7 +87,11 @@ void array_1d_check(int id, int et, int flag)
         fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // pega se eh array invertido
-    exec_fft = flag;
+         if (flag == 1)
+        exec_fft_use = 1;
+    else if (flag == 2)
+        exec_fft_set = 1;
+
     // da load no argumento do array
     load_check(et,0);
 

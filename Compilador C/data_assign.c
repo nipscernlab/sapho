@@ -70,8 +70,8 @@ void var_set(int id, int et, int is_array, int set_type)
     // se for array, antes de dar o SET tem que chamar SRF
     if (is_array)
     {
-        if (exec_fft) strcpy(cset, "ISRF\n"); else strcpy(cset, "SRF\n");
-            exec_fft = 0;
+        if (exec_fft_set == 1) strcpy(cset, "ISRF\n"); else strcpy(cset, "SRF\n");
+            exec_fft_set = 0;
     }
     else strcpy(cset, "");
 
