@@ -16,8 +16,8 @@ void  array_1d_check(int id, int et , int flag);
 void  array_2d_check(int id, int et1, int et2 );
 
 // funcoes auxiliares para reducao exp
-int     num2exp  (int id, int dtype);
-int      id2exp  (int id);
+int       num2exp(int id, int dtype);
+int        id2exp(int id);
 int   array1d2exp(int id, int et , int fft);
 int   array2d2exp(int id, int et1, int et2);
 int     exp_pplus(int et);

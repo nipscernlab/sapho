@@ -331,7 +331,7 @@ int main(int argc, char *argv[])
 
     // da problema com o reset se nao colocar isso se
     // a primeira instrucao for CALL main. Resolver ...
-    fprintf(f_asm, "LOAD 0\n");
+    fprintf(f_asm, "LOAD NULL\n");
 
     using_macro  = 0;
     exec_fft_use = 0;
