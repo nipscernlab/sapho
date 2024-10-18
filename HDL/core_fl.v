@@ -251,7 +251,22 @@ generate
 
 endgenerate
 
-assign addr_in    = f2i_out[$clog2(NUIOIN)-1:0];
-assign addr_out   = f2i_out[$clog2(NUIOOU)-1:0];
+generate
+
+	if (NUIOIN > 1)
+		assign addr_in  = f2i_out[$clog2(NUIOIN)-1:0];
+	else
+		assign addr_in  = 1'bx;
+
+endgenerate
+
+generate
+
+	if (NUIOOU > 1)
+		assign addr_out = f2i_out[$clog2(NUIOOU)-1:0];
+	else
+		assign addr_out = 1'bx;
+
+endgenerate
 
 endmodule 

@@ -165,7 +165,14 @@ void build_vfile()
     else
     fprintf(f_veri, "assign io_out = out_float;\n\n");
 
+    if (nuioin2 == 1)
+    fprintf(f_veri, "assign req_in = proc_req_in;\n");
+    else
     fprintf(f_veri, "addr_dec #(%d) dec_in (proc_req_in, addr_in , req_in);\n"  , nuioin2);
+
+    if (nuioou == 1)
+    fprintf(f_veri, "assign out_en = proc_out_en;\n\n");
+    else
     fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou );
 
     fprintf(f_veri, "endmodule\n");

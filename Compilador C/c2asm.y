@@ -114,8 +114,8 @@ direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0); $$ = create( 1,0,NULL,NU
        | NBEXPO INUM   {exec_diretivas("#NBEXPO",$2,3); $$ = create( 6,0,NULL,NULL,NULL,NULL);}
        | NDSTAC INUM   {exec_diretivas("#NDSTAC",$2,0); $$ = create( 7,0,NULL,NULL,NULL,NULL);}
        | SDEPTH INUM   {exec_diretivas("#SDEPTH",$2,0); $$ = create( 8,0,NULL,NULL,NULL,NULL);}
-       | NUIOIN INUM   {exec_diretivas("#NUIOIN",$2,0); $$ = create( 9,0,NULL,NULL,NULL,NULL);}
-       | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,0); $$ = create(10,0,NULL,NULL,NULL,NULL);}
+       | NUIOIN INUM   {exec_diretivas("#NUIOIN",$2,4); $$ = create( 9,0,NULL,NULL,NULL,NULL);}
+       | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5); $$ = create(10,0,NULL,NULL,NULL,NULL);}
        | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0); $$ = create(11,0,NULL,NULL,NULL,NULL);}
        | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0); $$ = create(12,0,NULL,NULL,NULL,NULL);}
 

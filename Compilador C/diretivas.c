@@ -9,12 +9,16 @@ void exec_diretivas(char *dir, int id, int t)
 {
     if (using_macro == 0) fprintf(f_asm, "%s %s\n", dir, v_name[id]);
 
+    int ival = atoi(v_name[id]);
+
     // acao a tomar
     switch(t)
     {
-        case 1: prtype = atoi(v_name[id]);
-        case 2: nbmant = atoi(v_name[id]);
-        case 3: nbexpo = atoi(v_name[id]);
+        case 1: prtype = ival; break;
+        case 2: nbmant = ival; break;
+        case 3: nbexpo = ival; break;
+        case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
+        case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
     }
 }
 

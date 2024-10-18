@@ -27,7 +27,7 @@ module proc_fl
 	// -------------------------------------------------------------------------
 
 	// Implementa pilha de subrotinas
-	parameter CAL   =   1,
+	parameter CAL   =   0,
 
 	// Implementa enderecamento indireto
 	parameter SRF   =   0,

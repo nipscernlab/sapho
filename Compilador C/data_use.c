@@ -101,10 +101,9 @@ void array_1d_check(int id, int et, int flag)
     // mas vale chamar a atencao com um warning
     if (et >= 2*OFST)
     {
-        fprintf(stdout, "Atenção na linha %d: índice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
-
         if (prtype == 0)
         {
+            fprintf(stdout, "Atenção na linha %d: índice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
