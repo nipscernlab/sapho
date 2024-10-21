@@ -32,8 +32,7 @@ int f2mf(char *va)
 
     if (f == 0.0) return 1 << (nbmant + nbexpo -1);
 
-    //int *ifl = (int*)&f;
-    int *ifl = &f;
+    int *ifl = &f; // isso aqui ta perigoso
 
     // desempacota padrao IEEE ------------------------------------------------
 
@@ -84,7 +83,7 @@ void float_begin(FILE *f_asm)
     char a;
 
     fprintf(f_asm, "// ---------- Inicializacao da emulacao do ponto flutuante em software ----------\n\n");
-    fprintf(f_asm, "LOAD 0\n");
+    fprintf(f_asm, "LOAD NULL\n");
     fprintf(f_asm, "LOAD %d\nSET nbmant\n", nbmant);
     fprintf(f_asm, "LOAD %d\nSET nbexp\n", nbexpo);
     fprintf(f_asm, "LOAD %d // 0.0\nSET float_zero\n", 1 << (nbmant+nbexpo-1));

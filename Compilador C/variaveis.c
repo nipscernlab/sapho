@@ -71,12 +71,13 @@ char* rem_fname(char *var, char *fname)
 int exec_id(char *text)
 {
     char var_name[64];
-    if (find_var(text) == -1)
+
+    if (find_var(text) == -1)                                     // primeiro ve se tem uma variavel global
     {
             strcpy  (var_name, fname);
-        if (strcmp  (var_name, "") != 0) strcat (var_name, "_");
+        if (strcmp  (var_name, "") != 0) strcat (var_name, "_");  // se nao, coloca o nome da funcao atual antes
             strcat  (var_name, text);
-        if (find_var(var_name)    == -1) add_var(var_name);
+        if (find_var(var_name)    == -1) add_var(var_name);       // cria a variavel local, caso ela ainda nao exista
     }
     else
     {

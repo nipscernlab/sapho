@@ -146,7 +146,7 @@ void func_ret(int id) // id -> id da funcao atual
 // ----------------------------------------------------------------------------
 
 // da LOAD no primeiro parametro (se houver)
-// get_type da o tipo de parametro (0, 1, 2 ou 3) (void, int, float ou comp)
+// get_type da o tipo de parametro (0, 1, 2) (void, int, float)
 // p_test consegue guardar a posicao e tipo de todos os parametros na chamada da funcao
 void par_exp(int et)
 {

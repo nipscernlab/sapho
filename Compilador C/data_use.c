@@ -95,10 +95,9 @@ void array_1d_check(int id, int et, int flag)
     // da load no argumento do array
     load_check(et,0);
 
-    // testa se o indice do array eh tipo float ou comp
+    // testa se o indice do array eh tipo float
     // se for, converte pra inteiro, caso o proc seja ponto fixo
     // se for ponto flutuante, a conversao eh automatica no hardware
-    // mas vale chamar a atencao com um warning
     if (et >= 2*OFST)
     {
         if (prtype == 0)
@@ -127,16 +126,15 @@ void array_2d_check(int id, int et1, int et2)
     // da load no primeiro argumento do array
     load_check(et1,0);
 
-    // testa se o indice do primeiro argumento eh tipo float ou comp
+    // testa se o indice do primeiro argumento eh tipo float
     // se for, converte pra inteiro, caso o proc seja ponto fixo
     // se for ponto flutuante, a conversao eh automatica no hardware
-    // mas vale chamar a atencao com um warning
     if (et1 >= 2*OFST)
     {
-        fprintf(stdout, "Atenção na linha %d: primeiro índice do array não tá dando int. Vou arredondar pra baixo.\n", line_num+1);
-
         if (prtype == 0)
         {
+            fprintf(stdout, "Atenção na linha %d: primeiro índice do array não tá dando int. Vou arredondar pra baixo.\n", line_num+1);
+
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
@@ -148,16 +146,15 @@ void array_2d_check(int id, int et1, int et2)
     // da load no segundo argumento do array
     load_check(et2,0);
 
-    // testa se o indice do segundo argumento eh tipo float ou comp
+    // testa se o indice do segundo argumento eh tipo float
     // se for, converte pra inteiro, caso o proc seja ponto fixo
     // se for ponto flutuante, a conversao eh automatica no hardware
-    // mas vale chamar a atencao com um warning
     if (et2 >= 2*OFST)
     {
-        fprintf(stdout, "Atenção na linha %d: segundo índice do array não tá dando int. Vou arredondar pra baixo.\n", line_num+1);
-
         if (prtype == 0)
         {
+            fprintf(stdout, "Atenção na linha %d: segundo índice do array não tá dando int. Vou arredondar pra baixo.\n", line_num+1);
+
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
@@ -165,9 +162,6 @@ void array_2d_check(int id, int et1, int et2)
 
     // soma com a conta anterior
     if (using_macro == 0) fprintf(f_asm, "SADD\n");
-
-    // se for array complexo, tem q salvar o indice numa variavel auxiliar
-    if (v_type[id] == 3) fprintf(f_asm, "SET comp_aux_index\n");
 }
 
 // reducao de INUM FNUM e CNUM para exp
@@ -257,9 +251,6 @@ int array2d2exp(int id, int et1, int et2)
 // reducao de ++ pra exp
 int exp_pplus(int et)
 {
-    if (get_type(et) == 3)
-        fprintf (stderr, "Erro na linha %d: qual o sentido em incrementar uma variável complexa?\n", line_num+1);
-
     int id = et % OFST;
 
     // checa concistencia da variavel
@@ -270,7 +261,7 @@ int exp_pplus(int et)
     // primeiro faz o lexer do 1
     if (find_var("1") == -1) add_var("1");
     int lval = find_var("1");
-    // pega se deve vir de INUM ou FNUM ou CNUM
+    // pega se deve vir de INUM ou FNUM
     int type = get_type(et);
     // depois o parser
     int et1 = num2exp(lval,type);

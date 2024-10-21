@@ -150,7 +150,7 @@ int exec_sign(int et1, int et2)
 
     if (prtype == 0)
     {
-        // nao pode ser nem float nem comp
+        // nao pode ser float
         if ((left_type != 1) || (righ_type != 1))
         {
             fprintf (stderr, "Erro na linha %d: parâmetros da função sign(.,.) devem ser inteiros!\n", line_num+1);
