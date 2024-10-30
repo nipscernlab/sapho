@@ -100,7 +100,7 @@ int operacoes(int et1, int et2, char *iop, char *fop, int *op)
     {
         if (imem(et1) && imem(et2))                              // int memoria e int memoria
         {
-            // carrega et2 depois fz instrucao com memoria de et1
+            // carrega et2 depois faz instrucao com memoria de et1
             load_check(et2,0);
             if (using_macro == 0) fprintf(f_asm, "%s %s\n", iop, v_name[et1 % OFST]);
         }

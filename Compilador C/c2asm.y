@@ -44,35 +44,20 @@ void  yyerror(char const *s);
 
 %}
 
-%code requires
-{
-    #include "ast.h"
-}
-
-%union
-{
-    int lval; // os tokens terminais sao com inteiro
-    Node  *N; // os reduzidos sao com noh
-}
-
 // tokens que nao tem atribuicao ----------------------------------------------
 
 %token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD        // diretivas
 %token IN OUT NRM PST ABS SIGN                                 // std lib
 %token WHILE IF ELSE RETURN BREAK                              // saltos
-%token SHIFTL SHIFTR SSHIFTR                                   // desloc de bits
+%token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
 %token NORM EQNE                                               // assignments especiais de dois caracteres
 %token PPLUS                                                   // operador ++. pode ser usado pra reduzir exp e tb pra assignments
 
-// tokens com atribuicao ------------------------------------------------------
+// tokens terminais -----------------------------------------------------------
 
-%token <lval> TYPE ID STRING INUM FNUM                         // simbolos
-
-%type <N> prog prog_elements direct funcao fim declar IID id_list stmt_list stmt stmt_full stmt_if while_if
-%type <N> wbreak declar_full assignment while_stmt ifelse_stmt std_out void_call return_call use_macro end_macro use_inter
-%type <N> par_list exp std_in std_pst std_abs std_sign std_nrm func_call exp_list while_exp if_exp if_exp_stmt
+%token TYPE ID STRING INUM FNUM                                // simbolos
 
 // importante para lista de parametros de uma funcao
 // o primeiro parametro eh o ultimo a ser parseado
@@ -93,72 +78,72 @@ void  yyerror(char const *s);
 
 %%
 
-fim : prog                          {$$ = $1; /*xuxa($$);*/}
+fim : prog                     {$$ = $1;}
 
 // Programa e seus elementos --------------------------------------------------
 
-prog : prog_elements                {$$ =                         $1 ;}
-     | prog prog_elements           {$$ = create(0,0,NULL,$1,$2,NULL);}
+prog : prog_elements           {$$ = $1;}
+     | prog prog_elements      {$$ = $2;}
 
-prog_elements : direct              {$$ = $1;}
-              | declar              {$$ = $1;}
-              | funcao              {$$ = $1;}
+prog_elements : direct         {$$ = $1;}
+              | declar         {$$ = $1;}
+              | funcao         {$$ = $1;}
 
 // Diretivas de compilacao ----------------------------------------------------
 
-direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0); $$ = create( 1,0,NULL,NULL,NULL,NULL);}
-       | DIRNAM STRING {exec_diretivas("#DIRNAM",$2,0); $$ = create( 2,0,NULL,NULL,NULL,NULL);}
-       | DATYPE INUM   {exec_diretivas("#DATYPE",$2,1); $$ = create( 3,0,NULL,NULL,NULL,NULL);}
-       | NUBITS INUM   {exec_diretivas("#NUBITS",$2,0); $$ = create( 4,0,NULL,NULL,NULL,NULL);}
-       | NBMANT INUM   {exec_diretivas("#NBMANT",$2,2); $$ = create( 5,0,NULL,NULL,NULL,NULL);}
-       | NBEXPO INUM   {exec_diretivas("#NBEXPO",$2,3); $$ = create( 6,0,NULL,NULL,NULL,NULL);}
-       | NDSTAC INUM   {exec_diretivas("#NDSTAC",$2,0); $$ = create( 7,0,NULL,NULL,NULL,NULL);}
-       | SDEPTH INUM   {exec_diretivas("#SDEPTH",$2,0); $$ = create( 8,0,NULL,NULL,NULL,NULL);}
-       | NUIOIN INUM   {exec_diretivas("#NUIOIN",$2,4); $$ = create( 9,0,NULL,NULL,NULL,NULL);}
-       | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5); $$ = create(10,0,NULL,NULL,NULL,NULL);}
-       | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0); $$ = create(11,0,NULL,NULL,NULL,NULL);}
-       | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0); $$ = create(12,0,NULL,NULL,NULL,NULL);}
+direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
+       | DIRNAM STRING {exec_diretivas("#DIRNAM",$2,0);} // diretorio
+       | DATYPE INUM   {exec_diretivas("#DATYPE",$2,1);} // tipo: 0 -> ponto fixo, 1 -> ponto flutuante
+       | NUBITS INUM   {exec_diretivas("#NUBITS",$2,0);} // tamanho da palavra da ULA
+       | NBMANT INUM   {exec_diretivas("#NBMANT",$2,2);} // numero de bits da mantissa
+       | NBEXPO INUM   {exec_diretivas("#NBEXPO",$2,3);} // numero de bits do expoente
+       | NDSTAC INUM   {exec_diretivas("#NDSTAC",$2,0);} // tamanho da pilha de dados
+       | SDEPTH INUM   {exec_diretivas("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
+       | NUIOIN INUM   {exec_diretivas("#NUIOIN",$2,4);} // numero de portas de entrada
+       | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5);} // numero de portas de saida
+       | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0);} // contante de divisao (norm(.))
+       | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
 
-use_macro : USEMAC STRING {use_macro(v_name[$2]);       $$ = create(72,0,NULL,NULL,NULL,NULL);}
-end_macro : ENDMAC        {end_macro(          );       $$ = create(73,0,NULL,NULL,NULL,NULL);}
-use_inter : ITRADD        {use_inter(          );       $$ = create(74,0,NULL,NULL,NULL,NULL);}
+use_macro : USEMAC STRING {use_macro(v_name[$2]);}
+end_macro : ENDMAC        {end_macro(          );}
+use_inter : ITRADD        {use_inter(          );}
 
 // Declaracao de variaveis ----------------------------------------------------
 
-declar : TYPE id_list ';'                             {                            $$ = create(14,0,NULL,NULL,  $2,NULL);}
-       | TYPE ID '[' INUM ']'              STRING ';' {declar_arr_1d($2,$4,$6   ); $$ = create(18,0,NULL,NULL,NULL,NULL);}
-       | TYPE ID '[' INUM ']' '[' INUM ']' STRING ';' {declar_arr_2d($2,$4,$7,$9); $$ = create(19,0,NULL,NULL,NULL,NULL);}
+declar : TYPE id_list ';'                             {                           }
+       | TYPE ID '[' INUM ']'              STRING ';' {declar_arr_1d($2,$4,$6   );}
+       | TYPE ID '[' INUM ']' '[' INUM ']' STRING ';' {declar_arr_2d($2,$4,$7,$9);}
 
-id_list :             IID                  {$$ =                          $1 ;}
-        | id_list ',' IID                  {$$ = create(15,0,NULL,$1,$3,NULL);}
+id_list :             IID                  {$$ = $1;}
+        | id_list ',' IID                  {$$ = $1;}
 
-IID : ID                                   {declar_var   ($1         ); $$ = create(13,0,NULL,NULL,NULL,NULL);}
-    | ID '[' INUM ']'                      {declar_arr_1d($1,$3   ,-1); $$ = create(16,0,NULL,NULL,NULL,NULL);}
-    | ID '[' INUM ']' '[' INUM ']'         {declar_arr_2d($1,$3,$6,-1); $$ = create(17,0,NULL,NULL,NULL,NULL);}
+IID : ID                                   {declar_var   ($1         );}
+    | ID '[' INUM ']'                      {declar_arr_1d($1,$3   ,-1);}
+    | ID '[' INUM ']' '[' INUM ']'         {declar_arr_2d($1,$3,$6,-1);}
 
 // Declaracao de funcoes ------------------------------------------------------
 
-funcao : TYPE ID '('                      {declar_fun     ($1,$2   );                                     }
-         par_list ')'                     {declar_firstpar($5->ival);                                     } // seta o primeiro parametro na variavel correspondente
-         '{' stmt_list '}'                {func_ret       ($2      ); $$ = create(23,0,NULL,$5  ,$9,NULL);} // checa se foi tudo ok
-       | TYPE ID '('   ')'                {declar_fun     ($1,$2   );                                     } // funcao sem parametros
-         '{' stmt_list '}'                {func_ret       ($2      ); $$ = create(20,0,NULL,NULL,$7,NULL);}
+funcao : TYPE ID '('                      {declar_fun     ($1,$2);}
+         par_list ')'                     {declar_firstpar($5   );} // seta o primeiro parametro na variavel correspondente
+         '{' stmt_list '}'                {func_ret       ($2   );} // checa se foi tudo ok
+       | TYPE ID '('   ')'                {declar_fun     ($1,$2);} // funcao sem parametros
+         '{' stmt_list '}'                {func_ret       ($2   );}
 
 // lista de parametros na declaracao
 // nao pode usar array em parametro de funcao
 // retorna o id do parametro
-par_list : TYPE ID                        {int ival = declar_par($1,$2   ); $$ = create(22,ival,NULL,NULL,NULL,NULL);}
-         | par_list ',' par_list          {              set_par($3->ival); $$ = create(24,$1->ival,NULL,$1,$3,NULL);}; // vai pegando da pilha
+par_list : TYPE ID                        {$$ = declar_par($1,$2);}
+         | par_list ',' par_list          {        set_par($3   );}; // vai pegando da pilha
 
 // lista de statments em C ----------------------------------------------------
 
-stmt_list: stmt              {$$ =                          $1 ;}
-         | stmt_list stmt    {$$ = create(25,0,NULL,$1,$2,NULL);}
+stmt_list: stmt              {$$ = $1;}
+         | stmt_list stmt    {$$ = $2;}
 
 stmt     : stmt_full         {$$ = $1;}
-         | stmt_if           {$$ = $1;}// fiz o if geral aqui separado. nao lembro pq. rever essa parte
+         | stmt_if           {$$ = $1;} // fiz o if geral aqui separado. nao lembro pq. rever essa parte
 
-// todos os statements que posso escrever dentro de uma funcao;
+// todos os statements que posso escrever dentro de uma funcao
 stmt_full: '{' stmt_list '}' {$$ = $2;} // bloco de statments
          |     declar_full   {$$ = $1;} // declaracoes de variaveis
          |     assignment    {$$ = $1;} // atribuicao de expressoes a uma variavel = $ @ />
@@ -175,98 +160,98 @@ stmt_full: '{' stmt_list '}' {$$ = $2;} // bloco de statments
 // chamadas de funcoes --------------------------------------------------------
 
 // funcao void
-void_call   : ID '('            {fun_id2  = $1;}                                                 // fun_id2 . id da funcao chamada
-              exp_list ')' ';'  {vcall($1);            $$ = create(75, 0,NULL,NULL,NULL,NULL);}; // ja pode dar o call void
+void_call   : ID '('            {fun_id2  = $1 ;} // fun_id2 -> id da funcao chamada
+              exp_list ')' ';'  {vcall     ($1);} // ja pode dar o call void
 // funcao com retorno
-func_call   : ID '('            {fun_id2  =       $1;}
-              exp_list ')'      {int ival = fcall($1); $$ = create(37,ival,NULL,NULL,$4,NULL);}; // da call e retorna o tipo de dado final
+func_call   : ID '('            {fun_id2  = $1 ;}
+              exp_list ')'      {$$ = fcall($1);} // da call e retorna o tipo de dado final
 
-return_call : RETURN exp ';'    {declar_ret($2->ival); $$ = create(41,   0,NULL,NULL,$2,NULL);}; // ainda nao implementei return pra void
+return_call : RETURN exp ';'    {declar_ret($2);} // ainda nao implementei return pra void
 
 // eh preciso colocar os parametros na pilha
 // pra cada exp achado, o valor resultante eh gravado na pilha com par_exp
 // o primeiro parametro fica no acumulador (pega de tras pra frente)
 // par_exp xuxa parametros na pilha e checa se o parametro esta consistente
-exp_list :                                 {                       $$ = create(40,0,NULL,NULL,NULL,NULL);} // pode ser vazio
-         | exp                             {par_exp    ($1->ival); $$ = create(38,0,NULL,  $1,NULL,NULL);} // primeiro parametro
-         | exp_list ',' exp                {par_listexp($3->ival); $$ = create(39,0,NULL,  $1,  $3,NULL);} // demais parametros
+exp_list :                                 {                } // pode ser vazio
+         | exp                             {par_exp    ($1);} // primeiro parametro
+         | exp_list ',' exp                {par_listexp($3);} // demais parametros
 
 // Standard library -----------------------------------------------------------
 
-std_out  : OUT  '(' exp ','                {           exec_out1($3->ival         );                                        }
-                    exp ')' ';'            {           exec_out2($6->ival         ); $$ = create(43,0   ,NULL,  $3,$6,NULL);}
-std_in   : IN   '(' exp ')'                {int ival = exec_in  ($3->ival         ); $$ = create(44,ival,NULL,NULL,$3,NULL);}
-std_pst  : PST  '(' exp ')'                {int ival = exec_pst ($3->ival         ); $$ = create(45,ival,NULL,NULL,$3,NULL);}
-std_abs  : ABS  '(' exp ')'                {int ival = exec_abs ($3->ival         ); $$ = create(46,ival,NULL,NULL,$3,NULL);}
-std_sign : SIGN '(' exp ',' exp ')'        {int ival = exec_sign($3->ival,$5->ival); $$ = create(47,ival,NULL,$3  ,$5,NULL);}
-std_nrm  : NRM  '(' exp ')'                {int ival = exec_norm($3->ival         ); $$ = create(48,ival,NULL,NULL,$3,NULL);}
+std_out  : OUT  '(' exp ','                {     exec_out1($3   );} // saida de dados
+                    exp ')' ';'            {     exec_out2($6   );}
+std_in   : IN   '(' exp ')'                {$$ = exec_in  ($3   );} // entrada de dados
+std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao pset(x)   -> zera se negativo
+std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
+std_sign : SIGN '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
+std_nrm  : NRM  '(' exp ')'                {$$ = exec_norm($3   );} // funcao norm(x)   -> divide x pela constante NUGAIN
 
 // if else --------------------------------------------------------------------
 
 // esse stmt_if eh confuso. Nao lembro como cheguei a isso, mas ta funcionando
 
-stmt_if : if_exp stmt                      {if_expstmt("@L%delse "); $$ = create(94,0,NULL,$1,  $2,NULL);} // um if dentro do outro?
-        | if_exp_stmt ELSE stmt_if         {if_expstmt("@L%dend " ); $$ = create(98,0,NULL,$1,  $3,NULL);} // um if dentro de um else
+stmt_if : if_exp stmt                      {if_expstmt("@L%delse ");} // um if dentro do outro?
+        | if_exp_stmt ELSE stmt_if         {if_expstmt("@L%dend " );} // um if dentro de um else
         | while_if                         {$$ = $1;}
 
-ifelse_stmt : if_exp_stmt ELSE stmt_full   {if_expstmt("@L%dend " ); $$ = create(97,0,NULL,$1  ,$3,NULL);} // terminou um if/else completo
-if_exp_stmt : if_exp           stmt_full   {if_expfull(           ); $$ = create(96,0,NULL,$1  ,$2,NULL);} // if (exp) {} padrao
-if_exp      : IF '(' exp ')'               {if_expp   ($3->ival   ); $$ = create(95,0,NULL,NULL,$3,NULL);} // inicio (JZ)
+ifelse_stmt : if_exp_stmt ELSE stmt_full   {if_expstmt("@L%dend " );} // terminou um if/else completo
+if_exp_stmt : if_exp           stmt_full   {if_expfull(           );} // if (exp) {} padrao
+if_exp      : IF '(' exp ')'               {if_expp   ($3         );} // inicio (JZ)
 
 // while ----------------------------------------------------------------------
 
-while_stmt : while_exp stmt_full           {while_stmt();            $$ = create(93,0,NULL,  $1,  $2,NULL);}
-while_if   : while_exp stmt_if             {while_stmt();            $$ = create(99,0,NULL,  $1,  $2,NULL);}
+while_stmt : while_exp stmt_full           {while_stmt();}
+while_if   : while_exp stmt_if             {while_stmt();}
 
-while_exp  : WHILE                         {while_expp();                                                  }
-          '(' exp ')'                      {while_expexp($4->ival);  $$ = create(92,0,NULL,NULL,  $4,NULL);}
+while_exp  : WHILE                         {while_expp  (  );}
+          '(' exp ')'                      {while_expexp($4);}
 
-wbreak     : BREAK ';'                     {exec_break();            $$ = create(21,0,NULL,NULL,NULL,NULL);}
+wbreak     : BREAK ';'                     {exec_break();}
 
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar                       {$$ = $1;}
-            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4->ival,0,0); $$ = create(76,0,NULL,NULL,$4,NULL);}  // SET
-            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4->ival,0,1); $$ = create(77,0,NULL,NULL,$4,NULL);}  // PSETS (PSET + SET)
-            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4->ival,0,2); $$ = create(78,0,NULL,NULL,$4,NULL);}  // NORMS (NORM + SET)
-            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4->ival,0,3); $$ = create(79,0,NULL,NULL,$4,NULL);}  // ABSS  (ABS  + SET)
-            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4->ival,0,4); $$ = create(80,0,NULL,NULL,$4,NULL);}  // NEGS  (NEG  + SET)
+            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0);} // SET
+            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4,0,1);} // PSETS (PSET + SET)
+            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4,0,2);} // NORMS (NORM + SET)
+            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4,0,3);} // ABSS  (ABS  + SET)
+            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4,0,4);} // NEGS  (NEG  + SET)
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '='    exp ';'              {var_set($1,$3->ival,0,0); $$ = create(32,0,NULL,NULL,$3,NULL);} // SET
-           | ID  '@'    exp ';'              {var_set($1,$3->ival,0,1); $$ = create(33,0,NULL,NULL,$3,NULL);} // PSETS (PSET + SET)
-           | ID NORM    exp ';'              {var_set($1,$3->ival,0,2); $$ = create(34,0,NULL,NULL,$3,NULL);} // NORMS (NORM + SET)
-           | ID  '$'    exp ';'              {var_set($1,$3->ival,0,3); $$ = create(35,0,NULL,NULL,$3,NULL);} // ABSS  (ABS  + SET)
-           | ID EQNE    exp ';'              {var_set($1,$3->ival,0,4); $$ = create(36,0,NULL,NULL,$3,NULL);} // NEGS  (NEG  + SET)
-           // incremento e decremento
-           | ID PPLUS       ';'              {pplus_assign($1); $$ = create(52,0,NULL,NULL,NULL,NULL);}
+assignment : ID  '='    exp ';'              {var_set($1,$3,0,0);} // SET
+           | ID  '@'    exp ';'              {var_set($1,$3,0,1);} // PSETS (PSET + SET)
+           | ID NORM    exp ';'              {var_set($1,$3,0,2);} // NORMS (NORM + SET)
+           | ID  '$'    exp ';'              {var_set($1,$3,0,3);} // ABSS  (ABS  + SET)
+           | ID EQNE    exp ';'              {var_set($1,$3,0,4);} // NEGS  (NEG  + SET)
+           // incremento - fazer pra matriz tb
+           | ID PPLUS       ';'              {pplus_assign($1);}
            // array normal
-           | ID  '[' exp ']'  '='            {array_1d_check($1,$3->ival,0 /*baguncou o array essa separacao*/ );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,0); $$ = create(81,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ']'  '@'            {array_1d_check($1,$3->ival,0                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,1); $$ = create(82,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ']' NORM            {array_1d_check($1,$3->ival,0                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,2); $$ = create(83,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ']'  '$'            {array_1d_check($1,$3->ival,0                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,3); $$ = create(84,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ']' EQNE            {array_1d_check($1,$3->ival,0                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,4); $$ = create(85,0,NULL,$3,$7,NULL);}
+           | ID  '[' exp ']'  '='            {array_1d_check($1,$3,0  );} // baguncou o array essa separacao
+                     exp ';'                 {var_set       ($1,$7,1,0);}
+           | ID  '[' exp ']'  '@'            {array_1d_check($1,$3,0  );}
+                     exp ';'                 {var_set       ($1,$7,1,1);}
+           | ID  '[' exp ']' NORM            {array_1d_check($1,$3,0  );}
+                     exp ';'                 {var_set       ($1,$7,1,2);}
+           | ID  '[' exp ']'  '$'            {array_1d_check($1,$3,0  );}
+                     exp ';'                 {var_set       ($1,$7,1,3);}
+           | ID  '[' exp ']' EQNE            {array_1d_check($1,$3,0  );}
+                     exp ';'                 {var_set       ($1,$7,1,4);}
            // array invertido
-           | ID  '[' exp ')'  '='            {array_1d_check($1,$3->ival,2                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,0); $$ = create(86,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ')'  '@'            {array_1d_check($1,$3->ival,2                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,1); $$ = create(87,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ')' NORM            {array_1d_check($1,$3->ival,2                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,2); $$ = create(88,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ')'  '$'            {array_1d_check($1,$3->ival,2                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,3); $$ = create(89,0,NULL,$3,$7,NULL);}
-           | ID  '[' exp ')' EQNE            {array_1d_check($1,$3->ival,2                                     );}
-                     exp ';'                 {var_set       ($1,$7->ival,1,4); $$ = create(90,0,NULL,$3,$7,NULL);}
+           | ID  '[' exp ')'  '='            {array_1d_check($1,$3,2  );}
+                     exp ';'                 {var_set       ($1,$7,1,0);}
+           | ID  '[' exp ')'  '@'            {array_1d_check($1,$3,2  );}
+                     exp ';'                 {var_set       ($1,$7,1,1);}
+           | ID  '[' exp ')' NORM            {array_1d_check($1,$3,2  );}
+                     exp ';'                 {var_set       ($1,$7,1,2);}
+           | ID  '[' exp ')'  '$'            {array_1d_check($1,$3,2  );}
+                     exp ';'                 {var_set       ($1,$7,1,3);}
+           | ID  '[' exp ')' EQNE            {array_1d_check($1,$3,2  );}
+                     exp ';'                 {var_set       ($1,$7,1,4);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '=' {array_2d_check($1, $3->ival,$6->ival);                             }
-                     exp ';'                 {var_set       ($1,$10->ival,2,0);$$ = create(91,0,$3,$6,$10 ,NULL);}
+           | ID  '[' exp ']' '[' exp ']' '=' {array_2d_check($1, $3, $6  );}
+                     exp ';'                 {var_set       ($1,$10,  2,0);}
 
 // expressoes -----------------------------------------------------------------
 
@@ -277,13 +262,13 @@ assignment : ID  '='    exp ';'              {var_set($1,$3->ival,0,0); $$ = cre
 // associada a um valor novo no acc!
 
          // constantes
-exp:       INUM                               {int ival = num2exp($1,1); $$ = create(26,ival,NULL,NULL,NULL,NULL);}
-         | FNUM                               {int ival = num2exp($1,2); $$ = create(27,ival,NULL,NULL,NULL,NULL);}
+exp:       INUM                               {$$ = num2exp($1,1);}
+         | FNUM                               {$$ = num2exp($1,2);}
          // variaveis
-         | ID                                 {int ival =      id2exp($1                  ); $$ = create(28,ival,NULL,NULL,NULL,NULL);}
-         | ID '[' exp ']'                     {int ival = array1d2exp($1,$3->ival,0       ); $$ = create(29,ival,NULL,NULL,  $3,NULL);}
-         | ID '[' exp ')'                     {int ival = array1d2exp($1,$3->ival,1       ); $$ = create(30,ival,NULL,NULL,  $3,NULL);}
-         | ID '[' exp ']' '[' exp ']'         {int ival = array2d2exp($1,$3->ival,$6->ival); $$ = create(31,ival,NULL,  $3,  $6,NULL);}
+         | ID                                 {$$ =      id2exp($1      );}
+         | ID '[' exp ']'                     {$$ = array1d2exp($1,$3,0 );}
+         | ID '[' exp ')'                     {$$ = array1d2exp($1,$3,1 );}
+         | ID '[' exp ']' '[' exp ']'         {$$ = array2d2exp($1,$3,$6);}
          // std library
          | std_in                             {$$ = $1;}
          | std_pst                            {$$ = $1;}
@@ -295,32 +280,32 @@ exp:       INUM                               {int ival = num2exp($1,1); $$ = cr
          |     '('     exp ')'                {$$ = $2;}
          |     '+'     exp                    {$$ = $2;}
          // operadores unarios
-         |     '-'     exp                    {int ival =   negacao($2->ival                       ); $$ = create(42,ival,NULL,NULL,$2,NULL);}
-         |     '!'     exp                    {int ival =  int_oper($2->ival, 0,      "!" ,"LINV",1); $$ = create(49,ival,NULL,NULL,$2,NULL);}
-         |     '~'     exp                    {int ival =  int_oper($2->ival, 0,      "~" , "INV",0); $$ = create(50,ival,NULL,NULL,$2,NULL);}
-         | exp PPLUS                          {int ival = exp_pplus($1->ival                       ); $$ = create(51,ival,NULL,$1,NULL,NULL);}
+         |     '-'     exp                    {$$ =   negacao($2                );}
+         |     '!'     exp                    {$$ =  int_oper($2,0,"!" ,"LINV",1);}
+         |     '~'     exp                    {$$ =  int_oper($2,0,"~" , "INV",0);}
+         | ID PPLUS /*fazer pra matriz*/      {$$ = exp_pplus($1                );}
          // operadores logicos
-         | exp  SHIFTL exp                    {int ival = int_oper($1->ival,$3->ival,"<<" , "SHL",0); $$ = create(53,ival,NULL,$1,$3,NULL);}
-         | exp  SHIFTR exp                    {int ival = int_oper($1->ival,$3->ival,">>" , "SHR",0); $$ = create(54,ival,NULL,$1,$3,NULL);}
-         | exp SSHIFTR exp                    {int ival = int_oper($1->ival,$3->ival,">>>", "SRS",0); $$ = create(55,ival,NULL,$1,$3,NULL);}
-         | exp '&'     exp                    {int ival = int_oper($1->ival,$3->ival, "&" , "AND",0); $$ = create(56,ival,NULL,$1,$3,NULL);}
-         | exp '|'     exp                    {int ival = int_oper($1->ival,$3->ival, "|" ,  "OR",0); $$ = create(57,ival,NULL,$1,$3,NULL);}
-         | exp '^'     exp                    {int ival = int_oper($1->ival,$3->ival, "^" , "XOR",0); $$ = create(58,ival,NULL,$1,$3,NULL);}
-         | exp LAND    exp                    {int ival = int_oper($1->ival,$3->ival, "&&","LAND",1); $$ = create(59,ival,NULL,$1,$3,NULL);}
-         | exp LOR     exp                    {int ival = int_oper($1->ival,$3->ival, "||", "LOR",1); $$ = create(60,ival,NULL,$1,$3,NULL);}
+         | exp  SHIFTL exp                    {$$ = int_oper($1,$3,"<<" , "SHL",0);}
+         | exp  SHIFTR exp                    {$$ = int_oper($1,$3,">>" , "SHR",0);}
+         | exp SSHIFTR exp                    {$$ = int_oper($1,$3,">>>", "SRS",0);}
+         | exp '&'     exp                    {$$ = int_oper($1,$3, "&" , "AND",0);}
+         | exp '|'     exp                    {$$ = int_oper($1,$3, "|" ,  "OR",0);}
+         | exp '^'     exp                    {$$ = int_oper($1,$3, "^" , "XOR",0);}
+         | exp LAND    exp                    {$$ = int_oper($1,$3, "&&","LAND",1);}
+         | exp LOR     exp                    {$$ = int_oper($1,$3, "||", "LOR",1);}
          // operadore aritmetico
-         | exp '%'     exp                    {int ival = int_oper($1->ival,$3->ival,  "%", "MOD",0); $$ = create(61,ival,NULL,$1,$3,NULL);}
-         | exp '*'     exp                    {int ival = oper_ari($1->ival,$3->ival             ,0); $$ = create(62,ival,NULL,$1,$3,NULL);}
-         | exp '/'     exp                    {int ival = oper_ari($1->ival,$3->ival             ,1); $$ = create(63,ival,NULL,$1,$3,NULL);}
-         | exp '+'     exp                    {int ival = oper_ari($1->ival,$3->ival             ,2); $$ = create(64,ival,NULL,$1,$3,NULL);}
-         | exp '-'     exp                    {int ival = oper_ari($1->ival,$3->ival             ,3); $$ = create(65,ival,NULL,$1,$3,NULL);}
+         | exp '%'     exp                    {$$ = int_oper($1,$3,  "%", "MOD",0);}
+         | exp '*'     exp                    {$$ = oper_ari($1,$3             ,0);}
+         | exp '/'     exp                    {$$ = oper_ari($1,$3             ,1);}
+         | exp '+'     exp                    {$$ = oper_ari($1,$3             ,2);}
+         | exp '-'     exp                    {$$ = oper_ari($1,$3             ,3);}
          // operadores de comparacao
-         | exp '<'     exp                    {int ival = oper_cmp($1->ival,$3->ival             ,0); $$ = create(66,ival,NULL,$1,$3,NULL);}
-         | exp '>'     exp                    {int ival = oper_cmp($1->ival,$3->ival             ,1); $$ = create(67,ival,NULL,$1,$3,NULL);}
-         | exp GREQU   exp                    {int ival = oper_cmp($1->ival,$3->ival             ,2); $$ = create(68,ival,NULL,$1,$3,NULL);}
-         | exp LESEQ   exp                    {int ival = oper_cmp($1->ival,$3->ival             ,3); $$ = create(69,ival,NULL,$1,$3,NULL);}
-         | exp EQU     exp                    {int ival = oper_cmp($1->ival,$3->ival             ,4); $$ = create(70,ival,NULL,$1,$3,NULL);}
-         | exp DIF     exp                    {int ival = oper_cmp($1->ival,$3->ival             ,5); $$ = create(71,ival,NULL,$1,$3,NULL);}
+         | exp '<'     exp                    {$$ = oper_cmp($1,$3,0);}
+         | exp '>'     exp                    {$$ = oper_cmp($1,$3,1);}
+         | exp GREQU   exp                    {$$ = oper_cmp($1,$3,2);}
+         | exp LESEQ   exp                    {$$ = oper_cmp($1,$3,3);}
+         | exp EQU     exp                    {$$ = oper_cmp($1,$3,4);}
+         | exp DIF     exp                    {$$ = oper_cmp($1,$3,5);}
 
 %%
 
@@ -333,6 +318,7 @@ int main(int argc, char *argv[])
     // a primeira instrucao for CALL main. Resolver ...
     fprintf(f_asm, "LOAD NULL\n");
 
+    // iniciaiza variaveis de estado
     using_macro  = 0;
     exec_fft_use = 0;
     exec_fft_set = 0;
@@ -341,7 +327,7 @@ int main(int argc, char *argv[])
     ret_ok       = 0;
     mainok       = 0;
 
-    float_init (); // inicializa variaveis de estado (t2t.c)
+    float_init (); // inicializa variaveis de estado pra float (t2t.c)
 	yyparse    (); // aqui a magica acontece!!
 	fclose(yyin );
 	fclose(f_asm);

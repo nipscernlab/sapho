@@ -65,9 +65,13 @@ char* rem_fname(char *var, char *fname)
 {
     int    ind = 0;
     while (var[ind] == fname[ind]) ind++;
-    return var + ind + 1; // o +1 eh pra tirar o '_'
+    // se ind != strlen(fname) eh pq a variavel nao
+    // contem todo o nome da funcao no comeco
+    // entao melhor nao remover nada (deve ser global)
+    return (ind == strlen(fname)) ? var + ind + 1 : var; // o +1 eh pra tirar o '_'
 }
 
+// usado quando o lexer acha um ID
 int exec_id(char *text)
 {
     char var_name[64];
@@ -86,6 +90,7 @@ int exec_id(char *text)
     return find_var(var_name);
 }
 
+// usado quando o lexer acha uma constante int ou float
 int exec_num(char *text)
 {
     if (find_var(text) == -1) add_var(text);

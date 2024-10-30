@@ -12,7 +12,7 @@
 // declaracao -----------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome; v_name -> tabela com os nomes
+void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
 {
     // testa se eh a funcao main e atualiza o status dela
     if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
@@ -59,9 +59,9 @@ void set_par(int id)
 }
 
 // quando acha a palavra chave return
-void declar_ret(int et) // tipo estendido da expressao x
+void declar_ret(int et)
 {
-    // ve se precisa carregar x
+    // ve se precisa carregar o argumento do return
     load_check(et,0);
 
     // checa se eh funcao mesmo, ou void por engano
@@ -113,7 +113,7 @@ void declar_ret(int et) // tipo estendido da expressao x
 
     if (using_macro == 0) fprintf(f_asm, "RETURN\n");
 
-    acc_ok = 0; // acc liberado, ta certo isso?
+    acc_ok = 1; // acc guarda o valor de retorno da funcao
     ret_ok = 1; // apareceu a palavra chave return na funcao certinho
 }
 
@@ -171,6 +171,7 @@ void vcall(int id)
         return;
     }
 
+    // checa numero de parametros
     if (get_npar(p_test) != get_npar(v_fpar[id])) // p_test tem a lista de par na chamada e v_fpar na declaracao
         fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função %s.\n", line_num+1, rem_fname(v_name[id], fname));
 
@@ -202,7 +203,7 @@ int fcall(int id)
 
     if (using_macro == 0) fprintf(f_asm, "CALL %s\n",v_name[id]);
 
-    v_used[id] = 1; // funcao ja foi usada
+    v_used[id] = 1;             // funcao ja foi usada
 
     return (v_type[id]-5)*OFST; // retorna o tipo de dado (void , int ou float)
 }

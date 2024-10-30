@@ -40,6 +40,7 @@ void load_check(int et, int neg)
 
     if (id == 0) return; // se for uma reducao exp, nao carrega nada, ja ta no acc
                          // nao tem id = 0 na tabela? isso pode dar M
+                         // criei uma variavel NULL (com LOAD NULL) para ocupar a primeira posicao
 
     // prepara o tipo de acesso, caso seja array
     char srf[10];
@@ -71,11 +72,12 @@ void load_check(int et, int neg)
         }
     }
 
-    acc_ok = 1;  // diz que o acc tem um valor que nao pode perder
+    acc_ok = 1;  // diz que o acc tem um valor carregado
 }
 
 // checagem de um array antes de usar
 // tb eh usada na atribuicao
+// flag diz se eh array invertido no uso (1) ou no set (2)
 void array_1d_check(int id, int et, int flag)
 {
     // tem que ver se eh array mesmo
@@ -87,10 +89,8 @@ void array_1d_check(int id, int et, int flag)
         fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // pega se eh array invertido
-         if (flag == 1)
-        exec_fft_use = 1;
-    else if (flag == 2)
-        exec_fft_set = 1;
+    if (flag == 1) exec_fft_use = 1;
+    if (flag == 2) exec_fft_set = 1;
 
     // da load no argumento do array
     load_check(et,0);
@@ -103,6 +103,7 @@ void array_1d_check(int id, int et, int flag)
         if (prtype == 0)
         {
             fprintf(stdout, "Atenção na linha %d: índice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
+
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
@@ -119,7 +120,7 @@ void array_2d_check(int id, int et1, int et2)
     if (v_isar[id] == 0)
         fprintf (stderr, "Erro na linha %d: %s não é array não, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
 
-    // tem que ver se eh array 2D mesmo
+    // tem que ver se nao eh array 1D
     if (v_isar[id] == 1)
         fprintf (stderr, "Erro na linha %d: array %s tem uma dimensão só!\n", line_num+1, rem_fname(v_name[id], fname));
 
@@ -164,7 +165,7 @@ void array_2d_check(int id, int et1, int et2)
     if (using_macro == 0) fprintf(f_asm, "SADD\n");
 }
 
-// reducao de INUM FNUM e CNUM para exp
+// reducao de INUM ou FNUM para exp
 // nao da load, soh atualiza as variaveis
 int num2exp(int id, int dtype)
 {
@@ -249,13 +250,10 @@ int array2d2exp(int id, int et1, int et2)
 }
 
 // reducao de ++ pra exp
-int exp_pplus(int et)
+int exp_pplus(int id)
 {
-    int id = et % OFST;
-
-    // checa concistencia da variavel
     // equivalente a pegar o x na expressao (x+1)
-    if (id != 0) et = id2exp(id);
+    int et = id2exp(id);
 
     // agora transforma o 1 em um exp
     // primeiro faz o lexer do 1

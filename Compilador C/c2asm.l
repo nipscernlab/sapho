@@ -33,9 +33,9 @@ WS       [ \t]+
 "#FFTSIZ"                       return FFTSIZ;
 "#INTERPOINT"                   return ITRADD;
 
-"float"  {fgen = 1; type_tmp = 2; yylval.lval = 2; return TYPE;}
-"int"    {          type_tmp = 1; yylval.lval = 1; return TYPE;}
-"void"   {                        yylval.lval = 0; return TYPE;}
+"float"  {fgen = 1; type_tmp = 2; yylval = 2; return TYPE;}
+"int"    {          type_tmp = 1; yylval = 1; return TYPE;}
+"void"   {                        yylval = 0; return TYPE;}
 
 "in"                            return IN;
 "out"                           return OUT;
@@ -52,23 +52,23 @@ WS       [ \t]+
 
 \"(\\.|[^\\"])*\"	       {
                               if (find_var(yytext) == -1) add_var(yytext);
-                              yylval.lval = find_var(yytext);
+                              yylval = find_var(yytext);
                               return STRING;
                            }
 
 {LETRA}({LETRA}|{DIGITO})* {
-                              yylval.lval = exec_id(yytext);
+                              yylval = exec_id(yytext);
                               return ID;
                            }
 
 [0-9]+                     {
-                              yylval.lval = exec_num(yytext);
+                              yylval = exec_num(yytext);
                               return INUM;
                            }
 
 [0-9]*\.?[0-9]+            {
 
-                              yylval.lval = exec_num(yytext);
+                              yylval = exec_num(yytext);
                               fgen = 1;
                               return FNUM;
                            }

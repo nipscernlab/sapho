@@ -11,7 +11,7 @@
 // embora nao seja uma coisa muito convencional, acho que deu muito certo
 #define OFST 1000000
 
-void      load_check(int et, int sinal);
+void      load_check(int et, int sinal        );
 void  array_1d_check(int id, int et , int flag);
 void  array_2d_check(int id, int et1, int et2 );
 
@@ -24,7 +24,7 @@ int     exp_pplus(int et);
 
 // variaeis de estado
 int acc_ok;       // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
-int exec_fft_use; // diz se a ultima chamada de um array foi ou nao com bit invertido
-int exec_fft_set;
+int exec_fft_use; // diz se o ultimo uso de um array foi ou nao com bit invertido
+int exec_fft_set; // diz se o ultimo SET de um array foi ou nao com bit invertido
 
 #endif // DATA_USE_H_INCLUDED

@@ -23,8 +23,8 @@ int get_type(int et)
     return t;
 }
 
-// tem que testar caso a caso e sao muitos
 // faz a checagem e execucao das funcoes SET na memoria
+// tem que testar caso a caso e sao muitos
 void var_set(int id, int et, int is_array, int set_type)
 {
     // da LOAD no right, se necessario
@@ -71,7 +71,7 @@ void var_set(int id, int et, int is_array, int set_type)
     if (is_array)
     {
         if (exec_fft_set == 1) strcpy(cset, "ISRF\n"); else strcpy(cset, "SRF\n");
-            exec_fft_set = 0;
+            exec_fft_set =  0;
     }
     else strcpy(cset, "");
 
@@ -178,9 +178,9 @@ void var_set(int id, int et, int is_array, int set_type)
     v_asgn[id] = 1;  // variavel recebeu um valor
 }
 
-// operador ++
+// operador ++ tb eh um tipo de SET
 void pplus_assign(int id)
 {
-    exp_pplus(OFST*v_type[id]+id);
+    exp_pplus(id);
     acc_ok = 0; // liberou o acc;
 }
