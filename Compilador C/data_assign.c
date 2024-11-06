@@ -9,8 +9,8 @@
 // funcao auxiliar
 // pega o tipo de variavel
 // 0 -> void (ainda nao declarada)
-// 1 -> ponto fixo
-// 2 -> ponto flutuante
+// 1 -> int
+// 2 -> float
 int get_type(int et)
 {
     int t;
@@ -73,7 +73,7 @@ void var_set(int id, int et, int is_array, int set_type)
         if (exec_fft_set == 1) strcpy(cset, "ISRF\n"); else strcpy(cset, "SRF\n");
             exec_fft_set =  0;
     }
-    else strcpy(cset, "");
+    else strcpy(cset,"");
 
     // ------------------------------------------------------------------------
     // prepara o tipo de assign -----------------------------------------------
@@ -82,9 +82,9 @@ void var_set(int id, int et, int is_array, int set_type)
     int left_type =   v_type[id];
     int righ_type = get_type(et);
 
-    // testei todas as combinacoes
+    // testa todas as combinacoes
     // assim fica redundante, mas mais imune a erro
-         if  (set_type  == 0) strcat(cset,  "SET" );
+         if  (set_type  == 0) strcat(cset,  "SET" ); // SET padrao
     else if  (set_type  == 1)
     {
          if (prtype == 0)
@@ -95,7 +95,7 @@ void var_set(int id, int et, int is_array, int set_type)
             }
          }
 
-         strcat(cset, "PSETS");
+         strcat(cset, "PSETS"); // SET se for positivo, zero caso contrario
     }
     else if  (set_type  == 2)
     {
@@ -104,7 +104,7 @@ void var_set(int id, int et, int is_array, int set_type)
             fprintf (stderr, "Erro na linha %d: essa atribuição não faz sentido aqui! Você entendeu o propósito dela?\n", line_num+1);
          }
 
-         strcat(cset, "NORMS");
+         strcat(cset, "NORMS"); // seta dividindo pela constante NUGAIN
     }
     else if  (set_type  == 3)
     {
@@ -117,7 +117,7 @@ void var_set(int id, int et, int is_array, int set_type)
             }
          }
 
-         strcat(cset, "ABSS" );
+         strcat(cset, "ABSS" ); // seta o valor absoluto
     }
     else if  (set_type  == 4)
     {
@@ -130,7 +130,7 @@ void var_set(int id, int et, int is_array, int set_type)
             }
          }
 
-         strcat(cset, "NEGS" );
+         strcat(cset, "NEGS" ); // seta com o negativo da variavel
     }
 
     // ------------------------------------------------------------------------
@@ -182,5 +182,20 @@ void var_set(int id, int et, int is_array, int set_type)
 void pplus_assign(int id)
 {
     exp_pplus(id);
+    acc_ok = 0; // liberou o acc;
+}
+
+// operador ++ pra array 1D sozinho
+void aplus_assign(int id, int et)
+{
+    array_pplus(id,et);
+    acc_ok = 0; // liberou o acc;
+}
+
+
+// operador ++ pra array 2D sozinho
+void aplu2_assign(int id, int et1, int et2)
+{
+    array_2plus(id,et1,et2);
     acc_ok = 0; // liberou o acc;
 }

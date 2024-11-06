@@ -10,11 +10,13 @@ int negacao(int et)
 {
     // se for uma constante, soh coloca um sinal de - na frente
     if (v_isco[et % OFST])
-        load_check(et,1);
+        load_check(et,1); // o segundo parametro faz a necagao
+    // se eh uma variavel, da LOAD normal e depois um NEG
     else
     {
         load_check(et,0);
 
+        // se for float em ponto fixo, usa uma macro pra trocar o bit de sinal
         if ((prtype == 0) && (et >= 2*OFST))
         {
             if (using_macro == 0)
@@ -62,8 +64,8 @@ int fmem(int et)
 // caso precise, swapa a posicao dos operandos pra chamar as instrucoes na ordem certa
 // et1 -> reducao exp pro primeiro operando
 // et2 -> reducao exp pro segundo  operando
-// iop -> instrucao se ponto fixo
-// fop -> instrucao se ponto flutuante
+// iop -> string da instrucao se ponto fixo
+// fop -> string da instrucao se ponto flutuante
 // op  -> retorna se a operacao feita foi em ponto flutuante pro proc em ponto fixo
 // existem muitas possibilidades de combinacao, cada uma vai gerar um codigo diferente
 int operacoes(int et1, int et2, char *iop, char *fop, int *op)
@@ -285,10 +287,14 @@ int operacoes(int et1, int et2, char *iop, char *fop, int *op)
         }
     }
 
+    // nao tem que fazer acc_ok = 1?
+
     return ((et1 >= 2*OFST) || (et2 >= 2*OFST)) ? 2*OFST : OFST; // retorna o tipo de dados em id extendido (pra exp)
 }
 
-// checa se uma operacao com inteiro pode ser executada
+// operacoes que resultam em inteiro devem ser feitas por aqui
+// ex: deslocamento de bits, inversao de bits, etc
+// fok diz se tal operacao foi implementada no proc em ponto flutuante
 int int_oper(int et1, int et2, char *op, char *code, int fok)
 {
     if ((prtype == 1) && (fok == 0))
@@ -298,6 +304,7 @@ int int_oper(int et1, int et2, char *op, char *code, int fok)
         fprintf(stderr, "Erro na linha %d: uso incorreto de %s. Tem que passar tipo int.\n", line_num+1, op);
 
     // tem que botar et2 = 0, caso a funcao seja de um unico operador
+    // ex: inversao de bit
     if (et2 == 0)
     {
         load_check(et1,0);
@@ -313,6 +320,7 @@ int int_oper(int et1, int et2, char *op, char *code, int fok)
     return OFST; // retorna o id extendido de int
 }
 
+// operacoes de comparacao devem sr feitas por aqui
 int oper_cmp(int et1, int et2, int op)
 {
     switch (op)
@@ -337,6 +345,7 @@ int oper_cmp(int et1, int et2, int op)
     return OFST;
 }
 
+// operacoes aritmeticas devem ser feitas por aqui
 int oper_ari(int et1, int et2, int op)
 {
     int r, ret;

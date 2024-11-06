@@ -14,10 +14,10 @@ void declar_var(int id)
         return;
     }
 
-    v_type[id] = type_tmp;        // o tipo da variavel esta em type_tmp (ver no flex quando acha a var)
+    v_type[id] = type_tmp;        // o tipo da variavel esta em type_tmp (ver no flex quando acha int ou float)
     v_used[id] = 0;               // acabou de ser declarada, entao ainda nao foi usada (lado direito do =)
     v_asgn[id] = 0;               // acabou de ser declarada, entao ainda nao tem valor (lado esquerd do =)
-    v_fnid[id] = find_var(fname); // diz em que funcao ela esta
+    v_fnid[id] = find_var(fname); // guarda em que funcao ela esta
 }
 
 // declara array 1D

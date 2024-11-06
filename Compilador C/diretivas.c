@@ -11,7 +11,7 @@ void exec_diretivas(char *dir, int id, int t)
 
     int ival = atoi(v_name[id]);
 
-    // acao a tomar
+    // acao a tomar dependendo da diretiva
     switch(t)
     {
         case 1: prtype = ival; break;
@@ -55,6 +55,10 @@ void end_macro()
         using_macro  = 0;
 }
 
+// gera instrucao ITRAD
+// ainda tenho q checar os lugares q nao podem ter isso
+// ex: dentro de loop, dentro de switch case, pensar ...
+// talvez um warning ja sirva
 void use_inter()
 {
     if (using_macro == 0) fprintf(f_asm, "ITRAD\n");

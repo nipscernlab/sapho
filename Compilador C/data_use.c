@@ -18,7 +18,7 @@ void prepar_oper(char *num, int id, int et, int neg)
     // se for uma constante do tipo float e o proc eh ponto fixo
     if ((v_isco[id] == 1) && (et >= 2*OFST) && (prtype == 0))
     {
-        // tem que printar o numero inteiro coorespondente
+        // tem que printar o numero inteiro coorrespondente
         itoa(f2mf(nf), num, 10);
         // acrescenta um comentario pra saber qual eh o numero em ponto flutuante
         strcat(num, " // ");
@@ -30,17 +30,17 @@ void prepar_oper(char *num, int id, int et, int neg)
 
 // carrega uma variavel no acc caso ela ja nao esteja
 // et eh um indice que diz se a variavel eh
-// void (menor que OFST), int (de OFST a 2*OFTS) ou float (acima de 2*OFST)
-// se et for OFST ou 2*OFST, eh um int ou um float ja carregado no acc respect.
+// nao declarada (menor que OFST), int (de OFST a 2*OFTS) ou float (acima de 2*OFST)
+// se et for OFST ou 2*OFST, eh um int ou um float ja carregado no acc respectivamente
 // ai nao precisa gerar a intrucao LOAD
-// flag (0,1) -> (normal, negacao)
+// neg (0,1) -> (normal,negacao)
 void load_check(int et, int neg)
 {
     int id = et % OFST;  // o id eh recuperado pegando o resto da divisao
 
     if (id == 0) return; // se for uma reducao exp, nao carrega nada, ja ta no acc
                          // nao tem id = 0 na tabela? isso pode dar M
-                         // criei uma variavel NULL (com LOAD NULL) para ocupar a primeira posicao
+                         // R: criei uma variavel NULL (com LOAD NULL) para ocupar a primeira posicao
 
     // prepara o tipo de acesso, caso seja array
     char srf[10];
@@ -57,11 +57,11 @@ void load_check(int et, int neg)
     {
         if (using_macro == 0) fprintf(f_asm, "PUSH\n%s\nLOAD %s\n" , srf, v_name[id]);
     }
-    else // se nao eh array, ve se ja foi carregado, se nao, carrega
+    else // se nao eh array, carrega a variavel
     {
         char num[64]; prepar_oper(num, id, et, neg);
 
-        // se o acc nao tem nenhum resultado, ai carrega
+        // se o acc nao tem nenhum resultado, carrega normalmente
         if (acc_ok == 0)
         {
             if (using_macro == 0) fprintf(f_asm, "LOAD %s\n" , num);
@@ -72,10 +72,10 @@ void load_check(int et, int neg)
         }
     }
 
-    acc_ok = 1;  // diz que o acc tem um valor carregado
+    acc_ok = 1;  // diz que o acc agora tem um valor carregado
 }
 
-// checagem de um array antes de usar
+// prepara o indice do array e carrega ele no acc
 // tb eh usada na atribuicao
 // flag diz se eh array invertido no uso (1) ou no set (2)
 void array_1d_check(int id, int et, int flag)
@@ -88,9 +88,9 @@ void array_1d_check(int id, int et, int flag)
     if (v_isar[id] == 2)
         fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n", line_num+1, rem_fname(v_name[id], fname));
 
-    // pega se eh array invertido
-    if (flag == 1) exec_fft_use = 1;
-    if (flag == 2) exec_fft_set = 1;
+    // seta se eh array invertido
+    if (flag == 1) exec_fft_use = 1; // array invertido no uso (depois do =)
+    if (flag == 2) exec_fft_set = 1; // array invertido no set (antes  do =)
 
     // da load no argumento do array
     load_check(et,0);
@@ -110,7 +110,7 @@ void array_1d_check(int id, int et, int flag)
     }
 }
 
-// checagem de um array 2d antes de usar
+// prepara o indice do array 2D e carrega ele no acc
 // tb eh usada na atribuicao
 // tem muito codigo que repete aqui e no array_1d_check
 // tentar otimizar
@@ -166,7 +166,7 @@ void array_2d_check(int id, int et1, int et2)
 }
 
 // reducao de INUM ou FNUM para exp
-// nao da load, soh atualiza as variaveis
+// nao da load, soh atualiza estados das variaveis
 int num2exp(int id, int dtype)
 {
     v_used[id] = 1;
@@ -178,7 +178,7 @@ int num2exp(int id, int dtype)
 }
 
 // reducao de ID pra exp
-// ainda nao da load
+// ainda nao da load, soh checa e atualiza estados da variavel
 int id2exp(int id)
 {
     // Testa se a variavel ja foi declarada
@@ -209,21 +209,21 @@ int array1d2exp(int id, int et, int fft)
     if (v_asgn[id] == 0)
         fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
-    // array check eh usado tanto no load quanto no assign
+    // prepara o indice e coloca ele no acc
     array_1d_check(id,et,fft);
 
     v_used[id] = 1;
 
     // array ja eh uma operacao entre ID e exp dando outro exp
     // nao eh soh pegar um token terminal na memoria
-    // entao tem q executar
+    // entao tem q executar o LOAD
     load_check(v_type[id]*OFST+id,0); // ver comentario em load_check
                                       // segundo parametro: array eh definido como variavel sem sinal
 
     return v_type[id]*OFST;           // array ja eh executado e gera id extendido de reducao exp
 }
 
-// da pra juntar com o de cima?
+// da pra juntar com o de cima
 // soh uma linha eh diferente
 int array2d2exp(int id, int et1, int et2)
 {
@@ -235,7 +235,7 @@ int array2d2exp(int id, int et1, int et2)
     if (v_asgn[id] == 0)
         fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
-    // array check eh usado tanto no load quanto no assign
+    // prepara o indice e coloca ele no acc
     array_2d_check(id,et1,et2);
 
     v_used[id] = 1;
@@ -270,7 +270,63 @@ int exp_pplus(int id)
     // por ultimo, atribui de volta pra id
     var_set(id, ret, v_isar[id], 0);
 
-    acc_ok = 1; //nao pode liberar o acc (isso acontece dentro do var_set);
+    acc_ok = 1; //nao pode liberar o acc, pois eh um exp
+
+    return ret;
+}
+
+// reducao de ++ pra exp em array 1D
+int array_pplus(int id, int ete)
+{
+    // equivalente a pegar o x na expressao (x+1)
+    int et = array1d2exp(id,ete,0);
+
+    // agora transforma o 1 em um exp
+    // primeiro faz o lexer do 1
+    if (find_var("1") == -1) add_var("1");
+    int lval = find_var("1");
+    // pega se deve vir de INUM ou FNUM
+    int type = get_type(et);
+    // depois o parser
+    int et1 = num2exp(lval,type);
+
+    // depois faz operacao de soma
+    int ret = oper_ari(et,et1,2);
+
+    // faz o load no indice do array novamente
+    array_1d_check(id, ete, 0);
+    // por ultimo, atribui de volta pra id
+    var_set(id, ret, v_isar[id], 0);
+
+    acc_ok = 1; //nao pode liberar o acc, pois eh um exp
+
+    return ret;
+}
+
+// reducao de ++ pra exp em array 2D
+int array_2plus(int id, int et1, int et2)
+{
+    // equivalente a pegar o x na expressao (x+1)
+    int et = array2d2exp(id,et1,et2);
+
+    // agora transforma o 1 em um exp
+    // primeiro faz o lexer do 1
+    if (find_var("1") == -1) add_var("1");
+    int lval = find_var("1");
+    // pega se deve vir de INUM ou FNUM
+    int type = get_type(et);
+    // depois o parser
+    int etx = num2exp(lval,type);
+
+    // depois faz operacao de soma
+    int ret = oper_ari(et,etx,2);
+
+    // faz o load no indice do array novamente
+    array_2d_check(id, et1, et2);
+    // por ultimo, atribui de volta pra id
+    var_set(id, ret, v_isar[id], 0);
+
+    acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
     return ret;
 }

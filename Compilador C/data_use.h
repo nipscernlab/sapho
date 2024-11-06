@@ -21,6 +21,8 @@ int        id2exp(int id);
 int   array1d2exp(int id, int et , int fft);
 int   array2d2exp(int id, int et1, int et2);
 int     exp_pplus(int et);
+int   array_pplus(int id, int et);
+int   array_2plus(int id, int et1, int et2);
 
 // variaeis de estado
 int acc_ok;       // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)

@@ -89,6 +89,7 @@ void exec_out1(int et)
 }
 
 // segundo parametro da funcao out(a,b)
+// o valor de saida
 void exec_out2(int et)
 {
     load_check(et,0);
@@ -106,11 +107,13 @@ void exec_out2(int et)
     acc_ok = 0; // libera acc
 }
 
+// executa a instrucao SIGN
 int exec_sign(int et1, int et2)
 {
     if (prtype == 0)
     {
-        // nao pode ser float
+        // nao vou converter pra float em ponto fixo
+        // soh se um dia alguem precisar
         if ((get_type(et1) != 1) || (get_type(et2) != 1))
         {
             fprintf (stderr, "Erro na linha %d: parâmetros da função sign(.,.) devem ser inteiros!\n", line_num+1);
@@ -122,6 +125,7 @@ int exec_sign(int et1, int et2)
     return operacoes(et1,et2,"SIGN","",&aux); // nao vou usar pf em software pro sign
 }
 
+// executa instrucao NORM
 int exec_norm(int et)
 {
     if ((prtype == 1) || (get_type(et) != 1))
