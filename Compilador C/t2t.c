@@ -82,17 +82,18 @@ void float_begin(FILE *f_asm)
 {
     char a;
 
-    fprintf(f_asm, "// ---------- Inicializacao da emulacao do ponto flutuante em software ----------\n\n");
-    fprintf(f_asm, "LOAD NULL\n");
-    fprintf(f_asm, "LOAD %d\nSET nbmant\n", nbmant);
-    fprintf(f_asm, "LOAD %d\nSET nbexp\n", nbexpo);
-    fprintf(f_asm, "LOAD %d // 0.0\nSET float_zero\n", 1 << (nbmant+nbexpo-1));
+    fprintf(f_asm, "// Inicializacao da emulacao do ponto flutuante em software -------------------\n\n");
+    fprintf(f_asm, "LOAD NULL              // evita problema da primeira instrucao com o reset ascincrono\n");
+    fprintf(f_asm, "\nLOAD %d\nSET  nbmant            // guarda num de bits da mantissa\n", nbmant);
+    fprintf(f_asm, "\nLOAD %d\nSET  nbexp             // guarda num de bits do expoente\n\n" , nbexpo);
+    fprintf(f_asm, "LOAD %d           // 0.0\nSET  float_zero", 1 << (nbmant+nbexpo-1));
+    fprintf(f_asm, "        // guarda o num zero\n\n");
 
-        f_float =     fopen  ("float_init.asm", "r"); // testar se arquivo existe
+        f_float =     fopen  ("float_init.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_init.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {          a = fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 
-	fprintf(f_asm, "\n// ---------- Codigo assembly original ----------\n\n");
+	fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
 	fclose (f_float);
 }
 

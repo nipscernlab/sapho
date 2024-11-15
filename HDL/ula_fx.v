@@ -192,7 +192,7 @@ module my_lin
 	output [NUBITS-1:0] out 
 );
 
-assign out = {{NUBITS-1{1'b0}}, !in[0]};
+assign out = {{NUBITS-1{1'b0}}, !in[0]}; // nao eh isso em C
 
 endmodule
 

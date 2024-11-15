@@ -17,10 +17,10 @@ LINHA          \n
 
 %%
 
-"#array"  eval_direct( 3); // array normal
-"#arrays" eval_direct(16); // array com arquivo de inicializacao
+"#array"  eval_direct( 3);  // array normal
+"#arrays" eval_direct(16);  // array com arquivo de inicializacao
 
-"#PRNAME" eval_direct( 5);
+"#PRNAME" eval_direct( 5);  // diretivas
 "#NUBITS" eval_direct( 6);
 "#NBMANT" eval_direct( 7);
 "#NBEXPO" eval_direct( 8);
@@ -33,7 +33,7 @@ LINHA          \n
 "#NUGAIN" eval_direct(15);
 "#FFTSIZ" eval_direct(19);
 
-"LOAD"    eval_opcode( 0,1);
+"LOAD"    eval_opcode( 0,1); // todas as instrucoes
 "PLD"     eval_opcode( 1,1);
 "SET"     eval_opcode( 2,1);
 "SETP"    eval_opcode( 3,1);

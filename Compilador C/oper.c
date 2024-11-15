@@ -3,6 +3,7 @@
 #include "t2t.h"
 #include "diretivas.h"
 #include "data_use.h"
+#include "data_assign.h"
 #include <string.h>
 
 // gera instrucao pra negar a utlima reducao exp
@@ -21,9 +22,10 @@ int negacao(int et)
         {
             if (using_macro == 0)
             {
-                fprintf(f_asm, " // negacao em ponto flutuante\n");
-                fprintf(f_asm, "PLD 1\nPLD float_nbits\nSSHL\nSADD\n");
-                fprintf(f_asm, " // fim da negacao\n");
+                fprintf(f_asm, "\nPLD float_nbits");
+                fprintf(f_asm, "             // negacao em ponto flutuante\n");
+                fprintf(f_asm, "SHL 1\nSADD");
+                fprintf(f_asm, "                        // fim da negacao\n\n");
             }
         }
         else
@@ -287,7 +289,7 @@ int operacoes(int et1, int et2, char *iop, char *fop, int *op)
         }
     }
 
-    // nao tem que fazer acc_ok = 1?
+    acc_ok = 1;
 
     return ((et1 >= 2*OFST) || (et2 >= 2*OFST)) ? 2*OFST : OFST; // retorna o tipo de dados em id extendido (pra exp)
 }
@@ -300,8 +302,13 @@ int int_oper(int et1, int et2, char *op, char *code, int fok)
     if ((prtype == 1) && (fok == 0))
         fprintf(stderr, "Erro na linha %d: processador em ponto flutuante não aceita %s. Você entendeu direito o que isso faz?\n", line_num+1, op);
 
-    if ((prtype == 0) && ((et1 >= 2*OFST) || (et2 >= 2*OFST)))
+    if ((prtype == 0) && ((get_type(et1) > 1) || (get_type(et2) > 1)))
         fprintf(stderr, "Erro na linha %d: uso incorreto de %s. Tem que passar tipo int.\n", line_num+1, op);
+
+    // testes com numeros complexos -------------------------------------------
+    if ((get_type(et1) > 2) || (get_type(et2) > 2))
+        fprintf(stderr, "Erro na linha %d: como você quer fazer essa operação com número complexo? Viajou?\n", line_num+1);
+    // fim do teste -----------------------------------------------------------
 
     // tem que botar et2 = 0, caso a funcao seja de um unico operador
     // ex: inversao de bit
@@ -348,7 +355,11 @@ int oper_cmp(int et1, int et2, int op)
 // operacoes aritmeticas devem ser feitas por aqui
 int oper_ari(int et1, int et2, int op)
 {
-    int r, ret;
+    // teste com numeros complexos --------------------------------------------
+    if ((get_type(et1) > 2) || (get_type(et2) > 2)) return oper_ari_cmp(et1,et2,op);
+    // fim do teste -----------------------------------------------------------
+
+    int r,ret;
 
     switch (op)
     {
@@ -361,4 +372,110 @@ int oper_ari(int et1, int et2, int op)
     }
 
     return ret;
+}
+
+// operacoes aritmeticas com numeros complexos
+// sao 33 combinacoes !!!
+int oper_ari_cmp(int et1, int et2, int op)
+{
+    int l_type = get_type(et1);
+    int r_type = get_type(et2);
+
+    int et1_r, et1_i;
+    int et2_r, et2_i;
+
+    // left int var com right comp var ----------------------------------------
+
+    if ((l_type == 1) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST != 0))
+    {
+        get_cmp_ets(et2  ,&et2_r,&et2_i);
+           oper_ari(et1  , et2_r, op   );
+         load_check(et2_i,            0);
+    }
+
+    // left comp const com right comp const -----------------------------------
+
+    if ((l_type == 5) && (r_type == 5))
+    {
+        split_cmp_const(et1  ,&et1_r,&et1_i);
+        split_cmp_const(et2  ,&et2_r,&et2_i);
+               oper_ari(et1_r, et2_r, op   );
+               oper_ari(et1_i, et2_i, op   );
+    }
+
+    // left comp const com right comp var -------------------------------------
+
+    if ((l_type == 5) && (r_type == 3) && (et2 % OFST != 0))
+    {
+        split_cmp_const(et1  ,&et1_r,&et1_i);
+          get_cmp_ets  (et2  ,&et2_r,&et2_i);
+               oper_ari(et1_r, et2_r, op   );
+               oper_ari(et1_i, et2_i, op   );
+    }
+
+    // left comp var com right comp const -------------------------------------
+
+    if ((l_type == 3) && (r_type == 5) && (et1 % OFST != 0))
+    {
+          get_cmp_ets  (et1  ,&et1_r,&et1_i);
+        split_cmp_const(et2  ,&et2_r,&et2_i);
+               oper_ari(et1_r, et2_r, op   );
+               oper_ari(et1_i, et2_i, op   );
+    }
+
+    // left comp acc com right comp const -------------------------------------
+
+    if ((l_type == 3) && (r_type == 5) && (et1 % OFST == 0))
+    {
+        et1_r = 2*OFST;
+        et1_i = 2*OFST;
+        split_cmp_const(et2,&et2_r,&et2_i);
+        oper_ari(et1_i, et2_i, op );
+        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        oper_ari(et1_r, et2_r, op );
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n");
+    }
+
+    // left comp const com right comp acc -------------------------------------
+
+    if ((l_type == 5) && (r_type == 3) && (et2 % OFST == 0))
+    {
+        split_cmp_const(et1,&et1_r,&et1_i);
+        et2_r = 2*OFST;
+        et2_i = 2*OFST;
+        oper_ari(et1_i, et2_i, op );
+        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        oper_ari(et1_r, et2_r, op );
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n");
+    }
+
+    // left comp acc com right comp var ---------------------------------------
+
+    if ((l_type == 3) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST != 0))
+    {
+        et1_r = 2*OFST;
+        et1_i = 2*OFST;
+        get_cmp_ets(et2,&et2_r,&et2_i);
+        oper_ari(et1_i, et2_i, op );
+        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        oper_ari(et1_r, et2_r, op );
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n");
+    }
+
+    // left comp acc com right comp acc ---------------------------------------
+
+    if ((l_type == 3) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        et1_r = 2*OFST;
+        et1_i = 2*OFST;
+        et2_r = 2*OFST;
+        et2_i = 2*OFST;
+        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmpi\nSET aux_cmpr\nLOAD aux_cmpi\n");
+        oper_ari(et1_i, et2_i, op );
+        if (using_macro == 0) fprintf(f_asm, "SET aux_cmpi\nLOAD aux_cmpr\n");
+        oper_ari(et1_r, et2_r, op );
+        if (using_macro == 0) fprintf(f_asm,  "PLD aux_cmpi\n");
+    }
+
+    return OFST*3;
 }

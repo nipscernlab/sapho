@@ -10,11 +10,10 @@
 
 #define NBITS_OPC 6 // tem que mudar em verilog de acordo (em proc_fx.v e proc_fl.v)
 
-FILE *f_data, *f_instr;
+FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 
 int state = 0;     // estado do compilador
 int c_op;          // guarda opcode atual
-int pp;            // flag do pre-processador
 int nbopr;         // num de bits de operando
 int tam_var;       // auxilia no preenchimento de array em memoria
 
@@ -24,7 +23,7 @@ void eval_init(int prep)
 
     var_reset();   // reseta a contagem de simbolos
 
-    if (pp) // pp soh conta, nao faz os arquivos ainda
+    if (pp)        // pp soh conta, nao faz os arquivos ainda
     {
         n_ins = 0;
         n_dat = 0;
@@ -33,7 +32,12 @@ void eval_init(int prep)
     {
         isrf  = 0; // ainda nao usou fft
 
+        // num de bits de endereco para o operando (depois do mnemonico)
+        // depende de quem eh maior, mem de dado ou de instr
+        // esse valor foi achado na fase de pp
         nbopr   = (n_ins > n_dat+ndstac) ? ceil(log2(n_ins)) : ceil(log2(n_dat+ndstac));
+
+        // abre os arquivos .mif
         f_data  = fopen(get_dname(), "w");
         f_instr = fopen(get_iname(), "w");
     }
@@ -41,17 +45,24 @@ void eval_init(int prep)
 
 void add_instr(int opc, int opr)
 {
+    // se for fase de pp, soh conta o num de instrucoes
     if ( pp) n_ins++;
+
+    // se nao, escreve a instrucao no .mif em binario
     if (!pp) fprintf(f_instr, "%s%s\n", itob(opc,NBITS_OPC), itob(opr,nbopr));
 }
 
 void add_data(int val)
 {
-    if (pp)
-        n_dat++;
-    else
+    // se for pp, soh conta a quantidade de dados
+    if ( pp) n_dat++;
+
+    // se nao, escreve o valor no .mif
+    if (!pp)
     {
+        // pega o tamanho da palavra de dado
         int s = (float_point) ? nbmant + nbexpo + 1 : nbits;
+        // escreve o dado em binario no .mif
         fprintf(f_data, "%s\n", itob(val,s));
     }
 }
@@ -155,9 +166,9 @@ void eval_opcode(int op, int next_state)
     c_op  = op;
     state = next_state;
 
-    if (state == 0) // nao tem operando, ja pode escrever a instrucao
+    if (state == 0)                   // nao tem operando, ja pode escrever a instrucao
     {
-        if (op == 55) // se for interrupcao, pegar o endereco atual durante o pp
+        if (op == 55)                 // se for interrupcao, pegar o endereco atual durante o pp
         {
             if (pp) itr_addr = n_ins; // endereco da interrupcao
             add_instr(op, itr_addr);

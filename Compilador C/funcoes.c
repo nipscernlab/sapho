@@ -14,7 +14,8 @@
 
 void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
 {
-    // testa se eh a funcao main e atualiza o status dela
+    // se ainda nao for a funcao main, entao tem que dar um call pra ela antes
+    // pois CALL main deve ser a primeira instrucao do processador depois do reset
     if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
     {
         if (using_macro == 0) fprintf(f_asm, "CALL main\n@fim JMP fim\n");
@@ -25,7 +26,7 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     if (using_macro == 0) fprintf(f_asm, "@%s ", v_name[id2]);
 
     strcpy(fname, v_name[id2]); // seta a variavel de estado fname para o nome da funcao a ser analisada
-    v_type[id2] = id1+5       ; // v_type vai ser funcao (void, int, float) (5, 6, 7)
+    v_type[id2] = id1+6       ; // v_type vai ser funcao (void, int, float, comp) (6, 7, 8, 9)
     fun_id1     = id2         ; // seta a variavel de estado fun_id1 para o id do nome da funcao
     ret_ok      =     0       ; // seta a variavel de estado ret_ok para zero (vai comecar o parser da funcao)
 }
@@ -33,6 +34,14 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
 // pega o primeiro parametro
 void declar_firstpar(int id)
 {
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+    {
+        int idi = get_img_id(id);
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[idi]);
+    }
+    // fim do teste -----------------------------------------------------------
+
     // o primeiro parametro da funcao eh com SET (pq eh o ultimo a ser chamado)
     // os proximos (se houver) sao com SETP em outra funcao
     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
@@ -55,21 +64,34 @@ int declar_par(int type, int id)
 // vai dando SETP nos parametros, a medida que for achando eles
 void set_par(int id)
 {
-    if (using_macro == 0) fprintf(f_asm, "SETP %s\n" , v_name[id]);
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+    {
+        int idi = get_img_id(id);
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[idi]);
+    }
+    // fim do teste -----------------------------------------------------------
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n" , v_name[id]);
 }
 
 // quando acha a palavra chave return
 void declar_ret(int et)
 {
-    // ve se precisa carregar o argumento do return
-    load_check(et,0);
+    // testes com numeros complexos -------------------------------------------
+    if ((v_type[fun_id1] > 8) || (get_type(et) > 2))
+    {
+        declar_ret_cmp(et);
+        return;
+    }
+    // fim do teste -----------------------------------------------------------
 
     // checa se eh funcao mesmo, ou void por engano
-    if (v_type[fun_id1] == 5)
-        fprintf (stderr, "Erro na linha %d: retorno em função void? viajou!\n", line_num+1);
+    if (v_type[fun_id1] == 6)
+        fprintf (stderr, "Erro na linha %d: valor de retorno em função void? viajou!\n", line_num+1);
 
     // testa se esta dentro de um if/else
-    if (get_if() > 0)
+    if ((get_if() > 0) && (v_type[fun_id1] != 6))
         fprintf(stdout, "Cuidado na linha %d: usar return dentro de if/else pode dar pau, caso você esqueça em algum lugar!\n", line_num+1);
 
     // ------------------------------------------------------------------------
@@ -79,9 +101,11 @@ void declar_ret(int et)
     int left_type = v_type[fun_id1];
     int righ_type = get_type(et);
 
+    load_check(et,0);
+
     // funcao eh int mas o return eh float ------------------------------------
 
-    if ((left_type == 6) && (righ_type == 2))
+    if ((left_type == 7) && (righ_type == 2))
     {
         if (prtype == 0)
         {
@@ -96,7 +120,7 @@ void declar_ret(int et)
 
     // funcao eh float mas o return eh int -------------------------------------
 
-    if ((left_type == 7) && (righ_type == 1))
+    if ((left_type == 8) && (righ_type == 1))
     {
         fprintf(stdout, "Atenção na linha %d: convertendo int para float no retorno da função %s.\n", line_num+1, v_name[fun_id1]);
 
@@ -113,15 +137,36 @@ void declar_ret(int et)
 
     if (using_macro == 0) fprintf(f_asm, "RETURN\n");
 
-    acc_ok = 1; // acc guarda o valor de retorno da funcao
+    acc_ok = 0; // apesar de ter exp no acc, tem q liberar para comecar outra funcao
     ret_ok = 1; // apareceu a palavra chave return na funcao certinho
+}
+
+// igual o var_set_comp, mas sem array
+void declar_ret_cmp(int et)
+{
+    int left_type = v_type[fun_id1];
+    int righ_type = get_type(et);
+
+    int et_r, et_i;
+
+    // funcao eh comp e retorno eh comp const ---------------------------------
+
+    if ((left_type == 9) && (righ_type == 5))
+    {
+        split_cmp_const(et,&et_r,&et_i);
+
+        v_type[fun_id1] = 2;
+        declar_ret(et_r);
+        declar_ret(et_i);
+        v_type[fun_id1] = left_type;
+    }
 }
 
 // fim do parser da declaracao de uma funcao
 void func_ret(int id) // id -> id da funcao atual
 {
     // checa se a funcao teve a instrucao return x;
-    if ((v_type[id] != 5) && (ret_ok == 0))
+    if ((v_type[id] != 6) && (ret_ok == 0))
         fprintf (stderr, "Erro na função %s: cadê o retorno pra essa função?\n", v_name[id]);
 
     if (strcmp(v_name[id], "main") == 0) // se eh funcao main ...
@@ -133,13 +178,23 @@ void func_ret(int id) // id -> id da funcao atual
         else if (using_macro == 0) fprintf(f_asm, "RETURN\n"); // tem subrotinas
 
         v_used[id] = 1; // funcao main foi usada
-            mainok = 1; // funcao main foi parseada
+        mainok     = 1; // funcao main foi parseada
     }
-    else if (v_type[id] == 5) {if (using_macro == 0) fprintf(f_asm, "RETURN\n");} // se eh tipo void, ainda precisa gerar um RETURN
+    else if (v_type[id] == 6) {if (using_macro == 0) fprintf(f_asm, "RETURN\n");} // se eh tipo void, ainda precisa gerar um RETURN
 
     // variavel de ambiente fname fica vazia (saiu de uma funcao)
     strcpy(fname, "");
 }
+
+void void_ret()
+{
+    // checa se eh void mesmo, ou funcao por engano
+    if (v_type[fun_id1] != 6)
+        fprintf (stderr, "Erro na linha %d: cadê o valor de retorno da função?\n", line_num+1);
+    // testar se eh void
+    if (using_macro == 0) fprintf(f_asm, "RETURN\n");
+}
+
 
 // ----------------------------------------------------------------------------
 // utilizacao -----------------------------------------------------------------
@@ -150,22 +205,75 @@ void func_ret(int id) // id -> id da funcao atual
 // p_test consegue guardar a posicao e tipo de todos os parametros na chamada da funcao
 void par_exp(int et)
 {
-    p_test = get_type(et);
-    par_check(et);
+    p_test = 0;
+
+    if (get_type(et) < 3)
+    {
+        p_test = p_test*10 + get_type(et);
+        par_check(et);
+    }
+    // testes com numeros complexos -------------------------------------------
+    else par_exp_cmp(et);
+    // fim do teste -----------------------------------------------------------
+}
+
+void par_exp_cmp(int et)
+{
+    int eti;
+
+    p_test = p_test*10 + get_type(et);
+
+    // acc --------------------------------------------------------------------
+
+    if (et % OFST == 0)
+    {
+        par_check(et);
+
+        eti = 3*OFST;
+        par_check(eti);
+    }
+
+    // memoria ----------------------------------------------------------------
+
+    if ((et > 3*OFST) && (et < 5*OFST))
+    {
+        par_check(et);
+
+        int id = get_img_id(et % OFST);
+        eti = 3*OFST + id;
+        par_check(eti);
+    }
+
+    // constante complexa -----------------------------------------------------
+
+    if (et > 5*OFST)
+    {
+        int et_r, et_i;
+        split_cmp_const(et,&et_r,&et_i);
+
+        par_check(et_r);
+        par_check(et_i);
+    }
 }
 
 // da LOAD nos proximos parametros
 void par_listexp(int et)
 {
-    p_test = p_test*10 + get_type(et);
-    par_check(et);
+    if (get_type(et) < 3)
+    {
+        p_test = p_test*10 + get_type(et);
+        par_check(et);
+    }
+    // testes com numeros complexos -------------------------------------------
+    else par_exp_cmp(et);
+    // fim do teste -----------------------------------------------------------
 }
 
 // executa instrucao CALL para funcoes tipo void (por isso o v de void)
 void vcall(int id)
 {
     // posso usar funcao com chamada void tb, por isso testar tudo aqui
-    if  ((v_type[id] != 5) && (v_type[id] != 6) && (v_type[id] != 7))
+    if  (v_type[id] < 6)
     {
         fprintf(stderr, "Erro na linha %d: cadê essa função %s?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
@@ -184,12 +292,12 @@ void vcall(int id)
 // executa instrucao CALL para funcoes com retorno (por isso o f de funcao)
 int fcall(int id)
 {
-    if  (v_type[id] == 5)
+    if (v_type[id] == 6)
     {
         fprintf (stderr, "Erro na linha %d: olha lá a funcao %s, você vai ver que ela nao retorna nada.\n", line_num+1, v_name[id]);
         return 0;
     }
-    else if ((v_type[id] != 6) && (v_type[id] != 7))
+    else if (v_type[id] < 6)
     {
         fprintf (stderr, "Erro na linha %d: A função %s tá onde?\n", line_num+1, rem_fname(v_name[id], fname));
         return 0;
@@ -205,7 +313,7 @@ int fcall(int id)
 
     v_used[id] = 1;             // funcao ja foi usada
 
-    return (v_type[id]-5)*OFST; // retorna o tipo de dado (void , int ou float)
+    return (v_type[id]-6)*OFST; // retorna o tipo de dado (void , int, float ou comp)
 }
 
 // calcula quantos parametros uma funcao tem

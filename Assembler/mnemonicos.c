@@ -3,6 +3,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+// ve se um mnemonico ja foi usado
+// se sim, pega o indice na tabela
+// se nao, retorna -1
 int find_mne(char *val)
 {
 	int i, ind = -1;
@@ -18,6 +21,7 @@ int find_mne(char *val)
 	return ind;
 }
 
+// addiciona um novo mnemonico na tabela
 void add_mne(char *mne)
 {
     if (find_mne(mne) != -1) return;

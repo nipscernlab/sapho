@@ -10,10 +10,9 @@
 // funcao interna para ajudar a gerar a string que vai depois do LOAD
 void prepar_oper(char *num, int id, int et, int neg)
 {
-    char nf[64] = "";
-
-    if (neg == 1) strcat(nf, "-");
-    strcat(nf,v_name[id]);
+    char nf[64] = "";               // comeca vazio
+    if (neg == 1) strcat(nf, "-");  // xuxa o sinal - se for pra negar uma constante
+    strcat(nf,v_name[id]);          // xuxa o nome da variavel/constante
 
     // se for uma constante do tipo float e o proc eh ponto fixo
     if ((v_isco[id] == 1) && (et >= 2*OFST) && (prtype == 0))
@@ -45,11 +44,8 @@ void load_check(int et, int neg)
     // prepara o tipo de acesso, caso seja array
     char srf[10];
     if ((v_isar[id] > 0) && (exec_fft_use == 1))
-    {
          strcpy(srf,"ISRF");
-         exec_fft_use = 0;
-    }
-    else strcpy(srf,"SRF");
+    else strcpy(srf,"SRF" );
 
     // se eh array, no acc ja tem o indice
     // entao coloca o indice na pilha e da LOAD
@@ -86,7 +82,7 @@ void array_1d_check(int id, int et, int flag)
 
     // tem que ver se eh array 1D mesmo
     if (v_isar[id] == 2)
-        fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n"  , line_num+1, rem_fname(v_name[id], fname));
 
     // seta se eh array invertido
     if (flag == 1) exec_fft_use = 1; // array invertido no uso (depois do =)
@@ -98,7 +94,7 @@ void array_1d_check(int id, int et, int flag)
     // testa se o indice do array eh tipo float
     // se for, converte pra inteiro, caso o proc seja ponto fixo
     // se for ponto flutuante, a conversao eh automatica no hardware
-    if (et >= 2*OFST)
+    if (get_type(et) == 2)
     {
         if (prtype == 0)
         {
@@ -108,6 +104,21 @@ void array_1d_check(int id, int et, int flag)
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
+
+    // teste com numeros complexos --------------------------------------------
+    if (v_type[id] > 2) array_1d_check_cmp(et);
+    // final do teste ---------------------------------------------------------
+}
+
+void array_1d_check_cmp(int et)
+{
+    if (get_type(et) > 2)
+        fprintf (stderr, "Erro na linha %d: usando número complexo em índice de array? tsts...\n", line_num+1);
+
+    // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
+    // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
+    if (using_macro == 0) fprintf(f_asm, "SET aux_cmp%d\n", ++a_cnt);
+    acc_ok = 0; // libera o acumulador
 }
 
 // prepara o indice do array 2D e carrega ele no acc
@@ -130,11 +141,11 @@ void array_2d_check(int id, int et1, int et2)
     // testa se o indice do primeiro argumento eh tipo float
     // se for, converte pra inteiro, caso o proc seja ponto fixo
     // se for ponto flutuante, a conversao eh automatica no hardware
-    if (et1 >= 2*OFST)
+    if (get_type(et1) == 2)
     {
         if (prtype == 0)
         {
-            fprintf(stdout, "Atenção na linha %d: primeiro índice do array não tá dando int. Vou arredondar pra baixo.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: primeiro índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
@@ -150,11 +161,11 @@ void array_2d_check(int id, int et1, int et2)
     // testa se o indice do segundo argumento eh tipo float
     // se for, converte pra inteiro, caso o proc seja ponto fixo
     // se for ponto flutuante, a conversao eh automatica no hardware
-    if (et2 >= 2*OFST)
+    if (get_type(et1) == 2)
     {
         if (prtype == 0)
         {
-            fprintf(stdout, "Atenção na linha %d: segundo índice do array não tá dando int. Vou arredondar pra baixo.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: segundo índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
@@ -163,9 +174,24 @@ void array_2d_check(int id, int et1, int et2)
 
     // soma com a conta anterior
     if (using_macro == 0) fprintf(f_asm, "SADD\n");
+
+    // teste com numeros complexos --------------------------------------------
+    if (v_type[id] > 2) array_2d_check_cmp(et1,et2);
+    // fim do teste -----------------------------------------------------------
 }
 
-// reducao de INUM ou FNUM para exp
+void array_2d_check_cmp(int et1, int et2)
+{
+    if ((get_type(et1) > 2) || (get_type(et2) > 2))
+        fprintf (stderr, "Erro na linha %d: usando número complexo em índice de array? tsts...\n", line_num+1);
+
+    // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
+    // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
+    if (using_macro == 0) fprintf(f_asm, "SET aux_cmp%d\n", ++a_cnt);
+    acc_ok = 0; // libera o acumulador
+}
+
+// reducao de constantes para exp
 // nao da load, soh atualiza estados das variaveis
 int num2exp(int id, int dtype)
 {
@@ -220,6 +246,21 @@ int array1d2exp(int id, int et, int fft)
     load_check(v_type[id]*OFST+id,0); // ver comentario em load_check
                                       // segundo parametro: array eh definido como variavel sem sinal
 
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+    {
+        int idi = get_img_id(id);
+        // pega o indice que foi armazenado em aux_cmp (no array_1d_check acima)
+        // esse decremento em a_cnt eh para array do lado direito
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp%d\n", a_cnt--);
+
+        // da load na parte imaginaria
+        load_check(v_type[id]*OFST+idi,0);
+    }
+    // fim do teste -----------------------------------------------------------
+
+    exec_fft_use = 0;                 // desativa indice invertido no uso (caso tenha sido usado)
+
     return v_type[id]*OFST;           // array ja eh executado e gera id extendido de reducao exp
 }
 
@@ -246,6 +287,19 @@ int array2d2exp(int id, int et1, int et2)
     load_check(v_type[id]*OFST+id,0); // ver comentario em load_check
                                       // segundo parametro: array eh definido como variavel sem sinal
 
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+    {
+        int idi = get_img_id(id);
+        // pega o indice que foi armazenado em aux_cmp (no array_2d_check acima)
+        // esse decremento em a_cnt eh para array do lado direito
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp%d\n", a_cnt--);
+
+        // da load na parte imaginaria
+        load_check(v_type[id]*OFST+idi,0);
+    }
+    // fim do teste -----------------------------------------------------------
+
     return v_type[id]*OFST;           // array ja eh executado e gera id extendido de reducao exp
 }
 
@@ -268,7 +322,7 @@ int exp_pplus(int id)
     int ret = oper_ari(et,et1,2);
 
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id], 0);
+    var_set(id, ret, v_isar[id],0,0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -296,7 +350,7 @@ int array_pplus(int id, int ete)
     // faz o load no indice do array novamente
     array_1d_check(id, ete, 0);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id], 0);
+    var_set(id, ret, v_isar[id],0,0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -324,7 +378,7 @@ int array_2plus(int id, int et1, int et2)
     // faz o load no indice do array novamente
     array_2d_check(id, et1, et2);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id], 0);
+    var_set(id, ret, v_isar[id],0,0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 

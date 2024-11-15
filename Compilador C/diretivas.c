@@ -1,6 +1,7 @@
 #include "diretivas.h"
 #include "variaveis.h"
 #include "t2t.h"
+#include "funcoes.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -24,10 +25,18 @@ void exec_diretivas(char *dir, int id, int t)
 
 // nao deixa o parser escrever no arquivo assembler
 // ao inves disso, copia o codigo de uma macro
-void use_macro(char *f_name)
+void use_macro(char *f_name, int global)
 {
     if (using_macro == 1)
         fprintf(stderr, "Erro na linha %d: Tá chamando uma macro dentro da outra. Você é uma pessoa confusa!\n", line_num+1);
+
+    // se for global, tem q ver se tem que chamar a funcao main ainda
+    if ((mainok == 0) && (global == 1))
+    {
+        fprintf(f_asm, "CALL main\n@fim JMP fim\n");
+
+        mainok = 2; // funcao main foi chamada no inicio
+    }
 
     // remover as aspas da sitring (trabalho da porra!)
     char file_name[512];

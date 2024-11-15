@@ -7,4 +7,6 @@ int int_oper (int  t1, int  t2, char * op, char *code, int fok); // reune expres
 int oper_cmp (int et1, int et2, int    op);                      // reune expressoes de comparacao
 int oper_ari (int et1, int et2, int    op);                      // reune expressoes aritmeticas
 
+int oper_ari_cmp(int et1, int et2, int op);
+
 #endif // OPER_H_INCLUDED

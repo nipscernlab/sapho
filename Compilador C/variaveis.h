@@ -19,7 +19,14 @@ void  check_var();
 char *rem_fname(char *var, char *fname);
 
 // usado no lexer para pegar variaveis e constantes
-int exec_id (char *text);
-int exec_num(char *text);
+int exec_id  (char *text);
+int exec_num (char *text);
+int exec_cnum(char *text);
+
+// testes com numeros complexos -----------------------------------------------
+// tive que implementar isso soh por causa da bagunca do array no assigne
+// s eeu puder mudar isso, vai melhorar bem o codigo
+int a_cnt;
+// fim do teste ---------------------------------------------------------------
 
 #endif // VARIAVEIS_H_INCLUDED

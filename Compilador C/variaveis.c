@@ -2,9 +2,12 @@
 // e suas rotinas auxiliares
 
 #include "variaveis.h"
+#include "t2t.h"
+#include "diretivas.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 int  v_count = 0; // guarda o tamanho da tabela
 
@@ -93,6 +96,36 @@ int exec_id(char *text)
 // usado quando o lexer acha uma constante int ou float
 int exec_num(char *text)
 {
+    float f = (atof(text) < 0) ? -atof(text) : atof(text); // valor absoluto do num, em float
+    float s =  pow(2,nbmant-1)*pow(2,-pow(2,nbexpo-1));    // menor valor permitido pra float = 2^(m-1)*2^(-(2^(e-1)))
+
+    // se o numero for menor do que o menor permitido pra float, printa um erro
+    if ((f < s) && (f != 0))
+        fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
+
+    if (find_var(text) == -1) add_var(text);
+    return find_var(text);
+}
+
+// usado quando o lexer acha uma constante comp
+int exec_cnum(char *text)
+{
+    // remova espacos em branco -----------------------------------------------
+
+    int i = 0, j = 0;
+    char temp[strlen(text) + 1];
+    strcpy(temp, text);
+    while (temp[i] != '\0')
+    {
+        while (temp[i] == ' ') i++;
+        text[j] = temp[i];
+        i++;
+        j++;
+    }
+    text[j] = '\0';
+
+    // adiciona na tabela -----------------------------------------------------
+
     if (find_var(text) == -1) add_var(text);
     return find_var(text);
 }

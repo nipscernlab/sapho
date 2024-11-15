@@ -1,9 +1,13 @@
 #include "t2t.h"
+#include "veri_comp.h"
+#include "eval.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
-#include "veri_comp.h"
 
+// converte o inteiro x para binario de comprimento w
+// tentar mudar para conseguir converter int maior de 32 bits
 char *itob(int x, int w)
 {
 	int z;
@@ -24,6 +28,8 @@ char *itob(int x, int w)
     return b;
 }
 
+// converte float ieee 32 bits para meu float
+// tentar mudar pra converter float de 64 bits
 int f2mf(char *va)
 {
     float f = atof(va);
@@ -32,6 +38,15 @@ int f2mf(char *va)
 
     int *ifl = &f;
 
+    // checa se o numero eh menor que o menor float permitido -----------------
+
+    float r = (f < 0) ? -f : f;                        // valor absoluto do num, em float
+    float q = pow(2,nbmant-1)*pow(2,-pow(2,nbexpo-1)); // menor valor permitido pra float = 2^(m-1)*2^(-(2^(e-1)))
+
+    // se o numero for menor do que o menor permitido pra float, printa um erro
+    if ((r < q) && (r != 0) && (pp == 1))
+        fprintf (stderr, "Erro: achei %f*10^-7, mas o menor número permitido é 2^(%d)!\n", f*10000000, (int)(nbmant-1 -pow(2,nbexpo-1)));
+
     // desempacota padrao IEEE ------------------------------------------------
 
     int s =  (*ifl >> 31) & 0x00000001;
@@ -39,6 +54,7 @@ int f2mf(char *va)
     int m = ((*ifl & 0x007FFFFF) + 0x00800000) >> 1;
 
     // sinal ------------------------------------------------------------------
+
     s = s << (nbmant + nbexpo);
 
     // expoente ---------------------------------------------------------------

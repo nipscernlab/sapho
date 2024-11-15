@@ -1,6 +1,8 @@
 #ifndef EVAL_H_INCLUDED
 #define EVAL_H_INCLUDED
 
+int pp;       // flag do pre-processador
+
 int n_ins;    // numero de instrucoes adicionadas
 int n_dat;    // numero de variaveis adicionadas
 int isrf;     // diz se achou a instrucao pra fazer FFT

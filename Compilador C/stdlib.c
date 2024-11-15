@@ -7,7 +7,7 @@
 #include "oper.h"
 
 // executa instrucao IN
-// et -> id extendido com endereco da porta
+// et -> id estendido com endereco da porta
 // tem que verificar se eh um inteiro (numero da porta)
 int exec_in(int et)
 {
@@ -22,6 +22,11 @@ int exec_in(int et)
         if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
         f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
     }
+
+    // testes com numeros complexos -------------------------------------------
+    if (get_type(et) > 2)
+        fprintf (stderr, "Erro na linha %d: Ah não, endereço de porta com número complexo já é demais!\n", line_num+1);
+    // fim do teste -----------------------------------------------------------
 
     // executa instrucao IN
     if (using_macro == 0) fprintf(f_asm, "PUSH\nIN\n");
@@ -40,15 +45,19 @@ int exec_abs(int et)
 
     if ((prtype == 0) && (get_type(et) == 2))
     {
-        fprintf(stdout, "Atenção na linha %d: essa conversão pra inteiro gasta muito recurso!\n", line_num+1);
+        if (using_macro == 0)
+        {
+            fprintf(f_asm, "\nPLD float_nbits");
+            fprintf(f_asm, "             // ABS em ponto flutuante\n" );
+            fprintf(f_asm, "SHL 1\nINV\nSAND");
+            fprintf(f_asm, "                        // fim do ABS\n\n");
+        }
 
-        if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
-        f2i = 1;
+        fgen = 1;
     }
+    else if (using_macro == 0) fprintf(f_asm, "ABS\n");
 
-    if (using_macro == 0) fprintf(f_asm, "ABS\n");
-
-    return (prtype == 0) ? OFST : 2*OFST;
+    return get_type(et)*OFST;
 }
 
 // executa instrucao PSET
@@ -65,6 +74,11 @@ int exec_pst(int et)
         if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
         f2i = 1;
     }
+
+    // testes com numeros complexos -------------------------------------------
+    if (get_type(et) > 2)
+        fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
+    // fim do teste -----------------------------------------------------------
 
     if (using_macro == 0) fprintf(f_asm, "PSET\n");
 
@@ -133,3 +147,19 @@ int exec_norm(int et)
 
     return int_oper(et,0,"norm(.)","NORM",0);
 }
+
+// codigo em C+- para calcular raiz quadrada para float
+/*double my_sqrt(float num)
+{
+    float x = num;
+    float epslon = 0.000001;
+
+    while (1)
+    {
+        float raiz = 0.5 * (x+num/x);
+        if (fabs(x - raiz) < epslon) break;
+        x = raiz;
+    }
+
+    return raiz;
+}*/

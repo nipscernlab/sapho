@@ -11,9 +11,14 @@ void yyerror(char *);
 
 %}
 
-DIGITO   [0-9]
-LETRA    [A-Za-z_]
-WS       [ \t]+
+DIGITO [0-9]
+LETRA  [A-Za-z_]
+WS     [ \t]+
+
+VARIA  {LETRA}({LETRA}|{DIGITO})*
+INNUM  {DIGITO}+
+FLNUM  (0|[1-9]+{DIGITO}*)\.?{DIGITO}*
+CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 
 %%
 
@@ -53,54 +58,60 @@ WS       [ \t]+
 ">>"                          return  SHIFTR;
 ">>>"                         return SSHIFTR;
 
-">="                          return   GREQU;
-"<="                          return   LESEQ;
-"=="                          return     EQU;
-"!="                          return     DIF;
+">="                          return GREQU;
+"<="                          return LESEQ;
+"=="                          return EQU;
+"!="                          return DIF;
 
-"&&"                          return    LAND;
-"||"                          return     LOR;
+"&&"                          return LAND;
+"||"                          return LOR;
 
-"/>"                          return    NORM;
-"=-"                          return    EQNE;
-"++"                          return   PPLUS;
+"/>"                          return NORM;
+"=-"                          return EQNE;
+"++"                          return PPLUS;
 
+"comp"   {fgen = 1; type_tmp = 3; yylval = 3; return TYPE;}
 "float"  {fgen = 1; type_tmp = 2; yylval = 2; return TYPE;}
 "int"    {          type_tmp = 1; yylval = 1; return TYPE;}
 "void"   {                        yylval = 0; return TYPE;}
 
-\"(\\.|[^\\"])*\"	       {
-                              if (find_var(yytext) == -1) add_var(yytext);
-                              yylval = find_var(yytext);
-                              return STRING;
-                           }
+{VARIA}           {
+                     yylval = exec_id(yytext);
+                     return ID;
+                  }
 
-{LETRA}({LETRA}|{DIGITO})* {
-                              yylval = exec_id(yytext);
-                              return ID;
-                           }
+{INNUM}           {
+                     yylval = exec_num(yytext);
+                     return INUM;
+                  }
 
-[0-9]+                     {
-                              yylval = exec_num(yytext);
-                              return INUM;
-                           }
+{FLNUM}           {  //[0-9]*\.?[0-9]+
+                     yylval = exec_num(yytext);
+                     fgen = 1;
+                     return FNUM;
+                  }
 
-[0-9]*\.?[0-9]+            {
+{CONUM}           {
+                     yylval = exec_cnum(yytext);
+                     fgen = 1;
+                     return CNUM;
+                  }
 
-                              yylval = exec_num(yytext);
-                              fgen = 1;
-                              return FNUM;
-                           }
+\"(\\.|[^\\"])*\" {
+                     if (find_var(yytext) == -1) add_var(yytext);
+                     yylval = find_var(yytext);
+                     return STRING;
+                  }
 
-[-+*()=$;:,\]\[{}<>~!%/&^|@?] return *yytext;
+[-+*()=$;:,\]\[{}<>~!%/&^|@?] {return *yytext;}
 
-\n                            line_num++;
+\n                   line_num++;
 
 {WS}                             ;       /* ignore whitespace   */
 "/*"((\*+[^/*])|([^*]))*\**"*/"  ;       /* comentario em bloco */
 "//"[^\n]*                       ;       /* comentario em linha */
 
-.                             {yyerror("Erro do Lexer!\n");}
+.                 {yyerror("Erro do Lexer!\n");}
 %%
 
 int yywrap(void) {return 1;}

@@ -9,6 +9,9 @@ int  v_count = 0;
 char v_name[NVARMAX][512];
 int  v_val [NVARMAX];
 
+// ve se uma variavel ja foi usado
+// se sim, pega o indice na tabela
+// se nao, retorna -1
 int find_var(char *val)
 {
 	int i, ind = -1;
@@ -22,6 +25,7 @@ int find_var(char *val)
 	return ind;
 }
 
+// addiciona uma nova variavel na tabela
 void add_var(char *var, int val)
 {
     if (v_count == NVARMAX)
@@ -30,8 +34,8 @@ void add_var(char *var, int val)
     }
     else
     {
-        strcpy(v_name[v_count], var);
-        v_val[v_count] = val;
+        strcpy(v_name [v_count], var);
+        v_val [v_count]        = val ;
         v_count++;
     }
 }

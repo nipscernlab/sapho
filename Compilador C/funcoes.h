@@ -12,9 +12,10 @@ int  p_test;  // identifica parametros na chamada de funcoes (parecido com OFST,
 void  declar_fun     (int id1, int id2); // tipo e nome
 void  declar_firstpar(int id);           // primeiro/unico parametro
 int   declar_par     (int   t, int id ); // proximo parametro
-void  set_par        (int id);           // SET no parametro
+void     set_par     (int id);           // SET no parametro
 void  declar_ret     (int et);           // achou uma palavra-chave return
-void  func_ret       (int id);           // fim/return da funcao
+void    func_ret     (int id);           // fim/return da funcao
+void    void_ret     (      );
 
 // utilizacao -----------------------------------------------------------------
 
@@ -27,5 +28,10 @@ int   fcall          (int id ); // CALL de funcao void
 
 int   get_npar       (int par); // calcula  numero de parametros
 void  par_check      (int et ); // checa se numero de parametros na declaracao eh igual na chamada
+
+// testes com numeros complexos -----------------------------------------------
+void    par_exp_cmp  (int et );
+void declar_ret_cmp  (int et );
+// fim do teste ---------------------------------------------------------------
 
 #endif // FUNCOES_H_INCLUDED

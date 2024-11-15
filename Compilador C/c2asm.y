@@ -49,7 +49,7 @@ void  yyerror(char const *s);
 %token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD        // diretivas
 %token IN OUT NRM PST ABS SIGN                                 // std lib
-%token WHILE IF ELSE SWITCH CASE DEFAULT RETURN BREAK          // saltos
+%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK     // saltos
 %token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
 %token NORM EQNE                                               // assignments especiais de dois caracteres
@@ -57,7 +57,11 @@ void  yyerror(char const *s);
 
 // tokens terminais -----------------------------------------------------------
 
-%token TYPE ID STRING INUM FNUM                                // vem do lexer com um valor associado
+%token TYPE ID STRING INUM FNUM CNUM                           // vem do lexer com um valor associado
+
+// elimina conflito if com e sem else
+%nonassoc THEN
+%nonassoc ELSE
 
 // importante para lista de parametros de uma funcao
 // o primeiro parametro eh o ultimo a ser parseado
@@ -99,12 +103,14 @@ direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
        | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5);} // numero de portas de saida
        | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
+       | USEMAC STRING {use_macro(v_name[$2],1);}
+       | ENDMAC        {end_macro(            );}
 
 // Diretivas comportamentais --------------------------------------------------
 
-use_macro : USEMAC STRING {use_macro(v_name[$2]);} // usa uma macro .asm no lugar do compilador
-end_macro : ENDMAC        {end_macro(          );} // ponto final de uso de uma macro
-use_inter : ITRADD        {use_inter(          );} // ponto de inicio da interrupcao (usado com o pino itr)
+use_macro : USEMAC STRING {use_macro(v_name[$2],0);} // usa uma macro .asm no lugar do compilador
+end_macro : ENDMAC        {end_macro(            );} // ponto final de uso de uma macro
+use_inter : ITRADD        {use_inter(            );} // ponto de inicio da interrupcao (usado com o pino itr)
 
 // Declaracao de variaveis ----------------------------------------------------
 
@@ -132,30 +138,31 @@ funcao : TYPE ID '('                      {declar_fun     ($1,$2);} // inicio da
 par_list : TYPE ID                        {$$ = declar_par($1,$2);}
          | par_list ',' par_list          {        set_par($3   );}; // vai pegando da pilha
 
+// retornos de funcao e void
+return_call : RETURN exp ';'              {declar_ret($2);}
+            | RETURN     ';'              {  void_ret(  );}
+
 // lista de statments em C ----------------------------------------------------
 
-stmt_list: stmt | stmt_list stmt
-
-stmt     : stmt_full
-         | stmt_if // fiz o if geral aqui separado. nao lembro pq. rever essa parte
+stmt_list: stmt_full | stmt_list stmt_full
 
 // todos os statements que posso escrever dentro de uma funcao
 stmt_full: '{' stmt_list '}' // bloco de statments
          |     stmt_case     // todos os tipos de stmts aceitos no case
-         |     switch_case   // switch case
-         |       wbreak      // break; dentro do while
+         |   switch_case     // switch case
+         |         break     // break; dentro do while
          |     use_inter     // ponto de interrupcao
 
-// statments que podem ser usados dentro do case
-stmt_case:     declar_full   // declaracoes de variaveis
-         |     assignment    // atribuicao de expressoes a uma variavel = $ @ />
-         |      while_stmt   // loop while
-         |     ifelse_stmt   // if com else
-         |     std_out       // std lib de output de dados
-         |       void_call   // chamada de subrotina
-         |     return_call   // retorno de funcao
-         |     use_macro     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
-         |     end_macro     // termina uma chamada de macro assembler
+// statments que podem ser usados dentro do case :
+stmt_case:   declar_full    // declaracoes de variaveis
+         |    assignment    // atribuicao de expressoes a uma variavel = $ @ />
+         |    while_stmt    // loop while
+         |  if_else_stmt    // if/else
+         |       std_out    // std lib de output de dados
+         |     void_call    // chamada de subrotina
+         |   return_call    // retorno de funcao
+         |     use_macro    // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
+         |     end_macro    // termina uma chamada de macro assembler
 
 // chamadas de funcoes --------------------------------------------------------
 
@@ -165,9 +172,6 @@ void_call   : ID '('            {fun_id2  = $1 ;} // fun_id2 -> id da funcao cha
 // funcao com retorno
 func_call   : ID '('            {fun_id2  = $1 ;}
               exp_list ')'      {$$ = fcall($1);} // da call e retorna o tipo de dado final
-
-return_call : RETURN exp ';'    {declar_ret($2);}
-            | RETURN     ';'    // ainda nao implementei return pra void
 
 // eh preciso colocar os parametros na pilha
 // pra cada exp achado, o valor resultante eh gravado na pilha com par_exp
@@ -180,105 +184,96 @@ exp_list :                                                    // pode ser vazio
 // Standard library -----------------------------------------------------------
 
 std_out  : OUT  '(' exp ','                {     exec_out1($3   );} // saida de dados
-                    exp ')' ';'            {     exec_out2($6   );}
+                    exp ')'     ';'        {     exec_out2($6   );}
 std_in   : IN   '(' exp ')'                {$$ = exec_in  ($3   );} // entrada de dados
 std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao pset(x)   -> zera se negativo
 std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
 std_sign : SIGN '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
 std_nrm  : NRM  '(' exp ')'                {$$ = exec_norm($3   );} // funcao norm(x)   -> divide x pela constante NUGAIN
 
-// if else --------------------------------------------------------------------
+// if/else --------------------------------------------------------------------
 
-// esse stmt_if eh confuso. recomendado pelo bison pra nao aparecer conflito shift/reduce
-// ex: if (exp) if (exp) stmt else stmt
+if_else_stmt : if_exp stmt_full ELSE             {else_stmt(  );} // if/else completo
+               stmt_full                         {if_fim   (  );}
+             | if_exp stmt_full     %prec THEN   {if_stmt  (  );} // if sem else
+if_exp       : IF '(' exp ')'                    {if_exp   ($3);} // inicio (JZ)
 
-stmt_if : if_exp stmt                      {if_expstmt("@L%delse ");} // um if dentro do outro sem else
-        | if_exp_stmt ELSE stmt_if         {if_expstmt("@L%dend " );} // um if dentro de um else
-        | while_if                                                    // um if dentro de um while
+// switch/case ----------------------------------------------------------------
 
-ifelse_stmt : if_exp_stmt ELSE stmt_full   {if_expstmt("@L%dend " );} // terminou um if/else completo
-if_exp_stmt : if_exp           stmt_full   {if_expfull(           );} // if (exp) {} padrao
-if_exp      : IF '(' exp ')'               {if_expp   ($3         );} // inicio (JZ)
-
-// switch case ----------------------------------------------------------------
-
-switch_case : SWITCH '(' exp ')' {exec_switch($3);}
-              '{' cases '}'      { end_switch(  );}
-
-cases       : case | default | case cases
-
-case        : CASE INUM ':' {  case_test($2,1);} case_list
-            | CASE FNUM ':' {  case_test($2,2);} case_list
-default     : DEFAULT   ':' {defaut_test(    );} case_list
+switch_case : SWITCH '(' exp ')'  {exec_switch($3);}
+              '{' cases '}'       { end_switch(  );}
 
 case_list   :           stmt_case
             | case_list stmt_case
-            | case_list BREAK ';' {switch_break();}
+            | case_list BREAK ';' {switch_break();} // case tem seu proprio break (diferente do while e for)
+
+case        : CASE INUM ':'       {  case_test($2,1);} case_list
+            | CASE FNUM ':'       {  case_test($2,2);} case_list
+default     : DEFAULT   ':'       {defaut_test(    );} case_list
+
+cases       : case | default | case cases
 
 // while ----------------------------------------------------------------------
 
-while_stmt : while_exp stmt_full           {while_stmt();}
-while_if   : while_exp stmt_if             {while_stmt();}
-
+while_stmt : while_exp stmt_full           {while_stmt  (  );}
 while_exp  : WHILE                         {while_expp  (  );}
-          '(' exp ')'                      {while_expexp($4);}
-
-wbreak     : BREAK ';'                     {exec_break();}
+            '(' exp ')'                    {while_expexp($4);}
+break      : BREAK ';'                     {exec_break  (  );}
 
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0);} // SET
-            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4,0,1);} // PSETS (PSET + SET)
-            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4,0,2);} // NORMS (NORM + SET)
-            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4,0,3);} // ABSS  (ABS  + SET)
-            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4,0,4);} // NEGS  (NEG  + SET)
+            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0,0);} // SET
+            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4,0,1,0);} // PSETS (PSET + SET)
+            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4,0,2,0);} // NORMS (NORM + SET)
+            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4,0,3,0);} // ABSS  (ABS  + SET)
+            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4,0,4,0);} // NEGS  (NEG  + SET)
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '='    exp ';'               {var_set($1,$3,0,0);} // SET
-           | ID  '@'    exp ';'               {var_set($1,$3,0,1);} // PSETS (PSET + SET)
-           | ID NORM    exp ';'               {var_set($1,$3,0,2);} // NORMS (NORM + SET)
-           | ID  '$'    exp ';'               {var_set($1,$3,0,3);} // ABSS  (ABS  + SET)
-           | ID EQNE    exp ';'               {var_set($1,$3,0,4);} // NEGS  (NEG  + SET)
+assignment : ID  '='    exp ';'               {var_set($1,$3,0,0,0);} // SET
+           | ID  '@'    exp ';'               {var_set($1,$3,0,1,0);} // PSETS (PSET + SET)
+           | ID NORM    exp ';'               {var_set($1,$3,0,2,0);} // NORMS (NORM + SET)
+           | ID  '$'    exp ';'               {var_set($1,$3,0,3,0);} // ABSS  (ABS  + SET)
+           | ID EQNE    exp ';'               {var_set($1,$3,0,4,0);} // NEGS  (NEG  + SET)
            // incremento
            | ID                          PPLUS ';' {pplus_assign($1      );}
            | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
            | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
            // array normal
-           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0  );} // baguncou o array essa separacao
-                     exp ';'                  {var_set       ($1,$7,1,0);} // tentar juntar
-           | ID  '[' exp ']'  '@'             {array_1d_check($1,$3,0  );}
-                     exp ';'                  {var_set       ($1,$7,1,1);}
-           | ID  '[' exp ']' NORM             {array_1d_check($1,$3,0  );}
-                     exp ';'                  {var_set       ($1,$7,1,2);}
-           | ID  '[' exp ']'  '$'             {array_1d_check($1,$3,0  );}
-                     exp ';'                  {var_set       ($1,$7,1,3);}
-           | ID  '[' exp ']' EQNE             {array_1d_check($1,$3,0  );}
-                     exp ';'                  {var_set       ($1,$7,1,4);}
+           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0    );}
+                     exp ';'                  {var_set       ($1,$7,1,0,0);}
+           | ID  '[' exp ']'  '@'             {array_1d_check($1,$3,0    );}
+                     exp ';'                  {var_set       ($1,$7,1,1,0);}
+           | ID  '[' exp ']' NORM             {array_1d_check($1,$3,0    );}
+                     exp ';'                  {var_set       ($1,$7,1,2,0);}
+           | ID  '[' exp ']'  '$'             {array_1d_check($1,$3,0    );}
+                     exp ';'                  {var_set       ($1,$7,1,3,0);}
+           | ID  '[' exp ']' EQNE             {array_1d_check($1,$3,0    );}
+                     exp ';'                  {var_set       ($1,$7,1,4,0);}
            // array invertido
-           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2  );}
-                     exp ';'                  {var_set       ($1,$7,1,0);}
-           | ID  '[' exp ')'  '@'             {array_1d_check($1,$3,2  );}
-                     exp ';'                  {var_set       ($1,$7,1,1);}
-           | ID  '[' exp ')' NORM             {array_1d_check($1,$3,2  );}
-                     exp ';'                  {var_set       ($1,$7,1,2);}
-           | ID  '[' exp ')'  '$'             {array_1d_check($1,$3,2  );}
-                     exp ';'                  {var_set       ($1,$7,1,3);}
-           | ID  '[' exp ')' EQNE             {array_1d_check($1,$3,2  );}
-                     exp ';'                  {var_set       ($1,$7,1,4);}
+           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2    );}
+                     exp ';'                  {var_set       ($1,$7,1,0,0);}
+           | ID  '[' exp ')'  '@'             {array_1d_check($1,$3,2    );}
+                     exp ';'                  {var_set       ($1,$7,1,1,0);}
+           | ID  '[' exp ')' NORM             {array_1d_check($1,$3,2    );}
+                     exp ';'                  {var_set       ($1,$7,1,2,0);}
+           | ID  '[' exp ')'  '$'             {array_1d_check($1,$3,2    );}
+                     exp ';'                  {var_set       ($1,$7,1,3,0);}
+           | ID  '[' exp ')' EQNE             {array_1d_check($1,$3,2    );}
+                     exp ';'                  {var_set       ($1,$7,1,4,0);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3, $6  );}
-                     exp ';'                  {var_set       ($1,$10,  2,0);}
-           | ID  '[' exp ']' '[' exp ']' '@'  {array_2d_check($1, $3, $6  );}
-                     exp ';'                  {var_set       ($1,$10,  2,1);}
-           | ID  '[' exp ']' '[' exp ']' NORM {array_2d_check($1, $3, $6  );}
-                     exp ';'                  {var_set       ($1,$10,  2,2);}
-           | ID  '[' exp ']' '[' exp ']' '$'  {array_2d_check($1, $3, $6  );}
-                     exp ';'                  {var_set       ($1,$10,  2,3);}
-           | ID  '[' exp ']' '[' exp ']' EQNE {array_2d_check($1, $3, $6  );}
-                     exp ';'                  {var_set       ($1,$10,  2,4);}
+           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3, $6    );}
+                     exp ';'                  {var_set       ($1,$10,  2,0,0);}
+           | ID  '[' exp ']' '[' exp ']' '@'  {array_2d_check($1, $3, $6    );}
+                     exp ';'                  {var_set       ($1,$10,  2,1,0);}
+           | ID  '[' exp ']' '[' exp ']' NORM {array_2d_check($1, $3, $6    );}
+                     exp ';'                  {var_set       ($1,$10,  2,2,0);}
+           | ID  '[' exp ']' '[' exp ']' '$'  {array_2d_check($1, $3, $6    );}
+                     exp ';'                  {var_set       ($1,$10,  2,3,0);}
+           | ID  '[' exp ']' '[' exp ']' EQNE {array_2d_check($1, $3, $6    );}
+                     exp ';'                  {var_set       ($1,$10,  2,4,0);}
 
 // expressoes -----------------------------------------------------------------
 
@@ -291,10 +286,11 @@ assignment : ID  '='    exp ';'               {var_set($1,$3,0,0);} // SET
          // constantes
 exp:       INUM                               {$$ = num2exp($1,1);}
          | FNUM                               {$$ = num2exp($1,2);}
+         | CNUM                               {$$ = num2exp($1,5);}
          // variaveis
          | ID                                 {$$ =      id2exp($1      );}
-         | ID '[' exp ']'                     {$$ = array1d2exp($1,$3,0 );}
-         | ID '[' exp ')'                     {$$ = array1d2exp($1,$3,1 );}
+         | ID '[' exp ']'                     {$$ = array1d2exp($1,$3, 0);}
+         | ID '[' exp ')'                     {$$ = array1d2exp($1,$3, 1);}
          | ID '[' exp ']' '[' exp ']'         {$$ = array2d2exp($1,$3,$6);}
          // std library
          | std_in                             {$$ = $1;}
@@ -374,5 +370,5 @@ int main(int argc, char *argv[])
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d\n", line_num+1);
+	fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
 }

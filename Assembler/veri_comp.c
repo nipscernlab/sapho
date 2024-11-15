@@ -9,8 +9,9 @@ char name[128]; // nome do processador
 char  tmp[512]; // guarda, temporariamente, os nomes de arquivos .v, .mif criados
 
 FILE *f_veri;
+
 // variaveis pra salvar no arquivo .v
-int   sdepth, nuioin2, nuioou, nugain; // nuioin eh usado internamente pelo flex e da pau -> usar nuioin2!!
+int  sdepth, nuioin2, nuioou, nugain; // nuioin eh usado internamente pelo flex e da pau -> usar nuioin2!!
 
 void set_name(char *va)
 {
@@ -153,8 +154,7 @@ void build_vfile()
     fprintf(f_veri, ".NUIOOU(%d),\n", nuioou );
     fprintf(f_veri, ".FFTSIZ(%d),\n", fftsiz );
 
-    int i;
-    for (i = 0; i < m_count; i++) fprintf(f_veri, ".%s(1),\n", m_name[i]);
+    for (int i = 0; i < m_count; i++) fprintf(f_veri, ".%s(1),\n", m_name[i]);
 
     fprintf(f_veri, ".DFILE(\"%s%s_data.mif\"),\n", barra_fix(d_name), name);
     fprintf(f_veri, ".IFILE(\"%s%s_inst.mif\")\n", d_name, name);
