@@ -24,6 +24,8 @@ int get_type(int et)
     return t;
 }
 
+// pega o id da parte imag de uma var complexa
+// a parte real esta no param id
 int get_img_id(int id)
 {
     char name[64];
@@ -93,7 +95,7 @@ void var_set(int id, int et, int is_array, int set_type, int pop)
     if  (set_type  == 0)
     {
         if (pop == 0)
-            strcat(cset,  "SET" ); // SET padrao
+            strcat(cset,  "SET " ); // SET padrao
         else
             strcat(cset,  "SETP"); // SET com POP
     }
@@ -163,36 +165,44 @@ void var_set(int id, int et, int is_array, int set_type, int pop)
     // sao 4 possibilidades
     // cada uma tem sua particuaridade
 
-    if ((left_type == 1) && (righ_type == 1)) // int pra int ------------------
+    // int pra int ------------------------------------------------------------
+
+    if ((left_type == 1) && (righ_type == 1))
     {
         if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
-    if ((left_type == 1) && (righ_type == 2)) // float pra int ----------------
+    // float pra int ----------------------------------------------------------
+
+    if ((left_type == 1) && (righ_type == 2))
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         if (prtype == 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1;
         }
         if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
-    if ((left_type == 2) && (righ_type == 1)) // int pra float ----------------
+    // int pra float ----------------------------------------------------------
+
+    if ((left_type == 2) && (righ_type == 1))
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         if (prtype == 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "CALL int2float\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   int2float\n");
             i2f = 1;
         }
         if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
-    if ((left_type == 2) && (righ_type == 2)) // float pra float --------------
+    // float pra float --------------------------------------------------------
+
+    if ((left_type == 2) && (righ_type == 2))
     {
         if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }

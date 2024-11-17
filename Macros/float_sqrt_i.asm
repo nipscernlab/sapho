@@ -1,7 +1,7 @@
 
 // Funcao sqrt para float em ponto fixo ---------------------------------------
 
-@sqrt        SET     sqrt_num                  // pega parametro
+@float_sqrti SET     sqrt_num                  // pega parametro
 @L1_sqrti    SET     sqrt_x                    // atualiza x
 
              LOAD    sqrt_num                  // iteracao
@@ -31,14 +31,11 @@
              CALL    denorm                    // para m = 16 e = 6, o num eh: 0.000007629...
              LOAD    float_aux3
              LES     float_aux1
-             JZ      L2else_sqrt
+             JZ      L2else_sqrti
              JMP     L1end_sqrti
 
-@L2else_sqrt LOAD    sqrt_raiz                 // se nao eh, volta
-             JMP     L1_sqrti
+@L2else_sqrti LOAD   sqrt_raiz                 // se nao eh, volta
+              JMP    L1_sqrti
 
 @L1end_sqrti LOAD    sqrt_raiz                 // se eh, retorna o resultado
              RETURN
-
-// fim da funcao sqrt ---------------------------------------------------------
-

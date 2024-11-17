@@ -48,7 +48,7 @@ void  yyerror(char const *s);
 
 %token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD        // diretivas
-%token IN OUT NRM PST ABS SIGN                                 // std lib
+%token IN OUT NRM PST ABS SIGN SQRT                            // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK     // saltos
 %token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
@@ -190,6 +190,7 @@ std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao ps
 std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
 std_sign : SIGN '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
 std_nrm  : NRM  '(' exp ')'                {$$ = exec_norm($3   );} // funcao norm(x)   -> divide x pela constante NUGAIN
+std_sqrt : SQRT '(' exp ')'                {$$ = exec_sqrt($3   );}
 
 // if/else --------------------------------------------------------------------
 
@@ -298,6 +299,7 @@ exp:       INUM                               {$$ = num2exp($1,1);}
          | std_abs                            {$$ = $1;}
          | std_sign                           {$$ = $1;}
          | std_nrm                            {$$ = $1;}
+         | std_sqrt                           {$$ = $1;}
          | func_call                          {$$ = $1;}
          // operadores nulos
          |    '(' exp ')'                     {$$ = $2;}
@@ -359,7 +361,8 @@ int main(int argc, char *argv[])
 
 	// carrega macros de ponto flutuante pra proc de ponto fixo
 	// caso precise (espero que nao)
-	if (fgen && prtype == 0) float_gen(argv[2]); //(t2t.c)
+	if (fgen && prtype == 0) float_gen(argv[2]);
+	if (mgen           == 1)  math_gen(argv[2]);
 
 	// checa consistencia de todas as variaveis e funcoes
 	check_var(); // (variaveis.c)

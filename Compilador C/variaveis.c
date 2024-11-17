@@ -104,7 +104,12 @@ int exec_num(char *text)
         fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
 
     if (find_var(text) == -1) add_var(text);
-    return find_var(text);
+
+    int id = find_var(text);
+
+    v_isco[id] = 1;
+
+    return id;
 }
 
 // usado quando o lexer acha uma constante comp

@@ -8,5 +8,10 @@ void  exec_out1 (int et );          // primeiro argumento do out
 void  exec_out2 (int et );          // segundo argumento do out
 int   exec_sign (int et1, int et2); // pega o sinal do primeiro argumento e coloca no segundo
 int   exec_norm (int et );          // divisao por constante
+int   exec_sqrt (int et );          // raiz quadrada
+
+// testes com numeros complexos -----------------------------------------------
+int abs_comp(int et);
+// fim do teste ---------------------------------------------------------------
 
 #endif // STDLIB_H_INCLUDED

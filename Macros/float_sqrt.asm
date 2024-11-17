@@ -1,8 +1,8 @@
 
 // Funcao sqrt para float -----------------------------------------------------
 
-@sqrt SET sqrt_num           // pega parametro
-@L1_sqrt SET sqrt_x          // atualiza x
+@float_sqrt SET sqrt_num     // pega parametro
+@L1_sqrt    SET sqrt_x       // atualiza x
 
 DIV sqrt_num                 // iteracao
 ADD sqrt_x
@@ -19,8 +19,5 @@ JZ L2else_sqrt               // para m = 16 e = 6, o num eh: 0.000007629...
 LOAD sqrt_raiz               // finaliza
 RETURN
 
-@L2else_sqrt LOAD sqrt_raiz  // se nao treminou...
+@L2else_sqrt LOAD sqrt_raiz  // se nao terminou...
 JMP L1_sqrt                  // volta
-
-// fim da funcao sqrt ---------------------------------------------------------
-

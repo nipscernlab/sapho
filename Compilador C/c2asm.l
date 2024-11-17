@@ -44,6 +44,7 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "pset"                        return PST;
 "abs"                         return ABS;
 "sign"                        return SIGN;
+"sqrt"                        return SQRT;
 
 "while"                       return WHILE;
 "break"                       return BREAK;

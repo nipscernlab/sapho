@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 // funcao interna para ajudar a gerar a string que vai depois do LOAD
+// usada no load_check
 void prepar_oper(char *num, int id, int et, int neg)
 {
     char nf[64] = "";               // comeca vazio
@@ -100,7 +101,7 @@ void array_1d_check(int id, int et, int flag)
         {
             fprintf(stdout, "Atenção na linha %d: índice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
@@ -110,6 +111,7 @@ void array_1d_check(int id, int et, int flag)
     // final do teste ---------------------------------------------------------
 }
 
+// faz a checagem do indice do array para var complexas
 void array_1d_check_cmp(int et)
 {
     if (get_type(et) > 2)
@@ -147,7 +149,7 @@ void array_2d_check(int id, int et1, int et2)
         {
             fprintf(stdout, "Atenção na linha %d: primeiro índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
@@ -167,7 +169,7 @@ void array_2d_check(int id, int et1, int et2)
         {
             fprintf(stdout, "Atenção na linha %d: segundo índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
@@ -180,6 +182,7 @@ void array_2d_check(int id, int et1, int et2)
     // fim do teste -----------------------------------------------------------
 }
 
+// faz a checagem do indice do array 2d para var complexas
 void array_2d_check_cmp(int et1, int et2)
 {
     if ((get_type(et1) > 2) || (get_type(et2) > 2))

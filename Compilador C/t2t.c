@@ -13,12 +13,15 @@ FILE *f_float;
 // inicializa as variaveis de estado para compilacao de ponto flutuante
 void float_init()
 {
-    fgen = 0; // precisa gerar pf em software?
-    i2f  = 0; // gera macro int2float
-    f2i  = 0; // gera macro float2int
-    fadd = 0; // gera macro de soma
-    fmlt = 0; // gera macro de multiplicacao
-    fdiv = 0; // gera macro de divisao
+    fgen  = 0; // precisa gerar pf em software?
+    i2f   = 0; // gera macro int2float
+    f2i   = 0; // gera macro float2int
+    fadd  = 0; // gera macro de soma
+    fmlt  = 0; // gera macro de multiplicacao
+    fdiv  = 0; // gera macro de divisao
+
+    mgen  = 0;
+    fsqrt = 0;
 
     // valores otimos achados no trabalho do Manso
     nbmant = 16;
@@ -97,13 +100,41 @@ void float_begin(FILE *f_asm)
 	fclose (f_float);
 }
 
-// gera as instrucoes asm para ponto flutuante no final do arquivo asm
+// incluir aqui, as macros de matematica que forem sendo criadas
+void math_gen(char *fasm)
+{
+    FILE *f_asm = fopen(fasm,"a");
+
+    char a;
+
+    if (fsqrt == 1)
+    {
+        f_float  =    fopen  ("float_sqrt.asm", "r");
+    if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+	                  fclose (f_float);
+    }
+
+    if (fsqrti == 1)
+    {
+        f_float  =    fopen  ("float_sqrt_i.asm", "r");
+    if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrti.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+	                  fclose (f_float);
+    }
+
+    fclose(f_asm);
+}
+
+// gera codigo padrao para rodar float no proc ponto fixo
 void float_gen(char *fasm)
 {
     FILE *f_aux = fopen("c2aux.asm", "w");
     FILE *f_asm = fopen(fasm       , "r");
 
     char a;
+
+    // copia todo o codigo original em assembler no arquivo auxiliar
     do {a = fgetc(f_asm); if (a != EOF) fputc(a, f_aux);} while (a != EOF);
     fclose(f_aux);
     fclose(f_asm);
@@ -111,7 +142,9 @@ void float_gen(char *fasm)
     f_aux = fopen("c2aux.asm", "r");
     f_asm = fopen(fasm       , "w");
 
+    // copia o cabecalho para geracao de float em ponto fixo
     float_begin(f_asm);
+    //agora recoloca o codigo original
     do {a = fgetc(f_aux); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
     fclose(f_aux);
 

@@ -33,7 +33,7 @@ void use_macro(char *f_name, int global)
     // se for global, tem q ver se tem que chamar a funcao main ainda
     if ((mainok == 0) && (global == 1))
     {
-        fprintf(f_asm, "CALL main\n@fim JMP fim\n");
+        fprintf(f_asm, "CALL   main\n@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio
     }

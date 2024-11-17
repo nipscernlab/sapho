@@ -62,6 +62,7 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // fim do teste -----------------------------------------------------------
 }
 
+// declara parte imagin de um array complexo
 void declar_arr_1d_img(int id_var, int id_arg, int id_fname)
 {
     id_var = get_img_id(id_var);
@@ -117,6 +118,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // fim do teste -----------------------------------------------------------
 }
 
+// declara parte imag de um array 2d complexo
 void declar_arr_2d_img(int id_var, int size, int id_fname)
 {
     id_var = get_img_id(id_var);

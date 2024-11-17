@@ -12,13 +12,14 @@
 // declaracao -----------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+// declara uma funcao
 void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
 {
     // se ainda nao for a funcao main, entao tem que dar um call pra ela antes
     // pois CALL main deve ser a primeira instrucao do processador depois do reset
     if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
     {
-        if (using_macro == 0) fprintf(f_asm, "CALL main\n@fim JMP fim\n");
+        if (using_macro == 0) fprintf(f_asm, "CALL   main\n@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio
     }
@@ -111,7 +112,7 @@ void declar_ret(int et)
         {
             fprintf(stdout, "Atenção na linha %d: vai mesmo retornar float para int na função %s? Vou meter um monte de instruções assembly pra isso?\n", line_num+1, v_name[fun_id1]);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1;
         }
         else
@@ -126,7 +127,7 @@ void declar_ret(int et)
 
         if (prtype == 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "CALL int2float\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL   int2float\n");
             i2f = 1;
         }
     }
@@ -186,6 +187,7 @@ void func_ret(int id) // id -> id da funcao atual
     strcpy(fname, "");
 }
 
+// retorno sem exp (return;)
 void void_ret()
 {
     // checa se eh void mesmo, ou funcao por engano
@@ -194,7 +196,6 @@ void void_ret()
     // testar se eh void
     if (using_macro == 0) fprintf(f_asm, "RETURN\n");
 }
-
 
 // ----------------------------------------------------------------------------
 // utilizacao -----------------------------------------------------------------
@@ -217,6 +218,7 @@ void par_exp(int et)
     // fim do teste -----------------------------------------------------------
 }
 
+// par_exp pra numer complexos
 void par_exp_cmp(int et)
 {
     int eti;
@@ -227,7 +229,7 @@ void par_exp_cmp(int et)
 
     if (et % OFST == 0)
     {
-        par_check(et);
+        par_check(et );
 
         eti = 3*OFST;
         par_check(eti);
@@ -240,7 +242,7 @@ void par_exp_cmp(int et)
         par_check(et);
 
         int id = get_img_id(et % OFST);
-        eti = 3*OFST + id;
+        eti    = 3*OFST + id;
         par_check(eti);
     }
 
@@ -283,7 +285,7 @@ void vcall(int id)
     if (get_npar(p_test) != get_npar(v_fpar[id])) // p_test tem a lista de par na chamada e v_fpar na declaracao
         fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função %s.\n", line_num+1, rem_fname(v_name[id], fname));
 
-    if (using_macro == 0) fprintf(f_asm, "CALL %s\n", v_name[id]);
+    if (using_macro == 0) fprintf(f_asm, "CALL   %s\n", v_name[id]);
 
     v_used[id] = 1; // funcao ja foi chamada
     acc_ok     = 0; // acc ta liberado
@@ -309,7 +311,7 @@ int fcall(int id)
         return 0;
     }
 
-    if (using_macro == 0) fprintf(f_asm, "CALL %s\n",v_name[id]);
+    if (using_macro == 0) fprintf(f_asm, "CALL   %s\n",v_name[id]);
 
     v_used[id] = 1;             // funcao ja foi usada
 

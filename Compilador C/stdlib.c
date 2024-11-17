@@ -40,9 +40,14 @@ int exec_in(int et)
 // o tipo de dado de entrada e saida sao de acordo com o tipo de processador
 int exec_abs(int et)
 {
+    // teste com numeros complexos --------------------------------------------
+    if (get_type(et) > 2) return abs_comp(et);
+    // fim do teste -----------------------------------------------------------
+
     // ve se precisa carregar o argumento
     load_check(et,0);
 
+    // abs em ponto flutuante para proc em ponto fixo
     if ((prtype == 0) && (get_type(et) == 2))
     {
         if (using_macro == 0)
@@ -60,6 +65,53 @@ int exec_abs(int et)
     return get_type(et)*OFST;
 }
 
+// valor absoluto de um num complexo
+int abs_comp(int et)
+{
+    int type = get_type(et);
+
+    int etr, eti;
+
+    // se for uma constante ---------------------------------------------------
+
+    if (type == 5)
+    {
+        split_cmp_const(et ,&etr,&eti); // pega o et de cada constante float
+        etr  = oper_ari(etr,etr ,   0); // parte real ao quadrado
+        eti  = oper_ari(eti,eti ,   0); // parte imag ao quadrado
+        etr  = oper_ari(etr,eti ,   2); // soma os quadrados
+    }
+
+    // se estiver na memoria --------------------------------------------------
+
+    if ((type == 3) && (et % OFST != 0))
+    {
+        get_cmp_ets    (et ,&etr,&eti); // pega o et de cada constante float
+        etr  = oper_ari(etr,etr ,   0); // parte real ao quadrado
+        eti  = oper_ari(eti,eti ,   0); // parte imag ao quadrado
+        etr  = oper_ari(etr,eti ,   2); // soma os quadrados
+    }
+
+    // se estiver no acumulador -----------------------------------------------
+
+    if ((type == 3) && (et % OFST == 0))
+    {
+        fprintf (f_asm, "PUSH\n");          // parte imag fica no acc e pilha
+        oper_ari(2*OFST,2*OFST,0);          // multiplica acc com pilha
+        fprintf (f_asm, "SETP  aux_cmp\n"); // salva temp e pega parte real
+
+        fprintf (f_asm, "PUSH\n");          // parte real fica no acc e pilha
+        oper_ari(2*OFST,2*OFST,0);          // multiplica acc com pilha
+        fprintf (f_asm, "PLD  aux_cmp\n");  // xuxa o quadr do real pra pilha e pega o quadr do imag
+
+        oper_ari(2*OFST,2*OFST,2);          // soma os quadrados
+
+        etr = 2*OFST;                       // saida tem q ser et estendido pra float no acc
+    }
+
+    return exec_sqrt(etr);                  // computa a raiz quadrada e retorna
+}
+
 // executa instrucao PSET
 // et eh o exp resultante
 int exec_pst(int et)
@@ -71,7 +123,7 @@ int exec_pst(int et)
     {
         fprintf(stdout, "Atenção na linha %d: essa conversão pra inteiro gasta muito recurso!\n", line_num+1);
 
-        if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+        if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
         f2i = 1;
     }
 
@@ -149,11 +201,13 @@ int exec_norm(int et)
 }
 
 // codigo em C+- para calcular raiz quadrada para float
+// deixar aqui pra lembrar de onde vieram as macros
+// float_sqrt.asm e float_sqrti.asm
 /*double my_sqrt(float num)
 {
     float x = num;
-    float epslon = 0.000001;
-
+    float epslon = 0.000008;  // menor numero possivel = 2^(m-1)*2^(-(2^(e-1)))
+                              // para m = 16 e = 6, o num eh: 0.000007629...
     while (1)
     {
         float raiz = 0.5 * (x+num/x);
@@ -163,3 +217,42 @@ int exec_norm(int et)
 
     return raiz;
 }*/
+
+// executa macro sqrt
+int exec_sqrt(int et)
+{
+    load_check(et,0);
+
+    int type = get_type(et);
+
+    if ((prtype == 0) && (type < 3))
+    {
+        if (type == 1)
+        if (using_macro == 0) fprintf(f_asm , "CALL int2float\n"  );
+        if (using_macro == 0) fprintf(f_asm , "CALL float_sqrti\n");
+
+        fgen   = 1;
+        fsqrti = 1;
+        fadd   = 1;
+        fmlt   = 1;
+        fdiv   = 1;
+    }
+
+    if ((prtype == 1) && (type < 3))
+    {
+        if (using_macro == 0) fprintf(f_asm , "CALL float_sqrt\n");
+
+        fsqrt = 1;
+    }
+
+    // testes com numeros complexos -------------------------------------------
+    if (type > 2)
+    {
+        fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo. Se vira!\n", line_num+1);
+    }
+    // fim do teste -----------------------------------------------------------
+
+    mgen = 1;
+
+    return 2*OFST;
+}
