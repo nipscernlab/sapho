@@ -1,6 +1,6 @@
 %{
 
-#include "y.tab.h"
+#include "c2asm.tab.h"
 #include "variaveis.h"
 #include "t2t.h"
 #include "data_declar.h"

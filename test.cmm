@@ -1,0 +1,182 @@
+//     UNIVERSIDADE FEDERAL DE JUIZ DE FORA – FACULDADE DE ENGENHARIA
+//           QUALIDADE DE ENERGIA - DETCÇÃO DE ERRO NO ESPECTRO 
+//                      Autor:Victor Mendes Ribeiro
+//codigo em Sapho para execução de um fft128pontos atraves de um processador
+//em FPGA - ponto flutuante 32bits                                29/09/2021
+//***************************************************************************
+    
+#PRNAME proc_FFT128
+#DIRNAM "C:\Users\Victor\Desktop\IC\FFT128\Hardware\proc_FFT128_H"
+#DATYPE 1
+#NBMANT 23
+#NBEXPO 8
+#NDSTAC 100
+#SDEPTH 100
+#NUIOIN 5
+#NUIOOU 6
+
+int     cont;                   // contador para usar em for 
+int     N;                      // N numeros de pontos 
+float   data[258];              // 128 pontos * 2 (real e imag) * 1 fase + 2 posições de 0 uma antes e uma depois (necessário pro algoritmo funcionar)
+ 
+
+void fft(float nn, int nfft)
+{
+    float mmax,istep;
+    int n,m,i,j;
+    float wtemp,wr,wpr,wpi,wi,theta;
+    float tempr,tempi;
+    int flag_fft;
+
+    n        = nn*2;
+    j        = 1;
+    i        = 1;
+    tempr    = 0.0;
+    tempi    = 0.0;
+    m        = 0;
+    flag_fft = 0;
+     
+    while(i<n) 
+    {
+            if(j > i)
+            {
+                tempr = data[j+(nfft)];
+                data[j+(nfft)] = data[i+(nfft)]; //swap 1
+                data[i+(nfft)] = tempr;
+                
+                tempr = data[j+1+(nfft)];
+                data[j+1+(nfft)] = data[i+1+(nfft)]; //swap 2
+                data[i+1+(nfft)] = tempr;               
+            }
+            m = nn; 
+            
+            // ####################
+            if(m > 1 ) // Troquei >= 2 por > 1, pois m é inteiro
+            {
+                if(j > m)
+                {
+                    flag_fft = 1;
+                }
+            }
+            
+            while(flag_fft == 1)
+            {
+                j = j - m;
+                m = m*0.5;
+                
+                if(m > 1 ) // Troquei >= 2 por > 1, pois m é inteiro
+                {
+                    if(j > m)
+                    {
+                        flag_fft = 1;
+                    }
+                    else
+                    {
+                        flag_fft = 0;
+                    }
+                }
+                else                // Isso aqui é pra ele sair do while
+                {
+                    flag_fft = 0;
+                }
+            }
+            
+            // ####################
+            
+            //while((m >= 2) && (j > m))  // Problema 1 : Tem uma && no while e o >= 
+            //{
+            //    j = j - m;
+            //    m = m*0.5;
+            //}
+            j = j + m;
+            i = i + 2.0;
+    }
+        
+    mmax = 2.0;
+
+    while (n >  mmax)
+    {
+        istep = mmax * 2.0;
+        theta = (6.28318530717959/mmax);
+        wtemp = 0.5*theta - (0.02083333333*theta*theta*theta) + (theta*theta*theta*theta*theta*0.00026041666) - (theta*theta*theta*theta*theta*theta*theta*0.00000155009);
+        wpr   = -2.0*wtemp*wtemp;
+        wpi   = theta - (0.16666666666*theta*theta*theta) + (0.00833333333*theta*theta*theta*theta*theta) - (theta*theta*theta*theta*theta*theta*theta*0.00019841269);
+        wr    = 1.0;
+        wi    = 0.0;
+        m     = 1.0;
+    
+        while (m < mmax)
+        {
+            i = m;
+            // while(i <= n)    // -- Problema 2 : não entende <= -> substitui por < n+1, pois n é inteiro
+            while(i < (n + 1))
+            {
+                j = i + mmax;
+                tempr = wr*data[j+(nfft)] - wi*data[j+1+(nfft)];
+                tempi = wr*data[j+1+(nfft)] + wi*data[j+(nfft)];
+                data[j+(nfft)] = data[i+(nfft)] - tempr;
+              
+                data[j+1+(nfft)] = data[i+1+(nfft)] - tempi;
+                data[i+(nfft)] = data[i+(nfft)] + tempr;
+                data[i+1+(nfft)] = data[i+1+(nfft)] + tempi;
+                i = i + istep;
+            }
+            wtemp = wr;
+            wr    = wpr*wtemp - wi*wpi + wtemp;            
+            wi    = wi*wpr + wtemp*wpi + wi;
+            m     = m + 2;
+                
+        }
+        
+        mmax = istep;
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////
+void main() 
+{
+    if(in(0) == 0) 
+    {
+        N = 128;                // N numeros de pontos da FFT
+    }
+    else 
+    {   // AQUISIÇÃO DO SINAL TXT =======================================
+        data[0]         = 0.0;      // inicio igual a 0  
+        data[(N*2+1)]   = 0.0;      // final igual a 0
+        cont = 1;
+        while(cont < (N*2+1))       // [1 : 256]
+        {
+            data[cont]   = in(1);   //Real 
+            data[cont+1] = 0;       //Imaginario 
+            cont = cont + 2;
+        }
+
+        // SINAL NA MEMORIA ==============================================
+        cont = 0;
+        while(cont < ((N*2)+2))     // [0 : 257]
+        {
+            out(1, data[cont]);
+            cont = cont + 1;
+        }
+
+        fft(128.0,0);
+        
+        // SINAL FFT  =====================================================
+        cont = 0;
+        while(cont < ((N*2)+2))     // [0 : 257]
+        {
+            out(2, data[cont]);
+            cont = cont + 1;
+        }
+      
+    
+//    out(1, 15213.0);   
+//    out(1, -1530.36);   
+//    out(1, 0); 
+//    out(1, 32); 
+//    out(1, 999.99910); 
+//    out(1, 999.99910); 
+    }
+    
+    
+    out(0,1);
+}
