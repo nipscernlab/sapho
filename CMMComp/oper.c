@@ -327,7 +327,7 @@ int int_oper(int et1, int et2, char *op, char *code, int fok)
     return OFST; // retorna o id extendido de int
 }
 
-// operacoes de comparacao devem sr feitas por aqui
+// operacoes de comparacao devem ser feitas por aqui
 int oper_cmp(int et1, int et2, int op)
 {
     switch (op)
@@ -375,7 +375,6 @@ int oper_ari(int et1, int et2, int op)
 }
 
 // operacoes aritmeticas com numeros complexos
-// sao 33 combinacoes !!!
 int oper_ari_cmp(int et1, int et2, int op)
 {
     int l_type = get_type(et1);
@@ -383,57 +382,603 @@ int oper_ari_cmp(int et1, int et2, int op)
 
     int et1_r, et1_i;
     int et2_r, et2_i;
+    int id1_r, id1_i;
+    int id2_r, id2_i;
+
+    int id, et;
+
+    // left int var com right comp const --------------------------------------
+
+    if ((l_type == 1) && (r_type == 5) && (et1 % OFST != 0))
+    {
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
 
     // left int var com right comp var ----------------------------------------
 
     if ((l_type == 1) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST != 0))
     {
-        get_cmp_ets(et2  ,&et2_r,&et2_i);
-           oper_ari(et1  , et2_r, op   );
-         load_check(et2_i,            0);
+        get_cmp_ets(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left int var com right comp acc ----------------------------------------
+
+    if ((l_type == 1) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST == 0))
+    {
+        id2_r = exec_id("aux_cmp_r");
+        id2_i = exec_id("aux_cmp_i");
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left int acc com right comp const ----------------------------------------
+
+    if ((l_type == 1) && (r_type == 5) && (et1 % OFST == 0))
+    {
+        id  = exec_id("aux_int");
+        et1 = OFST + id;
+
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id]);
+        acc_ok = 0;
+
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left int acc com right comp var ----------------------------------------
+
+    if ((l_type == 1) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST != 0))
+    {
+        id  = exec_id("aux_int");
+        et1 = OFST + id;
+
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id]);
+        acc_ok = 0;
+
+        get_cmp_ets(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left int acc com right comp acc ----------------------------------------
+
+    if ((l_type == 1) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        id  = exec_id("aux_int");
+        et1 = OFST + id;
+
+        id2_r = exec_id("aux_cmp_r");
+        id2_i = exec_id("aux_cmp_i");
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_r]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left float var com right comp const ------------------------------------
+
+    if ((l_type == 2) && (r_type == 5) && (et1 % OFST != 0))
+    {
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult float com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult float com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left float var com right comp var --------------------------------------
+
+    if ((l_type == 2) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST != 0))
+    {
+        get_cmp_ets(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left float var com right comp acc --------------------------------------
+
+    if ((l_type == 2) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST == 0))
+    {
+        id2_r = exec_id("aux_cmp_r");
+        id2_i = exec_id("aux_cmp_i");
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left float acc com right comp const ------------------------------------
+
+    if ((l_type == 2) && (r_type == 5) && (et1 % OFST == 0))
+    {
+        id  = exec_id("aux_flt");
+        et1 = 2*OFST + id;
+
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        acc_ok = 0;
+
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left float acc com right comp var --------------------------------------
+
+    if ((l_type == 2) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST != 0))
+    {
+        id  = exec_id("aux_flt");
+        et1 = 2*OFST + id;
+
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        acc_ok = 0;
+
+        get_cmp_ets(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left float acc com right comp acc --------------------------------------
+
+    if ((l_type == 2) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        id  = exec_id("aux_flt");
+        et1 = 2*OFST + id;
+
+        id2_r = exec_id("aux_cmp_r");
+        id2_i = exec_id("aux_cmp_i");
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_r]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1,et2_r,0); // mult com parte real
+                     oper_ari(et1,et2_i,0); // mult com parte imag
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0); // parte real ao quadrado
+                     oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
+                     oper_ari(2*OFST,2*OFST,2); // soma os quadrados
+
+                     if (using_macro == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                     acc_ok = 0;
+
+                     oper_ari(et1,et2_r,0);                                 // mult int com parte real
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+
+                     oper_ari(et1,et2_i,0);                                 // mult int com parte imag
+                     if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                     oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
+                      negacao(2*OFST);
+                     break;
+            // soma e sub -----------------------------------------------------
+            default:   oper_ari(et1,et2_r,op); // soma parte real
+                     load_check(    et2_i, 0); // coloca o imag no acc
+        }
+    }
+
+    // left comp const com right int var --------------------------------------
+
+    if ((l_type == 5) && (r_type == 1) && (et2 % OFST != 0))
+    {
+        split_cmp_const(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp const com right int acc --------------------------------------
+
+    if ((l_type == 5) && (r_type == 1) && (et2 % OFST == 0))
+    {
+        split_cmp_const(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp const com right float var ------------------------------------
+
+    if ((l_type == 5) && (r_type == 2) && (et2 % OFST != 0))
+    {
+        split_cmp_const(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp const com right float acc ------------------------------------
+
+    if ((l_type == 5) && (r_type == 2) && (et2 % OFST == 0))
+    {
+        split_cmp_const(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
     }
 
     // left comp const com right comp const -----------------------------------
 
     if ((l_type == 5) && (r_type == 5))
     {
-        split_cmp_const(et1  ,&et1_r,&et1_i);
-        split_cmp_const(et2  ,&et2_r,&et2_i);
-               oper_ari(et1_r, et2_r, op   );
-               oper_ari(et1_i, et2_i, op   );
+        split_cmp_const(et1,&et1_r,&et1_i);
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
     }
 
     // left comp const com right comp var -------------------------------------
 
     if ((l_type == 5) && (r_type == 3) && (et2 % OFST != 0))
     {
-        split_cmp_const(et1  ,&et1_r,&et1_i);
-          get_cmp_ets  (et2  ,&et2_r,&et2_i);
-               oper_ari(et1_r, et2_r, op   );
-               oper_ari(et1_i, et2_i, op   );
-    }
+        split_cmp_const(et1,&et1_r,&et1_i);
+            get_cmp_ets(et2,&et2_r,&et2_i);
 
-    // left comp var com right comp const -------------------------------------
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
 
-    if ((l_type == 3) && (r_type == 5) && (et1 % OFST != 0))
-    {
-          get_cmp_ets  (et1  ,&et1_r,&et1_i);
-        split_cmp_const(et2  ,&et2_r,&et2_i);
-               oper_ari(et1_r, et2_r, op   );
-               oper_ari(et1_i, et2_i, op   );
-    }
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
 
-    // left comp acc com right comp const -------------------------------------
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
 
-    if ((l_type == 3) && (r_type == 5) && (et1 % OFST == 0))
-    {
-        et1_r = 2*OFST;
-        et1_i = 2*OFST;
-        split_cmp_const(et2,&et2_r,&et2_i);
-        oper_ari(et1_i, et2_i, op );
-        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
-        oper_ari(et1_r, et2_r, op );
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n");
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
     }
 
     // left comp const com right comp acc -------------------------------------
@@ -441,40 +986,454 @@ int oper_ari_cmp(int et1, int et2, int op)
     if ((l_type == 5) && (r_type == 3) && (et2 % OFST == 0))
     {
         split_cmp_const(et1,&et1_r,&et1_i);
-        et2_r = 2*OFST;
-        et2_i = 2*OFST;
-        oper_ari(et1_i, et2_i, op );
-        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
-        oper_ari(et1_r, et2_r, op );
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n");
+
+        id2_r = exec_id("aux_cmp_r");
+        id2_i = exec_id("aux_cmp_i");
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
+    }
+
+    // left comp var com right int var ----------------------------------------
+
+    if ((l_type == 3) && (r_type == 1) && (et1 % OFST != 0) && (et2 % OFST != 0))
+    {
+        get_cmp_ets(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp var com right int acc ----------------------------------------
+
+    if ((l_type == 3) && (r_type == 1) && (et1 % OFST != 0) && (et2 % OFST == 0))
+    {
+        get_cmp_ets(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp var com right float var --------------------------------------
+
+    if ((l_type == 3) && (r_type == 2) && (et1 % OFST != 0) && (et2 % OFST != 0))
+    {
+        get_cmp_ets(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp var com right float acc --------------------------------------
+
+    if ((l_type == 3) && (r_type == 2) && (et1 % OFST != 0) && (et2 % OFST == 0))
+    {
+        get_cmp_ets(et1,&et1_r,&et1_i);
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp var com right comp const -------------------------------------
+
+    if ((l_type == 3) && (r_type == 5) && (et1 % OFST != 0))
+    {
+            get_cmp_ets(et1,&et1_r,&et1_i);
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
+    }
+
+    // left comp var com right comp var ---------------------------------------
+
+    if ((l_type == 3) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST != 0))
+    {
+        get_cmp_ets(et1,&et1_r,&et1_i);
+        get_cmp_ets(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
+    }
+
+    // left comp var com right comp acc ---------------------------------------
+
+    if ((l_type == 3) && (r_type == 3) && (et1 % OFST != 0) && (et2 % OFST == 0))
+    {
+        get_cmp_ets(et1,&et1_r,&et1_i);
+
+        id2_r = exec_id("aux_cmp_r");
+        id2_i = exec_id("aux_cmp_i");
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
+    }
+
+    // left comp acc com right int var ----------------------------------------
+
+    if ((l_type == 3) && (r_type == 1) && (et1 % OFST == 0) && (et2 % OFST != 0))
+    {
+        id1_r = exec_id("aux_cmp_r");
+        id1_i = exec_id("aux_cmp_i");
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp acc com right int acc ----------------------------------------
+
+    if ((l_type == 3) && (r_type == 1) && (et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        id1_r = exec_id("aux_cmp_r");
+        id1_i = exec_id("aux_cmp_i");
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp acc com right float var --------------------------------------
+
+    if ((l_type == 3) && (r_type == 2) && (et1 % OFST == 0) && (et2 % OFST != 0))
+    {
+        id1_r = exec_id("aux_cmp_r");
+        id1_i = exec_id("aux_cmp_i");
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp acc com right float acc --------------------------------------
+
+    if ((l_type == 3) && (r_type == 2) && (et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        id1_r = exec_id("aux_cmp_r");
+        id1_i = exec_id("aux_cmp_i");
+
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
+        oper_ari(et1_r,et2,op);
+        oper_ari(et1_i,et2,op);
+    }
+
+    // left comp acc com right comp const -------------------------------------
+
+    if ((l_type == 3) && (r_type == 5) && (et1 % OFST == 0))
+    {
+        id1_r = exec_id("aux_cmp_r");
+        id1_i = exec_id("aux_cmp_i");
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
+        split_cmp_const(et2,&et2_r,&et2_i);
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
     }
 
     // left comp acc com right comp var ---------------------------------------
 
     if ((l_type == 3) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST != 0))
     {
-        et1_r = 2*OFST;
-        et1_i = 2*OFST;
+        id1_r = exec_id("aux_cmp_r");
+        id1_i = exec_id("aux_cmp_i");
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
         get_cmp_ets(et2,&et2_r,&et2_i);
-        oper_ari(et1_i, et2_i, op );
-        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
-        oper_ari(et1_r, et2_r, op );
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp\n");
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
     }
 
     // left comp acc com right comp acc ---------------------------------------
 
     if ((l_type == 3) && (r_type == 3) && (et1 % OFST == 0) && (et2 % OFST == 0))
     {
-        et1_r = 2*OFST;
-        et1_i = 2*OFST;
-        et2_r = 2*OFST;
-        et2_i = 2*OFST;
-        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmpi\nSET aux_cmpr\nLOAD aux_cmpi\n");
-        oper_ari(et1_i, et2_i, op );
-        if (using_macro == 0) fprintf(f_asm, "SET aux_cmpi\nLOAD aux_cmpr\n");
-        oper_ari(et1_r, et2_r, op );
-        if (using_macro == 0) fprintf(f_asm,  "PLD aux_cmpi\n");
+        id1_r = exec_id("aux_cmp_r_1");
+        id1_i = exec_id("aux_cmp_i_1");
+        id2_r = exec_id("aux_cmp_r_2");
+        id2_i = exec_id("aux_cmp_i_2");
+
+        et1_r = 2*OFST + id1_r;
+        et1_i = 2*OFST + id1_i;
+        et2_r = 2*OFST + id2_r;
+        et2_i = 2*OFST + id2_i;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_r]);
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
+        if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        acc_ok = 0;
+
+        switch (op)
+        {   // mult -----------------------------------------------------------
+            case 0:  oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     break;
+            // div ------------------------------------------------------------
+            case 1:  oper_ari(et2_r ,et2_r ,0);
+                     oper_ari(et2_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+
+                     id = exec_id("aux_cmp_r");
+                     et = 2*OFST + id;
+                     if (using_macro == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                     acc_ok = 0;
+
+                     oper_ari(et1_r ,et2_r ,0);
+                     oper_ari(et1_i ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,2);
+                     oper_ari(2*OFST,  et  ,1);
+
+                     oper_ari(et1_i ,et2_r ,0);
+                     oper_ari(et1_r ,et2_i ,0);
+                     oper_ari(2*OFST,2*OFST,3);
+                     oper_ari(2*OFST, et   ,1);
+                    // break;
+            // soma e sub -----------------------------------------------------
+            default: oper_ari(et1_r,et2_r,op);
+                     oper_ari(et1_i,et2_i,op);
+        }
     }
 
     return OFST*3;

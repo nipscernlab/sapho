@@ -73,7 +73,6 @@ void load_check(int et, int neg)
 }
 
 // prepara o indice do array e carrega ele no acc
-// tb eh usada na atribuicao
 // flag diz se eh array invertido no uso (1) ou no set (2)
 void array_1d_check(int id, int et, int flag)
 {
@@ -119,7 +118,7 @@ void array_1d_check_cmp(int et)
 
     // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
     // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
-    if (using_macro == 0) fprintf(f_asm, "SET aux_cmp%d\n", ++a_cnt);
+    if (using_macro == 0) fprintf(f_asm, "SET aux_idx%d\n", ++a_cnt);
     acc_ok = 0; // libera o acumulador
 }
 
@@ -190,7 +189,7 @@ void array_2d_check_cmp(int et1, int et2)
 
     // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
     // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
-    if (using_macro == 0) fprintf(f_asm, "SET aux_cmp%d\n", ++a_cnt);
+    if (using_macro == 0) fprintf(f_asm, "SET aux_idx%d\n", ++a_cnt);
     acc_ok = 0; // libera o acumulador
 }
 
@@ -255,7 +254,7 @@ int array1d2exp(int id, int et, int fft)
         int idi = get_img_id(id);
         // pega o indice que foi armazenado em aux_cmp (no array_1d_check acima)
         // esse decremento em a_cnt eh para array do lado direito
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp%d\n", a_cnt--);
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_idx%d\n", a_cnt--);
 
         // da load na parte imaginaria
         load_check(v_type[id]*OFST+idi,0);
@@ -296,7 +295,7 @@ int array2d2exp(int id, int et1, int et2)
         int idi = get_img_id(id);
         // pega o indice que foi armazenado em aux_cmp (no array_2d_check acima)
         // esse decremento em a_cnt eh para array do lado direito
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_cmp%d\n", a_cnt--);
+        if (using_macro == 0) fprintf(f_asm, "PLD aux_idx%d\n", a_cnt--);
 
         // da load na parte imaginaria
         load_check(v_type[id]*OFST+idi,0);
@@ -325,7 +324,7 @@ int exp_pplus(int id)
     int ret = oper_ari(et,et1,2);
 
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,0);
+    var_set(id, ret, v_isar[id],0,0,1);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -353,7 +352,7 @@ int array_pplus(int id, int ete)
     // faz o load no indice do array novamente
     array_1d_check(id, ete, 0);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,0);
+    var_set(id, ret, v_isar[id],0,0,1);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -381,7 +380,7 @@ int array_2plus(int id, int et1, int et2)
     // faz o load no indice do array novamente
     array_2d_check(id, et1, et2);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,0);
+    var_set(id, ret, v_isar[id],0,0,1);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 

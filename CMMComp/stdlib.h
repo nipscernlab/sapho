@@ -11,7 +11,10 @@ int   exec_norm (int et );          // divisao por constante
 int   exec_sqrt (int et );          // raiz quadrada
 
 // testes com numeros complexos -----------------------------------------------
-int abs_comp(int et);
+int  abs_comp(int et);
+int  neg_comp(int et);
+int exec_real(int et);
+int exec_imag(int et);
 // fim do teste ---------------------------------------------------------------
 
 #endif // STDLIB_H_INCLUDED

@@ -5,6 +5,7 @@
 #include "data_assign.h"
 #include "data_use.h"
 #include "oper.h"
+#include <math.h>
 
 // executa instrucao IN
 // et -> id estendido com endereco da porta
@@ -37,7 +38,7 @@ int exec_in(int et)
 
 // executa instrucao ABS
 // et eh o exp pra pegar o valor absoluto
-// o tipo de dado de entrada e saida sao de acordo com o tipo de processador
+// o tipo de dado de entrada e saida sao de acordo com o tipo do et
 int exec_abs(int et)
 {
     // teste com numeros complexos --------------------------------------------
@@ -52,10 +53,11 @@ int exec_abs(int et)
     {
         if (using_macro == 0)
         {
-            fprintf(f_asm, "\nPLD float_nbits");
-            fprintf(f_asm, "             // ABS em ponto flutuante\n" );
-            fprintf(f_asm, "SHL 1\nINV\nSAND");
-            fprintf(f_asm, "                        // fim do ABS\n\n");
+            fprintf(f_asm, "AND %d           // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+            //fprintf(f_asm, "\nPLD float_nbits");
+            //fprintf(f_asm, "             // ABS em ponto flutuante\n" );
+            //fprintf(f_asm, "SHL 1\nINV\nSAND");
+            //fprintf(f_asm, "                        // fim do ABS\n\n");
         }
 
         fgen = 1;
@@ -112,6 +114,47 @@ int abs_comp(int et)
     return exec_sqrt(etr);                  // computa a raiz quadrada e retorna
 }
 
+// nega um num complexo
+// apesar de estar em stdlib, nao vou fazer uma funcao explicita
+// vai ser usada na reducao -exp -> exp
+// e tb no assign x =- y;
+int neg_comp(int et)
+{
+    int type = get_type(et);
+
+    int etr, eti;
+
+    // se for uma constante ---------------------------------------------------
+
+    if (type == 5)
+    {
+        split_cmp_const(et ,&etr,&eti); // pega o et de cada constante float
+        negacao(etr); // nega parte real
+        negacao(eti); // nega parte imag
+    }
+
+    // se estiver na memoria --------------------------------------------------
+
+    if ((type == 3) && (et % OFST != 0))
+    {
+        get_cmp_ets    (et ,&etr,&eti); // pega o et de cada constante float
+        negacao(etr); // nega parte real
+        negacao(eti); // nega parte imag
+    }
+
+    // se estiver no acumulador -----------------------------------------------
+
+    if ((type == 3) && (et % OFST == 0))
+    {
+        negacao(2*OFST);
+        fprintf(f_asm, "SETP  aux_cmp\n"); // salva temp e pega parte real
+        negacao(2*OFST);
+        fprintf(f_asm, "PLD   aux_cmp\n");
+    }
+
+    return 3*OFST;
+}
+
 // executa instrucao PSET
 // et eh o exp resultante
 int exec_pst(int et)
@@ -160,7 +203,7 @@ void exec_out2(int et)
 {
     load_check(et,0);
 
-    if ((prtype == 0) && (get_type(et) == 2))
+    if ((prtype == 0) && (get_type(et) > 1))
     {
         fprintf(stdout, "Atenção na linha %d: o processador é ponto fixo e você quer mandar um ponto flutuante pra fora? Vai gerar muito código!\n", line_num+1);
 
@@ -254,5 +297,69 @@ int exec_sqrt(int et)
 
     mgen = 1;
 
+    return 2*OFST;
+}
+
+// retorna a parte real de um comp
+int exec_real(int et)
+{
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função real(.) tem que ser complexo!\n", line_num+1);
+
+    int id = et % OFST;
+
+    // comp const
+    if (get_type(et) == 5)
+    {
+        int et_r, et_i;
+        split_cmp_const(et,&et_r,&et_i);
+        load_check(et_r,0);
+    }
+
+    // comp na memoria
+    if ((get_type(et) == 3) && (id != 0))
+    {
+        load_check(et,0);
+    }
+
+    // comp no acc
+    if ((get_type(et) == 3) && (id == 0))
+    {
+        if (using_macro == 0) fprintf(f_asm , "SETP aux_cmp\n");
+    }
+
+    acc_ok = 1;
+    return 2*OFST;
+}
+
+// retorna a parte imag de um comp
+int exec_imag(int et)
+{
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função imag(.) tem que ser complexo!\n", line_num+1);
+
+    int id = et % OFST;
+    int et_r, et_i;
+
+    // comp const
+    if (get_type(et) == 5)
+    {
+        split_cmp_const(et,&et_r,&et_i);
+        load_check(et_i,0);
+    }
+
+    // comp na memoria
+    if ((get_type(et) == 3) && (id != 0))
+    {
+        get_cmp_ets(et,&et_r,&et_i);
+        load_check(et_i,0);
+    }
+
+    // comp no acc
+    if ((get_type(et) == 3) && (id == 0))
+    {
+        if (using_macro == 0) fprintf(f_asm , "SETP aux_cmp\n");
+        if (using_macro == 0) fprintf(f_asm , "LOAD aux_cmp\n");
+    }
+
+    acc_ok = 1;
     return 2*OFST;
 }

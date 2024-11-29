@@ -52,14 +52,14 @@ void check_var()
         {
             // checa se eh ou nao global
             if (strcmp(v_name[v_fnid[i]], "") == 0)
-                fprintf (stderr, "Atenção: variável global %s não está sendo usada. Economize memória!\n", v_name[i]);
+                fprintf (stdout, "Atenção: variável global %s não está sendo usada. Economize memória!\n", v_name[i]);
             else
-                fprintf (stderr, "Atenção: variável %s na função %s não está sendo usada. Economize memória!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
+                fprintf (stdout, "Atenção: variável %s na função %s não está sendo usada. Economize memória!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
         }
 
         // checa se a funcao foi declarada e nao foi usada
         if (((v_type[i] == 5) || (v_type[i] == 6) || (v_type[i] == 7)) && v_used[i] == 0)
-            fprintf (stderr, "Atenção: função %s não está sendo usada. Economize memória!\n", v_name[i]);
+            fprintf (stdout, "Atenção: função %s não está sendo usada. Economize memória!\n", v_name[i]);
     }
 }
 
@@ -77,6 +77,11 @@ char* rem_fname(char *var, char *fname)
 // usado quando o lexer acha um ID
 int exec_id(char *text)
 {
+    // testes com numeros complexos -------------------------------------------
+    if (strcmp(text,"i") == 0)
+        fprintf (stderr, "Erro na linha %d: símbolo i é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1);
+    // fim dos teste ----------------------------------------------------------
+
     char var_name[64];
 
     if (find_var(text) == -1)                                     // primeiro ve se tem uma variavel global

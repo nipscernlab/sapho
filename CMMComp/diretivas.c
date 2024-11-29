@@ -33,7 +33,7 @@ void use_macro(char *f_name, int global)
     // se for global, tem q ver se tem que chamar a funcao main ainda
     if ((mainok == 0) && (global == 1))
     {
-        fprintf(f_asm, "CALL   main\n@fim JMP fim\n");
+        fprintf(f_asm, "CALL main\n@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio
     }
@@ -50,7 +50,7 @@ void use_macro(char *f_name, int global)
     FILE *f_macro;
     char a;
         f_macro  =    fopen  (file_name, "r");
-    if (f_macro == 0) fprintf(stderr, "Atenção na linha %d: Cadê a macro %s? Tinha que estar na pasta do projeto do SAPHO!\n", line_num+1, file_name);
+    if (f_macro == 0) fprintf(stderr, "Erro na linha %d: Cadê a macro %s? Tinha que estar na pasta do projeto do SAPHO!\n", line_num+1, file_name);
 	do {      a  =    fgetc  (f_macro); if (a != EOF) fputc(a,f_asm);} while (a != EOF);
 	                  fclose (f_macro);
 
@@ -60,7 +60,7 @@ void use_macro(char *f_name, int global)
 // libera o parser pra salvar no arquivo assembler
 void end_macro()
 {
-    if (using_macro == 0) fprintf(stderr, "Atenção na linha %d: Não estou achando o começo da macro\n", line_num+1);
+    if (using_macro == 0) fprintf(stderr, "Erro na linha %d: Não estou achando o começo da macro\n", line_num+1);
         using_macro  = 0;
 }
 

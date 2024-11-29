@@ -16,16 +16,16 @@ module pos_mux_fl
 )
 (
 	 input     [            2:0] ctrl,
-	 input     [NBMANT+NBEXPO:0] pset, abs, neg, acc,
+	 input     [NBMANT+NBEXPO:0] psetm, absm, negm, accm,
 	output reg [NBMANT+NBEXPO:0] out
 );
 
 always @ (*) begin
 	case (ctrl)
-		3'b100  : out <= pset;
-		3'b010  : out <= abs ;
-		3'b001  : out <= neg ;
-		default : out <= acc ;
+		3'b100  : out <= psetm;
+		3'b010  : out <= absm ;
+		3'b001  : out <= negm ;
+		default : out <= accm ;
 	endcase
 end
 
@@ -107,7 +107,7 @@ wire [NBMANT+NBEXPO:0]  neg_data;
 generate
 
 	if (PSTS)
-		psett_fl #(NBMANT, NBEXPO)psett_fl(acc, pset_data);
+		psett_fl #(NBMANT, NBEXPO) psett_fl(acc, pset_data);
 	else
 		assign pset_data = {NBMANT+NBEXPO+1{1'bx}};
 
@@ -129,7 +129,7 @@ generate
 	if (NEGS)
 		negg_fl #(NBMANT, NBEXPO) negg_fl(acc, neg_data);
 	else
-		assign abs_data = {NBMANT+NBEXPO+1{1'bx}};
+		assign neg_data = {NBMANT+NBEXPO+1{1'bx}};
 
 endgenerate
 

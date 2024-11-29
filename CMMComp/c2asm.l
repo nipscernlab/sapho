@@ -1,6 +1,6 @@
 %{
 
-#include "c2asm.tab.h"
+#include "y.tab.h"
 #include "variaveis.h"
 #include "t2t.h"
 #include "data_declar.h"
@@ -45,6 +45,9 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "abs"                         return ABS;
 "sign"                        return SIGN;
 "sqrt"                        return SQRT;
+
+"real"                        return REAL;
+"imag"                        return IMAG;
 
 "while"                       return WHILE;
 "break"                       return BREAK;

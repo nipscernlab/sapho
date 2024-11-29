@@ -192,7 +192,12 @@ module my_lin
 	output [NUBITS-1:0] out 
 );
 
-assign out = {{NUBITS-1{1'b0}}, !in[0]}; // nao eh isso em C
+// nao eh isso q fazem C
+// tem q verificar se toda a palavra eh = 0
+// se nao, retorna 0 em todos os bits e 1 no MSB
+// se sim, retorna zero em tudo
+// mudar aqui e no pf
+assign out = {{NUBITS-1{1'b0}}, !in[0]};
 
 endmodule
 

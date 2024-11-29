@@ -4,12 +4,17 @@
     - Diretivas #USEMAC #ENDMAC: seleciona trechos do código que serão substituidos por Macros otimizados em assembly
     - Diretiva  #INTERPOIN     : marca ponto de retorno para um reset no pino itr
 
+    - tipo de dados comp : esta ainda finalizando a fase de testes
+
     - StdLib   in(.,.): leitura de dados externos
     - StdLib  out(.,.): escrita pra fora do processador
     - StdLib   norm(.): funcao que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisao da ULA)
     - StdLib   pset(.): funcao que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
-    - StdLib    abs(.): funcao que retorna o valor absoluto (evita if(x<0) x = -x;)
+    - StdLib    abs(.): funcao que retorna o valor absoluto (evita if(x<0) x = -x;). se for cmplexxo, retorna o modulo
+    - StdLib   sqrt(.): retorna raiz quadrada. Gera um float
     - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele ai pra vc ver)
+    - StdLib   real(.): retorna a parte real de um numero complexo
+    - StdLib   imag(.): retorna a parte imag de um numero complexo
 
     - Operador   >>>  : deslocamento a direta com complemento a dois (desloca mantendo o sinal)
 
@@ -19,7 +24,7 @@
     - Atribuicao =-   : seta uma variavel com o negativo do valor passado (ex: x =- exp;) (evita x = -exp;)
 
     - Array inicializavel por arquivo. A memoria do array ja eh preenchida em tempo de compilacao. (ex: int x[128] "valores.txt";)
-    - Array com indice invertido. Usado em FFT (ex: x[i) = exp;) os bits de i sao invertidos. (usar com arrays complexos - real seguido do imaginario)
+    - Array com indice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sao invertidos. (usar com arrays complexos - real seguido do imaginario)
 */
 
 %{
@@ -48,7 +53,7 @@ void  yyerror(char const *s);
 
 %token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD        // diretivas
-%token IN OUT NRM PST ABS SIGN SQRT                            // std lib
+%token IN OUT NRM PST ABS SIGN SQRT REAL IMAG                  // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK     // saltos
 %token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
@@ -103,12 +108,12 @@ direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
        | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5);} // numero de portas de saida
        | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
-       | USEMAC STRING {use_macro(v_name[$2],1);}
-       | ENDMAC        {end_macro(            );}
+       | USEMAC STRING {use_macro(v_name[$2],1);}        // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
+       | ENDMAC        {end_macro(            );}        // ponto de termino do uso da macro
 
 // Diretivas comportamentais --------------------------------------------------
 
-use_macro : USEMAC STRING {use_macro(v_name[$2],0);} // usa uma macro .asm no lugar do compilador
+use_macro : USEMAC STRING {use_macro(v_name[$2],0);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
 end_macro : ENDMAC        {end_macro(            );} // ponto final de uso de uma macro
 use_inter : ITRADD        {use_inter(            );} // ponto de inicio da interrupcao (usado com o pino itr)
 
@@ -136,7 +141,7 @@ funcao : TYPE ID '('                      {declar_fun     ($1,$2);} // inicio da
 // nao pode usar array em parametro de funcao
 // retorna o id do parametro
 par_list : TYPE ID                        {$$ = declar_par($1,$2);}
-         | par_list ',' par_list          {        set_par($3   );}; // vai pegando da pilha
+         | par_list ',' par_list          {        set_par($3   );} // vai pegando da pilha
 
 // retornos de funcao e void
 return_call : RETURN exp ';'              {declar_ret($2);}
@@ -177,9 +182,9 @@ func_call   : ID '('            {fun_id2  = $1 ;}
 // pra cada exp achado, o valor resultante eh gravado na pilha com par_exp
 // o primeiro parametro fica no acumulador (pega de tras pra frente)
 // par_exp xuxa parametros na pilha e checa se o parametro esta consistente
-exp_list :                                                    // pode ser vazio
-         | exp                             {par_exp    ($1);} // primeiro parametro
-         | exp_list ',' exp                {par_listexp($3);} // demais parametros
+exp_list :                                                          // pode ser vazio (testar)
+         | exp                             {par_exp    ($1);}       // primeiro parametro
+         | exp_list ',' exp                {par_listexp($3);}       // demais parametros
 
 // Standard library -----------------------------------------------------------
 
@@ -190,7 +195,9 @@ std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao ps
 std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
 std_sign : SIGN '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
 std_nrm  : NRM  '(' exp ')'                {$$ = exec_norm($3   );} // funcao norm(x)   -> divide x pela constante NUGAIN
-std_sqrt : SQRT '(' exp ')'                {$$ = exec_sqrt($3   );}
+std_sqrt : SQRT '(' exp ')'                {$$ = exec_sqrt($3   );} // funcao sqrt(x)   -> raiz quadrada
+std_real : REAL '(' exp ')'                {$$ = exec_real($3   );} // funcao real(x)   -> pega a parte real de um comp
+std_imag : IMAG '(' exp ')'                {$$ = exec_imag($3   );} // funcao imag(x)   -> pega a parte imag de um comp
 
 // if/else --------------------------------------------------------------------
 
@@ -224,57 +231,57 @@ break      : BREAK ';'                     {exec_break  (  );}
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0,0);} // SET
-            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4,0,1,0);} // PSETS (PSET + SET)
-            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4,0,2,0);} // NORMS (NORM + SET)
-            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4,0,3,0);} // ABSS  (ABS  + SET)
-            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4,0,4,0);} // NEGS  (NEG  + SET)
+            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0,0,1);} // SET
+            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4,0,1,0,1);} // PSETS (PSET + SET)
+            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4,0,2,0,1);} // NORMS (NORM + SET)
+            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4,0,3,0,1);} // ABSS  (ABS  + SET)
+            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4,0,4,0,1);} // NEGS  (NEG  + SET)
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '='    exp ';'               {var_set($1,$3,0,0,0);} // SET
-           | ID  '@'    exp ';'               {var_set($1,$3,0,1,0);} // PSETS (PSET + SET)
-           | ID NORM    exp ';'               {var_set($1,$3,0,2,0);} // NORMS (NORM + SET)
-           | ID  '$'    exp ';'               {var_set($1,$3,0,3,0);} // ABSS  (ABS  + SET)
-           | ID EQNE    exp ';'               {var_set($1,$3,0,4,0);} // NEGS  (NEG  + SET)
+assignment : ID  '='    exp ';'               {var_set($1,$3,0,0,0,1);} // SET
+           | ID  '@'    exp ';'               {var_set($1,$3,0,1,0,1);} // PSETS (PSET + SET)
+           | ID NORM    exp ';'               {var_set($1,$3,0,2,0,1);} // NORMS (NORM + SET)
+           | ID  '$'    exp ';'               {var_set($1,$3,0,3,0,1);} // ABSS  (ABS  + SET)
+           | ID EQNE    exp ';'               {var_set($1,$3,0,4,0,1);} // NEGS  (NEG  + SET)
            // incremento
            | ID                          PPLUS ';' {pplus_assign($1      );}
            | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
            | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
            // array normal
-           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0    );}
-                     exp ';'                  {var_set       ($1,$7,1,0,0);}
-           | ID  '[' exp ']'  '@'             {array_1d_check($1,$3,0    );}
-                     exp ';'                  {var_set       ($1,$7,1,1,0);}
-           | ID  '[' exp ']' NORM             {array_1d_check($1,$3,0    );}
-                     exp ';'                  {var_set       ($1,$7,1,2,0);}
-           | ID  '[' exp ']'  '$'             {array_1d_check($1,$3,0    );}
-                     exp ';'                  {var_set       ($1,$7,1,3,0);}
-           | ID  '[' exp ']' EQNE             {array_1d_check($1,$3,0    );}
-                     exp ';'                  {var_set       ($1,$7,1,4,0);}
+           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0      );}
+                     exp ';'                  {var_set       ($1,$7,1,0,0,1);}
+           | ID  '[' exp ']'  '@'             {array_1d_check($1,$3,0      );}
+                     exp ';'                  {var_set       ($1,$7,1,1,0,1);}
+           | ID  '[' exp ']' NORM             {array_1d_check($1,$3,0      );}
+                     exp ';'                  {var_set       ($1,$7,1,2,0,1);}
+           | ID  '[' exp ']'  '$'             {array_1d_check($1,$3,0      );}
+                     exp ';'                  {var_set       ($1,$7,1,3,0,1);}
+           | ID  '[' exp ']' EQNE             {array_1d_check($1,$3,0      );}
+                     exp ';'                  {var_set       ($1,$7,1,4,0,1);}
            // array invertido
-           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2    );}
-                     exp ';'                  {var_set       ($1,$7,1,0,0);}
-           | ID  '[' exp ')'  '@'             {array_1d_check($1,$3,2    );}
-                     exp ';'                  {var_set       ($1,$7,1,1,0);}
-           | ID  '[' exp ')' NORM             {array_1d_check($1,$3,2    );}
-                     exp ';'                  {var_set       ($1,$7,1,2,0);}
-           | ID  '[' exp ')'  '$'             {array_1d_check($1,$3,2    );}
-                     exp ';'                  {var_set       ($1,$7,1,3,0);}
-           | ID  '[' exp ')' EQNE             {array_1d_check($1,$3,2    );}
-                     exp ';'                  {var_set       ($1,$7,1,4,0);}
+           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2      );}
+                     exp ';'                  {var_set       ($1,$7,1,0,0,1);}
+           | ID  '[' exp ')'  '@'             {array_1d_check($1,$3,2      );}
+                     exp ';'                  {var_set       ($1,$7,1,1,0,1);}
+           | ID  '[' exp ')' NORM             {array_1d_check($1,$3,2      );}
+                     exp ';'                  {var_set       ($1,$7,1,2,0,1);}
+           | ID  '[' exp ')'  '$'             {array_1d_check($1,$3,2      );}
+                     exp ';'                  {var_set       ($1,$7,1,3,0,1);}
+           | ID  '[' exp ')' EQNE             {array_1d_check($1,$3,2      );}
+                     exp ';'                  {var_set       ($1,$7,1,4,0,1);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3, $6    );}
-                     exp ';'                  {var_set       ($1,$10,  2,0,0);}
-           | ID  '[' exp ']' '[' exp ']' '@'  {array_2d_check($1, $3, $6    );}
-                     exp ';'                  {var_set       ($1,$10,  2,1,0);}
-           | ID  '[' exp ']' '[' exp ']' NORM {array_2d_check($1, $3, $6    );}
-                     exp ';'                  {var_set       ($1,$10,  2,2,0);}
-           | ID  '[' exp ']' '[' exp ']' '$'  {array_2d_check($1, $3, $6    );}
-                     exp ';'                  {var_set       ($1,$10,  2,3,0);}
-           | ID  '[' exp ']' '[' exp ']' EQNE {array_2d_check($1, $3, $6    );}
-                     exp ';'                  {var_set       ($1,$10,  2,4,0);}
+           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3, $6      );}
+                     exp ';'                  {var_set       ($1,$10,  2,0,0,1);}
+           | ID  '[' exp ']' '[' exp ']' '@'  {array_2d_check($1, $3, $6      );}
+                     exp ';'                  {var_set       ($1,$10,  2,1,0,1);}
+           | ID  '[' exp ']' '[' exp ']' NORM {array_2d_check($1, $3, $6      );}
+                     exp ';'                  {var_set       ($1,$10,  2,2,0,1);}
+           | ID  '[' exp ']' '[' exp ']' '$'  {array_2d_check($1, $3, $6      );}
+                     exp ';'                  {var_set       ($1,$10,  2,3,0,1);}
+           | ID  '[' exp ']' '[' exp ']' EQNE {array_2d_check($1, $3, $6      );}
+                     exp ';'                  {var_set       ($1,$10,  2,4,0,1);}
 
 // expressoes -----------------------------------------------------------------
 
@@ -300,6 +307,8 @@ exp:       INUM                               {$$ = num2exp($1,1);}
          | std_sign                           {$$ = $1;}
          | std_nrm                            {$$ = $1;}
          | std_sqrt                           {$$ = $1;}
+         | std_real                           {$$ = $1;}
+         | std_imag                           {$$ = $1;}
          | func_call                          {$$ = $1;}
          // operadores nulos
          |    '(' exp ')'                     {$$ = $2;}
