@@ -3,7 +3,7 @@ module instr_dec_fx
 	parameter NBDATA = 32, // Numero de bits dos dados
 	parameter NBOPCO = 6,  // Numero de bits de  opcode
 	parameter NBOPER = 9,  // Numero de bits de  operando
-	parameter MDATAW = 8   // Numero de bits de endereco da memoria de dados
+	parameter MDATAW = 8   // Numero de bits de  endereco da memoria de dados
 )
 (
 	input                   clk, rst,
@@ -251,14 +251,14 @@ always @ (posedge clk or posedge rst) begin
 					end
 			31  : begin
 						ula_op  <= 5'd13;    // INV    -> Inverte bit a bit o acumulador
-						 srf    <= 1'b0;     // fazer o INV com memoria!
+						 srf    <= 1'b0;     // fazer o INV com memoria?
 						isrf    <= 1'b0;
 						req_in  <= 1'b0;     
 						out_en  <= 1'b0;
 					end
 			32  : begin
 						ula_op  <= 5'd18;    // LINV   -> Inverte bit logico no acumulador
-						 srf    <= 1'b0;     // fazer o LINV com memoria!
+						 srf    <= 1'b0;     // fazer o LINV com memoria?
 						isrf    <= 1'b0;
 						req_in  <= 1'b0;     // nao tem SLINV pois eh operacao unaria
 						out_en  <= 1'b0;
@@ -349,14 +349,14 @@ always @ (posedge clk or posedge rst) begin
 					end
 			45   : begin
 						ula_op  <= 5'd9;     // PST    -> carrega o valor do acumulador ou zero se for negativo
-						 srf    <= 1'b0;     // fazer o PST com memoria!
+						 srf    <= 1'b0;     // fazer o PST com memoria?
 						isrf    <= 1'b0;
 					   req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			46   : begin
 						ula_op  <= 5'd0;     // PSTS  -> faz o PST e ja seta na variavel (usado no pos_proc)
-						 srf    <= 1'b0;     // fazer o PSTS com memoria!
+						 srf    <= 1'b0;     // fazer o PSTS com memoria?
 						isrf    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
@@ -841,7 +841,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			45: begin                     // PST  -> carrega memoria com o valor do acumulador e zero se for negativo
+			45: begin                     // PST
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;

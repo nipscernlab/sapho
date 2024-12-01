@@ -18,11 +18,6 @@
 
     - Operador   >>>  : deslocamento a direta com complemento a dois (desloca mantendo o sinal)
 
-    - Atribuicao />   : seta uma variavel com o valor à direta dividido pelo valor em #NUGAIN (ex: x /> exp;) (evita x = exp/NUGAIN;)
-    - Atribuicao @    : seta uma variavel com zero, caso a expressao a direita dê negativo (ex: x @ exp;) (evita if(exp<0) x = 0; else x = exp;)
-    - Atribuicao $    : seta uma variavel com o valor absoluto da expressao a direita (ex: x $ exp) (evita if(exp<0) x = -exp; else x = exp;)
-    - Atribuicao =-   : seta uma variavel com o negativo do valor passado (ex: x =- exp;) (evita x = -exp;)
-
     - Array inicializavel por arquivo. A memoria do array ja eh preenchida em tempo de compilacao. (ex: int x[128] "valores.txt";)
     - Array com indice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sao invertidos. (usar com arrays complexos - real seguido do imaginario)
 */
@@ -231,65 +226,33 @@ break      : BREAK ';'                     {exec_break  (  );}
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0,0,1);} // SET
-            | TYPE ID '@'     exp ';'      {declar_var($2); var_set($2,$4,0,1,0,1);} // PSETS (PSET + SET)
-            | TYPE ID NORM    exp ';'      {declar_var($2); var_set($2,$4,0,2,0,1);} // NORMS (NORM + SET)
-            | TYPE ID '$'     exp ';'      {declar_var($2); var_set($2,$4,0,3,0,1);} // ABSS  (ABS  + SET)
-            | TYPE ID EQNE    exp ';'      {declar_var($2); var_set($2,$4,0,4,0,1);} // NEGS  (NEG  + SET)
+            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0,1);}
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '='    exp ';'               {var_set($1,$3,0,0,0,1);} // SET
-           | ID  '@'    exp ';'               {var_set($1,$3,0,1,0,1);} // PSETS (PSET + SET)
-           | ID NORM    exp ';'               {var_set($1,$3,0,2,0,1);} // NORMS (NORM + SET)
-           | ID  '$'    exp ';'               {var_set($1,$3,0,3,0,1);} // ABSS  (ABS  + SET)
-           | ID EQNE    exp ';'               {var_set($1,$3,0,4,0,1);} // NEGS  (NEG  + SET)
+assignment : ID  '='    exp ';'               {var_set($1,$3,0,0,1);}
            // incremento
            | ID                          PPLUS ';' {pplus_assign($1      );}
            | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
            | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
            // array normal
-           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0      );}
-                     exp ';'                  {var_set       ($1,$7,1,0,0,1);}
-           | ID  '[' exp ']'  '@'             {array_1d_check($1,$3,0      );}
-                     exp ';'                  {var_set       ($1,$7,1,1,0,1);}
-           | ID  '[' exp ']' NORM             {array_1d_check($1,$3,0      );}
-                     exp ';'                  {var_set       ($1,$7,1,2,0,1);}
-           | ID  '[' exp ']'  '$'             {array_1d_check($1,$3,0      );}
-                     exp ';'                  {var_set       ($1,$7,1,3,0,1);}
-           | ID  '[' exp ']' EQNE             {array_1d_check($1,$3,0      );}
-                     exp ';'                  {var_set       ($1,$7,1,4,0,1);}
+           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0    );}
+                     exp ';'                  {var_set       ($1,$7,1,0,1);}
            // array invertido
-           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2      );}
-                     exp ';'                  {var_set       ($1,$7,1,0,0,1);}
-           | ID  '[' exp ')'  '@'             {array_1d_check($1,$3,2      );}
-                     exp ';'                  {var_set       ($1,$7,1,1,0,1);}
-           | ID  '[' exp ')' NORM             {array_1d_check($1,$3,2      );}
-                     exp ';'                  {var_set       ($1,$7,1,2,0,1);}
-           | ID  '[' exp ')'  '$'             {array_1d_check($1,$3,2      );}
-                     exp ';'                  {var_set       ($1,$7,1,3,0,1);}
-           | ID  '[' exp ')' EQNE             {array_1d_check($1,$3,2      );}
-                     exp ';'                  {var_set       ($1,$7,1,4,0,1);}
+           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2    );}
+                     exp ';'                  {var_set       ($1,$7,1,0,1);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3, $6      );}
-                     exp ';'                  {var_set       ($1,$10,  2,0,0,1);}
-           | ID  '[' exp ']' '[' exp ']' '@'  {array_2d_check($1, $3, $6      );}
-                     exp ';'                  {var_set       ($1,$10,  2,1,0,1);}
-           | ID  '[' exp ']' '[' exp ']' NORM {array_2d_check($1, $3, $6      );}
-                     exp ';'                  {var_set       ($1,$10,  2,2,0,1);}
-           | ID  '[' exp ']' '[' exp ']' '$'  {array_2d_check($1, $3, $6      );}
-                     exp ';'                  {var_set       ($1,$10,  2,3,0,1);}
-           | ID  '[' exp ']' '[' exp ']' EQNE {array_2d_check($1, $3, $6      );}
-                     exp ';'                  {var_set       ($1,$10,  2,4,0,1);}
+           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3,$6    );}
+                     exp ';'                  {var_set       ($1,$10, 2,0,1);}
 
 // expressoes -----------------------------------------------------------------
 
 // $$ gera o id extendido (et) da variavel
 // se vem de uma reducao generica, o valor pode ser OFST ou 2*OFST (int ou float)
-// se vem de uma variavel ou constante o valor eh OFST + id (int) ou 2*OFST + id (float)
+// se vem de uma variavel ou constante, o valor eh OFST + id (int) ou 2*OFST + id (float)
 // a regra aqui eh muito importante: cada reducao pra exp (menos variaveis e constantes) deve ser
-// associada a um valor novo no acc!
+// associada a um valor novo no acc
 
          // constantes
 exp:       INUM                               {$$ = num2exp($1,1);}
@@ -314,34 +277,34 @@ exp:       INUM                               {$$ = num2exp($1,1);}
          |    '(' exp ')'                     {$$ = $2;}
          |    '+' exp                         {$$ = $2;}
          // operadores unarios
-         |    '-' exp                         {$$ =     negacao($2                );}
-         |    '!' exp                         {$$ =    int_oper($2,0,"!" ,"LINV",1);}
-         |    '~' exp                         {$$ =    int_oper($2,0,"~" , "INV",0);}
-         | ID                         PPLUS   {$$ =   exp_pplus($1                );}
-         | ID '[' exp ']'             PPLUS   {$$ = array_pplus($1,$3             );}
-         | ID '[' exp ']' '[' exp ']' PPLUS   {$$ = array_2plus($1,$3,$6          );}
+         |    '-' exp                         {$$ =     negacao($2      );}
+         |    '!' exp                         {$$ =    oper_int($2, 0, 0);}
+         |    '~' exp                         {$$ =    oper_int($2, 0, 1);}
+         | ID                         PPLUS   {$$ =   exp_pplus($1      );}
+         | ID '[' exp ']'             PPLUS   {$$ = array_pplus($1,$3   );}
+         | ID '[' exp ']' '[' exp ']' PPLUS   {$$ = array_2plus($1,$3,$6);}
          // operadores logicos
-         | exp  SHIFTL exp                    {$$ = int_oper($1,$3,"<<" , "SHL",0);}
-         | exp  SHIFTR exp                    {$$ = int_oper($1,$3,">>" , "SHR",0);}
-         | exp SSHIFTR exp                    {$$ = int_oper($1,$3,">>>", "SRS",0);}
-         | exp '&'     exp                    {$$ = int_oper($1,$3, "&" , "AND",0);}
-         | exp '|'     exp                    {$$ = int_oper($1,$3, "|" ,  "OR",0);}
-         | exp '^'     exp                    {$$ = int_oper($1,$3, "^" , "XOR",0);}
-         | exp LAND    exp                    {$$ = int_oper($1,$3, "&&","LAND",1);}
-         | exp LOR     exp                    {$$ = int_oper($1,$3, "||", "LOR",1);}
-         // operadore aritmetico
-         | exp '%'     exp                    {$$ = int_oper($1,$3,  "%", "MOD",0);}
-         | exp '*'     exp                    {$$ = oper_ari($1,$3             ,0);}
-         | exp '/'     exp                    {$$ = oper_ari($1,$3             ,1);}
-         | exp '+'     exp                    {$$ = oper_ari($1,$3             ,2);}
-         | exp '-'     exp                    {$$ = oper_ari($1,$3             ,3);}
+         | exp  SHIFTL exp                    {$$ = oper_int($1,$3, 2);}
+         | exp  SHIFTR exp                    {$$ = oper_int($1,$3, 3);}
+         | exp SSHIFTR exp                    {$$ = oper_int($1,$3, 4);}
+         | exp '&'     exp                    {$$ = oper_int($1,$3, 5);}
+         | exp '|'     exp                    {$$ = oper_int($1,$3, 6);}
+         | exp '^'     exp                    {$$ = oper_int($1,$3, 7);}
+         | exp LAND    exp                    {$$ = oper_int($1,$3, 8);}
+         | exp LOR     exp                    {$$ = oper_int($1,$3, 9);}
+         // operadores aritmeticos
+         | exp '%'     exp                    {$$ = oper_int($1,$3,10);}
+         | exp '*'     exp                    {$$ = oper_ari($1,$3, 0);}
+         | exp '/'     exp                    {$$ = oper_ari($1,$3, 1);}
+         | exp '+'     exp                    {$$ = oper_ari($1,$3, 2);}
+         | exp '-'     exp                    {$$ = oper_ari($1,$3, 3);}
          // operadores de comparacao
-         | exp '<'     exp                    {$$ = oper_cmp($1,$3,0);}
-         | exp '>'     exp                    {$$ = oper_cmp($1,$3,1);}
-         | exp GREQU   exp                    {$$ = oper_cmp($1,$3,2);}
-         | exp LESEQ   exp                    {$$ = oper_cmp($1,$3,3);}
-         | exp EQU     exp                    {$$ = oper_cmp($1,$3,4);}
-         | exp DIF     exp                    {$$ = oper_cmp($1,$3,5);}
+         | exp '<'     exp                    {$$ = oper_cmp($1,$3, 0);}
+         | exp '>'     exp                    {$$ = oper_cmp($1,$3, 1);}
+         | exp GREQU   exp                    {$$ = oper_cmp($1,$3, 2);}
+         | exp LESEQ   exp                    {$$ = oper_cmp($1,$3, 3);}
+         | exp EQU     exp                    {$$ = oper_cmp($1,$3, 4);}
+         | exp DIF     exp                    {$$ = oper_cmp($1,$3, 5);}
 
 %%
 

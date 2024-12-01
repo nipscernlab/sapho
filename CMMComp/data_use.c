@@ -136,6 +136,18 @@ void array_2d_check(int id, int et1, int et2)
     if (v_isar[id] == 1)
         fprintf (stderr, "Erro na linha %d: array %s tem uma dimensão só!\n", line_num+1, rem_fname(v_name[id], fname));
 
+    // se os dois indices ja estao na pilha, tem que tirar o indice 2 de la e salvar temporariamente
+    if ((et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        int id  =  exec_id("aux_idj");
+            et2 = get_type(et2)*OFST + id;
+
+        v_used[id] = 1;
+        v_asgn[id] = 1;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+    }
+
     // da load no primeiro argumento do array
     load_check(et1,0);
 
@@ -148,7 +160,7 @@ void array_2d_check(int id, int et1, int et2)
         {
             fprintf(stdout, "Atenção na linha %d: primeiro índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
@@ -324,7 +336,7 @@ int exp_pplus(int id)
     int ret = oper_ari(et,et1,2);
 
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,0,1);
+    var_set(id, ret, v_isar[id],0,1);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -352,7 +364,7 @@ int array_pplus(int id, int ete)
     // faz o load no indice do array novamente
     array_1d_check(id, ete, 0);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,0,1);
+    var_set(id, ret, v_isar[id],0,1);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -380,7 +392,7 @@ int array_2plus(int id, int et1, int et2)
     // faz o load no indice do array novamente
     array_2d_check(id, et1, et2);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,0,1);
+    var_set(id, ret, v_isar[id],0,1);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 

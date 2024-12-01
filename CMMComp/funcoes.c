@@ -38,6 +38,7 @@ void declar_firstpar(int id)
     // testes com numeros complexos -------------------------------------------
     if (v_type[id] > 2)
     {
+        // primeiro pega o img da pilha
         int idi = get_img_id(id);
         if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[idi]);
     }
@@ -82,6 +83,7 @@ void declar_ret(int et)
     // testes com numeros complexos -------------------------------------------
     if ((v_type[fun_id1] > 8) || (get_type(et) > 2))
     {
+        // se retorno eh complexo, executa isso e sai
         declar_ret_cmp(et);
         return;
     }

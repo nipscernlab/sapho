@@ -67,8 +67,8 @@ int exec_abs(int et)
     return get_type(et)*OFST;
 }
 
-// valor absoluto de um num complexo
-int abs_comp(int et)
+// modulo ao quadrado de um num complexo
+int mod_sqr(int et)
 {
     int type = get_type(et);
 
@@ -111,7 +111,13 @@ int abs_comp(int et)
         etr = 2*OFST;                       // saida tem q ser et estendido pra float no acc
     }
 
-    return exec_sqrt(etr);                  // computa a raiz quadrada e retorna
+    return etr;
+}
+
+// valor absoluto de um num complexo
+int abs_comp(int et)
+{
+    return exec_sqrt(mod_sqr(et));          // computa a raiz quadrada do modulo ao quadrdo
 }
 
 // nega um num complexo

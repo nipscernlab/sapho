@@ -11,6 +11,7 @@ int   exec_norm (int et );          // divisao por constante
 int   exec_sqrt (int et );          // raiz quadrada
 
 // testes com numeros complexos -----------------------------------------------
+int   mod_sqr(int et);              // modulo ao quadrado
 int  abs_comp(int et);
 int  neg_comp(int et);
 int exec_real(int et);

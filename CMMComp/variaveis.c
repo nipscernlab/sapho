@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-int  v_count = 0; // guarda o tamanho da tabela
+int v_count = 0; // guarda o tamanho da tabela
 
 int find_var(char *val)
 {

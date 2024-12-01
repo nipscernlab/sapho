@@ -453,40 +453,40 @@ endmodule
 
 module ula_fl
 #(
-	// Geral
-	parameter           EXP = 8,
+ //Geral
+	parameter           EXP =  8,
 	parameter [EXP-1:0] MAN = 23,
 
-	// Operacoes aritmeticas
+ //Operacoes aritmeticas
 	parameter ADD  = 0,
 	parameter MLT  = 0,
 	parameter DIV  = 0,
  //parameter MOD  = 0,    soh pra ula_fx
 	parameter NEG  = 0,
 
-	// Operacoes criadas
+ //Operacoes criadas
  //parameter NRM  = 0, // divide pela constante NUGAIN
 	parameter ABS  = 0, // valor absoluto
 	parameter PST  = 0, // zera se form negativo
 	parameter SGN  = 0, // pega o sinal de in1 e coloca em in2
 
-	// Operacoes Logicas bitwise
+ //Operacoes Logicas bitwise
  //parameter OR   = 0,    soh pra ula_fx
  //parameter AND  = 0,
  //parameter INV  = 0,
  //parameter XOR  = 0,
 
-	// Operacoes de comparacao
+ //Operacoes de comparacao
 	parameter LES  = 0,
 	parameter GRE  = 0,
 	parameter EQU  = 0,
 
-	// Operacoes Logicas que resultam em 1 bit (usado em if else while)
+ //Operacoes Logicas que resultam em 1 bit (usado em if else while)
 	parameter LIN  = 0,
 	parameter LAN  = 0,
 	parameter LOR  = 0
 
- // Operacoes de deslocamento de bits
+ //Operacoes de deslocamento de bits
  //parameter SHR  = 0,    soh pra ula_fx
  //parameter SHL  = 0,
  //parameter SRS  = 0
@@ -694,7 +694,7 @@ wire    [EXP+MAN:0] mux_out;
 outmux #(EXP+MAN+1) omux_s(op,
                            in1,in2,
                            sum_out,mul_out,div_out,/*mod,*/neg_out,
-                           /*nrm,*/abs_out,pst_out,sgn_out,
+                         /*nrm,*/abs_out,pst_out,sgn_out,
                          //orr,ann,inv,cor,
                            les_out,gre_out,equ_out,
                            inv_out,and_out,orr_out,

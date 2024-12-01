@@ -1,6 +1,6 @@
 module mem_instr
 #(
-	parameter NADDRE = 8,
+	parameter NADDRE =  8,
 	parameter NBDATA = 12,
 	parameter FNAME  = "instr.mif"
 )
