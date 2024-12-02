@@ -367,7 +367,7 @@ int operacoes(int et1, int et2, char *iop, char *fop, int *op)
 int int_oper(int et1, int et2, char *op, char *code, int fok)
 {
     if ((prtype == 1) && (fok == 0))
-        fprintf(stderr, "Erro na linha %d: processador em ponto flutuante não aceita %s ainda. Aguarde!\n", line_num+1, op);
+        fprintf(stderr, "Erro na linha %d: processador em ponto flutuante nÃ£o aceita %s ainda. Aguarde!\n", line_num+1, op);
 
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
         fprintf(stderr, "Erro na linha %d: uso incorreto de %s. Tem que passar tipo int. Viajou?\n", line_num+1, op);

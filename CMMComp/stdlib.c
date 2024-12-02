@@ -18,7 +18,7 @@ int exec_in(int et)
     // se a porta eh um float e proc eh int, reclama e converte pra inteiro
     if ((prtype == 0) && (get_type(et) == 2))
     {
-        fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. Só me dando trabalho a toa!\n", line_num+1);
+        fprintf(stdout, "AtenÃ§Ã£o na linha %d: endereÃ§o de entrada tem que ser int. SÃ³ me dando trabalho a toa!\n", line_num+1);
 
         if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
         f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
@@ -26,7 +26,7 @@ int exec_in(int et)
 
     // testes com numeros complexos -------------------------------------------
     if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: Ah não, endereço de porta com número complexo já é demais!\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: Ah nÃ£o, endereÃ§o de porta com nÃºmero complexo jÃ¡ Ã© demais!\n", line_num+1);
     // fim do teste -----------------------------------------------------------
 
     // executa instrucao IN
@@ -170,7 +170,7 @@ int exec_pst(int et)
 
     if ((prtype == 0) && (get_type(et) == 2))
     {
-        fprintf(stdout, "Atenção na linha %d: essa conversão pra inteiro gasta muito recurso!\n", line_num+1);
+        fprintf(stdout, "AtenÃ§Ã£o na linha %d: essa conversÃ£o pra inteiro gasta muito recurso!\n", line_num+1);
 
         if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
         f2i = 1;
@@ -178,7 +178,7 @@ int exec_pst(int et)
 
     // testes com numeros complexos -------------------------------------------
     if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: NÃ£o faz nenhum sentido usar a funÃ§Ã£o 'pset(.)' com nÃºmeros complexos!\n", line_num+1);
     // fim do teste -----------------------------------------------------------
 
     if (using_macro == 0) fprintf(f_asm, "PSET\n");
@@ -196,7 +196,7 @@ void exec_out1(int et)
     // se a porta eh um float, reclama e converte pra inteiro
     if ((prtype == 0) && (get_type(et) == 2))
     {
-        fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. Só me dando trabalho a toa!\n", line_num+1);
+        fprintf(stdout, "AtenÃ§Ã£o na linha %d: endereÃ§o de entrada tem que ser int. SÃ³ me dando trabalho a toa!\n", line_num+1);
 
         if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
         f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
@@ -211,7 +211,7 @@ void exec_out2(int et)
 
     if ((prtype == 0) && (get_type(et) > 1))
     {
-        fprintf(stdout, "Atenção na linha %d: o processador é ponto fixo e você quer mandar um ponto flutuante pra fora? Vai gerar muito código!\n", line_num+1);
+        fprintf(stdout, "AtenÃ§Ã£o na linha %d: o processador Ã© ponto fixo e vocÃª quer mandar um ponto flutuante pra fora? Vai gerar muito cÃ³digo!\n", line_num+1);
 
         if (using_macro == 0) fprintf(f_asm , "CALL float2int\n");
         f2i = 1;
@@ -231,7 +231,7 @@ int exec_sign(int et1, int et2)
         // soh se um dia alguem precisar
         if ((get_type(et1) != 1) || (get_type(et2) != 1))
         {
-            fprintf (stderr, "Erro na linha %d: parâmetros da função sign(.,.) devem ser inteiros!\n", line_num+1);
+            fprintf (stderr, "Erro na linha %d: parÃ¢metros da funÃ§Ã£o sign(.,.) devem ser inteiros!\n", line_num+1);
             return 0;
         }
     }
@@ -244,7 +244,7 @@ int exec_sign(int et1, int et2)
 int exec_norm(int et)
 {
     if ((prtype == 1) || (get_type(et) != 1))
-        fprintf (stderr, "Erro na linha %d: nada a ver! norm é só pra inteiro no processador em ponto fixo!\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: nada a ver! norm Ã© sÃ³ pra inteiro no processador em ponto fixo!\n", line_num+1);
 
     return int_oper(et,0,"norm(.)","NORM",0);
 }
@@ -297,7 +297,7 @@ int exec_sqrt(int et)
     // testes com numeros complexos -------------------------------------------
     if (type > 2)
     {
-        fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo. Se vira!\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: nÃ£o implementei raiz quadrada de nÃºmero complexo. Se vira!\n", line_num+1);
     }
     // fim do teste -----------------------------------------------------------
 
@@ -309,7 +309,7 @@ int exec_sqrt(int et)
 // retorna a parte real de um comp
 int exec_real(int et)
 {
-    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função real(.) tem que ser complexo!\n", line_num+1);
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da funÃ§Ã£o real(.) tem que ser complexo!\n", line_num+1);
 
     int id = et % OFST;
 
@@ -340,7 +340,7 @@ int exec_real(int et)
 // retorna a parte imag de um comp
 int exec_imag(int et)
 {
-    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função imag(.) tem que ser complexo!\n", line_num+1);
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da funÃ§Ã£o imag(.) tem que ser complexo!\n", line_num+1);
 
     int id = et % OFST;
     int et_r, et_i;

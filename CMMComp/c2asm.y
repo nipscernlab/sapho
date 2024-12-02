@@ -1,7 +1,7 @@
 /*
-    Coisas que sÛ tem em C+-
+    Coisas que s√≥ tem em C+-
 
-    - Diretivas #USEMAC #ENDMAC: seleciona trechos do cÛdigo que ser„o substituidos por Macros otimizados em assembly
+    - Diretivas #USEMAC #ENDMAC: seleciona trechos do c√≥digo que ser√£o substituidos por Macros otimizados em assembly
     - Diretiva  #INTERPOIN     : marca ponto de retorno para um reset no pino itr
 
     - tipo de dados comp : esta ainda finalizando a fase de testes
@@ -345,5 +345,5 @@ int main(int argc, char *argv[])
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	fprintf (stderr, "PÙ, presta atenÁ„o na sintaxe da linha %d!\n", line_num+1);
+	fprintf (stderr, "P√¥, presta aten√ß√£o na sintaxe da linha %d!\n", line_num+1);
 }

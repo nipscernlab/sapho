@@ -18,8 +18,8 @@ void exec_diretivas(char *dir, int id, int t)
         case 1: prtype = ival; break;
         case 2: nbmant = ival; break;
         case 3: nbexpo = ival; break;
-        case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
-        case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
+        case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que vocÃª quer um processador sem entrada de dados?\n", line_num+1); break;
+        case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que vocÃª quer um processador sem saÃ­da de dados?\n"  , line_num+1); break;
     }
 }
 
@@ -28,7 +28,7 @@ void exec_diretivas(char *dir, int id, int t)
 void use_macro(char *f_name, int global)
 {
     if (using_macro == 1)
-        fprintf(stderr, "Erro na linha %d: Tá chamando uma macro dentro da outra. Você é uma pessoa confusa!\n", line_num+1);
+        fprintf(stderr, "Erro na linha %d: TÃ¡ chamando uma macro dentro da outra. VocÃª Ã© uma pessoa confusa!\n", line_num+1);
 
     // se for global, tem q ver se tem que chamar a funcao main ainda
     if ((mainok == 0) && (global == 1))
@@ -50,7 +50,7 @@ void use_macro(char *f_name, int global)
     FILE *f_macro;
     char a;
         f_macro  =    fopen  (file_name, "r");
-    if (f_macro == 0) fprintf(stderr, "Erro na linha %d: Cadê a macro %s? Tinha que estar na pasta do projeto do SAPHO!\n", line_num+1, file_name);
+    if (f_macro == 0) fprintf(stderr, "Erro na linha %d: CadÃª a macro %s? Tinha que estar na pasta do projeto do SAPHO!\n", line_num+1, file_name);
 	do {      a  =    fgetc  (f_macro); if (a != EOF) fputc(a,f_asm);} while (a != EOF);
 	                  fclose (f_macro);
 
@@ -60,7 +60,7 @@ void use_macro(char *f_name, int global)
 // libera o parser pra salvar no arquivo assembler
 void end_macro()
 {
-    if (using_macro == 0) fprintf(stderr, "Erro na linha %d: Não estou achando o começo da macro\n", line_num+1);
+    if (using_macro == 0) fprintf(stderr, "Erro na linha %d: NÃ£o estou achando o comeÃ§o da macro\n", line_num+1);
         using_macro  = 0;
 }
 

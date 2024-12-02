@@ -76,7 +76,7 @@ run: ${TARGET}
 # Regra para limpeza dos arquivos gerados.
 # Remove o executável, os arquivos gerados pelo Bison e Flex e qualquer arquivo objeto (*.o).
 clean:
-	rm -f $(TARGET) $(BISON_OUT) $(BISON_HEADER) $(FLEX_OUT) *.o
+	rm -f $(TARGET) $(BISON_OUT) $(BISON_HEADER) $(FLEX_OUT) ${OUTPUT_FILE}*.o
 
 # Regra para limpeza completa.
 # Além dos arquivos removidos por "clean", remove também arquivos temporários como *~.
