@@ -6,6 +6,9 @@ SRC_DIR = Sources
 HEADER_DIR = Headers
 BIN_DIR = bin
 
+# Diretório do projeto onde o arquivo de entrada e saída estarão localizados.
+PROJECT_DIR = ../Project
+
 # Lista dos arquivos fonte principais do projeto. 
 # Cada arquivo contém uma parte do código responsável por diferentes funcionalidades.
 SRCS = data_assign.c data_declar.c data_use.c diretivas.c funcoes.c \
@@ -30,11 +33,11 @@ BISON_HEADER = $(SRC_DIR)/y.tab.h
 # Arquivo gerado pelo Flex, que contém o código do analisador léxico (scanner).
 FLEX_OUT = $(SRC_DIR)/lex.yy.c
 
-# Arquivo de entrada que será processado pelo compilador.
-INPUT_FILE = ../test.cmm
+# Arquivo de entrada que será processado pelo compilador (modificado para refletir o caminho correto).
+INPUT_FILE = $(PROJECT_DIR)/test.cmm
 
-# Arquivo de saída que será gerado pelo compilador com o código assembly.
-OUTPUT_FILE = ../test.asm
+# Arquivo de saída que será gerado pelo compilador com o código assembly (modificado para refletir o caminho correto).
+OUTPUT_FILE = $(PROJECT_DIR)/test.asm
 
 # Nome do compilador utilizado para compilar os arquivos fonte.
 CC = gcc

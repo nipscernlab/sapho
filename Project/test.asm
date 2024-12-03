@@ -1,6 +1,6 @@
 LOAD NULL
 #PRNAME proc_FFT128
-#DIRNAM "C:\Users\Victor\Desktop\IC\FFT128\Hardware\proc_FFT128_H"
+#DIRNAM "."
 #DATYPE 1
 #NBMANT 23
 #NBEXPO 8
