@@ -28,7 +28,7 @@ FLEX_SRC = $(SRC_DIR)/c2asm.l
 BISON_OUT = $(SRC_DIR)/y.tab.c
 
 # Arquivo de cabeçalho gerado pelo Bison, que inclui definições de símbolos usados no parser.
-BISON_HEADER = $(SRC_DIR)/y.tab.h
+BISON_HEADER = $(HEADER_DIR)/y.tab.h
 
 # Arquivo gerado pelo Flex, que contém o código do analisador léxico (scanner).
 FLEX_OUT = $(SRC_DIR)/lex.yy.c
@@ -61,6 +61,7 @@ $(TARGET): $(SRC_FILES) $(BISON_OUT) $(FLEX_OUT)
 # Os arquivos de saída $(BISON_OUT) e $(BISON_HEADER) dependem do arquivo fonte $(BISON_SRC).
 $(BISON_OUT) $(BISON_HEADER): $(BISON_SRC)
 	bison -d -o $(BISON_OUT) $(BISON_SRC)
+	mv $(SRC_DIR)/y.tab.h $(HEADER_DIR)/y.tab.h
 
 # Regra para gerar o scanner (analisador léxico) usando o Flex.
 # O arquivo de saída $(FLEX_OUT) depende do arquivo fonte $(FLEX_SRC) e do cabeçalho $(BISON_HEADER).

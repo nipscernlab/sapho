@@ -9,7 +9,7 @@ LOAD NULL
 #NUIOIN 5
 #NUIOOU 6
 #array data 258
-CALL   main
+CALL main
 @fim JMP fim
 @fft SETP fft_nfft
 SET fft_nn
@@ -414,7 +414,7 @@ SET cont
 JMP L13
 @L13end LOAD 128.0
 PLD 0
-CALL   fft
+CALL fft
 LOAD 0
 SET cont
 @L14 LOAD 2
