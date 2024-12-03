@@ -164,10 +164,33 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-		// 19  :  MOD - ponto fixo
-		// 20  : SMOD - ponto fixo
-		// 21  :  AND - ponto fixo
-		// 22  : SAND - ponto fixo
+			19  : begin
+						ula_op  <= 5'd5;     // MOD  -> modulo da divisao com memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			20  : begin
+						ula_op  <= 5'd5;     // SMOD -> modulo da divisao com pilha
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+		   21  : begin
+						ula_op  <= 5'd12;    // AND  -> and bit a bit com memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			22  : begin
+						ula_op  <= 5'd12;    // SAND -> and bit a bit com pilha
+						srf     <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 			23  : begin
 						ula_op  <= 5'd19;    // LAND -> AND do LSB com memoria
 						 srf    <= 1'b0;
@@ -182,8 +205,20 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-		// 25  :  OR - ponto fixo
-		// 26  : SOR - ponto fixo
+			25  : begin
+						ula_op  <= 5'd11;    // OR    -> ou bit a bit com memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			26  : begin
+						ula_op  <= 5'd11;    // SOR   -> ou bit a bit com pilha
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 			27  : begin
 						ula_op  <= 5'd20;    // LOR -> OR do LSB com memoria
 						 srf    <= 1'b0;
@@ -198,9 +233,27 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-		// 29  :  XOR - ponto fixo
-		// 30  : SXOR - ponto fixo
-		// 31  : INV  - ponto fixo
+			29  : begin
+						ula_op  <= 5'd14;    // XOR   -> ou exclusivo bit a bit com memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			30  : begin
+						ula_op  <= 5'd14;    // SXOR   -> ou exclusivo bit a bit com pilha
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			31  : begin
+						ula_op  <= 5'd13;    // INV    -> Inverte bit a bit o acumulador
+						 srf    <= 1'b0;     // fazer o INV com memoria?
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;     
+						out_en  <= 1'b0;
+					end
 			32  : begin
 						ula_op  <= 5'd18;    // LINV -> Inverte bit de comparacao
 						 srf    <= 1'b0;
@@ -250,12 +303,48 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-		// 39  :  SHR - ponto fixo
-		// 40  : SSHR - ponto fixo
-		// 41  :  SHL - ponto fixo
-		// 42  : SSHL - ponto fixo
-		// 43  :  SRS - ponto fixo
-		// 44  : SSRS - ponto fixo
+			39  : begin
+						ula_op  <= 5'd22;    // SHR    -> Shift pra direita com memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			40  : begin
+						ula_op  <= 5'd22;    // SSHR   -> Shift pra direita com pilha
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			41  : begin
+						ula_op  <= 5'd21;    // SHL    -> shift pra esquerda com memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			42  : begin
+						ula_op  <= 5'd21;    // SSHL   -> shift pra esquerda com pilha
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			43  : begin
+						ula_op  <= 5'd23;    // SRS    -> Shift pra direita com sinal usando a memoria
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			44  : begin
+						ula_op  <= 5'd23;    // SSRS   -> Shift pra direita com sinal usando a pilha
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 			45  : begin
 						ula_op  <= 5'd9;     // PST -> Zera se for negativo
 						 srf    <= 1'b0;
@@ -270,8 +359,20 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-		// 47  : NORM  - ponto fixo
-		// 48  : NORMS - ponto fixo
+			47  : begin
+						ula_op  <= 5'd7;     // NORM   -> Divisao do acc por uma constante (exemplo: />300)
+						 srf    <= 1'b0;     // fazer o NORM com memoria!
+						isrf    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			48  : begin
+						ula_op  <= 5'd0;     // NORMS  -> faz o NORM e ja seta na variavel (subsitui o '=', exemplo: x /> 300;)
+						 srf    <= 1'b0;     // fazer o NORMS com memoria!
+						isrf    <= 1'b0;
+					   req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 			49  : begin
 						ula_op  <= 5'd8;     // ABS -> Valor absoluto  
 						 srf    <= 1'b0;
@@ -485,6 +586,38 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
+			19: begin                     // MOD
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			20: begin                     // SMOD
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			21: begin                     // AND
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			22: begin                     // SAND
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
 			23: begin                        // LAND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
@@ -494,6 +627,22 @@ always @ (*) begin
 						neg      <= 1'b0;
 					end
 			24: begin                        // SLAND
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			25: begin                     // OR
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			26: begin                     // SOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -517,7 +666,31 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			32: begin                        // LINV
+			29: begin                     // XOR
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			30: begin                     // SXOR
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			31: begin                     // INV
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			32: begin                     // LINV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -573,6 +746,54 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
+			39: begin                     // SHR
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			40: begin                     // SSHR
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			41: begin                     // SHL
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			42: begin                     // SSHL
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			43: begin                     // SRS
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			44: begin                     // SSRS
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
 			45: begin
 						mem_wr   <= 1'b0;       // PST
 						dsp_push <= 1'b0;
@@ -586,6 +807,22 @@ always @ (*) begin
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
 						pset     <= 1'b1;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			47: begin                     // NORM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
+						abs      <= 1'b0;
+						neg      <= 1'b0;
+					end
+			48: begin                     // NORMS 
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						pset     <= 1'b0;
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end

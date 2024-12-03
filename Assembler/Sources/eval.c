@@ -111,7 +111,7 @@ void get_addr(char *f_name, int tam)
 
         filepointer = fopen(addr_tab, "r");
         if (filepointer == NULL)
-        fprintf(stderr, "Erro: NÃ£o rolou de abrir/achar o arquivo %s!!\n", addr_tab);
+        fprintf(stderr, "Erro: Não rolou de abrir/achar o arquivo %s!!\n", addr_tab);
     }
 
     // agora le o arquivo -----------------------------------------------------

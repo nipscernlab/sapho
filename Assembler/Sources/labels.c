@@ -24,7 +24,7 @@ void add_label(char *la, int val)
 {
     if (l_count == NLABMAX)
     {
-        fprintf(stderr, "Erro: nÃºmero de labels > %d", NLABMAX);
+        fprintf(stderr, "Erro: número de labels > %d", NLABMAX);
     }
     else
     {

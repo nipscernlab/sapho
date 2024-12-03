@@ -114,12 +114,8 @@ int main(int argc, char *argv[])
     fclose(yyin);
 	eval_finish();
 
-	fprintf(stdout, "###### MemÃ³ria de instruÃ§Ãµes: %d\n", n_ins);
-	fprintf(stdout, "###### MemÃ³ria de dados: %d\n"     , n_dat);
+	fprintf(stdout, "###### Memória de instruções: %d\n", n_ins);
+	fprintf(stdout, "###### Memória de dados: %d\n"     , n_dat);
 
     return 0;
-}
-
-int yywrap(void) {
-    return 1;
 }

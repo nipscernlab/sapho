@@ -78,11 +78,11 @@ void array_1d_check(int id, int et, int flag)
 {
     // tem que ver se eh array mesmo
     if (v_isar[id] == 0)
-        fprintf (stderr, "Erro na linha %d: %s nÃ£o Ã© array nÃ£o, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: %s não é array não, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // tem que ver se eh array 1D mesmo
     if (v_isar[id] == 2)
-        fprintf (stderr, "Erro na linha %d: array %s tem duas dimensÃµes!\n"  , line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n"  , line_num+1, rem_fname(v_name[id], fname));
 
     // seta se eh array invertido
     if (flag == 1) exec_fft_use = 1; // array invertido no uso (depois do =)
@@ -98,7 +98,7 @@ void array_1d_check(int id, int et, int flag)
     {
         if (prtype == 0)
         {
-            fprintf(stdout, "AtenÃ§Ã£o na linha %d: Ã­ndice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
 
             if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
@@ -114,7 +114,7 @@ void array_1d_check(int id, int et, int flag)
 void array_1d_check_cmp(int et)
 {
     if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: usando nÃºmero complexo em Ã­ndice de array? tsts...\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: usando número complexo em índice de array? tsts...\n", line_num+1);
 
     // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
     // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
@@ -130,11 +130,11 @@ void array_2d_check(int id, int et1, int et2)
 {
     // tem que ver se eh array 2D mesmo
     if (v_isar[id] == 0)
-        fprintf (stderr, "Erro na linha %d: %s nÃ£o Ã© array nÃ£o, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: %s não é array não, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // tem que ver se nao eh array 1D
     if (v_isar[id] == 1)
-        fprintf (stderr, "Erro na linha %d: array %s tem uma dimensÃ£o sÃ³!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: array %s tem uma dimensão só!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // se os dois indices ja estao na pilha, tem que tirar o indice 2 de la e salvar temporariamente
     if ((et1 % OFST == 0) && (et2 % OFST == 0))
@@ -158,7 +158,7 @@ void array_2d_check(int id, int et1, int et2)
     {
         if (prtype == 0)
         {
-            fprintf(stdout, "AtenÃ§Ã£o na linha %d: primeiro Ã­ndice do array tÃ¡ dando float. Vou arredondar pra baixo.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: primeiro índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
@@ -178,7 +178,7 @@ void array_2d_check(int id, int et1, int et2)
     {
         if (prtype == 0)
         {
-            fprintf(stdout, "AtenÃ§Ã£o na linha %d: segundo Ã­ndice do array tÃ¡ dando float. Vou arredondar pra baixo.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: segundo índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
             if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
@@ -197,7 +197,7 @@ void array_2d_check(int id, int et1, int et2)
 void array_2d_check_cmp(int et1, int et2)
 {
     if ((get_type(et1) > 2) || (get_type(et2) > 2))
-        fprintf (stderr, "Erro na linha %d: usando nÃºmero complexo em Ã­ndice de array? tsts...\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: usando número complexo em índice de array? tsts...\n", line_num+1);
 
     // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
     // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
@@ -223,15 +223,15 @@ int id2exp(int id)
 {
     // Testa se a variavel ja foi declarada
     if (v_type[id] == 0)
-        fprintf (stderr, "Erro na linha %d: manÃ©, declara a variÃ¡vel %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: mané, declara a variável %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // Testa se a variavel ja recebeu um valor
     if (v_asgn[id] == 0)
-        fprintf (stdout, "AtenÃ§Ã£o na linha %d: como vocÃª quer usar %s se vocÃª nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
     // Se for um array, esqueceram o indice
     if (v_isar[id] > 0)
-        fprintf (stderr, "Erro na linha %d: cadÃª o Ã­ndice de array da variÃ¡vel %s?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: cadê o índice de array da variável %s?\n", line_num+1, rem_fname(v_name[id], fname));
 
     v_used[id] = 1;
 
@@ -243,11 +243,11 @@ int array1d2exp(int id, int et, int fft)
 {
     // testa se a variavel ja foi declarada
     if (v_type[id] == 0)
-        fprintf (stderr, "Erro na linha %d: manÃ©, declara a variÃ¡vel %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: mané, declara a variável %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // testa se a variavel ja recebeu um valor
     if (v_asgn[id] == 0)
-        fprintf (stdout, "AtenÃ§Ã£o na linha %d: como vocÃª quer usar %s se vocÃª nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
     // prepara o indice e coloca ele no acc
     array_1d_check(id,et,fft);
@@ -284,11 +284,11 @@ int array2d2exp(int id, int et1, int et2)
 {
     // testa se a variavel ja foi declarada
     if (v_type[id] == 0)
-        fprintf (stderr, "Erro na linha %d: manÃ©, declara a variÃ¡vel %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: mané, declara a variável %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
 
     // testa se a variavel ja recebeu um valor
     if (v_asgn[id] == 0)
-        fprintf (stdout, "AtenÃ§Ã£o na linha %d: como vocÃª quer usar %s se vocÃª nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
     // prepara o indice e coloca ele no acc
     array_2d_check(id,et1,et2);
@@ -320,6 +320,11 @@ int array2d2exp(int id, int et1, int et2)
 // reducao de ++ pra exp
 int exp_pplus(int id)
 {
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+        fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
+    // fim do teste -----------------------------------------------------------
+
     // equivalente a pegar o x na expressao (x+1)
     int et = id2exp(id);
 
@@ -346,6 +351,11 @@ int exp_pplus(int id)
 // reducao de ++ pra exp em array 1D
 int array_pplus(int id, int ete)
 {
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+        fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
+    // fim do teste -----------------------------------------------------------
+
     // equivalente a pegar o x na expressao (x+1)
     int et = array1d2exp(id,ete,0);
 
@@ -374,6 +384,11 @@ int array_pplus(int id, int ete)
 // reducao de ++ pra exp em array 2D
 int array_2plus(int id, int et1, int et2)
 {
+    // testes com numeros complexos -------------------------------------------
+    if (v_type[id] > 2)
+        fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
+    // fim do teste -----------------------------------------------------------
+
     // equivalente a pegar o x na expressao (x+1)
     int et = array2d2exp(id,et1,et2);
 

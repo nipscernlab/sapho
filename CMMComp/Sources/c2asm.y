@@ -1,7 +1,7 @@
 /*
-    Coisas que s√≥ tem em C+-
+    Coisas que sÛ tem em C+-
 
-    - Diretivas #USEMAC #ENDMAC: seleciona trechos do c√≥digo que ser√£o substituidos por Macros otimizados em assembly
+    - Diretivas #USEMAC #ENDMAC: seleciona trechos do cÛdigo que ser„o substituidos por Macros otimizados em assembly
     - Diretiva  #INTERPOIN     : marca ponto de retorno para um reset no pino itr
 
     - tipo de dados comp : esta ainda finalizando a fase de testes
@@ -139,8 +139,8 @@ par_list : TYPE ID                        {$$ = declar_par($1,$2);}
          | par_list ',' par_list          {        set_par($3   );} // vai pegando da pilha
 
 // retornos de funcao e void
-return_call : RETURN exp ';'              {declar_ret($2);}
-            | RETURN     ';'              {  void_ret(  );}
+return_call : RETURN exp ';'              {declar_ret($2,1);}
+            | RETURN     ';'              {  void_ret(    );}
 
 // lista de statments em C ----------------------------------------------------
 
@@ -345,5 +345,5 @@ int main(int argc, char *argv[])
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	fprintf (stderr, "P√¥, presta aten√ß√£o na sintaxe da linha %d!\n", line_num+1);
+	fprintf (stderr, "PÙ, presta atenÁ„o na sintaxe da linha %d!\n", line_num+1);
 }

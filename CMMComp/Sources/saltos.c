@@ -58,7 +58,7 @@ void while_stmt()
 void exec_break()
 {
     // checa se o break esta dentro de um while
-    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aÃ­ tÃ¡ perdido!\n",  line_num+1);
+    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aí tá perdido!\n",  line_num+1);
     if (using_macro == 0) fprintf(f_asm , "JMP L%dend\n"                                 , get_while());
 }
 
@@ -115,7 +115,7 @@ void switch_break()
 void exec_switch(int et)
 {
     if (switching == 1)
-    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? VocÃª Ã© uma pessoa confusa!\n",  line_num+1);
+    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Você é uma pessoa confusa!\n",  line_num+1);
 
     // acha a variavel switch_exp (lexer)
     if (find_var("switch_exp") == -1) add_var("switch_exp");

@@ -11,7 +11,7 @@ void declar_var(int id)
 {
     if (v_type[id] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variÃ¡vel %s jÃ¡ existe, tÃ¡ doido?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
@@ -48,13 +48,13 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     {
         if ((prtype == 0) && (v_type[id_var] != 1))
         {
-            fprintf (stderr, "Erro na linha %d: inicializaÃ§Ã£o de array, no processador em ponto fixo, sÃ³ pra int por enquanto. Se vira!\n", line_num+1);
+            fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
         if (using_macro == 0) fprintf(f_asm, "#arrays %s %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
     }
 
-    v_isar[id_var] = 1; // variavel Ã© array 1D
+    v_isar[id_var] = 1; // variavel é array 1D
     v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 
     // teste com numeros complexos --------------------------------------------
@@ -75,13 +75,13 @@ void declar_arr_1d_img(int id_var, int id_arg, int id_fname)
     {
         if ((prtype == 0) && (v_type[id_var] > 1))
         {   // preciso implementar isso!
-            fprintf (stderr, "Erro na linha %d: inicializaÃ§Ã£o de array, no processador em ponto fixo, sÃ³ pra int por enquanto. Se vira!\n", line_num+1);
+            fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
         if (using_macro == 0) fprintf(f_asm, "#arrays %s %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
     }
 
-    v_isar[id_var] = 1; // variavel Ã© array 1D
+    v_isar[id_var] = 1; // variavel é array 1D
     v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 }
 
@@ -101,7 +101,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     {
         if ((prtype == 0) && (v_type[id_var] != 1))
         {
-            fprintf (stderr, "Erro na linha %d: inicializaÃ§Ã£o de array, no processador em ponto fixo, sÃ³ pra int por enquanto. Se vira!\n", line_num+1);
+            fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
         if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s\n", v_name[id_var], size, v_name[id_fname]);
@@ -110,7 +110,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // cria uma variavel auxiliar pra guardar o tamanho da dimensao x
     fprintf(f_asm, "LOAD %s\nSET %s_arr_size\n", v_name[id_x], v_name[id_var]);
 
-    v_isar[id_var] = 2; // variavel Ã© array 2D
+    v_isar[id_var] = 2; // variavel é array 2D
     v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar um a um)
 
     // teste com numeros complexos --------------------------------------------
@@ -131,12 +131,12 @@ void declar_arr_2d_img(int id_var, int size, int id_fname)
     {
         if ((prtype == 0) && (v_type[id_var] > 1))
         {   // preciso implementar isso!
-            fprintf (stderr, "Erro na linha %d: inicializaÃ§Ã£o de array, no processador em ponto fixo, sÃ³ pra int por enquanto. Se vira!\n", line_num+1);
+            fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
         if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s\n", v_name[id_var], size, v_name[id_fname]);
     }
 
-    v_isar[id_var] = 1; // variavel Ã© array 1D
+    v_isar[id_var] = 1; // variavel é array 1D
     v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 }

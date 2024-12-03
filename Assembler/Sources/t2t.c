@@ -45,7 +45,7 @@ int f2mf(char *va)
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((r < q) && (r != 0) && (pp == 1))
-        fprintf (stderr, "Erro: achei %f*10^-7, mas o menor nÃºmero permitido Ã© 2^(%d)!\n", f*10000000, (int)(nbmant-1 -pow(2,nbexpo-1)));
+        fprintf (stderr, "Erro: achei %f*10^-7, mas o menor número permitido é 2^(%d)!\n", f*10000000, (int)(nbmant-1 -pow(2,nbexpo-1)));
 
     // desempacota padrao IEEE ------------------------------------------------
 

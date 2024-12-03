@@ -30,7 +30,7 @@ void add_var(char *var, int val)
 {
     if (v_count == NVARMAX)
     {
-        fprintf(stderr, "Erro: nÃºmero de variaveis > %d", NVARMAX);
+        fprintf(stderr, "Erro: número de variaveis > %d", NVARMAX);
     }
     else
     {

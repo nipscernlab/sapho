@@ -13,7 +13,7 @@ void  declar_fun     (int id1, int id2); // tipo e nome
 void  declar_firstpar(int id);           // primeiro/unico parametro
 int   declar_par     (int   t, int id ); // proximo parametro
 void     set_par     (int id);           // SET no parametro
-void  declar_ret     (int et);           // achou uma palavra-chave return
+void  declar_ret     (int  et, int ret); // achou uma palavra-chave return
 void    func_ret     (int id);           // fim/return da funcao
 void    void_ret     (      );
 

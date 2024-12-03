@@ -9,5 +9,6 @@ int oper_ari (int et1, int et2, int    op);                      // reune expres
 int oper_int (int et1, int et2, int    op);
 
 int oper_ari_cmp(int et1, int et2, int op);
+int  negacao_cmp(int et );
 
 #endif // OPER_H_INCLUDED

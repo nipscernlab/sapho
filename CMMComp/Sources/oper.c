@@ -12,6 +12,8 @@
 // nego o segundo arqumento e somo
 int negacao(int et)
 {
+    // testes com numeros complexos -------------------------------------------
+    if (get_type(et) > 2) return negacao_cmp(et);
     // se for uma constante, soh coloca um sinal de - na frente
     if (v_isco[et % OFST])
         load_check(et,1); // o segundo parametro faz a necagao
@@ -39,6 +41,48 @@ int negacao(int et)
     }
 
     return get_type(et)*OFST; // et padrao para reducao exp
+}
+
+int negacao_cmp(int et)
+{
+    int etr,eti;
+
+    // comp constante ---------------------------------------------------------
+
+    if (get_type(et) == 5)
+    {
+        split_cmp_const(et,&etr,&eti);
+        v_isco[etr%OFST] = 0;
+        v_isco[eti%OFST] = 0;
+        negacao(etr);
+        negacao(eti);
+        v_isco[etr%OFST] = 1;
+        v_isco[eti%OFST] = 1;
+    }
+
+    // comp var ---------------------------------------------------------------
+
+    if ((get_type(et) == 3) && (et%OFST != 0))
+    {
+        get_cmp_ets(et,&etr,&eti);
+        negacao(etr);
+        negacao(eti);
+    }
+
+    // comp acc ---------------------------------------------------------------
+
+    if ((get_type(et) == 3) && (et%OFST == 0))
+    {
+        etr = 2*OFST;
+        int id = exec_id("aux_neg");
+        eti = 2*OFST + id;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        acc_ok = 0; negacao(etr);
+        acc_ok = 1; negacao(eti);
+    }
+
+    return 3*OFST;
 }
 
 // checa se o acc esta com ponto fixo
@@ -366,9 +410,6 @@ int operacoes(int et1, int et2, char *iop, char *fop, int *op)
 // fok diz se tal operacao foi implementada no proc em ponto flutuante
 int int_oper(int et1, int et2, char *op, char *code, int fok)
 {
-    if ((prtype == 1) && (fok == 0))
-        fprintf(stderr, "Erro na linha %d: processador em ponto flutuante não aceita %s ainda. Aguarde!\n", line_num+1, op);
-
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
         fprintf(stderr, "Erro na linha %d: uso incorreto de %s. Tem que passar tipo int. Viajou?\n", line_num+1, op);
 
@@ -411,6 +452,8 @@ int oper_int(int et1, int et2, int op)
 }
 
 // operacoes de comparacao com num complexos
+// as comparacoes sao feitas entre os valores absolutos
+// pra evitar conflito com <= e >=
 int oper_cmp_cmp(int et1, int et2, int op)
 {
     int l_type = get_type(et1);

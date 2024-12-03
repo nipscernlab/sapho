@@ -19,7 +19,7 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     // pois CALL main deve ser a primeira instrucao do processador depois do reset
     if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
     {
-        if (using_macro == 0) fprintf(f_asm, "CALL   main\n@fim JMP fim\n");
+        if (using_macro == 0) fprintf(f_asm, "CALL main\n@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio
     }
@@ -78,28 +78,27 @@ void set_par(int id)
 }
 
 // quando acha a palavra chave return
-void declar_ret(int et)
+void declar_ret(int et, int ret)
 {
-    // testes com numeros complexos -------------------------------------------
-    if ((v_type[fun_id1] > 8) || (get_type(et) > 2))
-    {
-        // se retorno eh complexo, executa isso e sai
-        declar_ret_cmp(et);
-        return;
-    }
-    // fim do teste -----------------------------------------------------------
-
     // checa se eh funcao mesmo, ou void por engano
     if (v_type[fun_id1] == 6)
-        fprintf (stderr, "Erro na linha %d: valor de retorno em funÃ§Ã£o void? viajou!\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: valor de retorno em função void? viajou!\n", line_num+1);
 
     // testa se esta dentro de um if/else
     if ((get_if() > 0) && (v_type[fun_id1] != 6))
-        fprintf(stdout, "Cuidado na linha %d: usar return dentro de if/else pode dar pau, caso vocÃª esqueÃ§a em algum lugar!\n", line_num+1);
+        fprintf(stdout, "Cuidado na linha %d: usar return dentro de if/else pode dar pau, caso você esqueça em algum lugar!\n", line_num+1);
 
     // ------------------------------------------------------------------------
     // checa todas as combinacoes ---------------------------------------------
     // ------------------------------------------------------------------------
+
+    // testes com numeros complexos -------------------------------------------
+    if ((v_type[fun_id1] > 8) || (get_type(et) > 2))
+    {
+        // se retorno eh complexo, executa isso e sai
+        declar_ret_cmp(et); return;
+    }
+    // fim do teste -----------------------------------------------------------
 
     int left_type = v_type[fun_id1];
     int righ_type = get_type(et);
@@ -112,24 +111,24 @@ void declar_ret(int et)
     {
         if (prtype == 0)
         {
-            fprintf(stdout, "AtenÃ§Ã£o na linha %d: vai mesmo retornar float para int na funÃ§Ã£o %s? Vou meter um monte de instruÃ§Ãµes assembly pra isso?\n", line_num+1, v_name[fun_id1]);
+            fprintf(stdout, "Atenção na linha %d: vai mesmo retornar float para int na função %s? Vou meter um monte de instruções assembly pra isso?\n", line_num+1, v_name[fun_id1]);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL   float2int\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1;
         }
         else
-            fprintf(stdout, "AtenÃ§Ã£o na linha %d: convertendo float para int no retorno da funÃ§Ã£o %s.\n", line_num+1, v_name[fun_id1]);
+            fprintf(stdout, "Atenção na linha %d: convertendo float para int no retorno da função %s.\n", line_num+1, v_name[fun_id1]);
     }
 
     // funcao eh float mas o return eh int -------------------------------------
 
     if ((left_type == 8) && (righ_type == 1))
     {
-        fprintf(stdout, "AtenÃ§Ã£o na linha %d: convertendo int para float no retorno da funÃ§Ã£o %s.\n", line_num+1, v_name[fun_id1]);
+        fprintf(stdout, "Atenção na linha %d: convertendo int para float no retorno da função %s.\n", line_num+1, v_name[fun_id1]);
 
         if (prtype == 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "CALL   int2float\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL int2float\n");
             i2f = 1;
         }
     }
@@ -137,6 +136,8 @@ void declar_ret(int et)
     // ------------------------------------------------------------------------
     // finaliza ---------------------------------------------------------------
     // ------------------------------------------------------------------------
+
+    if (ret == 0) return;
 
     if (using_macro == 0) fprintf(f_asm, "RETURN\n");
 
@@ -147,21 +148,167 @@ void declar_ret(int et)
 // igual o var_set_comp, mas sem array
 void declar_ret_cmp(int et)
 {
-    int left_type = v_type[fun_id1];
-    int righ_type = get_type(et);
-
+    int id_r, id_i;
     int et_r, et_i;
 
-    // funcao eh comp e retorno eh comp const ---------------------------------
+    int t_left  =   v_type[fun_id1]-6;
+    int t_right = get_type(et);
 
-    if ((left_type == 9) && (righ_type == 5))
+    int mem = et % OFST;
+
+    // left int e right comp const --------------------------------------------
+
+    if ((t_left == 1) && (t_right == 5))
+    {
+        fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+        split_cmp_const(et,&et_r,&et_i);
+             declar_ret(et_r,1);
+    }
+
+    // left int e right comp var ----------------------------------------------
+
+    if ((t_left == 1) && (t_right == 3) && (mem != 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+        get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
+         declar_ret(et_r,1);
+    }
+
+    // left int e right comp acc ----------------------------------------------
+
+    if ((t_left == 1) && (t_right == 3) && (mem == 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+        if (using_macro == 0) fprintf(f_asm, "SETP aux_img\n");
+        declar_ret(2*OFST,1);
+    }
+
+    // left float e right comp const -----------------------------------------
+
+    if ((t_left == 2) && (t_right == 5))
+    {
+        fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
+
+        split_cmp_const(et,&et_r,&et_i);
+             declar_ret(et_r,1);
+    }
+
+    // left float e right comp var --------------------------------------------
+
+    if ((t_left == 2) && (t_right == 3) && (mem != 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
+
+        get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
+         declar_ret(et_r,1);
+    }
+
+    // left float e right comp acc ----------------------------------------------
+
+    if ((t_left == 2) && (t_right == 3) && (mem == 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
+
+        if (using_macro == 0) fprintf(f_asm, "SETP aux_img\n");
+        declar_ret(2*OFST,1);
+    }
+
+    // left comp e right int var ----------------------------------------------
+
+    if ((t_left == 3) && (t_right == 1) && (mem != 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: pra converter de int pra comp, eu vou jogar 0 na parte imaginária.\n", line_num+1);
+
+        v_type[fun_id1] = 8; declar_ret(et  ,0); v_type[fun_id1] = 9;
+
+        // gambiarra pra dar LOAD no zero da parte imaginaria
+        et_i = 2*OFST + exec_num("0.0");
+        v_type[et_i%OFST] = 2;
+        v_isco[et_i%OFST] = 1;
+        v_used[et_i%OFST] = 1;
+
+        v_type[fun_id1] = 8; declar_ret(et_i,1); v_type[fun_id1] = 9;
+    }
+
+    // left comp e right int acc ----------------------------------------------
+
+    if ((t_left == 3) && (t_right == 1) && (mem == 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: pra converter de int pra comp, eu vou jogar 0 na parte imaginária.\n", line_num+1);
+
+        v_type[fun_id1] = 8; declar_ret(et  ,0); v_type[fun_id1] = 9;
+
+        // gambiarra pra dar LOAD no zero da parte imaginaria
+        et_i = 2*OFST + exec_num("0.0");
+        v_type[et_i%OFST] = 2;
+        v_isco[et_i%OFST] = 1;
+        v_used[et_i%OFST] = 1;
+
+        v_type[fun_id1] = 8; declar_ret(et_i,1); v_type[fun_id1] = 9;
+    }
+
+    // left comp e right float var --------------------------------------------
+
+    if ((t_left == 3) && (t_right == 2) && (mem != 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: pra converter de float pra comp, eu vou jogar 0 na parte imaginária.\n", line_num+1);
+
+        v_type[fun_id1] = 8; declar_ret(et  ,0); v_type[fun_id1] = 9;
+
+        // gambiarra pra dar LOAD no zero da parte imaginaria
+        et_i = 2*OFST + exec_num("0.0");
+        v_type[et_i%OFST] = 2;
+        v_isco[et_i%OFST] = 1;
+        v_used[et_i%OFST] = 1;
+
+        v_type[fun_id1] = 8; declar_ret(et_i,1); v_type[fun_id1] = 9;
+    }
+
+    // left comp e right float acc --------------------------------------------
+
+    if ((t_left == 3) && (t_right == 2) && (mem == 0))
+    {
+        fprintf (stdout, "Atenção na linha %d: pra converter de float pra comp, eu vou jogar 0 na parte imaginária.\n", line_num+1);
+
+        v_type[fun_id1] = 8; declar_ret(et  ,0); v_type[fun_id1] = 9;
+
+        // gambiarra pra dar LOAD no zero da parte imaginaria
+        et_i = 2*OFST + exec_num("0.0");
+        v_type[et_i%OFST] = 2;
+        v_isco[et_i%OFST] = 1;
+        v_used[et_i%OFST] = 1;
+
+        v_type[fun_id1] = 8; declar_ret(et_i,1); v_type[fun_id1] = 9;
+    }
+
+    // left comp e right comp const -------------------------------------------
+
+    if ((t_left == 3) && (t_right == 5))
     {
         split_cmp_const(et,&et_r,&et_i);
 
-        v_type[fun_id1] = 2;
-        declar_ret(et_r);
-        declar_ret(et_i);
-        v_type[fun_id1] = left_type;
+        v_type[fun_id1] = 8; declar_ret(et_r,0); v_type[fun_id1] = 9;
+        v_type[fun_id1] = 8; declar_ret(et_i,1); v_type[fun_id1] = 9;
+    }
+
+    // left comp e right comp var ---------------------------------------------
+
+    if ((t_left == 3) && (t_right == 3) && (mem != 0))
+    {
+        get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
+
+        v_type[fun_id1] = 8; declar_ret(et_r,0); v_type[fun_id1] = 9;
+        v_type[fun_id1] = 8; declar_ret(et_i,1); v_type[fun_id1] = 9;
+    }
+
+    // left comp e right comp acc ---------------------------------------------
+
+    if ((t_left == 3) && (t_right == 3) && (mem == 0))
+    {
+        v_type[fun_id1] = 8; declar_ret(2*OFST,1); v_type[fun_id1] = 9;
     }
 }
 
@@ -170,7 +317,7 @@ void func_ret(int id) // id -> id da funcao atual
 {
     // checa se a funcao teve a instrucao return x;
     if ((v_type[id] != 6) && (ret_ok == 0))
-        fprintf (stderr, "Erro na funÃ§Ã£o %s: cadÃª o retorno pra essa funÃ§Ã£o?\n", v_name[id]);
+        fprintf (stderr, "Erro na função %s: cadê o retorno pra essa função?\n", v_name[id]);
 
     if (strcmp(v_name[id], "main") == 0) // se eh funcao main ...
     {
@@ -194,7 +341,7 @@ void void_ret()
 {
     // checa se eh void mesmo, ou funcao por engano
     if (v_type[fun_id1] != 6)
-        fprintf (stderr, "Erro na linha %d: cadÃª o valor de retorno da funÃ§Ã£o?\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: cadê o valor de retorno da função?\n", line_num+1);
     // testar se eh void
     if (using_macro == 0) fprintf(f_asm, "RETURN\n");
 }
@@ -279,15 +426,15 @@ void vcall(int id)
     // posso usar funcao com chamada void tb, por isso testar tudo aqui
     if  (v_type[id] < 6)
     {
-        fprintf(stderr, "Erro na linha %d: cadÃª essa funÃ§Ã£o %s?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stderr, "Erro na linha %d: cadê essa função %s?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
     // checa numero de parametros
     if (get_npar(p_test) != get_npar(v_fpar[id])) // p_test tem a lista de par na chamada e v_fpar na declaracao
-        fprintf(stderr, "Erro na linha %d: olha lÃ¡ direito quantos parÃ¢metro tem a funÃ§Ã£o %s.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função %s.\n", line_num+1, rem_fname(v_name[id], fname));
 
-    if (using_macro == 0) fprintf(f_asm, "CALL   %s\n", v_name[id]);
+    if (using_macro == 0) fprintf(f_asm, "CALL %s\n", v_name[id]);
 
     v_used[id] = 1; // funcao ja foi chamada
     acc_ok     = 0; // acc ta liberado
@@ -298,22 +445,22 @@ int fcall(int id)
 {
     if (v_type[id] == 6)
     {
-        fprintf (stderr, "Erro na linha %d: olha lÃ¡ a funcao %s, vocÃª vai ver que ela nao retorna nada.\n", line_num+1, v_name[id]);
+        fprintf (stderr, "Erro na linha %d: olha lá a funcao %s, você vai ver que ela nao retorna nada.\n", line_num+1, v_name[id]);
         return 0;
     }
     else if (v_type[id] < 6)
     {
-        fprintf (stderr, "Erro na linha %d: A funÃ§Ã£o %s tÃ¡ onde?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: A função %s tá onde?\n", line_num+1, rem_fname(v_name[id], fname));
         return 0;
     }
 
     if (get_npar(p_test) != get_npar(v_fpar[id]))
     {
-        fprintf(stderr, "Erro na linha %d: lista de parÃ¢metro da funÃ§Ã£o %s difere da original.\n", line_num+1, v_name[id]);
+        fprintf(stderr, "Erro na linha %d: lista de parâmetros da função %s difere da original.\n", line_num+1, v_name[id]);
         return 0;
     }
 
-    if (using_macro == 0) fprintf(f_asm, "CALL   %s\n",v_name[id]);
+    if (using_macro == 0) fprintf(f_asm, "CALL %s\n",v_name[id]);
 
     v_used[id] = 1;             // funcao ja foi usada
 
@@ -369,7 +516,7 @@ void par_check(int et)
 
     if ((t_fun == 1) && (t_cal == 2))
     {
-        fprintf(stdout, "AtenÃ§Ã£o na linha %d: convertendo float para int no parÃ¢metro %d da funÃ§Ã£o %s.\n", line_num+1, index, v_name[fun_id2]);
+        fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
         if (prtype == 0)
         {
@@ -382,7 +529,7 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 1))
     {
-        fprintf(stdout, "AtenÃ§Ã£o na linha %d: convertendo int para float no parÃ¢metro %d da funÃ§Ã£o %s.\n", line_num+1, index, v_name[fun_id2]);
+        fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
         if (prtype == 0)
         {

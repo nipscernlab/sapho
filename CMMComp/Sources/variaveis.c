@@ -30,7 +30,7 @@ void add_var(char *var)
 {
     if (v_count == NVARMAX)
     {
-        fprintf (stderr, "Erro: Aumente o n√∫mero de vari√°veis permitidas. Atual = %d\n", NVARMAX);
+        fprintf (stderr, "Erro: Aumente o n˙mero de vari·veis permitidas. Atual = %d\n", NVARMAX);
         exit(1);
     }
     else
@@ -52,14 +52,14 @@ void check_var()
         {
             // checa se eh ou nao global
             if (strcmp(v_name[v_fnid[i]], "") == 0)
-                fprintf (stdout, "Aten√ß√£o: vari√°vel global %s n√£o est√° sendo usada. Economize mem√≥ria!\n", v_name[i]);
+                fprintf (stdout, "AtenÁ„o: vari·vel global %s n„o est· sendo usada. Economize memÛria!\n", v_name[i]);
             else
-                fprintf (stdout, "Aten√ß√£o: vari√°vel %s na fun√ß√£o %s n√£o est√° sendo usada. Economize mem√≥ria!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
+                fprintf (stdout, "AtenÁ„o: vari·vel %s na funÁ„o %s n„o est· sendo usada. Economize memÛria!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
         }
 
         // checa se a funcao foi declarada e nao foi usada
         if (((v_type[i] == 5) || (v_type[i] == 6) || (v_type[i] == 7)) && v_used[i] == 0)
-            fprintf (stdout, "Aten√ß√£o: fun√ß√£o %s n√£o est√° sendo usada. Economize mem√≥ria!\n", v_name[i]);
+            fprintf (stdout, "AtenÁ„o: funÁ„o %s n„o est· sendo usada. Economize memÛria!\n", v_name[i]);
     }
 }
 
@@ -79,7 +79,7 @@ int exec_id(char *text)
 {
     // testes com numeros complexos -------------------------------------------
     if (strcmp(text,"i") == 0)
-        fprintf (stderr, "Erro na linha %d: s√≠mbolo i √© reservado para indicar a parte imagin√°ria de uma constante complexa.\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: sÌmbolo i È reservado para indicar a parte imagin·ria de uma constante complexa.\n", line_num+1);
     // fim dos teste ----------------------------------------------------------
 
     char var_name[64];
@@ -106,7 +106,7 @@ int exec_num(char *text)
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((f < s) && (f != 0))
-        fprintf (stderr, "Erro na linha %d: o menor n√∫mero que pode ser representado √© 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
+        fprintf (stderr, "Erro na linha %d: o menor n˙mero que pode ser representado È 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
 
     if (find_var(text) == -1) add_var(text);
 

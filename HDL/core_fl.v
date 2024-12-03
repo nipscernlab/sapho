@@ -44,10 +44,23 @@ module core_fl
 	parameter ADD   =   0,
 	parameter MLT   =   0,
 	parameter DIV   =   0,
-	parameter NEG   =   0,              // Negativa o acumulador
+	parameter MOD   =   0,              // Resto da divisao
 	parameter ABS   =   0,              // Valor absoluto do acumulador
-	parameter PST   =   0,              // Zera se negativo
+	parameter NRM   =   0,              // Divide pela constante NUGAIN (ex: x = /> y;);
+	parameter PST   =   0,              // Zera se for negativo
 	parameter SGN   =   0,              // Copia sinal de uma variavel na outra
+	parameter NEG   =   0,              // Complemento a 2
+
+	// ULA - Opeardores logicos bitwise
+	parameter OR    =   0,
+	parameter AND   =   0,
+	parameter INV   =   0,
+	parameter XOR   =   0,
+
+	// ULA - Operadores de deslocamento de bit
+	parameter SHR   =   0,
+	parameter SHL   =   0,
+	parameter SRS   =   0,              // Mantem o sinal em complemento a 2
 
 	// ULA - Operadores logicos que resultam em 1 bit
 	parameter LOR   =   0,
@@ -58,6 +71,7 @@ module core_fl
 	parameter EQU   =   0,
 
 	// Pos processamento da ULA
+	parameter NRMS  =   0,              // Divide pela constante NUGAIN e seta na memoria (ex: x /> y;)
 	parameter PSTS  =   0,              // Zera valores negativos e seta na memoria       (ex: x @  y;)
 	parameter ABSS  =   0,              // valor absoluto                                 (ex: x $  y;)
 	parameter NEGS  =   0               // Negacao                                        (ex: x = -y;)
@@ -157,21 +171,30 @@ wire signed [NBMANT+NBEXPO:0] ula_out;
 wire signed [NBMANT+NBEXPO:0] ula_acc;
 wire                          ula_is_zero;
 
-ula_fl #(.EXP (NBEXPO),
-         .MAN (NBMANT),
-         .DIV (DIV)   ,
-         .MLT (MLT)   ,
-         .ADD (ADD)   ,
-         .LES (LES)   ,
-         .EQU (EQU)   ,
-         .LIN (LIN)   ,
-         .LAN (LAN)   ,
-         .GRE (GRE)   ,
-         .LOR (LOR)   ,
-         .NEG (NEG)   ,
-         .ABS (ABS)   ,
-         .PST (PST)   ,
-         .SGN (SGN)   ) ula (id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
+ula #(.EXP (NBEXPO),
+      .MAN (NBMANT),
+      .DIV (DIV   ),
+      .OR  (OR    ),
+      .LOR (LOR   ),
+      .GRE (GRE   ),
+      .MOD (MOD   ),
+      .ADD (ADD   ),
+      .NEG (NEG   ),
+      .MLT (MLT   ),
+      .LES (LES   ),
+      .EQU (EQU   ),
+      .AND (AND   ),
+      .LAN (LAN   ),
+      .INV (INV   ),
+      .LIN (LIN   ),
+      .SHR (SHR   ),
+      .XOR (XOR   ),
+      .SHL (SHL   ),
+      .SRS (SRS   ),
+      .NRM (NRM   ),
+      .ABS (ABS   ),
+      .PST (PST   ),
+      .SGN (SGN   )) ula (id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
 
 // Pos-processamento da ULA ---------------------------------------------------
 
