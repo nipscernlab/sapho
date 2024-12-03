@@ -39,7 +39,9 @@ $(TARGET): $(SRC_FILES) $(FLEX_OUT)
 
 # Regra para gerar o scanner (analisador léxico) usando o Flex.
 $(FLEX_OUT): $(FLEX_SRC)
-	flex -o $(FLEX_OUT) $(FLEX_SRC)
+	flex $(FLEX_SRC)
+	mv lex.yy.c $(SRC_DIR)/lex.yy.c
+
 
 # Regra para rodar o compilador com o arquivo de entrada e gerar os arquivos de saída.
 run: $(TARGET)

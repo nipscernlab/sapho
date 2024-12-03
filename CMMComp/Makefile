@@ -66,7 +66,8 @@ $(BISON_OUT) $(BISON_HEADER): $(BISON_SRC)
 # Regra para gerar o scanner (analisador léxico) usando o Flex.
 # O arquivo de saída $(FLEX_OUT) depende do arquivo fonte $(FLEX_SRC) e do cabeçalho $(BISON_HEADER).
 $(FLEX_OUT): $(FLEX_SRC) $(BISON_HEADER)
-	flex -o $(FLEX_OUT) $(FLEX_SRC)
+	flex $(FLEX_SRC)
+	mv lex.yy.c $(SRC_DIR)/lex.yy.c
 
 # Regra para rodar o compilador com o arquivo de entrada e gerar o arquivo de saída.
 run: $(TARGET)
