@@ -7,7 +7,7 @@ HEADER_DIR = Headers
 BIN_DIR = bin
 OUTPUT_DIR = Output
 
-# Lista dos arquivos fonte principais do projeto. 
+# Lista dos arquivos fonte principais do projeto.
 SRCS = eval.c labels.c mnemonicos.c t2t.c variaveis.c veri_comp.c
 
 # Adiciona o caminho do diretório $(SRC_DIR) antes de cada arquivo listado em $(SRCS).
@@ -34,7 +34,8 @@ CC = gcc
 CFLAGS = -Wall -Wextra -g -I$(HEADER_DIR)
 
 # Regra padrão: será executada se nenhum alvo específico for passado.
-all: $(TARGET) $(OUTPUT_V_FILE) $(DATA_MIF_FILE) $(INST_MIF_FILE)
+# O alvo "all" agora depende apenas do executável $(TARGET).
+all: $(TARGET)
 
 # Regra para gerar o executável final $(TARGET).
 $(TARGET): $(SRC_FILES) $(FLEX_OUT)
@@ -46,7 +47,7 @@ $(FLEX_OUT): $(FLEX_SRC)
 	flex -o $(FLEX_OUT) $(FLEX_SRC)
 
 # Regra para rodar o compilador com o arquivo de entrada e gerar os arquivos de saída.
-run: $(TARGET) $(INPUT_FILE)
+run: $(TARGET)
 	@echo "Executando: $(TARGET) $(INPUT_FILE)"
 	./$(TARGET) $(INPUT_FILE) $(OUTPUT_V_FILE) $(DATA_MIF_FILE) $(INST_MIF_FILE)
 
