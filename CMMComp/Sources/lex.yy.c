@@ -1,6 +1,6 @@
-#line 2 "./CMMComp/lex.yy.c"
+#line 2 "Sources/lex.yy.c"
 
-#line 4 "./CMMComp/lex.yy.c"
+#line 4 "Sources/lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -630,8 +630,8 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "./CMMComp/c2asm.l"
-#line 2 "./CMMComp/c2asm.l"
+#line 1 "Sources/c2asm.l"
+#line 2 "Sources/c2asm.l"
 
 #include "y.tab.h"
 #include "variaveis.h"
@@ -642,7 +642,7 @@ char *yytext;
 
 void yyerror(char *);
 
-#line 646 "./CMMComp/lex.yy.c"
+#line 646 "Sources/lex.yy.c"
 
 #define INITIAL 0
 
@@ -829,10 +829,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 23 "./CMMComp/c2asm.l"
+#line 23 "Sources/c2asm.l"
 
 
-#line 836 "./CMMComp/lex.yy.c"
+#line 836 "Sources/lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -917,247 +917,247 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 25 "./CMMComp/c2asm.l"
+#line 25 "Sources/c2asm.l"
 return PRNAME;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 26 "./CMMComp/c2asm.l"
+#line 26 "Sources/c2asm.l"
 return DIRNAM;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 27 "./CMMComp/c2asm.l"
+#line 27 "Sources/c2asm.l"
 return DATYPE;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "./CMMComp/c2asm.l"
+#line 28 "Sources/c2asm.l"
 return NUBITS;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 29 "./CMMComp/c2asm.l"
+#line 29 "Sources/c2asm.l"
 return NBMANT;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "./CMMComp/c2asm.l"
+#line 30 "Sources/c2asm.l"
 return NBEXPO;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "./CMMComp/c2asm.l"
+#line 31 "Sources/c2asm.l"
 return NDSTAC;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "./CMMComp/c2asm.l"
+#line 32 "Sources/c2asm.l"
 return SDEPTH;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 33 "./CMMComp/c2asm.l"
+#line 33 "Sources/c2asm.l"
 return NUIOIN;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 34 "./CMMComp/c2asm.l"
+#line 34 "Sources/c2asm.l"
 return NUIOOU;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 35 "./CMMComp/c2asm.l"
+#line 35 "Sources/c2asm.l"
 return NUGAIN;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 36 "./CMMComp/c2asm.l"
+#line 36 "Sources/c2asm.l"
 return USEMAC;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 37 "./CMMComp/c2asm.l"
+#line 37 "Sources/c2asm.l"
 return ENDMAC;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 38 "./CMMComp/c2asm.l"
+#line 38 "Sources/c2asm.l"
 return FFTSIZ;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 39 "./CMMComp/c2asm.l"
+#line 39 "Sources/c2asm.l"
 return ITRADD;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 41 "./CMMComp/c2asm.l"
+#line 41 "Sources/c2asm.l"
 return IN;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 42 "./CMMComp/c2asm.l"
+#line 42 "Sources/c2asm.l"
 return OUT;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 43 "./CMMComp/c2asm.l"
+#line 43 "Sources/c2asm.l"
 return NRM;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 44 "./CMMComp/c2asm.l"
+#line 44 "Sources/c2asm.l"
 return PST;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 45 "./CMMComp/c2asm.l"
+#line 45 "Sources/c2asm.l"
 return ABS;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 46 "./CMMComp/c2asm.l"
+#line 46 "Sources/c2asm.l"
 return SIGN;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 47 "./CMMComp/c2asm.l"
+#line 47 "Sources/c2asm.l"
 return SQRT;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 49 "./CMMComp/c2asm.l"
+#line 49 "Sources/c2asm.l"
 return REAL;
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 50 "./CMMComp/c2asm.l"
+#line 50 "Sources/c2asm.l"
 return IMAG;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 52 "./CMMComp/c2asm.l"
+#line 52 "Sources/c2asm.l"
 return WHILE;
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 53 "./CMMComp/c2asm.l"
+#line 53 "Sources/c2asm.l"
 return BREAK;
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 54 "./CMMComp/c2asm.l"
+#line 54 "Sources/c2asm.l"
 return IF;
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 55 "./CMMComp/c2asm.l"
+#line 55 "Sources/c2asm.l"
 return ELSE;
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 56 "./CMMComp/c2asm.l"
+#line 56 "Sources/c2asm.l"
 return SWITCH;
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 57 "./CMMComp/c2asm.l"
+#line 57 "Sources/c2asm.l"
 return CASE;
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 58 "./CMMComp/c2asm.l"
+#line 58 "Sources/c2asm.l"
 return DEFAULT;
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 59 "./CMMComp/c2asm.l"
+#line 59 "Sources/c2asm.l"
 return RETURN;
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 61 "./CMMComp/c2asm.l"
+#line 61 "Sources/c2asm.l"
 return  SHIFTL;
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 62 "./CMMComp/c2asm.l"
+#line 62 "Sources/c2asm.l"
 return  SHIFTR;
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 63 "./CMMComp/c2asm.l"
+#line 63 "Sources/c2asm.l"
 return SSHIFTR;
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 65 "./CMMComp/c2asm.l"
+#line 65 "Sources/c2asm.l"
 return GREQU;
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 66 "./CMMComp/c2asm.l"
+#line 66 "Sources/c2asm.l"
 return LESEQ;
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 67 "./CMMComp/c2asm.l"
+#line 67 "Sources/c2asm.l"
 return EQU;
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 68 "./CMMComp/c2asm.l"
+#line 68 "Sources/c2asm.l"
 return DIF;
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 70 "./CMMComp/c2asm.l"
+#line 70 "Sources/c2asm.l"
 return LAND;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 71 "./CMMComp/c2asm.l"
+#line 71 "Sources/c2asm.l"
 return LOR;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 73 "./CMMComp/c2asm.l"
+#line 73 "Sources/c2asm.l"
 return NORM;
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 74 "./CMMComp/c2asm.l"
+#line 74 "Sources/c2asm.l"
 return EQNE;
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 75 "./CMMComp/c2asm.l"
+#line 75 "Sources/c2asm.l"
 return PPLUS;
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 77 "./CMMComp/c2asm.l"
+#line 77 "Sources/c2asm.l"
 {fgen = 1; type_tmp = 3; yylval = 3; return TYPE;}
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 78 "./CMMComp/c2asm.l"
+#line 78 "Sources/c2asm.l"
 {fgen = 1; type_tmp = 2; yylval = 2; return TYPE;}
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 79 "./CMMComp/c2asm.l"
+#line 79 "Sources/c2asm.l"
 {          type_tmp = 1; yylval = 1; return TYPE;}
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 80 "./CMMComp/c2asm.l"
+#line 80 "Sources/c2asm.l"
 {                        yylval = 0; return TYPE;}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 82 "./CMMComp/c2asm.l"
+#line 82 "Sources/c2asm.l"
 {
                      yylval = exec_id(yytext);
                      return ID;
@@ -1165,7 +1165,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 87 "./CMMComp/c2asm.l"
+#line 87 "Sources/c2asm.l"
 {
                      yylval = exec_num(yytext);
                      return INUM;
@@ -1173,7 +1173,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 92 "./CMMComp/c2asm.l"
+#line 92 "Sources/c2asm.l"
 {  //[0-9]*\.?[0-9]+
                      yylval = exec_num(yytext);
                      fgen = 1;
@@ -1182,7 +1182,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 98 "./CMMComp/c2asm.l"
+#line 98 "Sources/c2asm.l"
 {
                      yylval = exec_cnum(yytext);
                      fgen = 1;
@@ -1192,7 +1192,7 @@ YY_RULE_SETUP
 case 53:
 /* rule 53 can match eol */
 YY_RULE_SETUP
-#line 104 "./CMMComp/c2asm.l"
+#line 104 "Sources/c2asm.l"
 {
                      if (find_var(yytext) == -1) add_var(yytext);
                      yylval = find_var(yytext);
@@ -1201,42 +1201,42 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 110 "./CMMComp/c2asm.l"
+#line 110 "Sources/c2asm.l"
 {return *yytext;}
 	YY_BREAK
 case 55:
 /* rule 55 can match eol */
 YY_RULE_SETUP
-#line 112 "./CMMComp/c2asm.l"
+#line 112 "Sources/c2asm.l"
 line_num++;
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 114 "./CMMComp/c2asm.l"
+#line 114 "Sources/c2asm.l"
 ;       /* ignore whitespace   */
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 115 "./CMMComp/c2asm.l"
+#line 115 "Sources/c2asm.l"
 ;       /* comentario em bloco */
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 116 "./CMMComp/c2asm.l"
+#line 116 "Sources/c2asm.l"
 ;       /* comentario em linha */
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 118 "./CMMComp/c2asm.l"
+#line 118 "Sources/c2asm.l"
 {yyerror("Erro do Lexer!\n");}
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 119 "./CMMComp/c2asm.l"
+#line 119 "Sources/c2asm.l"
 ECHO;
 	YY_BREAK
-#line 1240 "./CMMComp/lex.yy.c"
+#line 1240 "Sources/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2234,7 +2234,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 119 "./CMMComp/c2asm.l"
+#line 119 "Sources/c2asm.l"
 
 
 

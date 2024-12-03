@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Executar make em CMMComp",
+            "type": "shell",
+            "command": "cd CMMComp && make -f Makefile clean && make -f Makefile && make -f Makefile run",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Executar make em Assembler",
+            "type": "shell",
+            "command": "cd Assembler && make -f Makefile clean && make -f Makefile && make -f Makefile run",
+            "problemMatcher": [],
+            "group": "build"
+        }
+    ]
+}

@@ -67,7 +67,7 @@
 /* Copy the first part of user declarations.  */
 
 /* Line 189 of yacc.c  */
-#line 25 "./CMMComp/c2asm.y"
+#line 25 "Sources/c2asm.y"
 
 
 #include "variaveis.h"   // tabela de variaveis
@@ -91,7 +91,7 @@ void  yyerror(char const *s);
 
 
 /* Line 189 of yacc.c  */
-#line 95 "./CMMComp/y.tab.c"
+#line 95 "Sources/y.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -186,7 +186,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 190 "./CMMComp/y.tab.c"
+#line 190 "Sources/y.tab.c"
 
 #ifdef short
 # undef short
@@ -1870,812 +1870,812 @@ yyreduce:
         case 8:
 
 /* Line 1464 of yacc.c  */
-#line 94 "./CMMComp/c2asm.y"
+#line 94 "Sources/c2asm.y"
     {exec_diretivas("#PRNAME",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 9:
 
 /* Line 1464 of yacc.c  */
-#line 95 "./CMMComp/c2asm.y"
+#line 95 "Sources/c2asm.y"
     {exec_diretivas("#DIRNAM",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 10:
 
 /* Line 1464 of yacc.c  */
-#line 96 "./CMMComp/c2asm.y"
+#line 96 "Sources/c2asm.y"
     {exec_diretivas("#DATYPE",(yyvsp[(2) - (2)]),1);;}
     break;
 
   case 11:
 
 /* Line 1464 of yacc.c  */
-#line 97 "./CMMComp/c2asm.y"
+#line 97 "Sources/c2asm.y"
     {exec_diretivas("#NUBITS",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 12:
 
 /* Line 1464 of yacc.c  */
-#line 98 "./CMMComp/c2asm.y"
+#line 98 "Sources/c2asm.y"
     {exec_diretivas("#NBMANT",(yyvsp[(2) - (2)]),2);;}
     break;
 
   case 13:
 
 /* Line 1464 of yacc.c  */
-#line 99 "./CMMComp/c2asm.y"
+#line 99 "Sources/c2asm.y"
     {exec_diretivas("#NBEXPO",(yyvsp[(2) - (2)]),3);;}
     break;
 
   case 14:
 
 /* Line 1464 of yacc.c  */
-#line 100 "./CMMComp/c2asm.y"
+#line 100 "Sources/c2asm.y"
     {exec_diretivas("#NDSTAC",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 15:
 
 /* Line 1464 of yacc.c  */
-#line 101 "./CMMComp/c2asm.y"
+#line 101 "Sources/c2asm.y"
     {exec_diretivas("#SDEPTH",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 16:
 
 /* Line 1464 of yacc.c  */
-#line 102 "./CMMComp/c2asm.y"
+#line 102 "Sources/c2asm.y"
     {exec_diretivas("#NUIOIN",(yyvsp[(2) - (2)]),4);;}
     break;
 
   case 17:
 
 /* Line 1464 of yacc.c  */
-#line 103 "./CMMComp/c2asm.y"
+#line 103 "Sources/c2asm.y"
     {exec_diretivas("#NUIOOU",(yyvsp[(2) - (2)]),5);;}
     break;
 
   case 18:
 
 /* Line 1464 of yacc.c  */
-#line 104 "./CMMComp/c2asm.y"
+#line 104 "Sources/c2asm.y"
     {exec_diretivas("#NUGAIN",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 19:
 
 /* Line 1464 of yacc.c  */
-#line 105 "./CMMComp/c2asm.y"
+#line 105 "Sources/c2asm.y"
     {exec_diretivas("#FFTSIZ",(yyvsp[(2) - (2)]),0);;}
     break;
 
   case 20:
 
 /* Line 1464 of yacc.c  */
-#line 106 "./CMMComp/c2asm.y"
+#line 106 "Sources/c2asm.y"
     {use_macro(v_name[(yyvsp[(2) - (2)])],1);;}
     break;
 
   case 21:
 
 /* Line 1464 of yacc.c  */
-#line 107 "./CMMComp/c2asm.y"
+#line 107 "Sources/c2asm.y"
     {end_macro(            );;}
     break;
 
   case 22:
 
 /* Line 1464 of yacc.c  */
-#line 111 "./CMMComp/c2asm.y"
+#line 111 "Sources/c2asm.y"
     {use_macro(v_name[(yyvsp[(2) - (2)])],0);;}
     break;
 
   case 23:
 
 /* Line 1464 of yacc.c  */
-#line 112 "./CMMComp/c2asm.y"
+#line 112 "Sources/c2asm.y"
     {end_macro(            );;}
     break;
 
   case 24:
 
 /* Line 1464 of yacc.c  */
-#line 113 "./CMMComp/c2asm.y"
+#line 113 "Sources/c2asm.y"
     {use_inter(            );;}
     break;
 
   case 26:
 
 /* Line 1464 of yacc.c  */
-#line 118 "./CMMComp/c2asm.y"
+#line 118 "Sources/c2asm.y"
     {declar_arr_1d((yyvsp[(2) - (7)]),(yyvsp[(4) - (7)]),(yyvsp[(6) - (7)])   );;}
     break;
 
   case 27:
 
 /* Line 1464 of yacc.c  */
-#line 119 "./CMMComp/c2asm.y"
+#line 119 "Sources/c2asm.y"
     {declar_arr_2d((yyvsp[(2) - (10)]),(yyvsp[(4) - (10)]),(yyvsp[(7) - (10)]),(yyvsp[(9) - (10)]));;}
     break;
 
   case 30:
 
 /* Line 1464 of yacc.c  */
-#line 123 "./CMMComp/c2asm.y"
+#line 123 "Sources/c2asm.y"
     {declar_var   ((yyvsp[(1) - (1)])         );;}
     break;
 
   case 31:
 
 /* Line 1464 of yacc.c  */
-#line 124 "./CMMComp/c2asm.y"
+#line 124 "Sources/c2asm.y"
     {declar_arr_1d((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)])   ,-1);;}
     break;
 
   case 32:
 
 /* Line 1464 of yacc.c  */
-#line 125 "./CMMComp/c2asm.y"
+#line 125 "Sources/c2asm.y"
     {declar_arr_2d((yyvsp[(1) - (7)]),(yyvsp[(3) - (7)]),(yyvsp[(6) - (7)]),-1);;}
     break;
 
   case 33:
 
 /* Line 1464 of yacc.c  */
-#line 129 "./CMMComp/c2asm.y"
+#line 129 "Sources/c2asm.y"
     {declar_fun     ((yyvsp[(1) - (3)]),(yyvsp[(2) - (3)]));;}
     break;
 
   case 34:
 
 /* Line 1464 of yacc.c  */
-#line 130 "./CMMComp/c2asm.y"
+#line 130 "Sources/c2asm.y"
     {declar_firstpar((yyvsp[(5) - (6)])   );;}
     break;
 
   case 35:
 
 /* Line 1464 of yacc.c  */
-#line 131 "./CMMComp/c2asm.y"
+#line 131 "Sources/c2asm.y"
     {func_ret       ((yyvsp[(2) - (10)])   );;}
     break;
 
   case 36:
 
 /* Line 1464 of yacc.c  */
-#line 132 "./CMMComp/c2asm.y"
+#line 132 "Sources/c2asm.y"
     {declar_fun     ((yyvsp[(1) - (4)]),(yyvsp[(2) - (4)]));;}
     break;
 
   case 37:
 
 /* Line 1464 of yacc.c  */
-#line 133 "./CMMComp/c2asm.y"
+#line 133 "Sources/c2asm.y"
     {func_ret       ((yyvsp[(2) - (8)])   );;}
     break;
 
   case 38:
 
 /* Line 1464 of yacc.c  */
-#line 138 "./CMMComp/c2asm.y"
+#line 138 "Sources/c2asm.y"
     {(yyval) = declar_par((yyvsp[(1) - (2)]),(yyvsp[(2) - (2)]));;}
     break;
 
   case 39:
 
 /* Line 1464 of yacc.c  */
-#line 139 "./CMMComp/c2asm.y"
+#line 139 "Sources/c2asm.y"
     {        set_par((yyvsp[(3) - (3)])   );;}
     break;
 
   case 40:
 
 /* Line 1464 of yacc.c  */
-#line 142 "./CMMComp/c2asm.y"
+#line 142 "Sources/c2asm.y"
     {declar_ret((yyvsp[(2) - (3)]));;}
     break;
 
   case 41:
 
 /* Line 1464 of yacc.c  */
-#line 143 "./CMMComp/c2asm.y"
+#line 143 "Sources/c2asm.y"
     {  void_ret(  );;}
     break;
 
   case 58:
 
 /* Line 1464 of yacc.c  */
-#line 170 "./CMMComp/c2asm.y"
+#line 170 "Sources/c2asm.y"
     {fun_id2  = (yyvsp[(1) - (2)]) ;;}
     break;
 
   case 59:
 
 /* Line 1464 of yacc.c  */
-#line 171 "./CMMComp/c2asm.y"
+#line 171 "Sources/c2asm.y"
     {vcall     ((yyvsp[(1) - (6)]));;}
     break;
 
   case 60:
 
 /* Line 1464 of yacc.c  */
-#line 173 "./CMMComp/c2asm.y"
+#line 173 "Sources/c2asm.y"
     {fun_id2  = (yyvsp[(1) - (2)]) ;;}
     break;
 
   case 61:
 
 /* Line 1464 of yacc.c  */
-#line 174 "./CMMComp/c2asm.y"
+#line 174 "Sources/c2asm.y"
     {(yyval) = fcall((yyvsp[(1) - (5)]));;}
     break;
 
   case 63:
 
 /* Line 1464 of yacc.c  */
-#line 181 "./CMMComp/c2asm.y"
+#line 181 "Sources/c2asm.y"
     {par_exp    ((yyvsp[(1) - (1)]));;}
     break;
 
   case 64:
 
 /* Line 1464 of yacc.c  */
-#line 182 "./CMMComp/c2asm.y"
+#line 182 "Sources/c2asm.y"
     {par_listexp((yyvsp[(3) - (3)]));;}
     break;
 
   case 65:
 
 /* Line 1464 of yacc.c  */
-#line 186 "./CMMComp/c2asm.y"
+#line 186 "Sources/c2asm.y"
     {     exec_out1((yyvsp[(3) - (4)])   );;}
     break;
 
   case 66:
 
 /* Line 1464 of yacc.c  */
-#line 187 "./CMMComp/c2asm.y"
+#line 187 "Sources/c2asm.y"
     {     exec_out2((yyvsp[(6) - (8)])   );;}
     break;
 
   case 67:
 
 /* Line 1464 of yacc.c  */
-#line 188 "./CMMComp/c2asm.y"
+#line 188 "Sources/c2asm.y"
     {(yyval) = exec_in  ((yyvsp[(3) - (4)])   );;}
     break;
 
   case 68:
 
 /* Line 1464 of yacc.c  */
-#line 189 "./CMMComp/c2asm.y"
+#line 189 "Sources/c2asm.y"
     {(yyval) = exec_pst ((yyvsp[(3) - (4)])   );;}
     break;
 
   case 69:
 
 /* Line 1464 of yacc.c  */
-#line 190 "./CMMComp/c2asm.y"
+#line 190 "Sources/c2asm.y"
     {(yyval) = exec_abs ((yyvsp[(3) - (4)])   );;}
     break;
 
   case 70:
 
 /* Line 1464 of yacc.c  */
-#line 191 "./CMMComp/c2asm.y"
+#line 191 "Sources/c2asm.y"
     {(yyval) = exec_sign((yyvsp[(3) - (6)]),(yyvsp[(5) - (6)]));;}
     break;
 
   case 71:
 
 /* Line 1464 of yacc.c  */
-#line 192 "./CMMComp/c2asm.y"
+#line 192 "Sources/c2asm.y"
     {(yyval) = exec_norm((yyvsp[(3) - (4)])   );;}
     break;
 
   case 72:
 
 /* Line 1464 of yacc.c  */
-#line 193 "./CMMComp/c2asm.y"
+#line 193 "Sources/c2asm.y"
     {(yyval) = exec_sqrt((yyvsp[(3) - (4)])   );;}
     break;
 
   case 73:
 
 /* Line 1464 of yacc.c  */
-#line 194 "./CMMComp/c2asm.y"
+#line 194 "Sources/c2asm.y"
     {(yyval) = exec_real((yyvsp[(3) - (4)])   );;}
     break;
 
   case 74:
 
 /* Line 1464 of yacc.c  */
-#line 195 "./CMMComp/c2asm.y"
+#line 195 "Sources/c2asm.y"
     {(yyval) = exec_imag((yyvsp[(3) - (4)])   );;}
     break;
 
   case 75:
 
 /* Line 1464 of yacc.c  */
-#line 199 "./CMMComp/c2asm.y"
+#line 199 "Sources/c2asm.y"
     {else_stmt(  );;}
     break;
 
   case 76:
 
 /* Line 1464 of yacc.c  */
-#line 200 "./CMMComp/c2asm.y"
+#line 200 "Sources/c2asm.y"
     {if_fim   (  );;}
     break;
 
   case 77:
 
 /* Line 1464 of yacc.c  */
-#line 201 "./CMMComp/c2asm.y"
+#line 201 "Sources/c2asm.y"
     {if_stmt  (  );;}
     break;
 
   case 78:
 
 /* Line 1464 of yacc.c  */
-#line 202 "./CMMComp/c2asm.y"
+#line 202 "Sources/c2asm.y"
     {if_exp   ((yyvsp[(3) - (4)]));;}
     break;
 
   case 79:
 
 /* Line 1464 of yacc.c  */
-#line 206 "./CMMComp/c2asm.y"
+#line 206 "Sources/c2asm.y"
     {exec_switch((yyvsp[(3) - (4)]));;}
     break;
 
   case 80:
 
 /* Line 1464 of yacc.c  */
-#line 207 "./CMMComp/c2asm.y"
+#line 207 "Sources/c2asm.y"
     { end_switch(  );;}
     break;
 
   case 83:
 
 /* Line 1464 of yacc.c  */
-#line 211 "./CMMComp/c2asm.y"
+#line 211 "Sources/c2asm.y"
     {switch_break();;}
     break;
 
   case 84:
 
 /* Line 1464 of yacc.c  */
-#line 213 "./CMMComp/c2asm.y"
+#line 213 "Sources/c2asm.y"
     {  case_test((yyvsp[(2) - (3)]),1);;}
     break;
 
   case 86:
 
 /* Line 1464 of yacc.c  */
-#line 214 "./CMMComp/c2asm.y"
+#line 214 "Sources/c2asm.y"
     {  case_test((yyvsp[(2) - (3)]),2);;}
     break;
 
   case 88:
 
 /* Line 1464 of yacc.c  */
-#line 215 "./CMMComp/c2asm.y"
+#line 215 "Sources/c2asm.y"
     {defaut_test(    );;}
     break;
 
   case 93:
 
 /* Line 1464 of yacc.c  */
-#line 221 "./CMMComp/c2asm.y"
+#line 221 "Sources/c2asm.y"
     {while_stmt  (  );;}
     break;
 
   case 94:
 
 /* Line 1464 of yacc.c  */
-#line 222 "./CMMComp/c2asm.y"
+#line 222 "Sources/c2asm.y"
     {while_expp  (  );;}
     break;
 
   case 95:
 
 /* Line 1464 of yacc.c  */
-#line 223 "./CMMComp/c2asm.y"
+#line 223 "Sources/c2asm.y"
     {while_expexp((yyvsp[(4) - (5)]));;}
     break;
 
   case 96:
 
 /* Line 1464 of yacc.c  */
-#line 224 "./CMMComp/c2asm.y"
+#line 224 "Sources/c2asm.y"
     {exec_break  (  );;}
     break;
 
   case 98:
 
 /* Line 1464 of yacc.c  */
-#line 229 "./CMMComp/c2asm.y"
+#line 229 "Sources/c2asm.y"
     {declar_var((yyvsp[(2) - (5)])); var_set((yyvsp[(2) - (5)]),(yyvsp[(4) - (5)]),0,0,1);;}
     break;
 
   case 99:
 
 /* Line 1464 of yacc.c  */
-#line 234 "./CMMComp/c2asm.y"
+#line 234 "Sources/c2asm.y"
     {var_set((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]),0,0,1);;}
     break;
 
   case 100:
 
 /* Line 1464 of yacc.c  */
-#line 236 "./CMMComp/c2asm.y"
+#line 236 "Sources/c2asm.y"
     {pplus_assign((yyvsp[(1) - (3)])      );;}
     break;
 
   case 101:
 
 /* Line 1464 of yacc.c  */
-#line 237 "./CMMComp/c2asm.y"
+#line 237 "Sources/c2asm.y"
     {aplus_assign((yyvsp[(1) - (6)]),(yyvsp[(3) - (6)])   );;}
     break;
 
   case 102:
 
 /* Line 1464 of yacc.c  */
-#line 238 "./CMMComp/c2asm.y"
+#line 238 "Sources/c2asm.y"
     {aplu2_assign((yyvsp[(1) - (9)]),(yyvsp[(3) - (9)]),(yyvsp[(6) - (9)]));;}
     break;
 
   case 103:
 
 /* Line 1464 of yacc.c  */
-#line 240 "./CMMComp/c2asm.y"
+#line 240 "Sources/c2asm.y"
     {array_1d_check((yyvsp[(1) - (5)]),(yyvsp[(3) - (5)]),0    );;}
     break;
 
   case 104:
 
 /* Line 1464 of yacc.c  */
-#line 241 "./CMMComp/c2asm.y"
+#line 241 "Sources/c2asm.y"
     {var_set       ((yyvsp[(1) - (8)]),(yyvsp[(7) - (8)]),1,0,1);;}
     break;
 
   case 105:
 
 /* Line 1464 of yacc.c  */
-#line 243 "./CMMComp/c2asm.y"
+#line 243 "Sources/c2asm.y"
     {array_1d_check((yyvsp[(1) - (5)]),(yyvsp[(3) - (5)]),2    );;}
     break;
 
   case 106:
 
 /* Line 1464 of yacc.c  */
-#line 244 "./CMMComp/c2asm.y"
+#line 244 "Sources/c2asm.y"
     {var_set       ((yyvsp[(1) - (8)]),(yyvsp[(7) - (8)]),1,0,1);;}
     break;
 
   case 107:
 
 /* Line 1464 of yacc.c  */
-#line 246 "./CMMComp/c2asm.y"
+#line 246 "Sources/c2asm.y"
     {array_2d_check((yyvsp[(1) - (8)]), (yyvsp[(3) - (8)]),(yyvsp[(6) - (8)])    );;}
     break;
 
   case 108:
 
 /* Line 1464 of yacc.c  */
-#line 247 "./CMMComp/c2asm.y"
+#line 247 "Sources/c2asm.y"
     {var_set       ((yyvsp[(1) - (11)]),(yyvsp[(10) - (11)]), 2,0,1);;}
     break;
 
   case 109:
 
 /* Line 1464 of yacc.c  */
-#line 258 "./CMMComp/c2asm.y"
+#line 258 "Sources/c2asm.y"
     {(yyval) = num2exp((yyvsp[(1) - (1)]),1);;}
     break;
 
   case 110:
 
 /* Line 1464 of yacc.c  */
-#line 259 "./CMMComp/c2asm.y"
+#line 259 "Sources/c2asm.y"
     {(yyval) = num2exp((yyvsp[(1) - (1)]),2);;}
     break;
 
   case 111:
 
 /* Line 1464 of yacc.c  */
-#line 260 "./CMMComp/c2asm.y"
+#line 260 "Sources/c2asm.y"
     {(yyval) = num2exp((yyvsp[(1) - (1)]),5);;}
     break;
 
   case 112:
 
 /* Line 1464 of yacc.c  */
-#line 262 "./CMMComp/c2asm.y"
+#line 262 "Sources/c2asm.y"
     {(yyval) =      id2exp((yyvsp[(1) - (1)])      );;}
     break;
 
   case 113:
 
 /* Line 1464 of yacc.c  */
-#line 263 "./CMMComp/c2asm.y"
+#line 263 "Sources/c2asm.y"
     {(yyval) = array1d2exp((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]), 0);;}
     break;
 
   case 114:
 
 /* Line 1464 of yacc.c  */
-#line 264 "./CMMComp/c2asm.y"
+#line 264 "Sources/c2asm.y"
     {(yyval) = array1d2exp((yyvsp[(1) - (4)]),(yyvsp[(3) - (4)]), 1);;}
     break;
 
   case 115:
 
 /* Line 1464 of yacc.c  */
-#line 265 "./CMMComp/c2asm.y"
+#line 265 "Sources/c2asm.y"
     {(yyval) = array2d2exp((yyvsp[(1) - (7)]),(yyvsp[(3) - (7)]),(yyvsp[(6) - (7)]));;}
     break;
 
   case 116:
 
 /* Line 1464 of yacc.c  */
-#line 267 "./CMMComp/c2asm.y"
+#line 267 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 117:
 
 /* Line 1464 of yacc.c  */
-#line 268 "./CMMComp/c2asm.y"
+#line 268 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 118:
 
 /* Line 1464 of yacc.c  */
-#line 269 "./CMMComp/c2asm.y"
+#line 269 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 119:
 
 /* Line 1464 of yacc.c  */
-#line 270 "./CMMComp/c2asm.y"
+#line 270 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 120:
 
 /* Line 1464 of yacc.c  */
-#line 271 "./CMMComp/c2asm.y"
+#line 271 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 121:
 
 /* Line 1464 of yacc.c  */
-#line 272 "./CMMComp/c2asm.y"
+#line 272 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 122:
 
 /* Line 1464 of yacc.c  */
-#line 273 "./CMMComp/c2asm.y"
+#line 273 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 123:
 
 /* Line 1464 of yacc.c  */
-#line 274 "./CMMComp/c2asm.y"
+#line 274 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 124:
 
 /* Line 1464 of yacc.c  */
-#line 275 "./CMMComp/c2asm.y"
+#line 275 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(1) - (1)]);;}
     break;
 
   case 125:
 
 /* Line 1464 of yacc.c  */
-#line 277 "./CMMComp/c2asm.y"
+#line 277 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(2) - (3)]);;}
     break;
 
   case 126:
 
 /* Line 1464 of yacc.c  */
-#line 278 "./CMMComp/c2asm.y"
+#line 278 "Sources/c2asm.y"
     {(yyval) = (yyvsp[(2) - (2)]);;}
     break;
 
   case 127:
 
 /* Line 1464 of yacc.c  */
-#line 280 "./CMMComp/c2asm.y"
+#line 280 "Sources/c2asm.y"
     {(yyval) =     negacao((yyvsp[(2) - (2)])      );;}
     break;
 
   case 128:
 
 /* Line 1464 of yacc.c  */
-#line 281 "./CMMComp/c2asm.y"
+#line 281 "Sources/c2asm.y"
     {(yyval) =    oper_int((yyvsp[(2) - (2)]), 0, 0);;}
     break;
 
   case 129:
 
 /* Line 1464 of yacc.c  */
-#line 282 "./CMMComp/c2asm.y"
+#line 282 "Sources/c2asm.y"
     {(yyval) =    oper_int((yyvsp[(2) - (2)]), 0, 1);;}
     break;
 
   case 130:
 
 /* Line 1464 of yacc.c  */
-#line 283 "./CMMComp/c2asm.y"
+#line 283 "Sources/c2asm.y"
     {(yyval) =   exp_pplus((yyvsp[(1) - (2)])      );;}
     break;
 
   case 131:
 
 /* Line 1464 of yacc.c  */
-#line 284 "./CMMComp/c2asm.y"
+#line 284 "Sources/c2asm.y"
     {(yyval) = array_pplus((yyvsp[(1) - (5)]),(yyvsp[(3) - (5)])   );;}
     break;
 
   case 132:
 
 /* Line 1464 of yacc.c  */
-#line 285 "./CMMComp/c2asm.y"
+#line 285 "Sources/c2asm.y"
     {(yyval) = array_2plus((yyvsp[(1) - (8)]),(yyvsp[(3) - (8)]),(yyvsp[(6) - (8)]));;}
     break;
 
   case 133:
 
 /* Line 1464 of yacc.c  */
-#line 287 "./CMMComp/c2asm.y"
+#line 287 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 2);;}
     break;
 
   case 134:
 
 /* Line 1464 of yacc.c  */
-#line 288 "./CMMComp/c2asm.y"
+#line 288 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 3);;}
     break;
 
   case 135:
 
 /* Line 1464 of yacc.c  */
-#line 289 "./CMMComp/c2asm.y"
+#line 289 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 4);;}
     break;
 
   case 136:
 
 /* Line 1464 of yacc.c  */
-#line 290 "./CMMComp/c2asm.y"
+#line 290 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 5);;}
     break;
 
   case 137:
 
 /* Line 1464 of yacc.c  */
-#line 291 "./CMMComp/c2asm.y"
+#line 291 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 6);;}
     break;
 
   case 138:
 
 /* Line 1464 of yacc.c  */
-#line 292 "./CMMComp/c2asm.y"
+#line 292 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 7);;}
     break;
 
   case 139:
 
 /* Line 1464 of yacc.c  */
-#line 293 "./CMMComp/c2asm.y"
+#line 293 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 8);;}
     break;
 
   case 140:
 
 /* Line 1464 of yacc.c  */
-#line 294 "./CMMComp/c2asm.y"
+#line 294 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 9);;}
     break;
 
   case 141:
 
 /* Line 1464 of yacc.c  */
-#line 296 "./CMMComp/c2asm.y"
+#line 296 "Sources/c2asm.y"
     {(yyval) = oper_int((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]),10);;}
     break;
 
   case 142:
 
 /* Line 1464 of yacc.c  */
-#line 297 "./CMMComp/c2asm.y"
+#line 297 "Sources/c2asm.y"
     {(yyval) = oper_ari((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 0);;}
     break;
 
   case 143:
 
 /* Line 1464 of yacc.c  */
-#line 298 "./CMMComp/c2asm.y"
+#line 298 "Sources/c2asm.y"
     {(yyval) = oper_ari((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 1);;}
     break;
 
   case 144:
 
 /* Line 1464 of yacc.c  */
-#line 299 "./CMMComp/c2asm.y"
+#line 299 "Sources/c2asm.y"
     {(yyval) = oper_ari((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 2);;}
     break;
 
   case 145:
 
 /* Line 1464 of yacc.c  */
-#line 300 "./CMMComp/c2asm.y"
+#line 300 "Sources/c2asm.y"
     {(yyval) = oper_ari((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 3);;}
     break;
 
   case 146:
 
 /* Line 1464 of yacc.c  */
-#line 302 "./CMMComp/c2asm.y"
+#line 302 "Sources/c2asm.y"
     {(yyval) = oper_cmp((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 0);;}
     break;
 
   case 147:
 
 /* Line 1464 of yacc.c  */
-#line 303 "./CMMComp/c2asm.y"
+#line 303 "Sources/c2asm.y"
     {(yyval) = oper_cmp((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 1);;}
     break;
 
   case 148:
 
 /* Line 1464 of yacc.c  */
-#line 304 "./CMMComp/c2asm.y"
+#line 304 "Sources/c2asm.y"
     {(yyval) = oper_cmp((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 2);;}
     break;
 
   case 149:
 
 /* Line 1464 of yacc.c  */
-#line 305 "./CMMComp/c2asm.y"
+#line 305 "Sources/c2asm.y"
     {(yyval) = oper_cmp((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 3);;}
     break;
 
   case 150:
 
 /* Line 1464 of yacc.c  */
-#line 306 "./CMMComp/c2asm.y"
+#line 306 "Sources/c2asm.y"
     {(yyval) = oper_cmp((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 4);;}
     break;
 
   case 151:
 
 /* Line 1464 of yacc.c  */
-#line 307 "./CMMComp/c2asm.y"
+#line 307 "Sources/c2asm.y"
     {(yyval) = oper_cmp((yyvsp[(1) - (3)]),(yyvsp[(3) - (3)]), 5);;}
     break;
 
 
 
 /* Line 1464 of yacc.c  */
-#line 2679 "./CMMComp/y.tab.c"
+#line 2679 "Sources/y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2887,7 +2887,7 @@ yyreturn:
 
 
 /* Line 1684 of yacc.c  */
-#line 309 "./CMMComp/c2asm.y"
+#line 309 "Sources/c2asm.y"
 
 
 int main(int argc, char *argv[])
