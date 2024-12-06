@@ -15,10 +15,10 @@ void declar_var(int id)
         return;
     }
 
-    v_type[id] = type_tmp;        // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
-    v_used[id] = 0;               // acabou de ser declarada, entao ainda nao foi usada (lado direito do =)
-    v_asgn[id] = 0;               // acabou de ser declarada, entao ainda nao tem valor (lado esquerd do =)
-    v_fnid[id] = find_var(fname); // guarda em que funcao ela esta
+    v_type[id] = type_tmp;               // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
+    v_asgn[id] = strcmp(fname,"") == 0;  // variavel global deve ser marcada como assigned
+    v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao tem valor (lado esquerd do =)
+    v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
     // testes com numeros complexos -------------------------------------------
     if (type_tmp > 2) declar_img(id);

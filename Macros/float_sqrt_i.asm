@@ -27,8 +27,8 @@
              INV
              SAND
 
-             PLD     2131512 // 0.000008       // menor numero possivel = 2^(m-1)*2^(-(2^(e-1)))
-             CALL    denorm                    // para m = 16 e = 6, o num eh: 0.000007629...
+             PLD     epsilon_taylor            // checa tolerancia
+             CALL    denorm
              LOAD    float_aux3
              LES     float_aux1
              JZ      L2else_sqrti

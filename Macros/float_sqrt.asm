@@ -13,8 +13,8 @@ NEG                          // abs(x - raiz)
 ADD sqrt_x
 ABS                          // precisa mesmo desse ABS?
 
-GRE 0.000008                 // menor numero possivel = 2^(m-1)*2^(-(2^(e-1)))
-JZ L2else_sqrt               // para m = 16 e = 6, o num eh: 0.000007629...
+GRE epsilon_taylor           // checa tolerancia
+JZ L2else_sqrt
 
 LOAD sqrt_raiz               // finaliza
 RETURN

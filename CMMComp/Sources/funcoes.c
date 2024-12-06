@@ -148,7 +148,6 @@ void declar_ret(int et, int ret)
 // igual o var_set_comp, mas sem array
 void declar_ret_cmp(int et)
 {
-    int id_r, id_i;
     int et_r, et_i;
 
     int t_left  =   v_type[fun_id1]-6;

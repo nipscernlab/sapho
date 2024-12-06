@@ -20,7 +20,7 @@ void float_init()
     fmlt  = 0; // gera macro de multiplicacao
     fdiv  = 0; // gera macro de divisao
 
-    mgen  = 0;
+    mgen  = 0; // vai usar funcoes aritmeticas
     fsqrt = 0;
 
     // valores otimos achados no trabalho do Manso
@@ -76,6 +76,25 @@ int f2mf(char *va)
     return s + e + m;
 }
 
+// valor a ser usado na convergencia dos funcoes aritmeticas iterativas
+// o inum pega uma string com o numero inteiro equivalente
+// o fnum pega uma string com o proprio numero float
+void epsilon_taylor(char *inum, char *fnum)
+{
+    // acha o menor valor possivel em float
+    double numf =  pow(2,nbmant-1)*pow(2,    -pow(2,nbexpo-1));
+    int    numi = (1 << (nbmant-1)) + (1 << (nbmant+nbexpo-1));
+
+    if (numf < 0.0000001)
+    {
+        numf = 0.0000001;
+        numi = f2mf("0.0000001");
+    }
+
+    sprintf(inum, "%d"  , numi);
+    sprintf(fnum, "%.7f", numf);
+}
+
 // ----------------------------------------------------------------------------
 // geracao do codigo em assembly para as operacoes encontradas ----------------
 // ----------------------------------------------------------------------------
@@ -85,12 +104,29 @@ void float_begin(FILE *f_asm)
 {
     char a;
 
+    // inicializacao de dados parametrizados ----------------------------------
+
     fprintf(f_asm, "// Inicializacao da emulacao do ponto flutuante em software -------------------\n\n");
+
+    // LOAD NULL deve ser a porimeira instrucao sempre, pra evitar problemas de reset
     fprintf(f_asm, "LOAD NULL              // evita problema da primeira instrucao com o reset ascincrono\n");
-    fprintf(f_asm, "\nLOAD %d\nSET  nbmant            // guarda num de bits da mantissa\n", nbmant);
-    fprintf(f_asm, "\nLOAD %d\nSET  nbexp             // guarda num de bits do expoente\n\n" , nbexpo);
+
+    // numero de bits da mantissa
+    fprintf(f_asm, "\nLOAD %d\nSET  nbmant            // guarda num de bits da mantissa\n"  , nbmant);
+    // numero de bits do expoente
+    fprintf(f_asm, "\nLOAD %d\nSET  nbexp             // guarda num de bits do expoente\n\n", nbexpo);
+
+    // numero zero
     fprintf(f_asm, "LOAD %d           // 0.0\nSET  float_zero", 1 << (nbmant+nbexpo-1));
-    fprintf(f_asm, "        // guarda o num zero\n\n");
+    fprintf(f_asm, "        // guarda o num zero\n");
+
+    // epsilon para convergencia de funcoes iterativas
+    char numi[64], numf[64];
+    epsilon_taylor(numi,numf);
+    fprintf(f_asm, "\nLOAD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
+    fprintf(f_asm, "SET  epsilon_taylor\n\n");
+
+    // inicializacao de dados genericos ---------------------------------------
 
         f_float =     fopen  ("float_init.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_init.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
@@ -127,14 +163,14 @@ void math_gen(char *fasm)
 }
 
 // gera codigo padrao para rodar float no proc ponto fixo
-void float_gen(char *fasm)
+void float_geni(char *fasm)
 {
     FILE *f_aux = fopen("c2aux.asm", "w");
     FILE *f_asm = fopen(fasm       , "r");
 
     char a;
 
-    // copia todo o codigo original em assembler no arquivo auxiliar
+    // copia todo o codigo original em assembler para o arquivo auxiliar
     do {a = fgetc(f_asm); if (a != EOF) fputc(a, f_aux);} while (a != EOF);
     fclose(f_aux);
     fclose(f_asm);
@@ -193,5 +229,41 @@ void float_gen(char *fasm)
 	                  fclose (f_float);
     }
 
+    fclose(f_asm);
+}
+
+// gera constantes trigonometricas
+void float_genf(char *fasm)
+{
+    FILE *f_aux = fopen("c2aux.asm", "w");
+    FILE *f_asm = fopen(fasm       , "r");
+
+    char a;
+
+    // copia todo o codigo original em assembler para o arquivo auxiliar
+    do {a = fgetc(f_asm); if (a != EOF) fputc(a, f_aux);} while (a != EOF);
+    fclose(f_aux);
+    fclose(f_asm);
+
+    f_aux = fopen("c2aux.asm", "r");
+    f_asm = fopen(fasm       , "w");
+
+    fprintf(f_asm, "// Inicializacao de parametros para operacoes aritmeticas ---------------------\n\n");
+
+    // LOAD NULL deve ser a porimeira instrucao sempre, pra evitar problemas de reset
+    fprintf(f_asm, "LOAD NULL                // evita problema da primeira instrucao com o reset ascincrono\n");
+
+    // epsilon para convergencia de funcoes iterativas
+    char numi[64], numf[64];
+    epsilon_taylor(numi,numf);
+    fprintf(f_asm, "\nLOAD %s           // epsilon usado em funcoes aritmeticas iterativas\n", numf);
+    fprintf(f_asm, "SET  epsilon_taylor\n");
+
+    fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
+
+    //agora recoloca o codigo original
+    do {a = fgetc(f_aux); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+
+    fclose(f_aux);
     fclose(f_asm);
 }

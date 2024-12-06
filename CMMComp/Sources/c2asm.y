@@ -333,8 +333,9 @@ int main(int argc, char *argv[])
 
 	// carrega macros de ponto flutuante pra proc de ponto fixo
 	// caso precise (espero que nao)
-	if (fgen && prtype == 0) float_gen(argv[2]);
-	if (mgen           == 1)  math_gen(argv[2]);
+	if (fgen && prtype == 0) float_geni(argv[2]);
+	if (mgen && prtype == 1) float_genf(argv[2]);
+	if (mgen           == 1)  math_gen (argv[2]);
 
 	// checa consistencia de todas as variaveis e funcoes
 	check_var(); // (variaveis.c)

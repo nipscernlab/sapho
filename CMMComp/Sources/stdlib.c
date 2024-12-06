@@ -314,7 +314,7 @@ int exec_sqrt(int et)
     }
     // fim do teste -----------------------------------------------------------
 
-    mgen = 1;
+    mgen = 1; // gera macros para funcoes aritmeticas
 
     return 2*OFST;
 }
