@@ -6,7 +6,8 @@
 // nao consigo inicializar essas variaveis aqui, nao sei pq!
 int fgen, mgen;                  // se gera ou nao macros de ponto flutuante
 int i2f , f2i, fadd, fmlt, fdiv; // quais macros de pf sao usadas
-int fsqrt, fsqrti;               // quais funcoes aritmeticas gerar
+int fsqrt, fsqrti;               // gerar macro pra raiz quadrada
+int fatan, fatani;               // gerar macro pra arco tangente
 
 int nbmant;                      // numero de bits de mantissa
 int nbexpo;                      // numero de bits de expoente

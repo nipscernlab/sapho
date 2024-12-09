@@ -45,9 +45,11 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "abs"                         return ABS;
 "sign"                        return SIGN;
 "sqrt"                        return SQRT;
+"atan"                        return ATAN;
 
 "real"                        return REAL;
 "imag"                        return IMAG;
+"fase"                        return FASE;
 
 "while"                       return WHILE;
 "break"                       return BREAK;

@@ -240,17 +240,23 @@ int exec_sign(int et1, int et2)
 
     if (prtype == 0)
     {
-        // nao vou converter pra float em ponto fixo
-        // soh se um dia alguem precisar
-        if ((get_type(et1) != 1) || (get_type(et2) != 1))
+        // se for pra colocar o sinal em um float
+        if (get_type(et2) == 2)
         {
-            fprintf (stderr, "Erro na linha %d: parâmetros da função sign(.,.) devem ser inteiros!\n", line_num+1);
-            return 0;
+            // mem com mem
+            if ((et1%OFST != 0) && (et2%OFST != 0))
+            {
+                load_check(et1,0);
+                if (using_macro == 0) fprintf(f_asm , "AND %d\n", 1 << (nbmant+nbexpo));
+                if (using_macro == 0) fprintf(f_asm , "ADD %s\n", v_name[et2%OFST]);
+            }
+            // completar ...
+            return 2*OFST;
         }
     }
 
     int aux;                                  // precisa mas nao vai ser usado
-    return operacoes(et1,et2,"SIGN","",&aux); // nao vou usar pf em software pro sign
+    return operacoes(et1,et2,"SIGN","",&aux); // nao vou usar pf em software pro sign por aqui
 }
 
 // executa instrucao NORM
@@ -316,6 +322,109 @@ int exec_sqrt(int et)
 
     mgen = 1; // gera macros para funcoes aritmeticas
 
+    return 2*OFST;
+}
+
+// codigo em C+- para calcular arco-tg para float
+// deixar aqui pra lembrar de onde vieram as macros
+// float_atan.asm e float_atani.asm
+/*float atan(float x)
+{
+    float pi2 = 3.1415/2.0;
+
+    if (abs(x) > 1.0) return sign(x,pi2) - atan(1.0/x);
+
+    float termo      = x;
+    float x2         = x*x;
+    float resultado  = termo;
+    float tolerancia = 0.000008/x2;
+
+    int indiceX = 3;
+
+    while (abs(termo) > tolerancia) {
+        termo = termo * (- x2 * (indiceX - 2)) / indiceX;
+
+        resultado = resultado + termo;
+        indiceX = indiceX + 2;
+    }
+
+    return resultado;
+}*/
+
+// executa macro atan
+int exec_atan(int et)
+{
+    load_check(et,0);
+
+    int type = get_type(et);
+
+    if ((prtype == 0) && (type < 3))
+    {
+        if (type == 1)
+        if (using_macro == 0) fprintf(f_asm , "CALL int2float\n"  );
+        if (using_macro == 0) fprintf(f_asm , "CALL float_atani\n");
+
+        fgen   = 1;
+        fatani = 1;
+        fadd   = 1;
+        fmlt   = 1;
+        fdiv   = 1;
+    }
+
+    if ((prtype == 1) && (type < 3))
+    {
+        if (using_macro == 0) fprintf(f_asm , "CALL float_atan\n");
+
+        fatan = 1;
+    }
+
+    // testes com numeros complexos -------------------------------------------
+    if (type > 2)
+    {
+        fprintf (stderr, "Erro na linha %d: não implementei atan(.) de número complexo ainda. Se vira!\n", line_num+1);
+    }
+    // fim do teste -----------------------------------------------------------
+
+    mgen = 1; // gera macros para funcoes aritmeticas
+
+    return 2*OFST;
+}
+
+int exec_fase(int et)
+{
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função fase(.) tem que ser complexo!\n", line_num+1);
+
+    int id = et % OFST;
+    int et_r, et_i;
+
+    // comp const
+    if (get_type(et) == 5)
+    {
+        split_cmp_const(et,&et_i,&et_r);
+        oper_ari(et_r,et_i,1);
+    }
+
+    // comp na memoria
+    if ((get_type(et) == 3) && (id != 0))
+    {
+        get_cmp_ets(et,&et_i,&et_r);
+        oper_ari(et_r,et_i,1);
+    }
+
+    // comp no acc
+    if ((get_type(et) == 3) && (id == 0))
+    {
+        id   = exec_id("aux_cmp_i");
+        et_i = 2*OFST + id;
+
+        if (using_macro == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+
+        oper_ari(et_i,2*OFST,1);
+    }
+
+    exec_atan(2*OFST);
+
+    acc_ok = 1;
     return 2*OFST;
 }
 

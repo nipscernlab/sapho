@@ -13,15 +13,18 @@ FILE *f_float;
 // inicializa as variaveis de estado para compilacao de ponto flutuante
 void float_init()
 {
-    fgen  = 0; // precisa gerar pf em software?
-    i2f   = 0; // gera macro int2float
-    f2i   = 0; // gera macro float2int
-    fadd  = 0; // gera macro de soma
-    fmlt  = 0; // gera macro de multiplicacao
-    fdiv  = 0; // gera macro de divisao
+    fgen   = 0; // precisa gerar pf em software?
+    i2f    = 0; // gera macro int2float
+    f2i    = 0; // gera macro float2int
+    fadd   = 0; // gera macro de soma
+    fmlt   = 0; // gera macro de multiplicacao
+    fdiv   = 0; // gera macro de divisao
 
-    mgen  = 0; // vai usar funcoes aritmeticas
-    fsqrt = 0;
+    mgen   = 0; // vai usar funcoes aritmeticas
+    fsqrt  = 0; // gera macro pra raiz quadrada (proc float)
+    fsqrti = 0; // gera macro pra raiz quadrada (proc int  )
+    fatan  = 0; // gera macro pra arco tangente (proc float)
+    fatani = 0; // gera macro pra arco tangente (proc int  )
 
     // valores otimos achados no trabalho do Manso
     nbmant = 16;
@@ -99,7 +102,7 @@ void epsilon_taylor(char *inum, char *fnum)
 // geracao do codigo em assembly para as operacoes encontradas ----------------
 // ----------------------------------------------------------------------------
 
-// deve ser incluido no comeco do arquivo asm
+// deve ser incluido no comeco do arquivo asm (para proc ponto fixo)
 void float_begin(FILE *f_asm)
 {
     char a;
@@ -124,7 +127,11 @@ void float_begin(FILE *f_asm)
     char numi[64], numf[64];
     epsilon_taylor(numi,numf);
     fprintf(f_asm, "\nLOAD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
-    fprintf(f_asm, "SET  epsilon_taylor\n\n");
+    fprintf(f_asm, "SET  epsilon_taylor\n");
+
+    // pi sobre 2
+    fprintf(f_asm, "\nLOAD %d           // pi/2 usado em funcoes trigonimetricas\n", f2mf("1.57079632679489661923"));
+    fprintf(f_asm, "SET  pi_div_2\n\n");
 
     // inicializacao de dados genericos ---------------------------------------
 
@@ -154,7 +161,23 @@ void math_gen(char *fasm)
     if (fsqrti == 1)
     {
         f_float  =    fopen  ("float_sqrt_i.asm", "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrti.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+    if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+	                  fclose (f_float);
+    }
+
+    if (fatan == 1)
+    {
+        f_float  =    fopen  ("float_atan.asm", "r");
+    if (f_float == 0) fprintf(stderr, "Cadê a macro float_atan.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+	                  fclose (f_float);
+    }
+
+    if (fatani == 1)
+    {
+        f_float  =    fopen  ("float_atan_i.asm", "r");
+    if (f_float == 0) fprintf(stderr, "Cadê a macro float_atan_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
     }

@@ -36,6 +36,7 @@ void declar_img(int id)
 }
 
 // declara array 1D
+// esta ficando confuso. fazer caso a caso, pra cada tipo de proc
 void declar_arr_1d(int id_var, int id_arg, int id_fname)
 {
     declar_var(id_var);

@@ -43,6 +43,7 @@ int negacao(int et)
     return get_type(et)*OFST; // et padrao para reducao exp
 }
 
+//  negacao com numeros complexos
 int negacao_cmp(int et)
 {
     int etr,eti;
@@ -880,6 +881,19 @@ void ari_int_cmp(int op, int et1, int et2_r, int et2_i)
     }
 }
 
+// contas entre comp e int/float
+void ari_cmp_int(int op, int et1_r, int et1_i, int et2)
+{
+    oper_ari(et1_r,et2,op);
+
+    switch (op)
+    {
+        case  0:
+        case  1:   oper_ari(et1_i,et2,op); break; // * e / tem q fazer com parte imag tb
+        default: load_check(et1_i,0);             // + e - soh carrega parte imag
+    }
+}
+
 // contas entre comp e comp
 void ari_cmp_cmp(int op, int et1_r, int et1_i, int et2_r, int et2_i)
 {
@@ -1096,40 +1110,32 @@ int oper_ari_cmp(int et1, int et2, int op)
 
     if ((l_type == 5) && (r_type == 1) && (et2 % OFST != 0))
     {
-        split_cmp_const(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        split_cmp_const(   et1  ,&et1_r,&et1_i);
+          ari_cmp_int  (op,et1_r, et1_i, et2  );
     }
 
     // left comp const com right int acc --------------------------------------
 
     if ((l_type == 5) && (r_type == 1) && (et2 % OFST == 0))
     {
-        split_cmp_const(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        split_cmp_const(   et1  ,&et1_r,&et1_i);
+          ari_cmp_int  (op,et1_r, et1_i, et2  );
     }
 
     // left comp const com right float var ------------------------------------
 
     if ((l_type == 5) && (r_type == 2) && (et2 % OFST != 0))
     {
-        split_cmp_const(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        split_cmp_const(   et1  ,&et1_r,&et1_i);
+          ari_cmp_int  (op,et1_r, et1_i, et2  );
     }
 
     // left comp const com right float acc ------------------------------------
 
     if ((l_type == 5) && (r_type == 2) && (et2 % OFST == 0))
     {
-        split_cmp_const(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        split_cmp_const(   et1  ,&et1_r,&et1_i);
+          ari_cmp_int  (op,et1_r, et1_i, et2  );
     }
 
     // left comp const com right comp const -----------------------------------
@@ -1174,40 +1180,32 @@ int oper_ari_cmp(int et1, int et2, int op)
 
     if ((l_type == 3) && (r_type == 1) && (et1 % OFST != 0) && (et2 % OFST != 0))
     {
-        get_cmp_ets(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        get_cmp_ets(   et1  ,&et1_r,&et1_i);
+        ari_cmp_int(op,et1_r, et1_i, et2  );
     }
 
     // left comp var com right int acc ----------------------------------------
 
     if ((l_type == 3) && (r_type == 1) && (et1 % OFST != 0) && (et2 % OFST == 0))
     {
-        get_cmp_ets(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        get_cmp_ets(   et1  ,&et1_r,&et1_i);
+        ari_cmp_int(op,et1_r, et1_i, et2  );
     }
 
     // left comp var com right float var --------------------------------------
 
     if ((l_type == 3) && (r_type == 2) && (et1 % OFST != 0) && (et2 % OFST != 0))
     {
-        get_cmp_ets(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        get_cmp_ets(   et1  ,&et1_r,&et1_i);
+        ari_cmp_int(op,et1_r, et1_i, et2  );
     }
 
     // left comp var com right float acc --------------------------------------
 
     if ((l_type == 3) && (r_type == 2) && (et1 % OFST != 0) && (et2 % OFST == 0))
     {
-        get_cmp_ets(et1,&et1_r,&et1_i);
-
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        get_cmp_ets(   et1  ,&et1_r,&et1_i);
+        ari_cmp_int(op,et1_r, et1_i, et2  );
     }
 
     // left comp var com right comp const -------------------------------------
@@ -1261,8 +1259,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        ari_cmp_int(op,et1_r,et1_i,et2);
     }
 
     // left comp acc com right int acc ----------------------------------------
@@ -1278,8 +1275,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        ari_cmp_int(op,et1_r,et1_i,et2);
     }
 
     // left comp acc com right float var --------------------------------------
@@ -1295,8 +1291,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        ari_cmp_int(op,et1_r,et1_i,et2);
     }
 
     // left comp acc com right float acc --------------------------------------
@@ -1313,8 +1308,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         if (using_macro == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
-        oper_ari(et1_r,et2,op);
-        oper_ari(et1_i,et2,op);
+        ari_cmp_int(op,et1_r,et1_i,et2);
     }
 
     // left comp acc com right comp const -------------------------------------

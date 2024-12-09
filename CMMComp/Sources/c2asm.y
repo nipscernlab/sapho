@@ -4,22 +4,24 @@
     - Diretivas #USEMAC #ENDMAC: seleciona trechos do código que serão substituidos por Macros otimizados em assembly
     - Diretiva  #INTERPOIN     : marca ponto de retorno para um reset no pino itr
 
-    - tipo de dados comp : esta ainda finalizando a fase de testes
+    - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
 
     - StdLib   in(.,.): leitura de dados externos
     - StdLib  out(.,.): escrita pra fora do processador
-    - StdLib   norm(.): funcao que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisao da ULA)
-    - StdLib   pset(.): funcao que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
-    - StdLib    abs(.): funcao que retorna o valor absoluto (evita if(x<0) x = -x;). se for cmplexxo, retorna o modulo
+    - StdLib   norm(.): função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
+    - StdLib   pset(.): função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
+    - StdLib    abs(.): função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
     - StdLib   sqrt(.): retorna raiz quadrada. Gera um float
-    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele ai pra vc ver)
-    - StdLib   real(.): retorna a parte real de um numero complexo
-    - StdLib   imag(.): retorna a parte imag de um numero complexo
+    - StdLib   atan(.): retorna o arco-tg. Gera um float
+    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
+    - StdLib   real(.): retorna a parte real de um número complexo
+    - StdLib   imag(.): retorna a parte imag de um número complexo
+    - StdLib   fase(.): retorna a fase de um número complexo
 
-    - Operador   >>>  : deslocamento a direta com complemento a dois (desloca mantendo o sinal)
+    - Operador   >>>  : deslocamento à direta com complemento a dois (desloca mantendo o sinal)
 
-    - Array inicializavel por arquivo. A memoria do array ja eh preenchida em tempo de compilacao. (ex: int x[128] "valores.txt";)
-    - Array com indice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sao invertidos. (usar com arrays complexos - real seguido do imaginario)
+    - Array inicializável por arquivo. A memória do array já é preenchida em tempo de compilação. (ex: int x[128] "valores.txt";)
+    - Array com índice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i são invertidos.
 */
 
 %{
@@ -48,7 +50,7 @@ void  yyerror(char const *s);
 
 %token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD        // diretivas
-%token IN OUT NRM PST ABS SIGN SQRT REAL IMAG                  // std lib
+%token IN OUT NRM PST ABS SIGN SQRT REAL IMAG ATAN FASE        // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK     // saltos
 %token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
@@ -103,8 +105,10 @@ direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
        | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5);} // numero de portas de saida
        | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
-       | USEMAC STRING {use_macro(v_name[$2],1);}        // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
-       | ENDMAC        {end_macro(            );}        // ponto de termino do uso da macro
+       | USEMAC STRING {     use_macro(  v_name[$2],1);} // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
+       | ENDMAC        {     end_macro(              );} // ponto de termino do uso da macro
+
+       | TYPE ID '=' exp ';' {declar_var($2); var_set($2,$4,0,0,1);} // inicializacao de variaveis globais
 
 // Diretivas comportamentais --------------------------------------------------
 
@@ -115,7 +119,7 @@ use_inter : ITRADD        {use_inter(            );} // ponto de inicio da inter
 // Declaracao de variaveis ----------------------------------------------------
 
 declar : TYPE id_list ';'
-       | TYPE ID '[' INUM ']'              STRING ';' {declar_arr_1d($2,$4,$6   );}
+       | TYPE ID '[' INUM ']'              STRING ';' {declar_arr_1d($2,$4,$6   );} // fazer pra complexo
        | TYPE ID '[' INUM ']' '[' INUM ']' STRING ';' {declar_arr_2d($2,$4,$7,$9);}
 
 id_list : IID | id_list ',' IID
@@ -133,7 +137,7 @@ funcao : TYPE ID '('                      {declar_fun     ($1,$2);} // inicio da
          '{' stmt_list '}'                {func_ret       ($2   );}
 
 // lista de parametros na declaracao
-// nao pode usar array em parametro de funcao
+// ainda nao pode usar array em parametro de funcao
 // retorna o id do parametro
 par_list : TYPE ID                        {$$ = declar_par($1,$2);}
          | par_list ',' par_list          {        set_par($3   );} // vai pegando da pilha
@@ -193,6 +197,8 @@ std_nrm  : NRM  '(' exp ')'                {$$ = exec_norm($3   );} // funcao no
 std_sqrt : SQRT '(' exp ')'                {$$ = exec_sqrt($3   );} // funcao sqrt(x)   -> raiz quadrada
 std_real : REAL '(' exp ')'                {$$ = exec_real($3   );} // funcao real(x)   -> pega a parte real de um comp
 std_imag : IMAG '(' exp ')'                {$$ = exec_imag($3   );} // funcao imag(x)   -> pega a parte imag de um comp
+std_atan : ATAN '(' exp ')'                {$$ = exec_atan($3   );} // funcao atan(x)   -> arctg
+std_fase : FASE '(' exp ')'                {$$ = exec_fase($3   );} // funcao fase(x)   -> pega a fase de um comp
 
 // if/else --------------------------------------------------------------------
 
@@ -226,25 +232,25 @@ break      : BREAK ';'                     {exec_break  (  );}
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '='     exp ';'      {declar_var($2); var_set($2,$4,0,0,1);}
+            | TYPE ID '=' exp ';'          {declar_var($2); var_set($2,$4,0,0,1);}
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '='    exp ';'               {var_set($1,$3,0,0,1);}
+assignment : ID  '=' exp ';'                       {var_set($1,$3,0,0,1);}
            // incremento
-           | ID                          PPLUS ';' {pplus_assign($1      );}
-           | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
-           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
+           | ID                          PPLUS ';' {  pplus_assign($1      );}
+           | ID  '[' exp ']'             PPLUS ';' {  aplus_assign($1,$3   );}
+           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {  aplu2_assign($1,$3,$6);}
            // array normal
-           | ID  '[' exp ']'  '='             {array_1d_check($1,$3,0    );}
-                     exp ';'                  {var_set       ($1,$7,1,0,1);}
+           | ID  '[' exp ']'  '='                  {array_1d_check($1,$3,  0    );}
+                     exp ';'                       {var_set       ($1,$7,  1,0,1);}
            // array invertido
-           | ID  '[' exp ')'  '='             {array_1d_check($1,$3,2    );}
-                     exp ';'                  {var_set       ($1,$7,1,0,1);}
+           | ID  '[' exp ')'  '='                  {array_1d_check($1,$3,  2    );}
+                     exp ';'                       {var_set       ($1,$7,  1,0,1);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='  {array_2d_check($1, $3,$6    );}
-                     exp ';'                  {var_set       ($1,$10, 2,0,1);}
+           | ID  '[' exp ']' '[' exp ']' '='       {array_2d_check($1, $3,$6    );}
+                     exp ';'                       {var_set       ($1,$10, 2,0,1);}
 
 // expressoes -----------------------------------------------------------------
 
@@ -272,6 +278,8 @@ exp:       INUM                               {$$ = num2exp($1,1);}
          | std_sqrt                           {$$ = $1;}
          | std_real                           {$$ = $1;}
          | std_imag                           {$$ = $1;}
+         | std_atan                           {$$ = $1;}
+         | std_fase                           {$$ = $1;}
          | func_call                          {$$ = $1;}
          // operadores nulos
          |    '(' exp ')'                     {$$ = $2;}
