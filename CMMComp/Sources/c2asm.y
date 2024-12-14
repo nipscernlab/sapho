@@ -108,7 +108,7 @@ direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
        | USEMAC STRING {     use_macro(  v_name[$2],1);} // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
        | ENDMAC        {     end_macro(              );} // ponto de termino do uso da macro
 
-       | TYPE ID '=' exp ';' {declar_var($2); var_set($2,$4,0,0,1);} // inicializacao de variaveis globais
+       | TYPE ID '=' exp ';' {declar_var($2); var_set($2,$4,0,0,1,0);} // inicializacao de variaveis globais
 
 // Diretivas comportamentais --------------------------------------------------
 
@@ -232,25 +232,25 @@ break      : BREAK ';'                     {exec_break  (  );}
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '=' exp ';'          {declar_var($2); var_set($2,$4,0,0,1);}
+            | TYPE ID '=' exp ';'          {declar_var($2); var_set($2,$4,0,0,1,0);}
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '=' exp ';'                       {var_set($1,$3,0,0,1);}
+assignment : ID  '=' exp ';'                       {var_set($1,$3,0,0,1,0);}
            // incremento
            | ID                          PPLUS ';' {  pplus_assign($1      );}
            | ID  '[' exp ']'             PPLUS ';' {  aplus_assign($1,$3   );}
            | ID  '[' exp ']' '[' exp ']' PPLUS ';' {  aplu2_assign($1,$3,$6);}
            // array normal
            | ID  '[' exp ']'  '='                  {array_1d_check($1,$3,  0    );}
-                     exp ';'                       {var_set       ($1,$7,  1,0,1);}
+                     exp ';'                       {var_set       ($1,$7,  1,0,1,0);}
            // array invertido
            | ID  '[' exp ')'  '='                  {array_1d_check($1,$3,  2    );}
-                     exp ';'                       {var_set       ($1,$7,  1,0,1);}
+                     exp ';'                       {var_set       ($1,$7,  1,0,1,0);}
            // array 2D (completar)
            | ID  '[' exp ']' '[' exp ']' '='       {array_2d_check($1, $3,$6    );}
-                     exp ';'                       {var_set       ($1,$10, 2,0,1);}
+                     exp ';'                       {var_set       ($1,$10, 2,0,1,0);}
 
 // expressoes -----------------------------------------------------------------
 

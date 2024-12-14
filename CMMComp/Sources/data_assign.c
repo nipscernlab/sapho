@@ -42,7 +42,7 @@ int get_img_id(int id)
 // ja fazer o assign com operacoes unarias
 // pensar em como implementar isso no compilador
 // acho que vai ter que mudar completamente essa funcao
-void var_set(int id, int et, int is_array, int pop, int warn)
+void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 {
     // testa se ja foi declarada pra poder dar uma atribuicao
     if (v_type[id] == 0)
@@ -85,7 +85,6 @@ void var_set(int id, int et, int is_array, int pop, int warn)
     if (is_array > 0)
     {
         if (exec_fft_set == 1) strcpy(cset, "ISRF\n"); else strcat(cset, "SRF\n");
-            exec_fft_set =  0;
     }
 
     // ------------------------------------------------------------------------
@@ -154,6 +153,9 @@ void var_set(int id, int et, int is_array, int pop, int warn)
         if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
+    // se vem do var_set_comp, nao altera por aqui
+    if ((is_array > 0) && (is_cmp == 0)) exec_fft_set = 0;
+
     acc_ok     = 0;  // liberou o acc
     v_asgn[id] = 1;  // variavel recebeu um valor
 }
@@ -208,7 +210,7 @@ void var_set_comp(int id, int et, int is_array)
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
         split_cmp_const(et,&et_r,&et_i);
-                var_set(id, et_r,is_array,0,0);
+                var_set(id, et_r,is_array,0,0,1);
     }
 
     // left int e right comp var ----------------------------------------------
@@ -218,7 +220,7 @@ void var_set_comp(int id, int et, int is_array)
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
         get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
-            var_set(id, et_r,is_array,0,0);
+            var_set(id, et_r,is_array,0,0,1);
     }
 
     // left int e right comp acc ----------------------------------------------
@@ -228,7 +230,7 @@ void var_set_comp(int id, int et, int is_array)
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
         if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
-        var_set(id,2*OFST,is_array,0,0);
+        var_set(id,2*OFST,is_array,0,0,1);
     }
 
     // left float e right comp const -----------------------------------------
@@ -238,7 +240,7 @@ void var_set_comp(int id, int et, int is_array)
         fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
         split_cmp_const(et,&et_r,&et_i);
-                var_set(id, et_r,is_array,0,0);
+                var_set(id, et_r,is_array,0,0,1);
     }
 
     // left float e right comp var --------------------------------------------
@@ -248,7 +250,7 @@ void var_set_comp(int id, int et, int is_array)
         fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
         get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
-            var_set(id, et_r,is_array,0,0);
+            var_set(id, et_r,is_array,0,0,1);
     }
 
     // left float e right comp acc ----------------------------------------------
@@ -258,7 +260,7 @@ void var_set_comp(int id, int et, int is_array)
         fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
         if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
-        var_set(id,2*OFST,is_array,0,0);
+        var_set(id,2*OFST,is_array,0,0,1);
     }
 
     // left comp e right int var ----------------------------------------------
@@ -266,7 +268,7 @@ void var_set_comp(int id, int et, int is_array)
     if ((t_left == 3) && (t_right == 1) && (mem != 0))
     {
         if (is_array) acc_ok = 1;
-        v_type[id] = 2; var_set(id,et,is_array,0,0); v_type[id] = 3;
+        v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
         if (is_array) a_cnt--;
     }
 
@@ -279,7 +281,7 @@ void var_set_comp(int id, int et, int is_array)
             if (using_macro == 0) fprintf(f_asm, "SET auxr_cmp\nLOAD aux_idx%d\nPLD auxr_cmp\n", a_cnt);
         }
 
-        v_type[id] = 2; var_set(id,et,is_array,0,0); v_type[id] = 3;
+        v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
 
         if (is_array) a_cnt--;
     }
@@ -289,7 +291,7 @@ void var_set_comp(int id, int et, int is_array)
     if ((t_left == 3) && (t_right == 2) && (mem != 0))
     {
         if (is_array) acc_ok = 1;
-        v_type[id] = 2; var_set(id,et,is_array,0,0); v_type[id] = 3;
+        v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
         if (is_array) a_cnt--;
     }
 
@@ -302,7 +304,7 @@ void var_set_comp(int id, int et, int is_array)
             if (using_macro == 0) fprintf(f_asm, "SET auxr_cmp\nLOAD aux_idx%d\nPLD auxr_cmp\n", a_cnt);
         }
 
-        v_type[id] = 2; var_set(id,et,is_array,0,0); v_type[id] = 3;
+        v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
 
         if (is_array) a_cnt--;
     }
@@ -320,7 +322,7 @@ void var_set_comp(int id, int et, int is_array)
             acc_ok = 1; // pra nao perder o indice
         }
 
-        v_type[id_r] = 2; var_set(id_r,et_r,is_array,0,0); v_type[id_r] = 3;
+        v_type[id_r] = 2; var_set(id_r,et_r,is_array,0,0,1); v_type[id_r] = 3;
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
@@ -328,7 +330,7 @@ void var_set_comp(int id, int et, int is_array)
             acc_ok = 1; // pra nao perder o indice
         }
 
-        v_type[id_i] = 2; var_set(id_i,et_i,is_array,0,0); v_type[id_i] = 4;
+        v_type[id_i] = 2; var_set(id_i,et_i,is_array,0,0,1); v_type[id_i] = 4;
     }
 
     // left comp e right comp var ---------------------------------------------
@@ -344,7 +346,7 @@ void var_set_comp(int id, int et, int is_array)
             acc_ok = 1; // pra nao perder o indice
         }
 
-        v_type[id_r] = 2; var_set(id_r,et_r,is_array,0,0); v_type[id_r] = 3;
+        v_type[id_r] = 2; var_set(id_r,et_r,is_array,0,0,1); v_type[id_r] = 3;
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
@@ -352,7 +354,7 @@ void var_set_comp(int id, int et, int is_array)
             acc_ok = 1; // pra nao perder o indice
         }
 
-        v_type[id_i] = 2; var_set(id_i,et_i,is_array,0,0); v_type[id_i] = 4;
+        v_type[id_i] = 2; var_set(id_i,et_i,is_array,0,0,1); v_type[id_i] = 4;
     }
 
     // left comp e right comp acc ---------------------------------------------
@@ -367,7 +369,7 @@ void var_set_comp(int id, int et, int is_array)
         }
 
         int pop = (is_array < 1); // se for array, usa PSET pra nao perder o img, se nao, usa SET
-        v_type[id_i] = 2; var_set(id_i,2*OFST,is_array,pop,0); v_type[id_i] = 4;
+        v_type[id_i] = 2; var_set(id_i,2*OFST,is_array,pop,0,1); v_type[id_i] = 4;
 
         if (is_array > 0)
             // agora coloca o indice e a parte real pra fazer o SET
@@ -375,8 +377,10 @@ void var_set_comp(int id, int et, int is_array)
             if (using_macro == 0) fprintf(f_asm, "LOAD aux_idx%d\nPLD auxr_cmp\n", a_cnt--);
         }
 
-        v_type[id_r] = 2; var_set(id_r,2*OFST,is_array,0,0); v_type[id_r] = 3;
+        v_type[id_r] = 2; var_set(id_r,2*OFST,is_array,0,0,1); v_type[id_r] = 3;
     }
+
+    if (is_array > 0) exec_fft_set = 0;
 }
 
 // operador ++ tb eh um tipo de SET

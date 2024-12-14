@@ -31,7 +31,7 @@ LINHA          \n
 "#DATYPE" eval_direct(13);
 "#DIRNAM" eval_direct(14);
 "#NUGAIN" eval_direct(15);
-"#FFTSIZ" eval_direct(19);
+"#FFTSIZ" eval_direct(20);
 
 "LOAD"    eval_opcode( 0,1); // todas as instrucoes
 "PLD"     eval_opcode( 1,1);

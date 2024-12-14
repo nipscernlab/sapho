@@ -341,7 +341,7 @@ int exp_pplus(int id)
     int ret = oper_ari(et,et1,2);
 
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,1);
+    var_set(id, ret, v_isar[id],0,1,0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -374,7 +374,7 @@ int array_pplus(int id, int ete)
     // faz o load no indice do array novamente
     array_1d_check(id, ete, 0);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,1);
+    var_set(id, ret, v_isar[id],0,1,0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -407,7 +407,7 @@ int array_2plus(int id, int et1, int et2)
     // faz o load no indice do array novamente
     array_2d_check(id, et1, et2);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret, v_isar[id],0,1);
+    var_set(id, ret, v_isar[id],0,1,0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 

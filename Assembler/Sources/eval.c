@@ -15,7 +15,8 @@ FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 int state = 0;     // estado do compilador
 int c_op;          // guarda opcode atual
 int nbopr;         // num de bits de operando
-int tam_var;       // auxilia no preenchimento de array em memoria
+int tam_var;       // auxilia no preenchimento de array em memoria (tamanho do array)
+int fil_typ;       // auxilia no preenchimento de array em memoria (tipo de dado)
 
 void eval_init(int prep)
 {
@@ -93,7 +94,7 @@ void operando(char *va, int is_const)
 // f_name eh o nome do arquivo a ser lido
 // tam eh o tamanho do arquivo
 // na fase de pp soh conta as variaveis
-void get_addr(char *f_name, int tam)
+void fill_mem(char *f_name, int tam)
 {
     FILE* filepointer;
 
@@ -116,29 +117,46 @@ void get_addr(char *f_name, int tam)
 
     // agora le o arquivo -----------------------------------------------------
 
-    int  i,val;
+    int  i,val = 0;
     char linha[512];
 
     for (i = 0; i < tam ; i++)
     {
-        if(pp == 0)
+        if (pp == 0)
         {
             fgets(linha, sizeof(linha), filepointer);
 
-            if(float_point)
-                val = f2mf(linha);
-            else
+            // proc ponto fixo com int
+            if ((float_point == 0) && (fil_typ == 0))
+            {
                 val = atoi(linha);
+            }
+
+            // proc ponto fixo com float
+            if ((float_point == 0) && (fil_typ == 1))
+            {
+                val = f2mf(linha);
+            }
+
+            // proc ponto flut com int
+            if ((float_point == 1) && (fil_typ == 0))
+            {
+                val = f2mf(linha);
+            }
+
+            // proc ponto flut com float
+            if ((float_point == 1) && (fil_typ == 1))
+            {
+                val = f2mf(linha);
+            }
 
             add_data(val);
         }
         else
-           add_data(0); // isso aqui eh soh pra contar as variaveis
+            add_data(0); // isso aqui eh soh pra contar as variaveis
     }
 
     if (pp == 0) fclose(filepointer);
-
-    return;
 }
 
 // adiciona array na memoria de dados
@@ -153,7 +171,7 @@ void array_size(int va, char *f_name)
     if (strcmp(f_name, "") == 0)
         for (int i = 0; i < va; i++) add_data(0);
     else
-        get_addr(f_name, va);
+        fill_mem(f_name, va);
 }
 
 void eval_direct(int next_state)
@@ -214,11 +232,13 @@ void eval_opernd(char *va, int is_const)
                  state = 0;  break;
         case 16: add_var(va,0);                                  // declarando array com arquivo
                  state = 17; break;
-        case 17: tam_var = atoi(va);                             // pega o tamanho do array com arquivo
+        case 17: fil_typ = atoi(va);                             // pega o tipo de array
                  state = 18; break;
-        case 18: array_size(tam_var,va);                         // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 18: tam_var = atoi(va);                             // pega o tamanho do array com arquivo
+                 state = 19; break;
+        case 19: array_size(tam_var,va);                         // preenche memoria com valor do arquivo (zero se nao tem arquivo)
                  state =  0; break;
-        case 19: if (pp) set_fftsiz(atoi(va));                   // num de bits pra inverter na fft
+        case 20: if (pp) set_fftsiz(atoi(va));                   // num de bits pra inverter na fft
                  state =  0; break;
     }
 

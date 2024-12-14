@@ -22,12 +22,11 @@ generate
 
 		always @ (*) begin
 			for (i = 0; i < FFTSIZ; i = i+1) begin : norm
-				aux[i] <= in[FFTSIZ-i];
+				aux[i] <= in[FFTSIZ-1-i];
 			end
 		end
 
-		//pula o LSB para pegar real e imaginario em sequencia
-		wire [MDATAW-1:0] add = (inv) ? {in[MDATAW-1:FFTSIZ+1], aux, in[0]} : in;
+		wire [MDATAW-1:0] add = (inv) ? {in[MDATAW-1:FFTSIZ], aux} : in;
 
 		assign out = (srf) ? add + addr: addr;
 

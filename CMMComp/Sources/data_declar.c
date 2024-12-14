@@ -17,7 +17,7 @@ void declar_var(int id)
 
     v_type[id] = type_tmp;               // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
     v_asgn[id] = strcmp(fname,"") == 0;  // variavel global deve ser marcada como assigned
-    v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao tem valor (lado esquerd do =)
+    v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
     // testes com numeros complexos -------------------------------------------
@@ -52,10 +52,10 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
             fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s %s\n", v_name[id_var], v_type[id_var], v_name[id_arg], v_name[id_fname]);
     }
 
-    v_isar[id_var] = 1; // variavel é array 1D
+    v_isar[id_var] = 1; // variavel eh array 1D
     v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 
     // teste com numeros complexos --------------------------------------------
@@ -63,12 +63,53 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // fim do teste -----------------------------------------------------------
 }
 
+void declar_arr_1d_new(int id_var, int id_arg, int id_fname)
+{
+    if (v_type[id_var] != 0) // variavel ja existe
+    {
+        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        return;
+    }
+
+    v_type[id_var] = type_tmp;               // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
+    v_used[id_var] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
+    v_fnid[id_var] = find_var(fname);        // guarda em que funcao ela esta
+    v_isar[id_var] = 1;                      // variavel eh array 1D
+    v_asgn[id_var] = 1;                      // array ja comeca como assigned (pois eh dificil de checar indice a indice)
+
+    int type = type_tmp;
+
+    // proc ponto fixo, tipo int, sem arquivo
+    if ((prtype == 0) && (type == 0) && (id_fname == -1))
+    {
+        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+    }
+
+    // proc ponto fixo, tipo int, com arquivo
+    if ((prtype == 0) && (type == 0) && (id_fname != -1))
+    {
+        if (using_macro == 0) fprintf(f_asm, "#arrays %s %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+    }
+
+    // proc ponto fixo, tipo float, sem arquivo
+    if ((prtype == 0) && (type == 1) && (id_fname == -1))
+    {
+        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+    }
+
+    // proc ponto fixo, tipo float, com arquivo
+    if ((prtype == 0) && (type == 1) && (id_fname != -1))
+    {
+
+    }
+}
+
 // declara parte imagin de um array complexo
 void declar_arr_1d_img(int id_var, int id_arg, int id_fname)
 {
     id_var = get_img_id(id_var);
 
-    if(id_fname == -1) // declara array sem arquivo de inicializacao
+    if (id_fname == -1) // declara array sem arquivo de inicializacao
     {   // ainda nao fiz inicializacao pra complexo
         if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
@@ -79,10 +120,10 @@ void declar_arr_1d_img(int id_var, int id_arg, int id_fname)
             fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s %s\n", v_name[id_var], v_type[id_var], v_name[id_arg], v_name[id_fname]);
     }
 
-    v_isar[id_var] = 1; // variavel é array 1D
+    v_isar[id_var] = 1; // variavel eh array 1D
     v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 }
 
@@ -105,7 +146,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
             fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s\n", v_name[id_var], size, v_name[id_fname]);
+        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %d %s\n", v_name[id_var], v_type[id_var], size, v_name[id_fname]);
     }
 
     // cria uma variavel auxiliar pra guardar o tamanho da dimensao x
@@ -135,7 +176,7 @@ void declar_arr_2d_img(int id_var, int size, int id_fname)
             fprintf (stderr, "Erro na linha %d: inicialização de array, no processador em ponto fixo, só pra int por enquanto. Se vira!\n", line_num+1);
         }
 
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s\n", v_name[id_var], size, v_name[id_fname]);
+        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %d %s\n", v_name[id_var], v_type[id_var], size, v_name[id_fname]);
     }
 
     v_isar[id_var] = 1; // variavel é array 1D
