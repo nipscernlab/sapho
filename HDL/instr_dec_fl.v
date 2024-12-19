@@ -415,13 +415,6 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-			55  : begin
-						ula_op  <= 5'd0;     // ITRAD -> Endereco da interrupcao (ver prefetch)
-						 srf    <= 1'b0;
-						isrf    <= 1'b0;
-						req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
 		default: begin
 						ula_op  <= 5'dx;
 						 srf    <= 1'bx;
@@ -586,7 +579,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			19: begin                     // MOD
+			19: begin                        // MOD
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -594,7 +587,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			20: begin                     // SMOD
+			20: begin                        // SMOD
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -602,7 +595,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			21: begin                     // AND
+			21: begin                        // AND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -610,7 +603,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			22: begin                     // SAND
+			22: begin                        // SAND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -634,7 +627,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			25: begin                     // OR
+			25: begin                       // OR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -642,7 +635,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			26: begin                     // SOR
+			26: begin                        // SOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -666,7 +659,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			29: begin                     // XOR
+			29: begin                        // XOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -674,7 +667,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			30: begin                     // SXOR
+			30: begin                        // SXOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -682,7 +675,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			31: begin                     // INV
+			31: begin                        // INV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -690,7 +683,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			32: begin                     // LINV
+			32: begin                        // LINV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -746,7 +739,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			39: begin                     // SHR
+			39: begin                        // SHR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -754,7 +747,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			40: begin                     // SSHR
+			40: begin                        // SSHR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -762,7 +755,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			41: begin                     // SHL
+			41: begin                        // SHL
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -770,7 +763,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			42: begin                     // SSHL
+			42: begin                        // SSHL
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -778,7 +771,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			43: begin                     // SRS
+			43: begin                        // SRS
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -786,7 +779,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			44: begin                     // SSRS
+			44: begin                        // SSRS
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
@@ -810,7 +803,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			47: begin                     // NORM
+			47: begin                        // NORM
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -818,7 +811,7 @@ always @ (*) begin
 						abs      <= 1'b0;
 						neg      <= 1'b0;
 					end
-			48: begin                     // NORMS 
+			48: begin                        // NORMS 
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -873,14 +866,6 @@ always @ (*) begin
 						pset     <= 1'b0;
 						abs      <= 1'b0;
 						neg      <= 1'b1;
-					end
-			55: begin                        // ITRAD
-						mem_wr   <= 1'b0;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 		default: begin
 						mem_wr   <= 1'bx;

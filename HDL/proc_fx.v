@@ -20,7 +20,8 @@ module proc_fx
 
 	// Constantes internas
 	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
-	parameter FFTSIZ = 3,               // Tamanho da FFT na inversao de bits
+	parameter FFTSIZ =  3,              // Tamanho da FFT na inversao de bits
+	parameter ITRADD =  0,              // Endereco da interrupcao
 
 	// -------------------------------------------------------------------------
 	// Parametros para alocacao dinamica de recursos ---------------------------
@@ -34,9 +35,6 @@ module proc_fx
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
-
-	// Implementa interrupcao
-	parameter ITR   =   0,
 
 	// ULA - Operadores aritmeticos
 	parameter ADD   =   0,
@@ -124,6 +122,7 @@ core_fx #(.NUBITS(NUBITS),
           .NUIOOU(NUIOOU),
           .NUGAIN(NUGAIN),
           .FFTSIZ(FFTSIZ),
+          .ITRADD(ITRADD),
           .DIV   (DIV   ),
           .OR    (OR    ),
           .LOR   (LOR   ),
@@ -135,7 +134,6 @@ core_fx #(.NUBITS(NUBITS),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
           .FFT   (FFT   ),
-          .ITR   (ITR   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
           .AND   (AND   ),
@@ -177,6 +175,7 @@ core_fx #(.NUBITS(NUBITS),
           .NUIOOU(NUIOOU),
           .NUGAIN(NUGAIN),
           .FFTSIZ(FFTSIZ),
+          .ITRADD(ITRADD),
           .DIV   (DIV   ),
           .OR    (OR    ),
           .LOR   (LOR   ),
@@ -188,7 +187,6 @@ core_fx #(.NUBITS(NUBITS),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
           .FFT   (FFT   ),
-          .ITR   (ITR   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
           .AND   (AND   ),

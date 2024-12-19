@@ -22,7 +22,8 @@ module core_fx
 
 	// Constantes internas
 	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
-	parameter FFTSIZ = 3,               // Tamanho da FFT na inversao de bits
+	parameter FFTSIZ =  3,              // Tamanho da FFT na inversao de bits
+	parameter ITRADD =  0,              // Endereco da interrupcao
 
 	// -------------------------------------------------------------------------
 	// Parametros para alocacao dinamica de recursos ---------------------------
@@ -36,9 +37,6 @@ module core_fx
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
-
-	// Implementa interrupcao
-	parameter ITR   =   0,
 
 	// ULA - Operadores aritmeticos
 	parameter ADD   =   0,
@@ -104,7 +102,7 @@ wire [MINSTW-1:0] pcl;
 
 generate
 
-	if (ITR)
+	if (ITRADD>0)
 		assign pcl = (itr) ? instr_addr : pc_lval;
 	else
 		assign pcl = pc_lval;
@@ -125,7 +123,8 @@ wire       [MINSTW-1:0]     pf_addr;
 
 prefetch #(.MINSTW(MINSTW),
            .NBOPCO(NBOPCO),
-           .NBOPER(NBOPER)) pf(clk, rst, pc_addr, pf_opcode, pf_operand,
+           .NBOPER(NBOPER),
+           .ITRADD(ITRADD)) pf(clk, rst, pc_addr, pf_opcode, pf_operand,
                             pf_instr, pf_addr,
                             pc_load , pf_acc,
                             pf_isp_push, pf_isp_pop,

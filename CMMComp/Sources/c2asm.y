@@ -2,7 +2,7 @@
     Coisas que só tem em C+-
 
     - Diretivas #USEMAC #ENDMAC: seleciona trechos do código que serão substituidos por Macros otimizados em assembly
-    - Diretiva  #INTERPOIN     : marca ponto de retorno para um reset no pino itr
+    - Diretiva  #INTERPOINT     : marca ponto de retorno para um reset no pino itr
 
     - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
 
@@ -89,7 +89,7 @@ void  yyerror(char const *s);
 fim  : prog
 prog : prog_elements | prog prog_elements
 
-prog_elements : direct | declar | funcao
+prog_elements : direct | declar_full | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
@@ -107,8 +107,6 @@ direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
        | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
        | USEMAC STRING {     use_macro(  v_name[$2],1);} // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
        | ENDMAC        {     end_macro(              );} // ponto de termino do uso da macro
-
-       | TYPE ID '=' exp ';' {declar_var($2); var_set($2,$4,0,0,1,0);} // inicializacao de variaveis globais
 
 // Diretivas comportamentais --------------------------------------------------
 
@@ -158,15 +156,15 @@ stmt_full: '{' stmt_list '}' // bloco de statments
          |     use_inter     // ponto de interrupcao
 
 // statments que podem ser usados dentro do case :
-stmt_case:   declar_full    // declaracoes de variaveis
-         |    assignment    // atribuicao de expressoes a uma variavel = $ @ />
-         |    while_stmt    // loop while
-         |  if_else_stmt    // if/else
-         |       std_out    // std lib de output de dados
-         |     void_call    // chamada de subrotina
-         |   return_call    // retorno de funcao
-         |     use_macro    // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
-         |     end_macro    // termina uma chamada de macro assembler
+stmt_case:   declar_full     // declaracoes de variaveis
+         |    assignment     // atribuicao de expressoes a uma variavel = $ @ />
+         |    while_stmt     // loop while
+         |  if_else_stmt     // if/else
+         |       std_out     // std lib de output de dados
+         |     void_call     // chamada de subrotina
+         |   return_call     // retorno de funcao
+         |     use_macro     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
+         |     end_macro     // termina uma chamada de macro assembler
 
 // chamadas de funcoes --------------------------------------------------------
 
@@ -333,6 +331,7 @@ int main(int argc, char *argv[])
     acc_ok       = 0;
     ret_ok       = 0;
     mainok       = 0;
+    itr_ok       = 0;
 
     float_init (); // inicializa variaveis de estado pra float (t2t.c)
 	yyparse    (); // aqui a magica acontece!!

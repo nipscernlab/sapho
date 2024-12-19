@@ -419,7 +419,6 @@ int int_oper(int et1, int et2, char *op, char *code, int fok)
     if (et2 == 0)
     {
         load_check(et1,0);
-
         if (using_macro == 0) fprintf(f_asm, "%s\n", code); // vai ser uma instrucao sem parametro
     }
     else

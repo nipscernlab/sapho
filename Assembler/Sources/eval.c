@@ -20,14 +20,15 @@ int fil_typ;       // auxilia no preenchimento de array em memoria (tipo de dado
 
 void eval_init(int prep)
 {
-    pp   = prep;   // se estou ou nao na fase de pre-processamento
+    pp   = prep;          // se estou ou nao na fase de pre-processamento
 
-    var_reset();   // reseta a contagem de simbolos
+    var_reset();          // reseta a contagem de simbolos
 
-    if (pp)        // pp soh conta, nao faz os arquivos ainda
+    if (pp)               // pp soh conta, nao faz os arquivos ainda
     {
-        n_ins = 0;
-        n_dat = 0;
+        n_ins    = 0;
+        n_dat    = 0;
+        itr_addr = 0;     // reseta endereco de interrupcao
     }
     else
     {
@@ -90,13 +91,30 @@ void operando(char *va, int is_const)
     add_instr(c_op, find_var(va));
 }
 
+void rem_space(char *text)
+{
+    // remova espacos em branco -----------------------------------------------
+
+    int i = 0, j = 0;
+    char temp[strlen(text) + 1];
+    strcpy(temp, text);
+    while (temp[i] != '\0')
+    {
+        while (temp[i] == ' ') i++;
+        text[j] = temp[i];
+        i++;
+        j++;
+    }
+    text[j] = '\0';
+}
+
 // preenche um array na memoria com dados em arquivo
 // f_name eh o nome do arquivo a ser lido
 // tam eh o tamanho do arquivo
 // na fase de pp soh conta as variaveis
 void fill_mem(char *f_name, int tam)
 {
-    FILE* filepointer;
+    FILE* filepointer = NULL;
 
     // primeiro pega o caminho completo e abre o arquivo ----------------------
 
@@ -127,27 +145,79 @@ void fill_mem(char *f_name, int tam)
             fgets(linha, sizeof(linha), filepointer);
 
             // proc ponto fixo com int
-            if ((float_point == 0) && (fil_typ == 0))
+            if ((float_point == 0) && (fil_typ == 1))
             {
                 val = atoi(linha);
             }
 
             // proc ponto fixo com float
-            if ((float_point == 0) && (fil_typ == 1))
+            if ((float_point == 0) && (fil_typ == 2))
             {
                 val = f2mf(linha);
             }
 
+            // proc ponto fixo com real comp
+            if ((float_point == 0) && (fil_typ == 3))
+            {
+                char  num[64];
+                float real,img;
+
+                rem_space(linha);
+                   sscanf(linha,"%f %f",&real,&img);
+
+                   sprintf(num,"%f",real);
+                val = f2mf(num);
+            }
+
+            // proc ponto fixo com imag comp
+            if ((float_point == 0) && (fil_typ == 4))
+            {
+                char  num[64];
+                float real,img;
+
+                rem_space(linha);
+                   sscanf(linha,"%f %f",&real,&img);
+
+                   sprintf(num,"%f",img);
+                val = f2mf(num);
+            }
+
             // proc ponto flut com int
-            if ((float_point == 1) && (fil_typ == 0))
+            if ((float_point == 1) && (fil_typ == 1))
             {
                 val = f2mf(linha);
             }
 
             // proc ponto flut com float
-            if ((float_point == 1) && (fil_typ == 1))
+            if ((float_point == 1) && (fil_typ == 2))
             {
                 val = f2mf(linha);
+            }
+
+            // proc ponto flut com real comp
+            if ((float_point == 1) && (fil_typ == 3))
+            {
+                char  num[64];
+                float real,img;
+
+                rem_space(linha);
+                   sscanf(linha,"%f %f",&real,&img);
+
+                   sprintf(num,"%f",real);
+                val = f2mf(num);
+            }
+
+            // proc ponto flut com imag comp
+            if ((float_point == 1) && (fil_typ == 4))
+            {
+                char  num[64];
+                float real,img;
+
+                rem_space(linha);
+                   sscanf(linha,"%f %f",&real,&img);
+
+                   sprintf(num,"%f",img);
+                val = f2mf(num);
             }
 
             add_data(val);
@@ -184,16 +254,7 @@ void eval_opcode(int op, int next_state)
     c_op  = op;
     state = next_state;
 
-    if (state == 0)                   // nao tem operando, ja pode escrever a instrucao
-    {
-        if (op == 55)                 // se for interrupcao, pegar o endereco atual durante o pp
-        {
-            if (pp) itr_addr = n_ins; // endereco da interrupcao
-            add_instr(op, itr_addr);
-        }
-        else
-            add_instr(op,0);
-    }
+    if (state == 0) add_instr(op,0); // nao tem operando, ja pode escrever a instrucao
 }
 
 void eval_opernd(char *va, int is_const)

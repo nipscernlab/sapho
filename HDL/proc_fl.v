@@ -20,7 +20,8 @@ module proc_fl
 	parameter NUIOOU =  2,              // Numero de enderecos de saida
 
 	// Constantes internas
-	parameter FFTSIZ =  3,              // Tamanho da FFT na inversao de bits
+	parameter FFTSIZ =  3,              // Tamanho  da FFT na inversao de bits
+	parameter ITRADD =  0,              // Endereco da interrupcao
 
 	// -------------------------------------------------------------------------
 	// Parametros para alocacao dinamica de recursos ---------------------------
@@ -34,9 +35,6 @@ module proc_fl
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
-
-	// Implementa interrupcao
-	parameter ITR   =   0,
 
 	// ULA - Operadores aritmeticos
 	parameter ADD   =   0,
@@ -122,6 +120,7 @@ core_fl #(.NBMANT(NBMANT),
           .NUIOIN(NUIOIN),
           .NUIOOU(NUIOOU),
           .FFTSIZ(FFTSIZ),
+          .ITRADD(ITRADD),
           .DIV   (DIV   ),
           .OR    (OR    ),
           .LOR   (LOR   ),
@@ -133,7 +132,6 @@ core_fl #(.NBMANT(NBMANT),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
           .FFT   (FFT   ),
-          .ITR   (ITR   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
           .AND   (AND   ),
@@ -175,6 +173,7 @@ core_fl #(.NBMANT(NBMANT),
           .NUIOIN(NUIOIN),
           .NUIOOU(NUIOOU),
           .FFTSIZ(FFTSIZ),
+          .ITRADD(ITRADD),
           .DIV   (DIV   ),
           .OR    (OR    ),
           .LOR   (LOR   ),
@@ -186,7 +185,6 @@ core_fl #(.NBMANT(NBMANT),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
           .FFT   (FFT   ),
-          .ITR   (ITR   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
           .AND   (AND   ),

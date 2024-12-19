@@ -20,7 +20,7 @@ void float_init()
     fmlt   = 0; // gera macro de multiplicacao
     fdiv   = 0; // gera macro de divisao
 
-    mgen   = 0; // vai usar funcoes aritmeticas
+     mgen  = 0; // vai usar funcoes aritmeticas
     fsqrt  = 0; // gera macro pra raiz quadrada (proc float)
     fsqrti = 0; // gera macro pra raiz quadrada (proc int  )
     fatan  = 0; // gera macro pra arco tangente (proc float)

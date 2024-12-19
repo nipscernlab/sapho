@@ -390,6 +390,7 @@ int exec_atan(int et)
     return 2*OFST;
 }
 
+// calcula a fase (em radianos) de um num complexo
 int exec_fase(int et)
 {
     if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função fase(.) tem que ser complexo!\n", line_num+1);

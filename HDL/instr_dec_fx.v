@@ -417,13 +417,6 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-			55  : begin
-						ula_op  <= 5'd0;     // ITRAD -> Endereco da interrupcao (ver prefetch)
-						 srf    <= 1'b0;
-						isrf    <= 1'b0;
-						req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
 		default: begin
 						ula_op  <= 5'dx;
 						 srf    <= 1'bx;
@@ -930,15 +923,6 @@ always @ (*) begin
 						norm     <= 1'b0;
 						abs      <= 1'b0;
 						neg      <= 1'b1;
-					end
-			55: begin                     // ITRAD
-						mem_wr   <= 1'b0;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 		default: begin
 						mem_wr   <= 1'bx;

@@ -8,9 +8,4 @@ void declar_img   (int id);
 void declar_arr_1d(int id_var, int id_arg,           int id_fname);
 void declar_arr_2d(int id_var, int id_x  , int id_y, int id_fname);
 
-// testes com numeros complexos -----------------------------------------------
-void declar_arr_1d_img(int id_var, int id_arg, int id_fname);
-void declar_arr_2d_img(int id_var, int size  , int id_fname);
-// fim do teste ---------------------------------------------------------------
-
 #endif // DATA_DECLAR_H_INCLUDED

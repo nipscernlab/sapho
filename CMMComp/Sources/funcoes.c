@@ -320,7 +320,7 @@ void func_ret(int id) // id -> id da funcao atual
 
     if (strcmp(v_name[id], "main") == 0) // se eh funcao main ...
     {
-        if (mainok == 0) // ainda nao tinha executado a funcao main
+        if (mainok == 0) // soh tem a funcao main
         {
              if (using_macro == 0) fprintf(f_asm, "@fim JMP fim\n");
         }
@@ -341,8 +341,13 @@ void void_ret()
     // checa se eh void mesmo, ou funcao por engano
     if (v_type[fun_id1] != 6)
         fprintf (stderr, "Erro na linha %d: cadê o valor de retorno da função?\n", line_num+1);
-    // testar se eh void
-    if (using_macro == 0) fprintf(f_asm, "RETURN\n");
+
+
+    if ((strcmp(fname, "main") == 0) && (mainok == 0))       // se eh funcao main e soh tem ela ...
+    {
+         if (using_macro == 0) fprintf(f_asm, "JMP fim\n");  // ai nao usa RETURN, pula pro fim
+    }
+    else if (using_macro == 0) fprintf(f_asm, "RETURN\n");   // se nao, usa return padrao
 }
 
 // ----------------------------------------------------------------------------

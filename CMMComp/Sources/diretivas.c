@@ -18,6 +18,7 @@ void exec_diretivas(char *dir, int id, int t)
         case 1: prtype = ival; break;
         case 2: nbmant = ival; break;
         case 3: nbexpo = ival; break;
+        // rever essa questao do num de i/o
         case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
         case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
     }
@@ -64,11 +65,14 @@ void end_macro()
         using_macro  = 0;
 }
 
-// gera instrucao ITRAD
+// gera diretiva #ITRAD
 // ainda tenho q checar os lugares q nao podem ter isso
 // ex: dentro de loop, dentro de switch case, pensar ...
 // talvez um warning ja sirva
 void use_inter()
 {
-    if (using_macro == 0) fprintf(f_asm, "ITRAD\n");
+    if (itr_ok      == 1) fprintf(stderr, "Erro na linha %d: já tem uma interrupção rolando em outro ponto antes desse!\n", line_num+1);
+    if (using_macro == 0) fprintf( f_asm, "#ITRAD\n");
+
+    itr_ok = 1;
 }

@@ -127,6 +127,7 @@ void build_vfile()
 
     fprintf(f_veri, "wire signed [%d:0] in_float;\n"   , s2);
     fprintf(f_veri, "wire signed [%d:0] out_float;\n\n", s2);
+
     if (float_point)
     fprintf(f_veri, "int2float #(.MAN(%d),.EXP(%d)) i2f (io_in, in_float);\n\n", nbmant, nbexpo);
     else
@@ -153,6 +154,8 @@ void build_vfile()
     fprintf(f_veri, ".NUIOIN(%d),\n", nuioin2);
     fprintf(f_veri, ".NUIOOU(%d),\n", nuioou );
     fprintf(f_veri, ".FFTSIZ(%d),\n", fftsiz );
+
+    if (itr_addr != 0) fprintf(f_veri, ".ITRADD(%d),\n", itr_addr); // vai ter interrupcao
 
     for (int i = 0; i < m_count; i++) fprintf(f_veri, ".%s(1),\n", m_name[i]);
 
