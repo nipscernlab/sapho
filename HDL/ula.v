@@ -48,7 +48,7 @@ always @ (*) begin
 		5'd15  : out <= out_ufl; // LES
 		5'd16  : out <= out_ufl; // GRE
 		5'd17  : out <= out_ufl; // EQU
-		  
+
 		5'd18  : out <= out_ufl; // LIN
 		5'd19  : out <= out_ufl; // LAN
 		5'd20  : out <= out_ufl; // LOR

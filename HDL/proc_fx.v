@@ -66,12 +66,6 @@ module proc_fx
 	parameter LES   =   0,
 	parameter EQU   =   0,
 
-	// Pos processamento da ULA
-	parameter NRMS  =   0,              // Divide pela constante NUGAIN e seta na memoria (ex: x /> y;)
-	parameter PSTS  =   0,              // Zera valores negativos e seta na memoria       (ex: x @  y;)
-	parameter ABSS  =   0,              // Valor absoluto                                 (ex: x $  y;)
-	parameter NEGS  =   0,              // Negacao                                        (ex: x = -y;)
-
 	// -------------------------------------------------------------------------
 	// Parametros internos -----------------------------------------------------
 	// -------------------------------------------------------------------------
@@ -147,11 +141,7 @@ core_fx #(.NUBITS(NUBITS),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
           .PST   (PST   ),
-          .SGN   (SGN   ),
-          .NRMS  (NRMS  ),
-          .ABSS  (ABSS  ),
-          .PSTS  (PSTS  ),
-          .NEGS  (NEGS  )) core(clk, rst,
+          .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
                                 mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
                                 io_in, addr_in, addr_out, req_in, out_en, itr);
@@ -200,11 +190,7 @@ core_fx #(.NUBITS(NUBITS),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
           .PST   (PST   ),
-          .SGN   (SGN   ),
-          .NRMS  (NRMS  ),
-          .ABSS  (ABSS  ),
-          .PSTS  (PSTS  ),
-          .NEGS  (NEGS  )) core(clk, rst,
+          .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
                                 mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
                                 io_in, addr_in, addr_out, req_in, out_en, itr);

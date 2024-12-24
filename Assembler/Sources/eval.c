@@ -8,7 +8,7 @@
 #include <math.h>
 #include <string.h>
 
-#define NBITS_OPC 6 // tem que mudar em verilog de acordo (em proc_fx.v e proc_fl.v)
+#define NBITS_OPC 6     // tem que mudar em verilog de acordo (em proc_fx.v e proc_fl.v)
 
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 
@@ -20,9 +20,9 @@ int fil_typ;       // auxilia no preenchimento de array em memoria (tipo de dado
 
 void eval_init(int prep)
 {
-    pp   = prep;          // se estou ou nao na fase de pre-processamento
+    pp = prep;            // se estou ou nao na fase de pre-processamento
 
-    var_reset();          // reseta a contagem de simbolos
+    var_reset();          // reseta a contagem de mnemonicos que alocam recursos em hardware
 
     if (pp)               // pp soh conta, nao faz os arquivos ainda
     {
@@ -32,12 +32,12 @@ void eval_init(int prep)
     }
     else
     {
-        isrf  = 0; // ainda nao usou fft
+        isrf  = 0; // ainda nao usou enderecamento invertido
 
         // num de bits de endereco para o operando (depois do mnemonico)
         // depende de quem eh maior, mem de dado ou de instr
         // esse valor foi achado na fase de pp
-        nbopr   = (n_ins > n_dat+ndstac) ? ceil(log2(n_ins)) : ceil(log2(n_dat+ndstac));
+        nbopr = (n_ins > n_dat+ndstac) ? ceil(log2(n_ins)) : ceil(log2(n_dat+ndstac));
 
         // abre os arquivos .mif
         f_data  = fopen(get_dname(), "w");
@@ -62,7 +62,7 @@ void add_data(int val)
     // se nao, escreve o valor no .mif
     if (!pp)
     {
-        // pega o tamanho da palavra de dado
+        // pega o tamanho da palavra de dado (aqui tem q mudar pois nbits sempre vai ter o valor correto)
         int s = (float_point) ? nbmant + nbexpo + 1 : nbits;
         // escreve o dado em binario no .mif
         fprintf(f_data, "%s\n", itob(val,s));
@@ -76,10 +76,12 @@ void add_data(int val)
 // por ultimo, coloca a instrucao na memoria
 void operando(char *va, int is_const)
 {
-    if (find_var(va) == -1)
+    if (find_var(va) == -1) // aqui tem q mudar para saber se a constante eh fix ou float
+                            // talvez criar mais uma variavel array pra marcar cada constante
+                            // dependendo do mnemonico a esquerda
     {
         int val;
-        if (float_point)
+        if (float_point) // trocar esse float_ponit global por um vetor pra idetificar cada variavel
             val = (is_const) ? f2mf(va) : 0;
         else
             val = (is_const) ? atoi(va) : 0;
@@ -91,10 +93,9 @@ void operando(char *va, int is_const)
     add_instr(c_op, find_var(va));
 }
 
+// remove espacos em branco
 void rem_space(char *text)
 {
-    // remova espacos em branco -----------------------------------------------
-
     int i = 0, j = 0;
     char temp[strlen(text) + 1];
     strcpy(temp, text);

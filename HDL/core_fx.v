@@ -66,13 +66,7 @@ module core_fx
 	parameter LIN   =   0,
 	parameter GRE   =   0,
 	parameter LES   =   0,
-	parameter EQU   =   0,
-
-	// Pos processamento da ULA
-	parameter NRMS  =   0,              // Divide pela constante NUGAIN e seta na memoria (ex: x /> y;)
-	parameter PSTS  =   0,              // Zera valores negativos e seta na memoria       (ex: x @  y;)
-	parameter ABSS  =   0,              // valor absoluto                                 (ex: x $  y;)
-	parameter NEGS  =   0               // Negacao                                        (ex: x = -y;)
+	parameter EQU   =   0
 )
 (
 	input                       clk, rst,
@@ -148,13 +142,13 @@ wire              id_nrm;
 wire              id_abs;
 wire              id_neg;
 
-instr_dec_fx #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
-                                               id_opcode, id_operand,
-                                               id_dsp_push, id_dsp_pop,
-                                               id_ula_op, id_ula_data,
-                                               mem_wr, id_mem_addr, mem_data_in,
-                                               io_in, req_in, out_en,
-                                               id_srf, id_isrf, id_pset, id_nrm, id_abs, id_neg);
+instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
+                                            id_opcode, id_operand,
+                                            id_dsp_push, id_dsp_pop,
+                                            id_ula_op, id_ula_data,
+                                            mem_wr, id_mem_addr, mem_data_in,
+                                            io_in, req_in, out_en,
+                                            id_srf, id_isrf, id_pset, id_nrm, id_abs, id_neg);
 
 // Ponteiro pra pilha de dados ------------------------------------------------
 
@@ -196,19 +190,6 @@ ula_fx #(.NUBITS(NUBITS),
          .SGN   (SGN   ),
          .PST   (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
 
-// Pos-processamento da ULA ---------------------------------------------------
-
-wire [NUBITS-1:0] pp_out;
-
-generate
-
-	if (NRMS || PSTS || ABSS || NEGS)
-		pos_proc_fx #(NUBITS, NUGAIN, NRMS, PSTS, ABSS, NEGS) pos_proc_fx(ula_out, id_pset, id_nrm, id_abs, id_neg, pp_out);
-	else
-		assign pp_out = ula_out;
-
-endgenerate
-
 // Acumulador -----------------------------------------------------------------
 
 reg signed [NUBITS-1:0] racc;
@@ -217,7 +198,7 @@ always @ (posedge clk or posedge rst) begin
 	if (rst)
 		racc <= 0;
 	else
-		racc <= pp_out;
+		racc <= ula_out;
 end
 
 assign ula_acc = racc;
@@ -256,7 +237,7 @@ endgenerate
 
 // Interface externa ----------------------------------------------------------
 
-assign data_out   =  pp_out;
+assign data_out   =  ula_out;
 assign mem_addr_w = (sp_push   ) ? sp_addr_w : rf;
 assign mem_addr_r = (sp_pop    ) ? sp_addr_r : rf;
 

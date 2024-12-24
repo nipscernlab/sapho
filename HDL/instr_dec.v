@@ -1,4 +1,4 @@
-module instr_dec_fx
+module instr_dec
 #(
 	parameter NBDATA = 32, // Numero de bits dos dados
 	parameter NBOPCO = 6,  // Numero de bits de  opcode
@@ -22,7 +22,7 @@ module instr_dec_fx
 	input      [NBDATA-1:0] io_in,
 	output reg              req_in, out_en,
 
-	output reg              srf, isrf, pset, norm, abs, neg
+	output reg              srf, isrf
 );
 
 always @ (posedge clk or posedge rst) begin
@@ -189,7 +189,8 @@ always @ (posedge clk or posedge rst) begin
 					end
 			22  : begin
 						ula_op  <= 5'd12;    // SAND -> and bit a bit com pilha
-						srf     <= 1'b0;
+						 srf    <= 1'b0;
+						isrf    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
@@ -354,13 +355,6 @@ always @ (posedge clk or posedge rst) begin
 					   req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-			46   : begin
-						ula_op  <= 5'd0;     // PSTS  -> faz o PST e ja seta na variavel (usado no pos_proc)
-						 srf    <= 1'b0;     // fazer o PSTS com memoria?
-						isrf    <= 1'b0;
-						req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
 			47  : begin
 						ula_op  <= 5'd7;     // NORM   -> Divisao do acc por uma constante (exemplo: />300)
 						 srf    <= 1'b0;     // fazer o NORM com memoria!
@@ -368,23 +362,9 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-			48  : begin
-						ula_op  <= 5'd0;     // NORMS  -> faz o NORM e ja seta na variavel (subsitui o '=', exemplo: x /> 300;)
-						 srf    <= 1'b0;     // fazer o NORMS com memoria!
-						isrf    <= 1'b0;
-					   req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
 			49  : begin
 						ula_op  <= 5'd8;     // ABS   -> retorna o valor absoluto do acc (exemplo: x = abs(y)) 
 						 srf    <= 1'b0;     // fazer o ABS com memoria!
-						isrf    <= 1'b0;
-						req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
-			50  : begin
-						ula_op  <= 5'd0;     // ABSS  -> ABS como pos-proc
-						 srf    <= 1'b0;     // fazer o ABSS com memoria!
 						isrf    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
@@ -396,24 +376,10 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-			52  : begin
-						ula_op  <= 5'd10;    // SSIGN -> SIGN com pilha
-						 srf    <= 1'b0;
-						isrf    <= 1'b0;
-						req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
 			53  : begin
 						ula_op  <= 5'd0;     // ISRF  -> SRF com bits invertidos
 						 srf    <= 1'b1;
 						isrf    <= 1'b1;
-						req_in  <= 1'b0;
-						out_en  <= 1'b0;
-					end
-			54  : begin
-						ula_op  <= 5'd0;     // NEGS  -> NEG (por fora) e SET na memoria
-						 srf    <= 1'b0;
-						isrf    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
@@ -433,505 +399,256 @@ always @ (*) begin
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			1 : begin                     // PLD
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			2 : begin                     // SET
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			3 : begin                     // SETP
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			4: begin                      // PUSH
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			5: begin                      // JZ
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			6: begin                      // JMP
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			7 : begin                     // CALL
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			8 : begin                     // RETURN
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			9 : begin                     // SRF
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			10: begin                     // IN
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			11: begin                     // OUT
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			12: begin                     // NEG
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			13: begin                     // ADD
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			14: begin                     // SADD
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			15: begin                     // MLT
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			16: begin                     // SMLT
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			17: begin                     // DIV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			18: begin                     // SDIV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			19: begin                     // MOD
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			20: begin                     // SMOD
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			21: begin                     // AND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
+						dsp_pop  <= 1'b0;;
 					end
 			22: begin                     // SAND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			23: begin                     // LAND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			24: begin                     // SLAND
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			25: begin                     // OR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			26: begin                     // SOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			27: begin                     // LOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			28: begin                     // SLOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			29: begin                     // XOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			30: begin                     // SXOR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			31: begin                     // INV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			32: begin                     // LINV
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			33: begin                     // EQU
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			34: begin                     // SEQU
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			35: begin                     // GRE
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			36: begin                     // SGRE
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			37: begin                     // LES
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			38: begin                     // SLES
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			39: begin                     // SHR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			40: begin                     // SSHR
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			41: begin                     // SHL
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			42: begin                     // SSHL
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			43: begin                     // SRS
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			44: begin                     // SSRS
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			45: begin                     // PST
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
-					end
-			46: begin                     // PSTS
-						mem_wr   <= 1'b1;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b1;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			47: begin                     // NORM
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
-					end
-			48: begin                     // NORMS 
-						mem_wr   <= 1'b1;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b1;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			49: begin                     // ABS
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
-					end
-			50: begin                     // ABSS
-						mem_wr   <= 1'b1;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b1;
-						neg      <= 1'b0;
 					end
 			51: begin                     // SIGN
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
-					end
-			52: begin                     // SSIGN
-						mem_wr   <= 1'b0;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
 					end
 			53: begin                     // ISRF
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b0;
-					end
-			54: begin                     // NEGS
-						mem_wr   <= 1'b1;
-						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b0;
-						pset     <= 1'b0;
-						norm     <= 1'b0;
-						abs      <= 1'b0;
-						neg      <= 1'b1;
 					end
 		default: begin
 						mem_wr   <= 1'bx;
 						dsp_push <= 1'bx;
 						dsp_pop  <= 1'bx;
-						pset     <= 1'bx;
-						norm     <= 1'bx;
-						abs      <= 1'bx;
-						neg      <= 1'bx;
 					end
 	endcase
 end

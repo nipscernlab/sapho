@@ -66,13 +66,7 @@ module core_fl
 	parameter LIN   =   0,
 	parameter GRE   =   0,
 	parameter LES   =   0,
-	parameter EQU   =   0,
-
-	// Pos processamento da ULA
-	parameter NRMS  =   0,              // Divide pela constante NUGAIN e seta na memoria (ex: x /> y;)
-	parameter PSTS  =   0,              // Zera valores negativos e seta na memoria       (ex: x @  y;)
-	parameter ABSS  =   0,              // valor absoluto                                 (ex: x $  y;)
-	parameter NEGS  =   0               // Negacao                                        (ex: x = -y;)
+	parameter EQU   =   0
 )
 (
 	input                       clk, rst,
@@ -144,16 +138,17 @@ wire [NBMANT+NBEXPO:0] id_ula_data;
 wire [MDATAW     -1:0] id_mem_addr;
 wire                   id_srf, id_isrf;
 wire                   id_set;
+wire                   id_nrm; // nao usado em float
 wire                   id_abs;
 wire                   id_neg;
 
-instr_dec_fl #(NBMANT+NBEXPO+1, NBOPCO, NBOPER, MDATAW) id(clk, rst,
-                                                        id_opcode  , id_operand ,
-                                                        id_dsp_push, id_dsp_pop ,
-                                                        id_ula_op  , id_ula_data,
-                                                        mem_wr     , id_mem_addr, mem_data_in,
-                                                        io_in , req_in, out_en,
-                                                        id_srf, id_isrf, id_set, id_abs, id_neg);
+instr_dec #(NBMANT+NBEXPO+1, NBOPCO, NBOPER, MDATAW) id(clk, rst,
+                                                     id_opcode  , id_operand ,
+                                                     id_dsp_push, id_dsp_pop ,
+                                                     id_ula_op  , id_ula_data,
+                                                     mem_wr     , id_mem_addr, mem_data_in,
+                                                     io_in , req_in, out_en,
+                                                     id_srf, id_isrf);
 
 // Ponteiro pra pilha de dados ------------------------------------------------
 
@@ -195,19 +190,6 @@ ula #(.EXP (NBEXPO),
       .PST (PST   ),
       .SGN (SGN   )) ula (id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
 
-// Pos-processamento da ULA ---------------------------------------------------
-
-wire [NBMANT+NBEXPO:0] pp_out;
-
-generate
-
-	if (PSTS || ABSS || NEGS)
-		pos_proc_fl #(NBMANT, NBEXPO, PSTS, ABSS, NEGS) pos_proc_fl (ula_out, id_set, id_abs, id_neg, pp_out);
-	else
-		assign pp_out = ula_out;
-
-endgenerate
-
 // Acumulador -----------------------------------------------------------------
 
 reg signed [NBMANT+NBEXPO:0] racc;
@@ -216,7 +198,7 @@ always @ (posedge clk or posedge rst) begin
 	if (rst)
 		racc <= 0;
 	else
-		racc <= pp_out;
+		racc <= ula_out;
 end
 
 assign ula_acc = racc;
@@ -226,13 +208,15 @@ assign  pf_acc = ula_is_zero;
 
 wire [MINSTW-1:0] stack_out;
 
-generate if (CAL == 1) begin
+generate
 
-	stack #($clog2(SDEPTH), SDEPTH, MINSTW) isp(clk, rst, pf_isp_push, pf_isp_pop, pc_addr, stack_out);
+	if (CAL == 1) begin
 
-	assign pc_lval = (pf_isp_pop) ? stack_out : instr[MINSTW-1:0];
+		stack #($clog2(SDEPTH), SDEPTH, MINSTW) isp(clk, rst, pf_isp_push, pf_isp_pop, pc_addr, stack_out);
 
-end else
+		assign pc_lval = (pf_isp_pop) ? stack_out : instr[MINSTW-1:0];
+
+	end else
 
 	assign pc_lval = instr[MINSTW-1:0];
 
@@ -260,7 +244,7 @@ endgenerate
 
 // Interface externa ----------------------------------------------------------
 
-assign data_out   =  pp_out;
+assign data_out   =  ula_out;
 assign mem_addr_w = (sp_push   ) ? sp_addr_w : rf;
 assign mem_addr_r = (sp_pop    ) ? sp_addr_r : rf;
 
