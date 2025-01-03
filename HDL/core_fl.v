@@ -34,6 +34,7 @@ module core_fl
 
 	// Implementa enderecamento indireto
 	parameter SRF   =   0,
+	parameter LDI   =   0,
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
@@ -136,11 +137,7 @@ wire [            4:0] id_ula_op;
 wire [NBMANT+NBEXPO:0] id_ula_data;
 
 wire [MDATAW     -1:0] id_mem_addr;
-wire                   id_srf, id_isrf;
-wire                   id_set;
-wire                   id_nrm; // nao usado em float
-wire                   id_abs;
-wire                   id_neg;
+wire                   id_srf, id_ldi, id_inv;
 
 instr_dec #(NBMANT+NBEXPO+1, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                                      id_opcode  , id_operand ,
@@ -148,7 +145,7 @@ instr_dec #(NBMANT+NBEXPO+1, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                                      id_ula_op  , id_ula_data,
                                                      mem_wr     , id_mem_addr, mem_data_in,
                                                      io_in , req_in, out_en,
-                                                     id_srf, id_isrf);
+                                                     id_srf, id_ldi, id_inv);
 
 // Ponteiro pra pilha de dados ------------------------------------------------
 
@@ -224,8 +221,18 @@ endgenerate
 
 // Float2index ----------------------------------------------------------------
 
-wire signed [NBMANT+NBEXPO-1:0] f2i_in = mem_data_in[NBMANT+NBEXPO-1:0];
-wire signed [NBMANT       -1:0] f2i_out;
+wire [NBMANT+NBEXPO-1:0] f2i_in;
+
+generate
+
+	if (LDI == 1)
+		assign f2i_in = (id_ldi) ? ula_out[NBMANT+NBEXPO-1:0] : mem_data_in[NBMANT+NBEXPO-1:0];
+	else
+		assign f2i_in = mem_data_in[NBMANT+NBEXPO-1:0];
+
+endgenerate
+
+wire signed [NBMANT-1:0] f2i_out;
 
 float2index #(NBEXPO, NBMANT) f2i(f2i_in, f2i_out);
 
@@ -235,8 +242,8 @@ wire [MDATAW-1:0] rf;
 
 generate
 
-	if (SRF == 1)
-		rel_addr #(MDATAW, FFTSIZ, FFT) ra (id_srf, id_isrf, f2i_out[MDATAW-1:0], id_mem_addr, rf);
+	if (SRF == 1 || LDI == 1)
+		rel_addr #(MDATAW, FFTSIZ, FFT) ra (id_srf, id_ldi, id_inv, f2i_out[MDATAW-1:0], id_mem_addr, rf);
 	else
 		assign rf = id_mem_addr;
 

@@ -80,15 +80,12 @@ LINHA          \n
  "SRS"   {eval_opcode(43,1); add_mne("SRS" );}
 "SSRS"   {eval_opcode(44,0); add_mne("SRS" );}
 "PSET"   {eval_opcode(45,0); add_mne("PST" );}
-"PSETS"  {eval_opcode(46,1); add_mne("PSTS");}
 "NORM"   {eval_opcode(47,0); add_mne("NRM" );}
-"NORMS"  {eval_opcode(48,1); add_mne("NRMS");}
 "ABS"    {eval_opcode(49,0); add_mne("ABS" );}
-"ABSS"   {eval_opcode(50,1); add_mne("ABSS");}
+"ILDI"   {eval_opcode(50,1); add_mne("FFT" ); isrf = 1;}
 "SIGN"   {eval_opcode(51,1); add_mne("SGN" );}
-"SSIGN"  {eval_opcode(52,0); add_mne("SGN" );}
+"LDI"    {eval_opcode(52,1); add_mne("LDI" );}
 "ISRF"   {eval_opcode(53,0); add_mne("FFT" ); isrf = 1;} // isrf auxilia no teste do tamanho da memoria no final
-"NEGS"   {eval_opcode(54,1); add_mne("NEGS");}
 
 {CONST}   eval_opernd(yytext  ,1);
 {STRIN}   eval_opernd(yytext+1,0);

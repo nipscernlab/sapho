@@ -32,6 +32,7 @@ module proc_fl
 
 	// Implementa enderecamento indireto
 	parameter SRF   =   0,
+	parameter LDI   =   0,
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
@@ -125,6 +126,7 @@ core_fl #(.NBMANT(NBMANT),
           .MLT   (MLT   ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
+          .LDI   (LDI   ),
           .FFT   (FFT   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
@@ -174,6 +176,7 @@ core_fl #(.NBMANT(NBMANT),
           .MLT   (MLT   ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
+          .LDI   (LDI   ),
           .FFT   (FFT   ),
           .LES   (LES   ),
           .EQU   (EQU   ),

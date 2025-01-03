@@ -34,6 +34,7 @@ module core_fx
 
 	// Implementa enderecamento indireto
 	parameter SRF   =   0,
+	parameter LDI   =   0,
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
@@ -136,11 +137,7 @@ wire [       4:0] id_ula_op;
 wire [NUBITS-1:0] id_ula_data;
 
 wire [MDATAW-1:0] id_mem_addr;
-wire              id_srf, id_isrf;
-wire              id_pset;
-wire              id_nrm;
-wire              id_abs;
-wire              id_neg;
+wire              id_srf, id_ldi, id_inv;
 
 instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                             id_opcode, id_operand,
@@ -148,7 +145,7 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                             id_ula_op, id_ula_data,
                                             mem_wr, id_mem_addr, mem_data_in,
                                             io_in, req_in, out_en,
-                                            id_srf, id_isrf, id_pset, id_nrm, id_abs, id_neg);
+                                            id_srf, id_ldi, id_inv);
 
 // Ponteiro pra pilha de dados ------------------------------------------------
 
@@ -228,9 +225,14 @@ wire [MDATAW-1:0] rf;
 
 generate
 
-	if (SRF == 1)
-		rel_addr #(MDATAW, FFTSIZ, FFT) ra(id_srf, id_isrf, mem_data_in[MDATAW-1:0], id_mem_addr, rf);
-	else
+	if (SRF == 1 || LDI == 1) begin
+
+		wire [MDATAW-1:0] rf_in = (id_ldi) ? ula_out[MDATAW-1:0] : mem_data_in[MDATAW-1:0];
+
+		rel_addr #(MDATAW, FFTSIZ, FFT) ra(id_srf, id_ldi, id_inv, rf_in, id_mem_addr, rf);
+
+	end else
+
 		assign rf = id_mem_addr;
 
 endgenerate

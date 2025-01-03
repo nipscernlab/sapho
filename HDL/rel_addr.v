@@ -6,7 +6,7 @@ module rel_addr
 	parameter USEFFT = 1
 )
 (
-	input               srf, inv,
+	input               srf, ldi, inv,
 	input  [MDATAW-1:0] in,
 	input  [MDATAW-1:0] addr,
 	output [MDATAW-1:0] out
@@ -28,11 +28,11 @@ generate
 
 		wire [MDATAW-1:0] add = (inv) ? {in[MDATAW-1:FFTSIZ], aux} : in;
 
-		assign out = (srf) ? add + addr: addr;
+		assign out = (srf || ldi) ? add + addr: addr;
 
 	end else
 
-		assign out = (srf) ? in  + addr: addr;
+		assign out = (srf || ldi) ? in  + addr: addr;
 
 endgenerate
 

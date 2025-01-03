@@ -32,6 +32,7 @@ module proc_fx
 
 	// Implementa enderecamento indireto
 	parameter SRF   =   0,
+	parameter LDI   =   0,
 
 	// Implementa inversao de bits na indexacao
 	parameter FFT   =   0,
@@ -127,6 +128,7 @@ core_fx #(.NUBITS(NUBITS),
           .MLT   (MLT   ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
+          .LDI   (LDI   ),
           .FFT   (FFT   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
@@ -176,6 +178,7 @@ core_fx #(.NUBITS(NUBITS),
           .MLT   (MLT   ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
+          .LDI   (LDI   ),
           .FFT   (FFT   ),
           .LES   (LES   ),
           .EQU   (EQU   ),
