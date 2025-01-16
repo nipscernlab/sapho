@@ -436,7 +436,9 @@ void vcall(int id)
 
     // checa numero de parametros
     if (get_npar(p_test) != get_npar(v_fpar[id])) // p_test tem a lista de par na chamada e v_fpar na declaracao
+    {
         fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função %s.\n", line_num+1, rem_fname(v_name[id], fname));
+    }
 
     if (using_macro == 0) fprintf(f_asm, "CALL %s\n", v_name[id]);
 
@@ -476,11 +478,13 @@ int get_npar(int par)
 {
     int t_fun = par;
     int n_par = 0;
+
     while (t_fun != 0)
     {
         t_fun = t_fun/10;
         n_par++;
     }
+
     return n_par;
 }
 
@@ -515,6 +519,8 @@ void par_check(int et)
     // ------------------------------------------------------------------------
     // checando todas as possibilidades ---------------------------------------
     // ------------------------------------------------------------------------
+
+    // falta fazer pra comp?
 
     // original eh int e chamada eh float -------------------------------------
 

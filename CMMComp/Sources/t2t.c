@@ -84,18 +84,14 @@ int f2mf(char *va)
 // o fnum pega uma string com o proprio numero float
 void epsilon_taylor(char *inum, char *fnum)
 {
-    // acha o menor valor possivel em float
-    double numf =  pow(2,nbmant-1)*pow(2,    -pow(2,nbexpo-1));
-    int    numi = (1 << (nbmant-1)) + (1 << (nbmant+nbexpo-1));
+    // acha o dobro do menor valor possivel em float
+    double numf = 2.0*pow(2, nbmant-1)*pow(2,-pow(2,nbexpo-1));
+    // se  aprecisao for grande, usa o padrao
+    if    (numf < 0.0000001) numf = 0.0000001;
+    sprintf(fnum, "%.7f",    numf);
 
-    if (numf < 0.0000001)
-    {
-        numf = 0.0000001;
-        numi = f2mf("0.0000001");
-    }
-
-    sprintf(inum, "%d"  , numi);
-    sprintf(fnum, "%.7f", numf);
+    int     numi = f2mf(fnum);
+    sprintf(inum, "%d", numi);
 }
 
 // ----------------------------------------------------------------------------

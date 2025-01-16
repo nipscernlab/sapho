@@ -265,6 +265,7 @@ void var_set_comp(int id, int et, int is_array)
 
     // left comp e right int var ----------------------------------------------
 
+    // falta completar o imag com zero nos 4 casos abaixo
     if ((t_left == 3) && (t_right == 1) && (mem != 0))
     {
         if (is_array) acc_ok = 1;

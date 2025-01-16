@@ -263,7 +263,8 @@ exp:       INUM                               {$$ = num2exp($1,1);}
          | FNUM                               {$$ = num2exp($1,2);}
          | CNUM                               {$$ = num2exp($1,5);}
          // variaveis
-         | ID                                 {$$ =      id2exp($1      );}
+         | ID                                 {$$ =  id2exp($1  );}
+         // arrays
          | ID '[' exp ']'                     {$$ = array1d2exp($1,$3, 0);}
          | ID '[' exp ')'                     {$$ = array1d2exp($1,$3, 1);}
          | ID '[' exp ']' '[' exp ']'         {$$ = array2d2exp($1,$3,$6);}

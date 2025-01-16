@@ -238,8 +238,7 @@ int id2exp(int id)
     return v_type[id]*OFST+id;
 }
 
-// parei aqui. terminar
-int array1d2exp_new(int id, int et, int fft)
+int array1d2exp(int id, int et, int fft)
 {
     // testes de consistencia -------------------------------------------------
 
@@ -269,7 +268,9 @@ int array1d2exp_new(int id, int et, int fft)
     char ldi[10];
     if (acc_ok == 1) strcpy(ldi,"PLD" ); else strcpy(ldi,"LOAD");
 
+    // ------------------------------------------------------------------------
     // escreve as instrucoes --------------------------------------------------
+    // ------------------------------------------------------------------------
 
     char num[32];
     int  etr, eti;
@@ -440,7 +441,10 @@ int array1d2exp_new(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // float na memoria
@@ -448,8 +452,10 @@ int array1d2exp_new(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria
@@ -459,8 +465,10 @@ int array1d2exp_new(int id, int et, int fft)
 
             split_cmp_const(et, &etr, &eti);
 
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc
@@ -468,8 +476,11 @@ int array1d2exp_new(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria
@@ -477,8 +488,10 @@ int array1d2exp_new(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
     }
 
@@ -489,14 +502,19 @@ int array1d2exp_new(int id, int et, int fft)
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc
@@ -504,8 +522,11 @@ int array1d2exp_new(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
 
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"   ); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // float na memoria
@@ -516,8 +537,11 @@ int array1d2exp_new(int id, int et, int fft)
             prepar_oper(num, et % OFST, et, 0);
 
             if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n" ); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria
@@ -530,7 +554,10 @@ int array1d2exp_new(int id, int et, int fft)
 
             if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, num);
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc
@@ -540,7 +567,10 @@ int array1d2exp_new(int id, int et, int fft)
 
             if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria
@@ -552,7 +582,10 @@ int array1d2exp_new(int id, int et, int fft)
 
             if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, num);
             if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_ind_right\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
         }
     }
 
@@ -562,9 +595,10 @@ int array1d2exp_new(int id, int et, int fft)
     return v_type[id]*OFST;
 }
 
-// reducao de array 1d pra exp
-int array1d2exp(int id, int et, int fft)
+int array2d2exp(int id, int et1, int et2)
 {
+    // testes de consistencia -------------------------------------------------
+
     // testa se a variavel ja foi declarada
     if (v_type[id] == 0)
         fprintf (stderr, "Erro na linha %d: mané, declara a variável %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
@@ -573,38 +607,2353 @@ int array1d2exp(int id, int et, int fft)
     if (v_asgn[id] == 0)
         fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
-    // prepara o indice e coloca ele no acc
-    array_1d_check(id,et,fft);
+    // tem que ver se eh array 2D mesmo
+    if (v_isar[id] == 0)
+        fprintf (stderr, "Erro na linha %d: %s não é array não, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
 
+    // tem que ver se nao eh array 1D
+    if (v_isar[id] == 1)
+        fprintf (stderr, "Erro na linha %d: array %s tem uma dimensão só!\n", line_num+1, rem_fname(v_name[id], fname));
+
+    // prepara os comandos de LOAD --------------------------------------------
+
+    // prepara o tipo de load da variavel
+    char ldv[10];
+    strcpy(ldv,"LDI" ); // ainda nao tem fft 2d
+
+    // prepara o tipo de load do indice (se necessario)
+    char ldi[10];
+    if (acc_ok == 1) strcpy(ldi,"PLD" ); else strcpy(ldi,"LOAD");
+
+    // ------------------------------------------------------------------------
+    // escreve as instrucoes --------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    char num[32];
+    int  etr, eti;
+    int  type = v_type[id];
+
+    // left int/float no proc em ponto flutuante ------------------------------
+
+    if ((type < 3) && (prtype == 1))
+    {
+        // int no acc e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e float no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp const na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+
+            split_cmp_const(et2, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+    }
+
+    // left int/float no proc em ponto fixo -----------------------------------
+
+    else if ((type < 3) && (prtype == 0))
+    {
+        // int no acc e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e float no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp const na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+
+            split_cmp_const(et2, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+    }
+
+    // left comp no proc em ponto flutuante -----------------------------------
+
+    else if ((type > 2) && (prtype == 1))
+    {
+        // int no acc e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e float no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp const na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+
+            split_cmp_const(et2, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+    }
+
+    // left comp no proc em ponto fixo ----------------------------------------
+
+    else if ((type > 2) && (prtype == 0))
+    {
+        // int no acc e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e comp na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e int na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e float no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp no acc
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e comp na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e int na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp const na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+
+            split_cmp_const(et2, &etr, &eti);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp no acc
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e comp na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_lixo\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e int na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp no acc
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "SETP aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SET  aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "ADD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e comp na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses ídices do array estão uma bagunça. Você é uma pessoa confusa!\n", line_num+1);
+
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
+            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
+            if (using_macro == 0) fprintf(f_asm, "SADD\n");
+            if (using_macro == 0) fprintf(f_asm, "SET aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            if (using_macro == 0) fprintf(f_asm, "PLD aux_index_y\n");
+            if (using_macro == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+        }
+    }
+
+    acc_ok     = 1;
     v_used[id] = 1;
 
-    // array ja eh uma operacao entre ID e exp dando outro exp
-    // nao eh soh pegar um token terminal na memoria
-    // entao tem q executar o LOAD
-    load_check(v_type[id]*OFST+id,0); // ver comentario em load_check
-                                      // segundo parametro: array eh definido como variavel sem sinal
-
-    // testes com numeros complexos -------------------------------------------
-    if (v_type[id] > 2)
-    {
-        int idi = get_img_id(id);
-        // pega o indice que foi armazenado em aux_cmp (no array_1d_check acima)
-        // esse decremento em a_cnt eh para array do lado direito
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_idx%d\n", a_cnt--);
-
-        // da load na parte imaginaria
-        load_check(v_type[id]*OFST+idi,0);
-    }
-    // fim do teste -----------------------------------------------------------
-
-    exec_fft_use = 0;                 // desativa indice invertido no uso (caso tenha sido usado)
-
-    return v_type[id]*OFST;           // array ja eh executado e gera id extendido de reducao exp
+    return v_type[id]*OFST;
 }
 
-// da pra juntar com o de cima
-// soh uma linha eh diferente
-int array2d2exp(int id, int et1, int et2)
+int array2d2exp_old(int id, int et1, int et2)
 {
     // testa se a variavel ja foi declarada
     if (v_type[id] == 0)

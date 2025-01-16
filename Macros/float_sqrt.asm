@@ -21,3 +21,4 @@ RETURN
 
 @L2else_sqrt LOAD sqrt_raiz  // se nao terminou...
 JMP L1_sqrt                  // volta
+
