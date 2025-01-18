@@ -10,9 +10,7 @@ BIN_DIR = bin
 PROJECT_DIR = ../Project
 
 # Lista dos arquivos fonte principais do projeto. 
-# Cada arquivo contém uma parte do código responsável por diferentes funcionalidades.
-SRCS = data_assign.c data_declar.c data_use.c diretivas.c funcoes.c \
-       labels.c oper.c saltos.c stdlib.c t2t.c variaveis.c
+SRCS = data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c oper.c saltos.c stdlib.c t2t.c variaveis.c
 
 # Adiciona o caminho do diretório $(SRC_DIR) antes de cada arquivo listado em $(SRCS). 
 # Isso resulta em uma lista completa de arquivos com seus caminhos.
@@ -33,10 +31,10 @@ BISON_HEADER = $(HEADER_DIR)/y.tab.h
 # Arquivo gerado pelo Flex, que contém o código do analisador léxico (scanner).
 FLEX_OUT = $(SRC_DIR)/lex.yy.c
 
-# Arquivo de entrada que será processado pelo compilador (modificado para refletir o caminho correto).
+# Arquivo de entrada que será processado pelo compilador.
 INPUT_FILE = $(PROJECT_DIR)/test.cmm
 
-# Arquivo de saída que será gerado pelo compilador com o código assembly (modificado para refletir o caminho correto).
+# Arquivo de saída que será gerado pelo compilador com o código assembly.
 OUTPUT_FILE = $(PROJECT_DIR)/test.asm
 
 # Nome do compilador utilizado para compilar os arquivos fonte.
@@ -54,8 +52,12 @@ all: $(TARGET)
 
 # Regra para gerar o executável final $(TARGET).
 # Depende dos arquivos fonte $(SRC_FILES) e dos arquivos gerados pelo Bison e Flex.
-$(TARGET): $(SRC_FILES) $(BISON_OUT) $(FLEX_OUT)
+$(TARGET): $(SRC_FILES) $(BISON_OUT) $(FLEX_OUT) | $(BIN_DIR)
 	$(CC) $(CFLAGS) -o $@ $^
+
+# Regra para criar o diretório bin caso não exista.
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
 # Regra para gerar o parser (analisador sintático) usando o Bison.
 # Os arquivos de saída $(BISON_OUT) e $(BISON_HEADER) dependem do arquivo fonte $(BISON_SRC).

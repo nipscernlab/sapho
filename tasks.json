@@ -1,93 +1,101 @@
 {
-    "version": "2.0.0",
-    "tasks": [
+    "version": "2.0.0",  // Define a versão do formato do arquivo tasks.json.
+    
+    "tasks": [  // Array contendo todas as tarefas definidas.
+        
         {
-            "label": "Executar make em CMMComp",
-            "type": "shell",
-            "command": "cd CMMComp && make -f Makefile clean",
-            "problemMatcher": [],
-            "options": {
+            "label": "Limpar CMMComp",  // Rótulo da tarefa para limpar o projeto CMMComp.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "command": "cd CMMComp && make -f Makefile clean",  // Comando a ser executado. Aqui, muda para o diretório CMMComp e executa o comando make com o alvo clean.
+            "problemMatcher": [], // Não estamos usando um matcher para capturar problemas ou erros.
+            "options": {  // Especificações do shell para execução do comando.
                 "shell": {
-                    "executable": "cmd.exe",
-                    "args": ["/c"]
+                    "executable": "cmd.exe",  // O shell usado será o cmd.exe (Windows).
+                    "args": ["/c"]  // Argumentos para o cmd.exe. O argumento "/c" indica que o comando será executado e o terminal será fechado.
                 }
             }
         },
+        
         {
-            "label": "Compilar CMMComp",
-            "type": "shell",
-            "command": "cd CMMComp && make -f Makefile",
-            "problemMatcher": [],
-            "options": {
+            "label": "Compilar CMMComp",  // Rótulo da tarefa para compilar o projeto CMMComp.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "command": "cd CMMComp && make -f Makefile",  // Comando para compilar o projeto CMMComp com o Makefile.
+            "problemMatcher": [],  // Não estamos usando um matcher para capturar problemas ou erros.
+            "options": {  // Especificações do shell para execução do comando.
                 "shell": {
-                    "executable": "cmd.exe",
-                    "args": ["/c"]
+                    "executable": "cmd.exe",  // O shell usado será o cmd.exe (Windows).
+                    "args": ["/c"]  // Argumentos para o cmd.exe. O argumento "/c" indica que o comando será executado e o terminal será fechado.
                 }
             }
         },
+        
         {
-            "label": "Rodar CMMComp",
-            "type": "shell",
-            "command": "cd CMMComp && make -f Makefile run",
-            "problemMatcher": [],
-            "options": {
+            "label": "Executar CMMComp",  // Rótulo da tarefa para executar o projeto CMMComp.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "command": "cd CMMComp && make -f Makefile run",  // Comando para executar o projeto CMMComp após a compilação.
+            "problemMatcher": [], // Não estamos usando um matcher para capturar problemas ou erros.
+            "options": {  // Especificações do shell para execução do comando.
                 "shell": {
-                    "executable": "cmd.exe",
-                    "args": ["/c"]
+                    "executable": "cmd.exe", // O shell usado será o cmd.exe (Windows).
+                    "args": ["/c"]  // Argumentos para o cmd.exe. O argumento "/c" indica que o comando será executado e o terminal será fechado.
                 }
             }
         },
+        
         {
-            "label": "Executar make em Assembler",
-            "type": "shell",
-            "command": "cd Assembler && make -f Makefile clean",
-            "problemMatcher": [],
-            "options": {
+            "label": "Limpar ASMComp",  // Rótulo da tarefa para limpar o projeto ASMComp.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "command": "cd ASMComp && make -f Makefile clean",  // Comando para limpar o diretório ASMComp com o comando make e o alvo clean.
+            "problemMatcher": [],  // Não estamos usando um matcher para capturar problemas ou erros.
+            "options": {  // Especificações do shell para execução do comando.
                 "shell": {
-                    "executable": "cmd.exe",
-                    "args": ["/c"]
+                    "executable": "cmd.exe",  // O shell usado será o cmd.exe (Windows).
+                    "args": ["/c"]  // Argumentos para o cmd.exe. O argumento "/c" indica que o comando será executado e o terminal será fechado.
                 }
             }
         },
+        
         {
-            "label": "Compilar Assembler",
-            "type": "shell",
-            "command": "cd Assembler && make -f Makefile",
-            "problemMatcher": [],
-            "options": {
+            "label": "Compilar ASMComp",  // Rótulo da tarefa para compilar o projeto ASMComp.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "command": "cd ASMComp && make -f Makefile",  // Comando para compilar o projeto ASMComp com o Makefile.
+            "problemMatcher": [],  // Não estamos usando um matcher para capturar problemas ou erros.
+            "options": {  // Especificações do shell para execução do comando.
                 "shell": {
-                    "executable": "cmd.exe",
-                    "args": ["/c"]
+                    "executable": "cmd.exe",  // O shell usado será o cmd.exe (Windows).
+                    "args": ["/c"]  // Argumentos para o cmd.exe. O argumento "/c" indica que o comando será executado e o terminal será fechado.
                 }
             }
         },
+        
         {
-            "label": "Rodar Assembler",
-            "type": "shell",
-            "command": "cd Assembler && make -f Makefile run",
-            "problemMatcher": [],
-            "options": {
+            "label": "Executar ASMComp",  // Rótulo da tarefa para executar o projeto ASMComp.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "command": "cd ASMComp && make -f Makefile run",  // Comando para executar o projeto ASMComp após a compilação.
+            "problemMatcher": [],  // Não estamos usando um matcher para capturar problemas ou erros.
+            "options": {  // Especificações do shell para execução do comando.
                 "shell": {
-                    "executable": "cmd.exe",
-                    "args": ["/c"]
+                    "executable": "cmd.exe",  // O shell usado será o cmd.exe (Windows).
+                    "args": ["/c"]  // Argumentos para o cmd.exe. O argumento "/c" indica que o comando será executado e o terminal será fechado.
                 }
             }
         },
+        
         {
-            "label": "Build All",
-            "type": "shell",
-            "dependsOn": [
-                "Executar make em CMMComp",
-                "Compilar CMMComp",
-                "Rodar CMMComp",
-                "Executar make em Assembler",
-                "Compilar Assembler",
-                "Rodar Assembler"
+            "label": "Build All",  // Tarefa para compilar e executar todas as tarefas em sequência.
+            "type": "shell",  // Tipo da tarefa, que será executada em um shell (terminal).
+            "dependsOn": [  // Define as dependências desta tarefa. Ela depende de todas as outras tarefas listadas abaixo.
+                "Limpar CMMComp",  // Limpar CMMComp.
+                "Compilar CMMComp",  // Compilar CMMComp.
+                "Executar CMMComp",  // Executar CMMComp.
+                "Limpar ASMComp",  // Limpar ASMComp.
+                "Compilar ASMComp",  // Compilar ASMComp.
+                "Executar ASMComp"  // Executar ASMComp.
             ],
-            "dependsOrder": "sequence",
-            "group": {
-                "kind": "build",
-                "isDefault": false
+            "dependsOrder": "sequence",  // As dependências serão executadas em sequência.
+            "group": {  // Agrupa a tarefa sob um tipo específico, neste caso, como tarefa de construção.
+                "kind": "build",  // Define que esta tarefa pertence ao grupo de tarefas de construção (build).
+                "isDefault": true  // Define esta tarefa como a tarefa padrão de construção. Ou seja, será a tarefa executada por padrão quando o comando "build" for acionado.
             }
         }
     ]
