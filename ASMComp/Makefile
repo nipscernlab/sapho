@@ -32,7 +32,7 @@ CC = gcc
 # -Wall: Ativa todos os avisos comuns.
 # -Wextra: Ativa avisos adicionais.
 # -g: Inclui informações de depuração no binário gerado.
-CFLAGS = -Wall -Wextra -g -I$(HEADER_DIR)
+# CFLAGS = -Wall -Wextra -g -I$(HEADER_DIR)
 
 # Regra para criar o diretório bin caso não exista.
 $(BIN_DIR):
@@ -45,7 +45,7 @@ all: $(TARGET)
 # Regra para gerar o executável final $(TARGET).
 $(TARGET): $(SRC_FILES) $(FLEX_OUT)
 	@mkdir -p $(BIN_DIR) $(PROJECT_DIR)  
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) -I$(HEADER_DIR) -o $@ $^
 
 # Regra para gerar o scanner (analisador léxico) usando o Flex.
 $(FLEX_OUT): $(FLEX_SRC)
