@@ -26,17 +26,17 @@
 
 %{
 
-#include "variaveis.h"   // tabela de variaveis
-#include "labels.h"      // geracao de labels para saltos
-#include "t2t.h"         // conversoes de tipos
-#include "funcoes.h"     // criacao e uso de funcoes
-#include "oper.h"        // operacoes da ULA
-#include "stdlib.h"      // biblioteca padrao do sapho
-#include "diretivas.h"   // diretivas de compilacao
-#include "saltos.h"      // gerenciamento saltos (if/else while)
-#include "data_declar.h" // declaracao de dados
-#include "data_use.h"    // utilizacao de dados
-#include "data_assign.h" // atribuicao de dados
+#include "..\Headers\variaveis.h"   // tabela de variaveis
+#include "..\Headers\labels.h"      // geracao de labels para saltos
+#include "..\Headers\t2t.h"         // conversoes de tipos
+#include "..\Headers\funcoes.h"     // criacao e uso de funcoes
+#include "..\Headers\oper.h"        // operacoes da ULA
+#include "..\Headers\stdlib.h"      // biblioteca padrao do sapho
+#include "..\Headers\diretivas.h"   // diretivas de compilacao
+#include "..\Headers\saltos.h"      // gerenciamento saltos (if/else while)
+#include "..\Headers\data_declar.h" // declaracao de dados
+#include "..\Headers\data_use.h"    // utilizacao de dados
+#include "..\Headers\data_assign.h" // atribuicao de dados
 
 // variaveis obrigatorias do flex/bison
 
@@ -317,24 +317,24 @@ exp:       INUM                               {$$ = num2exp($1,1);}
 
 int main(int argc, char *argv[])
 {
-    yyin   = fopen(argv[1], "r");
-    f_asm  = fopen(argv[2], "w");
+  yyin   = fopen(argv[1], "r");
+  f_asm  = fopen(argv[2], "w");
 
-    // da problema com o reset se nao colocar isso se
-    // a primeira instrucao for CALL main. Resolver ...
-    fprintf(f_asm, "LOAD NULL\n");
+  // da problema com o reset se nao colocar isso se
+  // a primeira instrucao for CALL main. Resolver ...
+  fprintf(f_asm, "LOAD NULL\n");
 
-    // iniciaiza variaveis de estado
-    using_macro  = 0;
-    exec_fft_use = 0;
-    exec_fft_set = 0;
-    prtype       = 0;
-    acc_ok       = 0;
-    ret_ok       = 0;
-    mainok       = 0;
-    itr_ok       = 0;
+  // iniciaiza variaveis de estado
+  using_macro  = 0;
+  exec_fft_use = 0;
+  exec_fft_set = 0;
+  prtype       = 0;
+  acc_ok       = 0;
+  ret_ok       = 0;
+  mainok       = 0;
+  itr_ok       = 0;
 
-    float_init (); // inicializa variaveis de estado pra float (t2t.c)
+  float_init (); // inicializa variaveis de estado pra float (t2t.c)
 	yyparse    (); // aqui a magica acontece!!
 	fclose(yyin );
 	fclose(f_asm);

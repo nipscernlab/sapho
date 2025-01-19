@@ -6,7 +6,7 @@
 
 module ula_fx_mux
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input     [       4:0] op,
@@ -64,7 +64,7 @@ endmodule
 
 module my_and
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in1, in2,
@@ -79,7 +79,7 @@ endmodule
 
 module my_or
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in1, in2,
@@ -94,7 +94,7 @@ endmodule
 
 module my_equ
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in1, in2,
@@ -109,7 +109,7 @@ endmodule
 
 module my_xor
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in1, in2,
@@ -124,8 +124,8 @@ endmodule
 
 module my_nrm
 #(
-	parameter        NUBITS,
-	parameter signed NUGAIN
+	parameter        NUBITS = 32,
+	parameter signed NUGAIN = 1
 )
 (
 	 input signed [NUBITS-1:0] in,
@@ -140,7 +140,7 @@ endmodule
 
 module my_abs
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in,
@@ -155,7 +155,7 @@ endmodule
 
 module my_pst
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in,
@@ -170,7 +170,7 @@ endmodule
 
 module my_sgn
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input signed [NUBITS-1:0] in1, in2,
@@ -185,7 +185,7 @@ endmodule
 
 module my_lin
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in,
@@ -205,7 +205,7 @@ endmodule
 
 module my_lan
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in1, in2,
@@ -220,7 +220,7 @@ endmodule
 
 module my_lor
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input [NUBITS-1:0] in1, in2,
@@ -235,7 +235,7 @@ endmodule
 
 module my_neg
 #(
-	parameter NUBITS
+	parameter NUBITS = 32
 )
 (
 	 input signed [NUBITS-1:0] in,

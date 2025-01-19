@@ -1,11 +1,11 @@
 %{
 
 #include "y.tab.h"
-#include "variaveis.h"
-#include "t2t.h"
-#include "data_declar.h"
-#include "data_use.h"
-#include "diretivas.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\data_declar.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\diretivas.h"
 
 void yyerror(char *);
 

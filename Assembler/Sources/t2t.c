@@ -1,6 +1,6 @@
-#include "t2t.h"
-#include "veri_comp.h"
-#include "eval.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\veri_comp.h"
+#include "..\Headers\eval.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>

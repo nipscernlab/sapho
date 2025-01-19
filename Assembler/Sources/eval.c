@@ -1,8 +1,8 @@
-#include "eval.h"
-#include "t2t.h"
-#include "variaveis.h"
-#include "labels.h"
-#include "veri_comp.h"
+#include "..\Headers\eval.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\labels.h"
+#include "..\Headers\veri_comp.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -354,4 +354,5 @@ void eval_finish()
         fprintf(stderr, "Erro: NUBITS (%d) tem que ser NBMANT (%d) + NBEXPO (%d) + 1!\n", nbits, nbmant, nbexpo);
 
     build_vfile();
+    build_tb_file();
 }

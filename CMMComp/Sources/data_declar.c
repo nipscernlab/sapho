@@ -1,7 +1,7 @@
-#include "data_declar.h"
-#include "variaveis.h"
-#include "diretivas.h"
-#include "data_assign.h"
+#include "..\Headers\data_declar.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\data_assign.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

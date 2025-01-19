@@ -1,9 +1,9 @@
 // implementacao da tabela de indentificadores
 // e suas rotinas auxiliares
 
-#include "variaveis.h"
-#include "t2t.h"
-#include "diretivas.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\diretivas.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

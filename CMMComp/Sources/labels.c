@@ -1,6 +1,6 @@
 // implementa a pilha para labels em instrucoes de salto
 
-#include "labels.h"
+#include "..\Headers\labels.h"
 #include <stdio.h>
 
 #define LABMAX 99999

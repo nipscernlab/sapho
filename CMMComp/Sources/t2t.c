@@ -1,6 +1,6 @@
 // rotinas para conversao entre int e float
 
-#include "t2t.h"
+#include "..\Headers\t2t.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -131,7 +131,7 @@ void float_begin(FILE *f_asm)
 
     // inicializacao de dados genericos ---------------------------------------
 
-        f_float =     fopen  ("float_init.asm", "r");
+        f_float =     fopen  ("../../Macros/float_init.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_init.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {          a = fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 
@@ -148,7 +148,7 @@ void math_gen(char *fasm)
 
     if (fsqrt == 1)
     {
-        f_float  =    fopen  ("float_sqrt.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_sqrt.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -156,7 +156,7 @@ void math_gen(char *fasm)
 
     if (fsqrti == 1)
     {
-        f_float  =    fopen  ("float_sqrt_i.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_sqrt_i.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -164,7 +164,7 @@ void math_gen(char *fasm)
 
     if (fatan == 1)
     {
-        f_float  =    fopen  ("float_atan.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_atan.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_atan.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -172,7 +172,7 @@ void math_gen(char *fasm)
 
     if (fatani == 1)
     {
-        f_float  =    fopen  ("float_atan_i.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_atan_i.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_atan_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -203,14 +203,14 @@ void float_geni(char *fasm)
     do {a = fgetc(f_aux); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
     fclose(f_aux);
 
-        f_float  =    fopen  ("float_gen.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_gen.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_gen.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
 
     if (i2f)
     {
-        f_float  =    fopen  ("float_i2f.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_i2f.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_i2f.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -218,7 +218,7 @@ void float_geni(char *fasm)
 
 	if (f2i)
     {
-        f_float  =    fopen  ("float_f2i.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_f2i.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_f2i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -226,7 +226,7 @@ void float_geni(char *fasm)
 
     if (fadd)
     {
-        f_float  =    fopen  ("float_soma.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_soma.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_soma.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -234,7 +234,7 @@ void float_geni(char *fasm)
 
     if (fmlt)
     {
-        f_float  =    fopen  ("float_mult.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_mult.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_mult.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
@@ -242,7 +242,7 @@ void float_geni(char *fasm)
 
     if (fdiv)
     {
-        f_float  =    fopen  ("float_div.asm", "r");
+        f_float  =    fopen  ("../../Macros/float_div.asm", "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_div.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);

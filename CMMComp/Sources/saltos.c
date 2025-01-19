@@ -1,9 +1,9 @@
-#include "variaveis.h"
-#include "diretivas.h"
-#include "data_use.h"
-#include "data_assign.h"
-#include "labels.h"
-#include "oper.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\data_assign.h"
+#include "..\Headers\labels.h"
+#include "..\Headers\oper.h"
 
 // variaveis de estado para switch case
 int switching = 0;

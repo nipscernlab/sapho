@@ -1,9 +1,9 @@
-#include "data_use.h"
-#include "variaveis.h"
-#include "diretivas.h"
-#include "t2t.h"
-#include "data_assign.h"
-#include "oper.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\data_assign.h"
+#include "..\Headers\oper.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -2951,43 +2951,6 @@ int array2d2exp(int id, int et1, int et2)
     v_used[id] = 1;
 
     return v_type[id]*OFST;
-}
-
-int array2d2exp_old(int id, int et1, int et2)
-{
-    // testa se a variavel ja foi declarada
-    if (v_type[id] == 0)
-        fprintf (stderr, "Erro na linha %d: mané, declara a variável %s direito!\n", line_num+1, rem_fname(v_name[id], fname));
-
-    // testa se a variavel ja recebeu um valor
-    if (v_asgn[id] == 0)
-        fprintf (stdout, "Atenção na linha %d: como você quer usar %s se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
-
-    // prepara o indice e coloca ele no acc
-    array_2d_check(id,et1,et2);
-
-    v_used[id] = 1;
-
-    // array ja eh uma operacao entre ID e exp dando outro exp
-    // nao eh soh pegar um token terminal na memoria
-    // entao tem q executar
-    load_check(v_type[id]*OFST+id,0); // ver comentario em load_check
-                                      // segundo parametro: array eh definido como variavel sem sinal
-
-    // testes com numeros complexos -------------------------------------------
-    if (v_type[id] > 2)
-    {
-        int idi = get_img_id(id);
-        // pega o indice que foi armazenado em aux_cmp (no array_2d_check acima)
-        // esse decremento em a_cnt eh para array do lado direito
-        if (using_macro == 0) fprintf(f_asm, "PLD aux_idx%d\n", a_cnt--);
-
-        // da load na parte imaginaria
-        load_check(v_type[id]*OFST+idi,0);
-    }
-    // fim do teste -----------------------------------------------------------
-
-    return v_type[id]*OFST;           // array ja eh executado e gera id extendido de reducao exp
 }
 
 // reducao de ++ pra exp

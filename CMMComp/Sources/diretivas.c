@@ -1,7 +1,7 @@
-#include "diretivas.h"
-#include "variaveis.h"
-#include "t2t.h"
-#include "funcoes.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\funcoes.h"
 #include <string.h>
 #include <stdlib.h>
 

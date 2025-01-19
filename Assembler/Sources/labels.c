@@ -1,4 +1,4 @@
-#include "labels.h"
+#include "..\Headers\labels.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -1,10 +1,10 @@
-#include "stdlib.h"
-#include "variaveis.h"
-#include "t2t.h"
-#include "diretivas.h"
-#include "data_assign.h"
-#include "data_use.h"
-#include "oper.h"
+#include "..\Headers\stdlib.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\data_assign.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\oper.h"
 #include <math.h>
 
 // executa instrucao IN

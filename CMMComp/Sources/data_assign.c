@@ -1,9 +1,9 @@
-#include "data_assign.h"
-#include "data_use.h"
-#include "variaveis.h"
-#include "diretivas.h"
-#include "t2t.h"
-#include "stdlib.h"
+#include "..\Headers\data_assign.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\stdlib.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>

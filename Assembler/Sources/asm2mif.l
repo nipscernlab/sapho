@@ -1,8 +1,8 @@
 %{
 
-#include "eval.h"
-#include "veri_comp.h"
-#include "mnemonicos.h"
+#include "..\Headers\eval.h"
+#include "..\Headers\veri_comp.h"
+#include "..\Headers\mnemonicos.h"
 
 %}
 
@@ -111,8 +111,8 @@ int main(int argc, char *argv[])
     fclose(yyin);
 	eval_finish();
 
-	fprintf(stdout, "###### Memória de instruções: %d\n", n_ins);
-	fprintf(stdout, "###### Memória de dados: %d\n"     , n_dat);
+	fprintf(stdout, "###### Mem ria de instru  es: %d\n", n_ins);
+	fprintf(stdout, "###### Mem ria de dados: %d\n"     , n_dat);
 
     return 0;
 }

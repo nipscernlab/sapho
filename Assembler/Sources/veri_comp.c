@@ -1,9 +1,9 @@
-#include "veri_comp.h"
+#include "..\Headers\veri_comp.h"
+#include "..\Headers\eval.h"
+#include "..\Headers\mnemonicos.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include "eval.h"
-#include "mnemonicos.h"
 
 char name[128]; // nome do processador
 char  tmp[512]; // guarda, temporariamente, os nomes de arquivos .v, .mif criados
@@ -41,6 +41,15 @@ char *get_vname()
     strcpy(tmp, d_name);
     strcat(tmp, name);
     strcat(tmp, ".v");
+
+    return tmp;
+}
+
+char *get_tb_name()
+{
+    strcpy(tmp, d_name);
+    strcat(tmp, name);
+    strcat(tmp, "_tb.v");
 
     return tmp;
 }
@@ -115,7 +124,7 @@ void build_vfile()
     fprintf(f_veri, "module %s (\n", name);
     fprintf(f_veri, "input clk, rst,\n");
 
-    int s1 = (float_point) ? nbmant-1 : nbits-1;
+    int s1 = (float_point) ? nbmant-1      : nbits-1;
     int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
 
     fprintf(f_veri, "input signed [%d:0] io_in,\n"  , s1);
@@ -177,6 +186,41 @@ void build_vfile()
     fprintf(f_veri, "assign out_en = proc_out_en;\n\n");
     else
     fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou );
+
+    fprintf(f_veri, "endmodule\n");
+
+    fclose (f_veri);
+}
+
+void build_tb_file()
+{
+    f_veri = fopen(get_tb_name(), "w");
+
+    fprintf(f_veri, "`timescale 1ns/1ps\n\n", name);
+    fprintf(f_veri, "module %s_tb();\n\n", name);
+    fprintf(f_veri, "reg clk, rst;\n\n");
+    fprintf(f_veri, "initial begin\n\n");
+    fprintf(f_veri, "$dumpfile(\"%s_tb.vcd\");\n", name);
+    fprintf(f_veri, "$dumpvars(0,%s_tb);\n\n", name);
+
+    fprintf(f_veri, "clk = 0;\n");
+    fprintf(f_veri, "rst = 1;\n");
+    fprintf(f_veri, "#20;\n");
+    fprintf(f_veri, "rst = 0;\n\n");
+    fprintf(f_veri, "#600000;\n");
+    fprintf(f_veri, "$finish;\n\n");
+    fprintf(f_veri, "end\n\n");
+
+    fprintf(f_veri, "always #12.5 clk = ~clk;\n\n");
+
+    int s1 = (float_point) ? nbmant-1      : nbits-1;
+    int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
+
+    fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n", s2);
+    fprintf(f_veri, "wire [%d:0] proc_req_in;\n", nuioin2-1);
+    fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n", nuioou -1);
+
+    fprintf(f_veri, "%s proc(clk,rst,%d'd0,proc_io_out,proc_req_in,proc_out_en,1'b0);\n\n", name, s1+1);
 
     fprintf(f_veri, "endmodule\n");
 

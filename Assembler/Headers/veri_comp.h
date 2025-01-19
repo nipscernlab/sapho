@@ -22,5 +22,6 @@ void set_float_point(int n);
 void set_dir        (char* dir);
 
 void build_vfile();
+void build_tb_file();
 
 #endif // VERI_COMP_H_INCLUDED

@@ -1,11 +1,11 @@
-#include "funcoes.h"
-#include "variaveis.h"
-#include "t2t.h"
-#include "diretivas.h"
-#include "data_declar.h"
-#include "data_assign.h"
-#include "data_use.h"
-#include "labels.h"
+#include "..\Headers\funcoes.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\diretivas.h"
+#include "..\Headers\data_declar.h"
+#include "..\Headers\data_assign.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\labels.h"
 #include <string.h>
 
 // ----------------------------------------------------------------------------
