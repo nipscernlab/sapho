@@ -12,7 +12,7 @@ module mem_data
 	output reg signed [NBDATA        -1:0] data_out
 );
 
-reg [NBDATA-1:0] mem [NADDRE-1:0];
+reg [NBDATA-1:0] mem [0:NADDRE-1];
 
 initial $readmemb(FNAME, mem);
 

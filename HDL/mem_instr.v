@@ -10,7 +10,7 @@ module mem_instr
 	output reg [NBDATA        -1:0] data = 0 // para o modelsim
 );
 
-reg [NBDATA-1:0] mem [NADDRE-1:0];
+reg [NBDATA-1:0] mem [0:NADDRE-1];
 
 initial $readmemb(FNAME, mem);
 

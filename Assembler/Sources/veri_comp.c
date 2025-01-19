@@ -194,6 +194,8 @@ void build_vfile()
 
 void build_tb_file()
 {
+    double T = 1000.0/clk_frq; // periodo do clock em ns (clk_frq em kHz)
+
     f_veri = fopen(get_tb_name(), "w");
 
     fprintf(f_veri, "`timescale 1ns/1ps\n\n", name);
@@ -205,13 +207,13 @@ void build_tb_file()
 
     fprintf(f_veri, "clk = 0;\n");
     fprintf(f_veri, "rst = 1;\n");
-    fprintf(f_veri, "#20;\n");
+    fprintf(f_veri, "#%f;\n",T);
     fprintf(f_veri, "rst = 0;\n\n");
-    fprintf(f_veri, "#600000;\n");
+    fprintf(f_veri, "#%f;\n", T*clk_num);
     fprintf(f_veri, "$finish;\n\n");
     fprintf(f_veri, "end\n\n");
 
-    fprintf(f_veri, "always #12.5 clk = ~clk;\n\n");
+    fprintf(f_veri, "always #%f clk = ~clk;\n\n", T/2.0);
 
     int s1 = (float_point) ? nbmant-1      : nbits-1;
     int s2 = (float_point) ? nbmant+nbexpo : nbits-1;

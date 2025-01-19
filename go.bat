@@ -1,3 +1,6 @@
+cls
+echo off
+
 :: Gera o compilador CMM ------------------------------------------------------
 
 cd CMMComp/Sources
@@ -12,7 +15,7 @@ rm y.tab.h
 
 :: Executa o compilador CMM ---------------------------------------------------
 
-cmm2asm.exe ../../Exemplos/fft.cmm tmp.asm
+cmm2asm.exe ../../%1 tmp.asm
 
 rm cmm2asm.exe
 cd..
@@ -29,24 +32,26 @@ rm asm2mif.c
 
 :: Executa o compilador Assembler ---------------------------------------------
 
-asm2mif.exe ../../CMMComp/Sources/tmp.asm
+asm2mif.exe ../../CMMComp/Sources/tmp.asm %2 %3
 
 rm asm2mif.exe
 rm ../../CMMComp/Sources/tmp.asm
-rm ../../CMMComp/Sources/c2aux.asm
+if exist ../../CMMComp/Sources/c2aux.asm rm ../../CMMComp/Sources/c2aux.asm
 mv *.mif *.v ../../HDL
 cd..
 cd..
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
+set /p PROC_NAME=<CMMComp/Sources/log.txt
+rm CMMComp/Sources/log.txt
 cd HDL
 
-iverilog -s %1_tb -o %1 %1_tb.v %1.v int2float.v proc_fl.v float2int.v addr_dec.v mem_data.v core_fl.v mem_instr.v pc.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
-vvp %1
-gtkwave %1_tb.vcd --script=gtkwave_init.tcl
+iverilog -s %PROC_NAME%_tb -o %PROC_NAME% %PROC_NAME%_tb.v %PROC_NAME%.v int2float.v proc_fl.v float2int.v addr_dec.v mem_data.v core_fl.v mem_instr.v pc.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
+vvp %PROC_NAME%
+if exist config.gtkw (gtkwave config.gtkw) else (gtkwave %PROC_NAME%_tb.vcd --script=gtkwave_init.tcl)
 
-rm %1.v %1_tb.v
-rm %1 %1_data.mif %1_inst.mif
-rm %1_tb.vcd
+rm %PROC_NAME%.v %PROC_NAME%_tb.v
+rm %PROC_NAME% %PROC_NAME%_data.mif %PROC_NAME%_inst.mif
+rm %PROC_NAME%_tb.vcd
 cd..

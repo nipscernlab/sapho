@@ -93,7 +93,7 @@ prog_elements : direct | declar_full | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
-direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,0);} // nome do processador
+direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,6);} // nome do processador
        | DIRNAM STRING {exec_diretivas("#DIRNAM",$2,0);} // diretorio
        | DATYPE INUM   {exec_diretivas("#DATYPE",$2,1);} // tipo: 0 -> ponto fixo, 1 -> ponto flutuante
        | NUBITS INUM   {exec_diretivas("#NUBITS",$2,0);} // tamanho da palavra da ULA
@@ -347,6 +347,11 @@ int main(int argc, char *argv[])
 
 	// checa consistencia de todas as variaveis e funcoes
 	check_var(); // (variaveis.c)
+
+  // gera arquivo log
+  f_asm  = fopen("log.txt", "w");
+  fprintf(f_asm, "%s\n", pr_name);
+  fclose(f_asm);
 
 	return 0;
 }

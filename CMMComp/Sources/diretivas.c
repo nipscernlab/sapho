@@ -21,6 +21,7 @@ void exec_diretivas(char *dir, int id, int t)
         // rever essa questao do num de i/o
         case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
         case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
+        case 6: strcpy(pr_name,v_name[id]);
     }
 }
 

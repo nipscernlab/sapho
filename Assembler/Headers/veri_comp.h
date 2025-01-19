@@ -5,6 +5,9 @@ int  ndstac, nbmant, nbexpo, nbits, fftsiz;
 int  float_point; // diz se eh ou nao o processador em ponto flutuante
 char d_name[512];
 
+int clk_frq;
+int clk_num;
+
 void    set_name(char *va);
 char  *get_dname();
 char  *get_iname();

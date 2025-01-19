@@ -36,7 +36,7 @@ int f2mf(char *va)
 
     if (f == 0.0) return 0;
 
-    int *ifl = &f;
+    int *ifl = (int*)&f;
 
     // checa se o numero eh menor que o menor float permitido -----------------
 

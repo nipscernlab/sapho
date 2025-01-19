@@ -38,7 +38,7 @@ int f2mf(char *va)
 
     if (f == 0.0) return 1 << (nbmant + nbexpo -1);
 
-    int *ifl = &f; // isso aqui ta perigoso
+    int *ifl = (int*)&f; // isso aqui ta perigoso
 
     // desempacota padrao IEEE ------------------------------------------------
 

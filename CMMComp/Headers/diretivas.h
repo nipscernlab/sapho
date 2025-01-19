@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 FILE *f_asm;
+char pr_name[128];
 
 int prtype;      // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
 int using_macro; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse

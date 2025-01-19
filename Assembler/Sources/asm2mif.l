@@ -100,6 +100,9 @@ LINHA          \n
 
 int main(int argc, char *argv[])
 {
+	clk_frq = atoi(argv[2]);
+	clk_num = atoi(argv[3]);
+
     yyin = fopen(argv[1], "r");
 	eval_init(1);
     yylex();
