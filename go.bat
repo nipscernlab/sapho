@@ -38,6 +38,7 @@ rm asm2mif.exe
 rm ../../CMMComp/Sources/tmp.asm
 if exist ../../CMMComp/Sources/c2aux.asm rm ../../CMMComp/Sources/c2aux.asm
 mv *.mif *.v ../../HDL
+mv trad_opcode.txt ../../HDL
 cd..
 cd..
 
@@ -54,4 +55,5 @@ if exist config.gtkw (gtkwave config.gtkw) else (gtkwave %PROC_NAME%_tb.vcd --sc
 rm %PROC_NAME%.v %PROC_NAME%_tb.v
 rm %PROC_NAME% %PROC_NAME%_data.mif %PROC_NAME%_inst.mif
 rm %PROC_NAME%_tb.vcd
+rm trad_opcode.txt
 cd..

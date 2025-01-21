@@ -11,6 +11,7 @@
 #define NBITS_OPC 6     // tem que mudar em verilog de acordo (em proc_fx.v e proc_fl.v)
 
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
+FILE *f_tran;           // arquivo para traducao do gtkWave
 
 int state = 0;     // estado do compilador
 int c_op;          // guarda opcode atual
@@ -32,6 +33,7 @@ void eval_init(int prep)
     }
     else
     {
+        n_opc = 0;
         isrf  = 0; // ainda nao usou enderecamento invertido
 
         // num de bits de endereco para o operando (depois do mnemonico)
@@ -40,8 +42,9 @@ void eval_init(int prep)
         nbopr = (n_ins > n_dat+ndstac) ? ceil(log2(n_ins)) : ceil(log2(n_dat+ndstac));
 
         // abre os arquivos .mif
-        f_data  = fopen(get_dname(), "w");
-        f_instr = fopen(get_iname(), "w");
+        f_data  = fopen(get_dname()      , "w");
+        f_instr = fopen(get_iname()      , "w");
+        f_tran  = fopen("trad_opcode.txt", "w");
     }
 }
 
@@ -51,7 +54,11 @@ void add_instr(int opc, int opr)
     if ( pp) n_ins++;
 
     // se nao, escreve a instrucao no .mif em binario
-    if (!pp) fprintf(f_instr, "%s%s\n", itob(opc,NBITS_OPC), itob(opr,nbopr));
+    if (!pp)
+    {
+        fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
+        fprintf(f_tran , "%d %s\n", n_opc++, opcd);
+    }
 }
 
 void add_data(int val)
@@ -90,6 +97,7 @@ void operando(char *va, int is_const)
         add_data(    val);
     }
 
+    strcat(opcd, " "); strcat(opcd, va);
     add_instr(c_op, find_var(va));
 }
 
@@ -250,10 +258,11 @@ void eval_direct(int next_state)
     state = next_state;
 }
 
-void eval_opcode(int op, int next_state)
+void eval_opcode(int op, int next_state, char *text)
 {
     c_op  = op;
     state = next_state;
+    strcpy(opcd,text);
 
     if (state == 0) add_instr(op,0); // nao tem operando, ja pode escrever a instrucao
 }
@@ -264,7 +273,8 @@ void eval_opernd(char *va, int is_const)
     {
         case  1: operando  (va, is_const);                       // operacoes com a ULA
                  state = 0;  break;
-        case  2: add_instr (c_op, find_label(va));               // label
+        case  2: strcat(opcd, " "); strcat(opcd, va); 
+                 add_instr (c_op, find_label(va));               // label
                  state = 0;  break;
         case  3: add_var   (va,0);                               // declarando array normal
                  state = 4;  break;
@@ -355,4 +365,8 @@ void eval_finish()
 
     build_vfile();
     build_tb_file();
+
+    // finaliza traducao ------------------------------------------------------
+
+    fclose(f_tran);
 }
