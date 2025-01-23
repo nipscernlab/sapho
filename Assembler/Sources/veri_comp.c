@@ -284,3 +284,41 @@ void build_pc_file()
 
     fclose(output);
 }
+
+void build_dt_file()
+{
+    int top_ins, num_ins;
+
+    FILE *input;
+    FILE *output = fopen("../../HDL/mem_data_sim.v", "w");
+
+    char texto[1001] = "";
+
+    input = fopen("../../HDL/mem_data.v", "r");
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if(strcmp(texto, "endmodule") != 0)
+        {
+            fputs(texto, output);
+        }
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+    fclose(input );
+
+    for (int i = 0; i < v_cont; i++)
+    {
+        fprintf(output, "reg [NBDATA-1:0] %s;\n", v_namo[i]);
+    }
+    
+    fprintf(output, "\nalways @ (posedge clk) begin\n");
+
+    for (int i = 0; i < v_cont; i++)
+    {
+        fprintf(output, "   if (addr_w == %d && wr) %s <= data_in;\n", v_add[i], v_namo[i]);
+    }
+
+    fprintf(output, "end\n\n");
+    fprintf(output, "endmodule\n");
+
+    fclose(output);
+}

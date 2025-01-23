@@ -8,6 +8,10 @@ FILE *f_log;
 FILE *f_lin;
 char pr_name[128];
 
+char dir_macro[1024];
+char dir_soft [1024];
+char dir_tmp  [1024];
+
 int prtype;      // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
 int using_macro; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
 int line_num;    // numero da linha sendo parseada

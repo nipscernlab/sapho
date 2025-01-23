@@ -1,5 +1,5 @@
-
 # procura sinais alvo
+set monitorSignals [list]
 set index -1
 set nfacs [ gtkwave::getNumFacs ]
 for {set i 0} {$i < $nfacs } {incr i} {
@@ -8,6 +8,11 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set index2 [string first proc.out_en $facname]
     set index3 [string first pc.valr2 $facname]
     set index4 [string first pc.linetabr $facname]
+
+    set index5 [string first mdata.me $facname]
+    if {$index5 != -1} {
+        lappend monitorSignals "$facname"
+	}
     
     if {$index1 != -1} {
     	set io_out $facname
@@ -49,10 +54,11 @@ gtkwave::installFileFilter $cmm
 gtkwave::/Edit/Alias_Highlighted_Trace C+-
 gtkwave::/Edit/UnHighlight_All
 
-#set float [ gtkwave::setCurrentTranslateProc float2gtkw.exe ]
-#gtkwave::highlightSignalsFromList $out_en
-#gtkwave::installProcFilter $float
-#gtkwave::/Edit/UnHighlight_All
+set float [ gtkwave::setCurrentTranslateProc float2gtkw.exe ]
+gtkwave::addSignalsFromList $monitorSignals
+gtkwave::/Edit/Data_Format/Decimal
+gtkwave::installProcFilter $float
+gtkwave::/Edit/UnHighlight_All
 
 # estica as ondas na tela
 gtkwave::/Time/Zoom/Zoom_Best_Fit

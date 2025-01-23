@@ -29,6 +29,7 @@ void eval_init(int prep)
     {
         n_ins    = 0;
         n_dat    = 0;
+        v_cont   = 0;
         itr_addr = 0;     // reseta endereco de interrupcao
     }
     else
@@ -76,6 +77,37 @@ void add_data(int val)
     }
 }
 
+int is_var(char *va)
+{
+    char texto[1001];
+    char funcao[128];
+    char variav[128];
+    char nome  [128];
+    int tipo;
+
+    FILE *input = fopen("log.txt", "r");
+
+    // pula as 3 primeiras linhas
+    fgets(texto, 1001, input);
+    fgets(texto, 1001, input);
+    fgets(texto, 1001, input);
+  
+    int ok = 0;
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if (strcmp(texto, "#\n") == 0) break;
+
+         sscanf(texto, "%s %s %d", funcao, variav, &tipo);
+        sprintf(nome , "%s_%s"   , funcao, variav);
+
+        if (strcmp(nome,va) == 0) {ok = 1; break;}
+    }
+    
+    fclose(input);
+
+    return ok;
+}
+
 // achei um simbolo depois de um mnemonico
 // se for novo, salva o simbolo na tabela
 // se o simbolo for uma constante, converte seu valor para binario
@@ -95,6 +127,14 @@ void operando(char *va, int is_const)
 
         add_var (va, val);
         add_data(    val);
+
+        if (pp && is_var(va))
+        {
+            sprintf(v_namo[v_cont], "me_%s", va);
+            v_add[v_cont] = n_dat-1;
+            v_cont++;
+        }
+
     }
 
     strcat(opcd, " "); strcat(opcd, va);
@@ -368,6 +408,7 @@ void eval_finish()
     build_vv_file();  // arquivo verilog top level do processador   
     build_tb_file();  // arquivo de test bench
     build_pc_file();  // arquivo de simulacao do program counter
+    build_dt_file();  // arquivo de simulacao das variaveis
 
     // finaliza traducao ------------------------------------------------------
 

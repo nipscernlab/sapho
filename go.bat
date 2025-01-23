@@ -53,7 +53,7 @@ cd..
 set /p PROC_NAME=<Assembler/Sources/log.txt
 cd HDL
 
-iverilog -s %PROC_NAME%_tb -o %PROC_NAME% %PROC_NAME%_tb.v %PROC_NAME%.v int2float.v proc_fl.v float2int.v addr_dec.v mem_data.v core_fl.v mem_instr.v pc_sim.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
+iverilog -s %PROC_NAME%_tb -o %PROC_NAME% %PROC_NAME%_tb.v %PROC_NAME%.v int2float.v proc_fl.v float2int.v addr_dec.v mem_data_sim.v core_fl.v mem_instr.v pc_sim.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
 vvp %PROC_NAME%
 if exist config.gtkw (gtkwave config.gtkw) else (gtkwave %PROC_NAME%_tb.vcd --script=gtkwave_init.tcl)
 
@@ -67,3 +67,4 @@ rm Assembler/Sources/float2gtkw.exe
 rm HDL/in2line.txt
 rm HDL/pc_sim.v
 rm HDL/trad_cmm.txt
+rm HDL/mem_data_sim.v

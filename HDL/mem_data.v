@@ -24,4 +24,4 @@ always @ (posedge clk) begin
 	data_out <= mem[addr_r];
 end
 
-endmodule 
+endmodule

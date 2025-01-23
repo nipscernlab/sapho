@@ -27,5 +27,6 @@ void set_dir        (char* dir);
 void build_vv_file();
 void build_tb_file();
 void build_pc_file();
+void build_dt_file();
 
 #endif // VERI_COMP_H_INCLUDED

@@ -321,6 +321,11 @@ int main(int argc, char *argv[])
 {
   yyin  = fopen(argv[1]      , "r");
   f_asm = fopen(argv[2]      , "w");
+
+  //strcpy(dir_macro, argv[3]);
+  //strcpy(dir_soft , argv[3]);
+  //strcpy(dir_tmp  , argv[3]);
+
   f_log = fopen("log.txt"    , "w");
   f_lin = fopen("in2line.txt", "w");
 

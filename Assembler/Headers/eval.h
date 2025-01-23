@@ -11,6 +11,10 @@ int n_opc;    // numero de instrucoes no arquivo de traducao
 int isrf;     // diz se achou a instrucao pra fazer FFT
 int itr_addr; // endereco da interrupcao
 
+char v_namo[1000][64];
+int  v_add [1000];
+int  v_cont;
+
 void eval_init  (int prep);
 void eval_direct(int next_state);
 void eval_opcode(int op, int next_state, char *text);
