@@ -24,7 +24,8 @@ void set_nugain     (int n);
 void set_float_point(int n);
 void set_dir        (char* dir);
 
-void build_vfile();
+void build_vv_file();
 void build_tb_file();
+void build_pc_file();
 
 #endif // VERI_COMP_H_INCLUDED

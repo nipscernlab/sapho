@@ -20,6 +20,8 @@ void declar_var(int id)
     v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
+    fprintf(f_log, "%s %s %d\n", fname, rem_fname(v_name[id], fname), type_tmp);
+
     // testes com numeros complexos -------------------------------------------
     if (type_tmp > 2) declar_img(id);
     // fim do teste -----------------------------------------------------------
@@ -260,5 +262,6 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     }
 
     // cria uma variavel auxiliar pra guardar o tamanho da dimensao x
-    fprintf(f_asm, "LOAD %s\nSET %s_arr_size\n", v_name[id_x], v_name[id_var]);
+    if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[id_x]);
+    if (is_macro() == 0) fprintf(f_asm, "SET %s_arr_size\n", v_name[id_var]);
 }

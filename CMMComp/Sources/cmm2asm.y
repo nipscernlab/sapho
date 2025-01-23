@@ -38,6 +38,8 @@
 #include "..\Headers\data_use.h"    // utilizacao de dados
 #include "..\Headers\data_assign.h" // atribuicao de dados
 
+#include <string.h>
+
 // variaveis obrigatorias do flex/bison
 
 FILE *yyin;
@@ -317,12 +319,16 @@ exp:       INUM                               {$$ = num2exp($1,1);}
 
 int main(int argc, char *argv[])
 {
-  yyin   = fopen(argv[1], "r");
-  f_asm  = fopen(argv[2], "w");
+  yyin  = fopen(argv[1]      , "r");
+  f_asm = fopen(argv[2]      , "w");
+  f_log = fopen("log.txt"    , "w");
+  f_lin = fopen("in2line.txt", "w");
 
   // da problema com o reset se nao colocar isso se
   // a primeira instrucao for CALL main. Resolver ...
   fprintf(f_asm, "LOAD NULL\n");
+  top_ins = 1;
+  num_ins = 0;
 
   // iniciaiza variaveis de estado
   using_macro  = 0;
@@ -336,8 +342,10 @@ int main(int argc, char *argv[])
 
   float_init (); // inicializa variaveis de estado pra float (t2t.c)
 	yyparse    (); // aqui a magica acontece!!
+
 	fclose(yyin );
 	fclose(f_asm);
+  fclose(f_lin);
 
 	// carrega macros de ponto flutuante pra proc de ponto fixo
 	// caso precise (espero que nao)
@@ -348,10 +356,25 @@ int main(int argc, char *argv[])
 	// checa consistencia de todas as variaveis e funcoes
 	check_var(); // (variaveis.c)
 
-  // gera arquivo log
-  f_asm  = fopen("log.txt", "w");
-  fprintf(f_asm, "%s\n", pr_name);
-  fclose(f_asm);
+  fprintf(f_log, "#\n%d\n%d\n", top_ins, num_ins);
+  fclose(f_log);
+
+  FILE *input  = fopen(argv[1], "r");
+  FILE *output = fopen("../../HDL/trad_cmm.txt", "w");
+
+  char texto[1001] = "";
+  char linha[1001];
+
+fputs("-1 NADA\n", output);
+  int cnt = 1;
+  while(fgets(texto, 1001, input) != NULL)
+  {
+    sprintf(linha, "%d %s", cnt++, texto);
+      fputs(linha, output);
+      memset(texto, 0, sizeof(char) * 1001);
+  }
+  fclose(input );
+  fclose(output);
 
 	return 0;
 }

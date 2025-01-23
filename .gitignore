@@ -1,9 +1,0 @@
-/Project/
-
-/Assembler/Sources/lex.yy.c
-/Assembler/bin/myasmcomp.exe
-
-/CMMComp/Sources/y.tab.c
-/CMMComp/Sources/lex.yy.c
-/CMMComp/Headers/y.tab.h
-/CMMComp/bin/mycmmcomp.exe

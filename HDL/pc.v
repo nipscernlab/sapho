@@ -23,4 +23,4 @@ end
 
 assign addr = cnt;
 
-endmodule 
+endmodule

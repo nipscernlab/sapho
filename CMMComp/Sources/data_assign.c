@@ -79,12 +79,21 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
         return;
     }
 
-    char   cset[512] = "";
+    // teste com numeros complexos --------------------------------------------
+    if ((v_type[id] > 2) || (get_type(et) > 2))
+    {
+        // faz o assign complexo e sai da funcao
+        var_set_comp(id,et,is_array); return;
+    }
+    // fim do teste -----------------------------------------------------------
+
+    char cset[512] = "";
 
     // se for array, antes de dar o SET tem que chamar SRF/ISRF
     if (is_array > 0)
     {
         if (exec_fft_set == 1) strcpy(cset, "ISRF\n"); else strcat(cset, "SRF\n");
+        is_macro();
     }
 
     // ------------------------------------------------------------------------
@@ -100,14 +109,6 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
     // executa o assign -------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    // teste com numeros complexos --------------------------------------------
-    if ((v_type[id] > 2) || (get_type(et) > 2))
-    {
-        // faz o assign complexo e sai da funcao
-        var_set_comp(id,et,is_array); return;
-    }
-    // fim do teste -----------------------------------------------------------
-
     // da LOAD no right, se necessario
     load_check(et,0);
 
@@ -115,7 +116,7 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
     if ((left_type == 1) && (righ_type == 1))
     {
-        if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
     // float pra int ----------------------------------------------------------
@@ -126,10 +127,10 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
         if (prtype == 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "CALL float2int\n");
+            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
             f2i = 1;
         }
-            if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
     // int pra float ----------------------------------------------------------
@@ -140,17 +141,17 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
         if (prtype == 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "CALL int2float\n");
+            if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
             i2f = 1;
         }
-        if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
     // float pra float --------------------------------------------------------
 
     if ((left_type == 2) && (righ_type == 2))
     {
-        if (using_macro == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
     }
 
     // se vem do var_set_comp, nao altera por aqui
@@ -229,7 +230,7 @@ void var_set_comp(int id, int et, int is_array)
     {
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
-        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
         var_set(id,2*OFST,is_array,0,0,1);
     }
 
@@ -259,7 +260,7 @@ void var_set_comp(int id, int et, int is_array)
     {
         fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
-        if (using_macro == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
         var_set(id,2*OFST,is_array,0,0,1);
     }
 
@@ -279,7 +280,9 @@ void var_set_comp(int id, int et, int is_array)
     {
         if (is_array > 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "SET auxr_cmp\nLOAD aux_idx%d\nPLD auxr_cmp\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "SET auxr_cmp\n");
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "PLD auxr_cmp\n");
         }
 
         v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
@@ -302,7 +305,9 @@ void var_set_comp(int id, int et, int is_array)
     {
         if (is_array > 0)
         {
-            if (using_macro == 0) fprintf(f_asm, "SET auxr_cmp\nLOAD aux_idx%d\nPLD auxr_cmp\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "SET auxr_cmp\n");
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "PLD auxr_cmp\n");
         }
 
         v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
@@ -319,7 +324,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (using_macro == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -327,7 +332,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (using_macro == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -343,7 +348,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (using_macro == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -351,7 +356,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (using_macro == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -366,7 +371,10 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // precisa tirar o img e o real da pilha pra botar o indice do array depois o img
-            if (using_macro == 0) fprintf(f_asm, "SETP auxi_cmp\nSET auxr_cmp\nLOAD aux_idx%d\nPLD auxi_cmp\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "SETP auxi_cmp\n");
+            if (is_macro() == 0) fprintf(f_asm, "SET auxr_cmp\n");
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            if (is_macro() == 0) fprintf(f_asm, "PLD auxi_cmp\n");
         }
 
         int pop = (is_array < 1); // se for array, usa PSET pra nao perder o img, se nao, usa SET
@@ -375,7 +383,8 @@ void var_set_comp(int id, int et, int is_array)
         if (is_array > 0)
             // agora coloca o indice e a parte real pra fazer o SET
         {   // esse decremento eh para o indice do array do lado esquerdo (ex: d[3] = x;)
-            if (using_macro == 0) fprintf(f_asm, "LOAD aux_idx%d\nPLD auxr_cmp\n", a_cnt--);
+            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
+            if (is_macro() == 0) fprintf(f_asm, "PLD auxr_cmp\n");
         }
 
         v_type[id_r] = 2; var_set(id_r,2*OFST,is_array,0,0,1); v_type[id_r] = 3;

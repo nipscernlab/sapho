@@ -6,7 +6,8 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
     set index1 [string first proc.io_out $facname]
     set index2 [string first proc.out_en $facname]
-    set index3 [string first pc.val $facname]
+    set index3 [string first pc.valr2 $facname]
+    set index4 [string first pc.linetabr $facname]
     
     if {$index1 != -1} {
     	set io_out $facname
@@ -19,10 +20,14 @@ for {set i 0} {$i < $nfacs } {incr i} {
     if {$index3 != -1} {
     	set opcode $facname
 	}
+
+    if {$index4 != -1} {
+    	set linetab $facname
+	}
 }
 
 # adiciona os sinais no grafico
-set filter [list clk $io_out $out_en $opcode]
+set filter [list clk $io_out $out_en $opcode $linetab]
 gtkwave::addSignalsFromList $filter
 
 # traducao de sinais
@@ -36,6 +41,18 @@ gtkwave::/Edit/Data_Format/Decimal
 gtkwave::installFileFilter $instructions
 gtkwave::/Edit/Alias_Highlighted_Trace Instrucao
 gtkwave::/Edit/UnHighlight_All
+
+set cmm [gtkwave::setCurrentTranslateFile trad_cmm.txt]
+gtkwave::highlightSignalsFromList $linetab
+gtkwave::/Edit/Data_Format/Signed_Decimal
+gtkwave::installFileFilter $cmm
+gtkwave::/Edit/Alias_Highlighted_Trace C+-
+gtkwave::/Edit/UnHighlight_All
+
+#set float [ gtkwave::setCurrentTranslateProc float2gtkw.exe ]
+#gtkwave::highlightSignalsFromList $out_en
+#gtkwave::installProcFilter $float
+#gtkwave::/Edit/UnHighlight_All
 
 # estica as ondas na tela
 gtkwave::/Time/Zoom/Zoom_Best_Fit

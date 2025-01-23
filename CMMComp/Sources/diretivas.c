@@ -4,6 +4,7 @@
 #include "..\Headers\funcoes.h"
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 // escreve as diretivas de compilacao no arquivo asm
 void exec_diretivas(char *dir, int id, int t)
@@ -16,12 +17,12 @@ void exec_diretivas(char *dir, int id, int t)
     switch(t)
     {
         case 1: prtype = ival; break;
-        case 2: nbmant = ival; break;
-        case 3: nbexpo = ival; break;
+        case 2: nbmant = ival; fprintf(f_log, "%d\n", nbmant); break;
+        case 3: nbexpo = ival; fprintf(f_log, "%d\n", nbexpo); break;
         // rever essa questao do num de i/o
         case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
         case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
-        case 6: strcpy(pr_name,v_name[id]);
+        case 6: strcpy (pr_name,v_name[id]); fprintf(f_log, "%s\n",v_name[id]); break;
     }
 }
 
@@ -64,6 +65,35 @@ void end_macro()
 {
     if (using_macro == 0) fprintf(stderr, "Erro na linha %d: Não estou achando o começo da macro\n", line_num+1);
         using_macro  = 0;
+}
+
+// converte o inteiro x para binario de comprimento w
+// tentar mudar para conseguir converter int maior de 32 bits
+char *itob(int x, int w)
+{
+	int z;
+    char *b = (char *) malloc(w+1);
+    b[0] = '\0';
+
+	int s = (w > 31) ? 31 : w;
+	if (w > 31)
+    {
+        for (z = 0; z < w- 31; z++)
+            if (x < 0) strcat(b,"1");
+            else       strcat(b,"0");
+    }
+
+    for (z = pow(2,s-1); z > 0; z >>= 1)
+		strcat(b, ((x & z) == z) ? "1" : "0");
+
+    return b;
+}
+
+int is_macro()
+{
+    if (using_macro == 0) fprintf(f_lin, "%s // %d\n", itob(line_num+1,20), line_num+1);
+    num_ins++;
+    return using_macro;
 }
 
 // gera diretiva #ITRAD

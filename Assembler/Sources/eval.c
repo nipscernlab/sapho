@@ -363,8 +363,11 @@ void eval_finish()
     if ((float_point == 0) && (nbits != nbmant+nbexpo+1))
         fprintf(stderr, "Erro: NUBITS (%d) tem que ser NBMANT (%d) + NBEXPO (%d) + 1!\n", nbits, nbmant, nbexpo);
 
-    build_vfile();
-    build_tb_file();
+    // gera arquivos ----------------------------------------------------------
+
+    build_vv_file();  // arquivo verilog top level do processador   
+    build_tb_file();  // arquivo de test bench
+    build_pc_file();  // arquivo de simulacao do program counter
 
     // finaliza traducao ------------------------------------------------------
 

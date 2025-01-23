@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 char name[128]; // nome do processador
 char  tmp[512]; // guarda, temporariamente, os nomes de arquivos .v, .mif criados
@@ -117,7 +118,7 @@ char *barra_fix(char *dir)
     return dir;
 }
 
-void build_vfile()
+void build_vv_file()
 {
     f_veri = fopen(get_vname(), "w");
 
@@ -227,4 +228,59 @@ void build_tb_file()
     fprintf(f_veri, "endmodule\n");
 
     fclose (f_veri);
+}
+
+void build_pc_file()
+{
+    int top_ins, num_ins;
+
+    FILE *input;
+    FILE *output = fopen("../../HDL/pc_sim.v", "w");
+
+    char texto[1001] = "";
+
+    input = fopen("../../HDL/pc.v", "r");
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if(strcmp(texto, "endmodule") != 0)
+        {
+            fputs(texto, output);
+        }
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+    fclose(input );
+
+    input = fopen("log.txt", "r");
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if(strcmp(texto, "#\n") == 0)
+        {
+            memset(texto, 0, sizeof(char) * 1001);
+             fgets(texto, 1001, input);
+            top_ins = atoi(texto);
+            memset(texto, 0, sizeof(char) * 1001);
+             fgets(texto, 1001, input);
+            num_ins = atoi(texto);
+        }
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+    fclose(input );
+
+    fprintf(output, "reg [NBITS-1:0] valr1, valr2;\n");
+    fprintf(output, "reg [19:0] min [0:%d];\n", num_ins-1);
+    fprintf(output, "reg signed [20:0] linetab,linetabr;\n");
+    fprintf(output, "initial $readmemb(\"in2line.txt\", min);\n");
+    fprintf(output, "always @ (posedge clk) begin\n");
+    fprintf(output, "	if (val < %d)\n", top_ins);
+    fprintf(output, "		linetab <= -1;\n");
+    fprintf(output, "	else if (val < %d)\n", num_ins);
+    fprintf(output, "		 linetab <= min[val-%d];\n", top_ins);
+    fprintf(output, "	else linetab <= linetab;\n");
+    fprintf(output, "	valr1 <= val;\n");
+    fprintf(output, "	valr2 <= valr1;\n");
+    fprintf(output, "	linetabr <= linetab;\n");
+    fprintf(output, "end\n\n");
+    fprintf(output, "endmodule\n");
+
+    fclose(output);
 }

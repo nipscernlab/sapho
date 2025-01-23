@@ -19,7 +19,7 @@ void if_exp(int et)
 {
     load_check(et, 0);
     int n = push_lab(0);
-    if (using_macro == 0) fprintf(f_asm, "JZ L%delse\n", n); // 0 -> if
+    if (is_macro() == 0) fprintf(f_asm, "JZ L%delse\n", n); // 0 -> if
     acc_ok = 0;
 }
 
@@ -33,7 +33,7 @@ void if_stmt()
 // antes dos statments do else
 void else_stmt()
 {
-    if (using_macro == 0) fprintf(f_asm, "JMP L%dend\n@L%delse ", get_lab(), get_lab());
+    if (is_macro() == 0) fprintf(f_asm, "JMP L%dend\n@L%delse ", get_lab(), get_lab());
 }
 
 // cria label do final do if/else
@@ -51,7 +51,7 @@ void if_fim()
 void while_stmt()
 {
     int n = pop_lab();
-    if (using_macro == 0) fprintf(f_asm, "JMP L%d\n@L%dend ",n,n);
+    if (is_macro() == 0) fprintf(f_asm, "JMP L%d\n@L%dend ",n,n);
 }
 
 // da um JMP pro final do while
@@ -59,7 +59,7 @@ void exec_break()
 {
     // checa se o break esta dentro de um while
     if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aí tá perdido!\n",  line_num+1);
-    if (using_macro == 0) fprintf(f_asm , "JMP L%dend\n"                                 , get_while());
+    if (is_macro() == 0) fprintf(f_asm , "JMP L%dend\n"                                 , get_while());
 }
 
 // somente a palavra-chave while - gera um label nesse ponto
@@ -73,7 +73,7 @@ void while_expp()
 void while_expexp(int et)
 {
     load_check(et, 0);
-    if (using_macro == 0) fprintf(f_asm, "JZ L%dend\n", get_lab());
+    if (is_macro() == 0) fprintf(f_asm, "JZ L%dend\n", get_lab());
     acc_ok = 0;
 }
 
@@ -94,7 +94,7 @@ void case_test(int id, int type)
     // faz operacao de comparacao
     oper_cmp(et1,et2,4);
 
-    if (using_macro == 0) fprintf(f_asm, "JZ sw_case_%d_%d\n", swit_cnt, case_cnt+1);
+    if (is_macro() == 0) fprintf(f_asm, "JZ sw_case_%d_%d\n", swit_cnt, case_cnt+1);
     acc_ok = 0;
 }
 
@@ -108,7 +108,7 @@ void defaut_test()
 // executa break do switch case
 void switch_break()
 {
-    if (using_macro == 0) fprintf(f_asm, "JMP switch_end_%d\n", swit_cnt);
+    if (is_macro() == 0) fprintf(f_asm, "JMP switch_end_%d\n", swit_cnt);
 }
 
 // inicio do switch case
@@ -125,7 +125,7 @@ void exec_switch(int et)
     v_used[id] = 0;
     // equivalente a var_set
     load_check(et,0);
-    if (using_macro == 0) fprintf(f_asm, "SET switch_exp\n");
+    if (is_macro() == 0) fprintf(f_asm, "SET switch_exp\n");
 
     acc_ok     = 0;
     v_asgn[id] = 1;

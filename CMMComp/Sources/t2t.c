@@ -1,6 +1,7 @@
 // rotinas para conversao entre int e float
 
 #include "..\Headers\t2t.h"
+#include "..\Headers\diretivas.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -137,6 +138,8 @@ void float_begin(FILE *f_asm)
 
 	fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
 	fclose (f_float);
+
+    top_ins = top_ins+20;
 }
 
 // incluir aqui, as macros de matematica que forem sendo criadas
