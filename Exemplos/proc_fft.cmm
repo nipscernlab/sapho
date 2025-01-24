@@ -1,4 +1,4 @@
-#PRNAME fft
+#PRNAME proc_fft
 #DIRNAM "."
 #DATYPE 1
 #NUBITS 32

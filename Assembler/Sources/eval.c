@@ -79,15 +79,16 @@ void add_data(int val)
     }
 }
 
-int is_var(char *va)
+int is_var(char *va, int *tipo)
 {
     char texto[1001];
     char funcao[128];
     char variav[128];
     char nome  [128];
-    int tipo;
 
-    FILE *input = fopen("log.txt", "r");
+    char path[1024];
+    sprintf(path, "%s/log.txt", temp_dir);
+    FILE *input = fopen(path, "r");
 
     // pula as 3 primeiras linhas
     fgets(texto, 1001, input);
@@ -99,7 +100,7 @@ int is_var(char *va)
     {
         if (strcmp(texto, "#\n") == 0) break;
 
-         sscanf(texto, "%s %s %d", funcao, variav, &tipo);
+         sscanf(texto, "%s %s %d", funcao, variav, tipo);
         sprintf(nome , "%s_%s"   , funcao, variav);
 
         if (strcmp(nome,va) == 0) {ok = 1; break;}
@@ -130,11 +131,15 @@ void operando(char *va, int is_const)
         add_var (va, val);
         add_data(    val);
 
-        if (pp && is_var(va))
+        int tipo;
+        if (pp && is_var(va, &tipo))
         {
-            sprintf(v_namo[v_cont], "me_%s", va);
-            v_add[v_cont] = n_dat-1;
-            v_cont++;
+            
+                sprintf(v_namo[v_cont], "me%d_%s", tipo, va);
+                v_add[v_cont] = n_dat-1;
+                v_tipo[v_cont] = tipo;
+                v_cont++;
+            
         }
 
     }

@@ -1,7 +1,7 @@
 cls
 echo off
-set EXEMPLO=fft
-set ROOT_DIR=C:\Users\lucia\Documents\sapho-p
+set EXEMPLO=proc_fft
+set ROOT_DIR=%cd%
 set TESTE_DIR=%ROOT_DIR%\Teste
 
 rmdir %TESTE_DIR% /s /q
@@ -14,9 +14,10 @@ set HDL_DIR=%INST_DIR%\hdl
 set MAC_DIR=%INST_DIR%\macros
 set SCR_DIR=%INST_DIR%\script
 
-set USER_DIR=%TESTE_DIR%\Usuario
-set SOFT_DIR=%USER_DIR%\Software
-set HARD_DIR=%USER_DIR%\Hardware
+set USER_DIR=%TESTE_DIR%\Projeto
+set PROC_DIR=%USER_DIR%\%EXEMPLO%
+set SOFT_DIR=%PROC_DIR%\Software
+set HARD_DIR=%PROC_DIR%\Hardware
 
 set TMP_DIR=%TESTE_DIR%\Tmp
 
@@ -27,6 +28,7 @@ mkdir %HDL_DIR%
 mkdir %MAC_DIR%
 mkdir %SCR_DIR%
 mkdir %USER_DIR%
+mkdir %PROC_DIR%
 mkdir %SOFT_DIR%
 mkdir %HARD_DIR%
 mkdir %TMP_DIR%
@@ -68,8 +70,10 @@ rm asm2mif.c
 cd %SCR_DIR%
 
 gcc -o float2gtkw.exe float2gtkw.c
+gcc -o f2i_gtkw.exe f2i_gtkw.c
 
 mv float2gtkw.exe %BIN_DIR%
+mv f2i_gtkw.exe %BIN_DIR%
 
 :: Executa o compilador CMM ---------------------------------------------------
 
@@ -96,6 +100,9 @@ cd %TMP_DIR%
 vvp %EXEMPLO%
 
 :: Roda o GtkWave -------------------------------------------------------------
+
+cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
+cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
 
 if exist %HARD_DIR%\.config.gtkw (gtkwave %HARD_DIR%\.config.gtkw) else (gtkwave %EXEMPLO%_tb.vcd --script=%SCR_DIR%\gtkwave_init.tcl)
 

@@ -21,6 +21,8 @@ void declar_var(int id)
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
     fprintf(f_log, "%s %s %d\n", fname, rem_fname(v_name[id], fname), type_tmp);
+    if (type_tmp == 3)
+    fprintf(f_log, "%s %s_i %d\n", fname, rem_fname(v_name[id], fname), type_tmp);
 
     // testes com numeros complexos -------------------------------------------
     if (type_tmp > 2) declar_img(id);

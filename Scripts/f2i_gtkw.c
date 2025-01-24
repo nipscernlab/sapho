@@ -3,8 +3,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-//1960477308 // 0.707107
-
 float i2mf(unsigned int ifl, int nbm, int nbe)
 {
     // sinal
@@ -42,9 +40,9 @@ int main(int argc, char **argv)
         if (bufi[0]) 
         {
             unsigned int x;
-            sscanf(bufi, "%u", &x);
+            sscanf(bufi, "%u", &x); //strtol();
             float f = i2mf(x,nbm,nbe);
-            sprintf(bufo, "%.3f", f);
+            sprintf(bufo, "%d", (int)f);
             printf("%s\n", bufo);
             fflush(stdout);
         }

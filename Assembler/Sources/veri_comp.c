@@ -314,7 +314,24 @@ void build_dt_file()
     }
 
     fprintf(output, "end\n\n");
-    fprintf(output, "endmodule\n");
+
+    for (int i = 0; i < v_cont; i++)
+    {
+        if (v_tipo[i] == 3)
+        {
+            for (int j = 0; j < v_cont; j++)
+            {
+                char im[64];
+                sprintf(im, "%s_i", v_namo[i]);
+                if (strcmp(v_namo[j],im) == 0)
+                {
+                    fprintf(output,"wire [NBDATA*2-1:0] comp_%s = {%s, %s};\n", v_namo[i], v_namo[i], v_namo[j]);
+                }
+            }
+        }
+    }
+
+    fprintf(output, "\nendmodule\n");
 
     fclose(output);
 }

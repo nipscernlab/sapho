@@ -13,6 +13,7 @@ int itr_addr; // endereco da interrupcao
 
 char v_namo[1000][64];
 int  v_add [1000];
+int  v_tipo[1000];
 int  v_cont;
 
 void eval_init  (int prep);

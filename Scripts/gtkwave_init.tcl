@@ -1,5 +1,6 @@
 # procura sinais alvo
 set monitorSignals [list]
+set var_int [list]
 set index -1
 set nfacs [ gtkwave::getNumFacs ]
 for {set i 0} {$i < $nfacs } {incr i} {
@@ -9,9 +10,14 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set index3 [string first pc.valr2 $facname]
     set index4 [string first pc.linetabr $facname]
 
-    set index5 [string first mdata.me $facname]
+    set index5 [string first mdata.comp_me3 $facname]
     if {$index5 != -1} {
         lappend monitorSignals "$facname"
+	}
+
+    set index5 [string first mdata.me1 $facname]
+    if {$index5 != -1} {
+        lappend var_int "$facname"
 	}
     
     if {$index1 != -1} {
@@ -52,6 +58,12 @@ gtkwave::highlightSignalsFromList $linetab
 gtkwave::/Edit/Data_Format/Signed_Decimal
 gtkwave::installFileFilter $cmm
 gtkwave::/Edit/Alias_Highlighted_Trace C+-
+gtkwave::/Edit/UnHighlight_All
+
+set vint [ gtkwave::setCurrentTranslateProc f2i_gtkw.exe ]
+gtkwave::addSignalsFromList $var_int
+gtkwave::/Edit/Data_Format/Decimal
+gtkwave::installProcFilter $vint
 gtkwave::/Edit/UnHighlight_All
 
 set float [ gtkwave::setCurrentTranslateProc float2gtkw.exe ]
