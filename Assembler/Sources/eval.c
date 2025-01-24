@@ -45,7 +45,9 @@ void eval_init(int prep)
         // abre os arquivos .mif
         f_data  = fopen(get_dname()      , "w");
         f_instr = fopen(get_iname()      , "w");
-        f_tran  = fopen("trad_opcode.txt", "w");
+        char path[1024];
+        sprintf(path, "%s/trad_opcode.txt", temp_dir);
+        f_tran  = fopen(path, "w");
     }
 }
 
@@ -174,7 +176,7 @@ void fill_mem(char *f_name, int tam)
         int idxToDel = tamanho-1;     // indice para deletar, nesse caso o ultimo, as aspas.
         strcpy(addr_tab, "");
         memmove(&f_name[idxToDel], &f_name[idxToDel +1], 1); // deletando de fato o indice
-        strcat(addr_tab, d_name);
+        strcat(addr_tab, hard_dir);
         strcat(addr_tab, f_name);
 
         filepointer = fopen(addr_tab, "r");
@@ -338,8 +340,8 @@ void eval_opernd(char *va, int is_const)
                  state = 0;  break;
         case 13: if (pp) set_float_point(atoi(va));              // 1 para ponto-flutuante e 0 para ponto-fixo
                  state = 0;  break;
-        case 14: if (pp){va[strlen(va)-1] = 92; set_dir(va);}    // diretorio
-                 state = 0;  break;
+        //case 14: if (pp){va[strlen(va)-1] = 92; set_dir(va);}    // diretorio
+                 //state = 0;  break;
         case 15: if (pp)set_nugain(atoi(va));                    // valor da normalizacao
                  state = 0;  break;
         case 16: add_var(va,0);                                  // declarando array com arquivo

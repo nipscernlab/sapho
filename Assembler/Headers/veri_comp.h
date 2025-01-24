@@ -3,7 +3,9 @@
 
 int  ndstac, nbmant, nbexpo, nbits, fftsiz;
 int  float_point; // diz se eh ou nao o processador em ponto flutuante
-char d_name[512];
+char hard_dir[1024];
+char temp_dir[1024];
+char  hdl_dir[1024];
 
 int clk_frq;
 int clk_num;
@@ -22,7 +24,6 @@ void set_nuioou     (int n);
 void set_fftsiz     (int n);
 void set_nugain     (int n);
 void set_float_point(int n);
-void set_dir        (char* dir);
 
 void build_vv_file();
 void build_tb_file();

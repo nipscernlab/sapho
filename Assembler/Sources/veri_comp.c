@@ -21,36 +21,28 @@ void set_name(char *va)
 
 char *get_dname()
 {
-    strcpy(tmp,      d_name);
-    strcat(tmp,        name);
-    strcat(tmp, "_data.mif");
+    sprintf(tmp, "%s\\%s_data.mif", hard_dir,name);
 
     return tmp;
 }
 
 char *get_iname()
 {
-    strcpy(tmp, d_name);
-    strcat(tmp, name);
-    strcat(tmp, "_inst.mif");
+    sprintf(tmp, "%s\\%s_inst.mif", hard_dir,name);
 
     return tmp;
 }
 
 char *get_vname()
 {
-    strcpy(tmp, d_name);
-    strcat(tmp, name);
-    strcat(tmp, ".v");
+    sprintf(tmp, "%s\\%s.v", hard_dir,name);
 
     return tmp;
 }
 
 char *get_tb_name()
 {
-    strcpy(tmp, d_name);
-    strcat(tmp, name);
-    strcat(tmp, "_tb.v");
+    sprintf(tmp, "%s\\%s_tb.v", hard_dir,name);
 
     return tmp;
 }
@@ -93,11 +85,6 @@ void set_nuioou(int n)
 void set_float_point(int n)
 {
     float_point = n;
-}
-
-void set_dir(char* dir)
-{
-    strcpy(d_name, dir);
 }
 
 void set_nugain(int n)
@@ -169,8 +156,8 @@ void build_vv_file()
 
     for (int i = 0; i < m_count; i++) fprintf(f_veri, ".%s(1),\n", m_name[i]);
 
-    fprintf(f_veri, ".DFILE(\"%s%s_data.mif\"),\n", barra_fix(d_name), name);
-    fprintf(f_veri, ".IFILE(\"%s%s_inst.mif\")\n", d_name, name);
+    fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n", name);
+    fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , name);
     fprintf(f_veri, ") p_%s (clk, rst, in_float, out_float, addr_in, addr_out, proc_req_in, proc_out_en, itr);\n\n", name);
 
     if (float_point)
@@ -234,12 +221,16 @@ void build_pc_file()
 {
     int top_ins, num_ins;
 
+    char path[1024];
+    sprintf(path, "%s/pc_sim.v", temp_dir);
+
     FILE *input;
-    FILE *output = fopen("../../HDL/pc_sim.v", "w");
+    FILE *output = fopen(path, "w");
 
     char texto[1001] = "";
 
-    input = fopen("../../HDL/pc.v", "r");
+    sprintf(path, "%s/pc.v", hdl_dir);
+    input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "endmodule") != 0)
@@ -250,7 +241,8 @@ void build_pc_file()
     }
     fclose(input );
 
-    input = fopen("log.txt", "r");
+    sprintf(path, "%s/log.txt", temp_dir);
+    input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "#\n") == 0)
@@ -289,12 +281,16 @@ void build_dt_file()
 {
     int top_ins, num_ins;
 
+    char path[1024];
+    sprintf(path, "%s/mem_data_sim.v", temp_dir);
+
     FILE *input;
-    FILE *output = fopen("../../HDL/mem_data_sim.v", "w");
+    FILE *output = fopen(path, "w");
 
     char texto[1001] = "";
 
-    input = fopen("../../HDL/mem_data.v", "r");
+    sprintf(path, "%s/mem_data.v", hdl_dir);
+    input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "endmodule") != 0)

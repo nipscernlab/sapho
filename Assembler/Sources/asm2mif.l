@@ -4,6 +4,8 @@
 #include "..\Headers\veri_comp.h"
 #include "..\Headers\mnemonicos.h"
 
+#include <string.h>
+
 %}
 
 CONST    [-+]?[0-9]*\.?[0-9]+
@@ -29,7 +31,7 @@ LINHA          \n
 "#NUIOIN" eval_direct(11);
 "#NUIOOU" eval_direct(12);
 "#DATYPE" eval_direct(13);
-"#DIRNAM" eval_direct(14);
+"#DIRNAM" {}
 "#NUGAIN" eval_direct(15);
 "#FFTSIZ" eval_direct(20);
 "#ITRAD" {if (pp) itr_addr = n_ins;} // isso nao eh mais uma instrucao. trocar por uma diretiva
@@ -100,8 +102,12 @@ LINHA          \n
 
 int main(int argc, char *argv[])
 {
-	clk_frq = atoi(argv[2]);
-	clk_num = atoi(argv[3]);
+	strcpy(hard_dir,argv[2]);
+	strcpy( hdl_dir,argv[3]);
+	strcpy(temp_dir,argv[4]);
+
+	clk_frq = atoi(argv[5]);
+	clk_num = atoi(argv[6]);
 
     yyin = fopen(argv[1], "r");
 	eval_init(1);

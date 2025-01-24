@@ -319,15 +319,17 @@ exp:       INUM                               {$$ = num2exp($1,1);}
 
 int main(int argc, char *argv[])
 {
-  yyin  = fopen(argv[1]      , "r");
-  f_asm = fopen(argv[2]      , "w");
+  yyin  = fopen(argv[1], "r");
+  f_asm = fopen(argv[2], "w");
 
-  //strcpy(dir_macro, argv[3]);
-  //strcpy(dir_soft , argv[3]);
-  //strcpy(dir_tmp  , argv[3]);
+  strcpy(dir_macro, argv[3]);
+  strcpy(dir_tmp  , argv[4]);
 
-  f_log = fopen("log.txt"    , "w");
-  f_lin = fopen("in2line.txt", "w");
+  char path[1024];
+  sprintf(path, "%s/%s", dir_tmp, "log.txt");
+  f_log = fopen(path, "w");
+  sprintf(path, "%s/%s", dir_tmp, "in2line.txt");
+  f_lin = fopen(path, "w");
 
   // da problema com o reset se nao colocar isso se
   // a primeira instrucao for CALL main. Resolver ...
@@ -365,7 +367,8 @@ int main(int argc, char *argv[])
   fclose(f_log);
 
   FILE *input  = fopen(argv[1], "r");
-  FILE *output = fopen("../../HDL/trad_cmm.txt", "w");
+  sprintf(path, "%s/%s", dir_tmp, "trad_cmm.txt");
+  FILE *output = fopen(path, "w");
 
   char texto[1001] = "";
   char linha[1001];
