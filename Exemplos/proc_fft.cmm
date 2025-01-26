@@ -64,13 +64,21 @@ void main()
 
     fft(8);
 
-    out(0,1000.0*imag(data[0)));
-    out(0,1000.0*imag(data[1)));
-    out(0,1000.0*imag(data[2)));
-    out(0,1000.0*imag(data[3)));
-    out(0,1000.0*imag(data[4)));
-    out(0,1000.0*imag(data[5)));
-    out(0,1000.0*imag(data[6)));
-    out(0,1000.0*imag(data[7)));
+    out(0,1000.0*real(data[0)));
+    out(1,1000.0*imag(data[0)));
+    out(0,1000.0*real(data[1)));
+    out(1,1000.0*imag(data[1)));
+    out(0,1000.0*real(data[2)));
+    out(1,1000.0*imag(data[2)));
+    out(0,1000.0*real(data[3)));
+    out(1,1000.0*imag(data[3)));
+    out(0,1000.0*real(data[4)));
+    out(1,1000.0*imag(data[4)));
+    out(0,1000.0*real(data[5)));
+    out(1,1000.0*imag(data[5)));
+    out(0,1000.0*real(data[6)));
+    out(1,1000.0*imag(data[6)));
+    out(0,1000.0*real(data[7)));
+    out(1,1000.0*imag(data[7)));
 }
 

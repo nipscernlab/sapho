@@ -206,13 +206,34 @@ void build_tb_file()
     int s1 = (float_point) ? nbmant-1      : nbits-1;
     int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
 
+    fprintf(f_veri, "reg signed [%d:0] proc_io_in = 0;\n" , s1);
     fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n", s2);
     fprintf(f_veri, "wire [%d:0] proc_req_in;\n", nuioin2-1);
-    fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n", nuioou -1);
+    fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n", nuioou-1);
 
-    fprintf(f_veri, "%s proc(clk,rst,%d'd0,proc_io_out,proc_req_in,proc_out_en,1'b0);\n\n", name, s1+1);
+    fprintf(f_veri, "%s proc(clk,rst,proc_io_in,proc_io_out,proc_req_in,proc_out_en,1'b0);\n\n", name);
 
-    fprintf(f_veri, "endmodule\n");
+    int i;
+    for(i=0;i<nuioin2;i++)
+    fprintf(f_veri, "reg signed [%d:0] in_%d = 0; // coloque aqui a sua entrada\n", s1, i);
+    fprintf(f_veri,"\n");
+
+    for(i=0;i<nuioou;i++)
+    fprintf(f_veri, "reg signed [%d:0] out_%d = 0;\n", s2, i);
+
+    fprintf(f_veri, "\nalways @ (*) begin\n");
+    fprintf(f_veri, "   proc_io_in = 0;\n");
+    for(i=0;i<nuioin2;i++)
+    fprintf(f_veri, "   if (proc_req_in == %d) proc_io_in = in_%d;\n", (int)pow(2,i),i);
+    fprintf(f_veri, "end\n");
+
+    fprintf(f_veri, "\nalways @ (posedge clk) begin\n");
+    for(i=0;i<nuioou;i++)
+    fprintf(f_veri, "   if (proc_out_en == %d) out_%d <= proc_io_out;\n", (int)pow(2,i), i);
+
+    fprintf(f_veri, "end\n");
+
+    fprintf(f_veri, "\nendmodule\n");
 
     fclose (f_veri);
 }
@@ -258,9 +279,11 @@ void build_pc_file()
     }
     fclose(input );
 
-    fprintf(output, "reg [NBITS-1:0] valr1, valr2;\n");
+    fprintf(output, "reg [NBITS-1:0] valr1;\n");
+    fprintf(output, "reg [NBITS-1:0] valr2=0;\n");
     fprintf(output, "reg [19:0] min [0:%d];\n", num_ins-1);
-    fprintf(output, "reg signed [20:0] linetab,linetabr;\n");
+    fprintf(output, "reg signed [20:0] linetab;\n");
+    fprintf(output, "reg signed [20:0] linetabr=-1;\n");
     fprintf(output, "initial $readmemb(\"in2line.txt\", min);\n");
     fprintf(output, "always @ (posedge clk) begin\n");
     fprintf(output, "	if (val < %d)\n", top_ins);
@@ -303,7 +326,7 @@ void build_dt_file()
 
     for (int i = 0; i < v_cont; i++)
     {
-        fprintf(output, "reg [NBDATA-1:0] %s;\n", v_namo[i]);
+        fprintf(output, "reg [NBDATA-1:0] %s=0;\n", v_namo[i]);
     }
     
     fprintf(output, "\nalways @ (posedge clk) begin\n");

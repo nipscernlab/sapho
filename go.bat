@@ -71,9 +71,11 @@ cd %SCR_DIR%
 
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o f2i_gtkw.exe f2i_gtkw.c
+gcc -o comp2gtkw.exe comp2gtkw.c
 
 mv float2gtkw.exe %BIN_DIR%
 mv f2i_gtkw.exe %BIN_DIR%
+mv comp2gtkw.exe %BIN_DIR%
 
 :: Executa o compilador CMM ---------------------------------------------------
 
@@ -103,6 +105,7 @@ vvp %EXEMPLO%
 
 cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
+cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
 
 if exist %HARD_DIR%\.config.gtkw (gtkwave %HARD_DIR%\.config.gtkw) else (gtkwave %EXEMPLO%_tb.vcd --script=%SCR_DIR%\gtkwave_init.tcl)
 

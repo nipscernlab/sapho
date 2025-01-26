@@ -9,7 +9,7 @@ module pc
 	output [NBITS-1:0] addr
 );
 
-reg  [NBITS-1:0] cnt;
+reg  [NBITS-1:0] cnt=0;
 wire [NBITS-1:0] val;
 
 assign val = (load) ? data : cnt;
