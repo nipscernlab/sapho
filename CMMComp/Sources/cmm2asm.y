@@ -91,7 +91,11 @@ void  yyerror(char const *s);
 fim  : prog
 prog : prog_elements | prog prog_elements
 
-prog_elements : direct | declar_full | funcao
+// tirei decla_full por enquanto.=
+// ate resolver o bug que nao pode ter instrucao antes do CALL main
+// se nao, a linha C+- no gtkwave mostra errado no comeco
+//prog_elements : direct | declar_full | funcao
+prog_elements : direct | declar | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 

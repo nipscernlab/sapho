@@ -20,9 +20,15 @@ void declar_var(int id)
     v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
-    fprintf(f_log, "%s %s %d\n", fname, rem_fname(v_name[id], fname), type_tmp);
+    char func[256];
+    if (strcmp(fname,"")==0)
+        strcpy(func, "global");
+    else
+        strcpy(func, fname);
+
+    fprintf(f_log, "%s %s %d\n", func, rem_fname(v_name[id], fname), type_tmp);
     if (type_tmp == 3)
-    fprintf(f_log, "%s %s_i %d\n", fname, rem_fname(v_name[id], fname), type_tmp);
+    fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
 
     // testes com numeros complexos -------------------------------------------
     if (type_tmp > 2) declar_img(id);

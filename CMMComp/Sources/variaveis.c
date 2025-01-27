@@ -66,6 +66,7 @@ void check_var()
 // tira o nome da funcao da variavel
 char* rem_fname(char *var, char *fname)
 {
+    if (strcmp(fname,"") == 0) return var;
     int    ind = 0;
     while (var[ind] == fname[ind]) ind++;
     // se ind != strlen(fname) eh pq a variavel nao

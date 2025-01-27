@@ -169,7 +169,11 @@ for {set i 0} {$i < $var_n } {incr i} {
     set func [lindex $var_int_func $i]
     set ftmp [list int $name em $func]
     set par {()}
-    gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    if {[string compare $func global]==0} {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
+    } else {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    }
     gtkwave::/Edit/UnHighlight_All
 }
 
@@ -227,7 +231,11 @@ for {set i 0} {$i < $var_n } {incr i} {
     set func [lindex $var_float_func $i]
     set ftmp [list float $name em $func]
     set par {()}
-    gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    if {[string compare $func global]==0} {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
+    } else {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    }
     gtkwave::/Edit/UnHighlight_All
 }
 
@@ -285,7 +293,11 @@ for {set i 0} {$i < $var_n } {incr i} {
     set func [lindex $var_comp_func $i]
     set ftmp [list comp $name em $func]
     set par {()}
-    gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    if {[string compare $func global]==0} {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
+    } else {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    }
     gtkwave::/Edit/UnHighlight_All
 }  
 
