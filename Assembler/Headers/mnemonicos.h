@@ -1,11 +1,6 @@
-#ifndef MNEMONICOS_H_INCLUDED
-#define MNEMONICOS_H_INCLUDED
+#define NMNEMAX 999999    // o preco por nao usar C++ com o flex e bison
 
-#define NMNEMAX 999999
+int  m_count;             // num  de  opcodes cadastrados para gerar circuitos dimanicamente
+char m_name[NMNEMAX][64]; // nome dos opcodes cadastrados
 
-int  m_count;             // num de opcodes cadastrados
-char m_name[NMNEMAX][64];
-
-void add_mne(char *mne);
-
-#endif // VARIAVEIS_H_INCLUDED
+void add_mne(char *mne);  // cadastra opcode

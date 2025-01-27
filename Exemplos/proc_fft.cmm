@@ -1,5 +1,4 @@
 #PRNAME proc_fft
-#DIRNAM "."
 #DATYPE 1
 #NUBITS 32
 #NDSTAC 10

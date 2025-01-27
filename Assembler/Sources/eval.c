@@ -1,41 +1,49 @@
+// esse rquivo ta ficando confuso
+// nao esta claro o que executa nas fases pp e nao pp
+// tentar separar rotinas pp e nao pp em arquivos diferentes?
+// ou talvez em funcoes diferentes?
+// acho q vai ter q separar em dois executaveis
+
 #include "..\Headers\eval.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\variaveis.h"
 #include "..\Headers\labels.h"
 #include "..\Headers\veri_comp.h"
+#include "..\Headers\mnemonicos.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
 
-#define NBITS_OPC 6     // tem que mudar em verilog de acordo (em proc_fx.v e proc_fl.v)
+#define NBITS_OPC 6     // tem que mudar no verilog de acordo (em proc_fx.v e proc_fl.v)
 
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
-FILE *f_tran;           // arquivo para traducao do gtkWave
+FILE *f_tran;           // arquivo para traducao do opcode
 
-int state = 0;     // estado do compilador
-int c_op;          // guarda opcode atual
-int nbopr;         // num de bits de operando
-int tam_var;       // auxilia no preenchimento de array em memoria (tamanho do array)
-int fil_typ;       // auxilia no preenchimento de array em memoria (tipo de dado)
+int state = 0;          // estado do compilador
+int c_op;               // guarda opcode atual
+int nbopr;              // num de bits de operando
+int tam_var;            // auxilia no preenchimento de array em memoria (tamanho do array)
+int fil_typ;            // auxilia no preenchimento de array em memoria (tipo de dado)
 
 void eval_init(int prep)
 {
-    pp = prep;            // se estou ou nao na fase de pre-processamento
+    pp = prep;          // se estou ou nao na fase de pre-processamento
 
-    var_reset();          // reseta a contagem de mnemonicos que alocam recursos em hardware
+    var_reset();        // reseta a contagem de mnemonicos que alocam recursos em hardware
 
-    if (pp)               // pp soh conta, nao faz os arquivos ainda
+    if (pp)             // pp soh conta, nao faz os arquivos ainda
     {
         n_ins    = 0;
         n_dat    = 0;
         v_cont   = 0;
-        itr_addr = 0;     // reseta endereco de interrupcao
+        itr_addr = 0;   // reseta endereco de interrupcao
     }
-    else
+    else                // segunda fase
     {
-        n_opc = 0;
-        isrf  = 0; // ainda nao usou enderecamento invertido
+        n_opc    = 0;
+        isrf     = 0;   // ainda nao usou enderecamento invertido
 
         // num de bits de endereco para o operando (depois do mnemonico)
         // depende de quem eh maior, mem de dado ou de instr
@@ -43,17 +51,14 @@ void eval_init(int prep)
         nbopr = (n_ins > n_dat+ndstac) ? ceil(log2(n_ins)) : ceil(log2(n_dat+ndstac));
 
         // abre os arquivos .mif
-        f_data  = fopen(get_dname()      , "w");
-        f_instr = fopen(get_iname()      , "w");
+        f_data  = fopen(get_dname(), "w");
+        f_instr = fopen(get_iname(), "w");
+
+        // abre arquivo de traducao de opcode na pasta Tmp
         char path[1024];
         sprintf(path, "%s/trad_opcode.txt", temp_dir);
         f_tran  = fopen(path, "w");
     }
-}
-
-void eval_fim()
-{
-    if (pp) fim_addr = n_ins;
 }
 
 void add_instr(int opc, int opr)
@@ -62,6 +67,7 @@ void add_instr(int opc, int opr)
     if ( pp) n_ins++;
 
     // se nao, escreve a instrucao no .mif em binario
+    // tambem escreve a traducao no arquivo de traducao de opcode
     if (!pp)
     {
         fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
@@ -77,13 +83,14 @@ void add_data(int val)
     // se nao, escreve o valor no .mif
     if (!pp)
     {
-        // pega o tamanho da palavra de dado (aqui tem q mudar pois nbits sempre vai ter o valor correto)
-        int s = (float_point) ? nbmant + nbexpo + 1 : nbits;
         // escreve o dado em binario no .mif
-        fprintf(f_data, "%s\n", itob(val,s));
+        fprintf(f_data, "%s\n", itob(val,nbits));
     }
 }
 
+// funcao auxiliar que procura no arquivo log.txt se ...
+// char *va aponta para uma variavel declarada no .cmm
+// tambem retorna o tipo da variavel encontrada
 int is_var(char *va, int *tipo)
 {
     char texto[1001];
@@ -91,21 +98,24 @@ int is_var(char *va, int *tipo)
     char variav[128];
     char nome  [128];
 
+    // abre o arquivo de log
     char path[1024];
     sprintf(path, "%s/log.txt", temp_dir);
     FILE *input = fopen(path, "r");
 
     // pula as 3 primeiras linhas
-    fgets(texto, 1001, input);
-    fgets(texto, 1001, input);
-    fgets(texto, 1001, input);
+    fgets(texto, 1001, input); // nome do processador
+    fgets(texto, 1001, input); // numero de bits da mantissa
+    fgets(texto, 1001, input); // numero de bits do expoente
   
     int ok = 0;
+    // varre as linhas do arquivo
     while(fgets(texto, 1001, input) != NULL)
     {
+        // secao de variaveis termina quando encontra um #
         if (strcmp(texto, "#\n") == 0) break;
 
-         sscanf(texto, "%s %s %d", funcao, variav, tipo);
+        sscanf (texto, "%s %s %d", funcao, variav, tipo);
         sprintf(nome , "%s_%s"   , funcao, variav);
 
         if (strcmp(nome,va) == 0) {ok = 1; break;}
@@ -116,17 +126,18 @@ int is_var(char *va, int *tipo)
     return ok;
 }
 
-// achei um simbolo depois de um mnemonico
-// se for novo, salva o simbolo na tabela
-// se o simbolo for uma constante, converte seu valor para binario
-// coloca o simbolo na memoria de dados
+// cadastra instrucao com a ula
+// se o operando for uma constante, converte seu valor para binario ...
+// e coloca o simbolo na memoria de dados
 // por ultimo, coloca a instrucao na memoria
-void operando(char *va, int is_const)
+// soh eh executado na fase pp
+void oper_ula(char *va, int is_const)
 {
     if (find_var(va) == -1) // aqui tem q mudar para saber se a constante eh fix ou float
                             // talvez criar mais uma variavel array pra marcar cada constante
                             // dependendo do mnemonico a esquerda
-    {
+
+    {   // variavel nao existe ainda
         int val;
         if (float_point) // trocar esse float_ponit global por um vetor pra idetificar cada variavel
             val = (is_const) ? f2mf(va) : 0;
@@ -136,24 +147,32 @@ void operando(char *va, int is_const)
         add_var (va, val);
         add_data(    val);
 
+        // procura, no arquivo de log, se eh uma variavel ...
+        // declarada no codigo .cmm
+        // se sim, cadastra ela para mostrar no simulador
         int tipo;
         if (pp && is_var(va, &tipo))
         {
-            
                 sprintf(v_namo[v_cont], "me%d_%s", tipo, va);
-                v_add[v_cont] = n_dat-1;
-                v_tipo[v_cont] = tipo;
+                v_add  [v_cont] = n_dat-1;
+                v_tipo [v_cont] = tipo;
                 v_cont++;
-            
         }
-
     }
 
     strcat(opcd, " "); strcat(opcd, va);
     add_instr(c_op, find_var(va));
 }
 
-// remove espacos em branco
+// cadastra instrucoes de salto
+void oper_salto(char *va)
+{
+    strcat(opcd, " "); strcat(opcd, va); 
+    add_instr (c_op, find_label(va));
+}
+
+// funcao auxiliar para ...
+// remover espacos em branco
 void rem_space(char *text)
 {
     int i = 0, j = 0;
@@ -169,7 +188,8 @@ void rem_space(char *text)
     text[j] = '\0';
 }
 
-// preenche um array na memoria com dados em arquivo
+// funcao auxiliar para preencher array na memoria de dados
+// usado com inicializacao de array (ex: int x[10] "nome do arquivo")
 // f_name eh o nome do arquivo a ser lido
 // tam eh o tamanho do arquivo
 // na fase de pp soh conta as variaveis
@@ -178,6 +198,7 @@ void fill_mem(char *f_name, int tam)
     FILE* filepointer = NULL;
 
     // primeiro pega o caminho completo e abre o arquivo ----------------------
+    // mudar a sintaxe para nao precisar das aspas
 
     char addr_tab[2048];
     if(pp == 0)
@@ -203,6 +224,9 @@ void fill_mem(char *f_name, int tam)
     {
         if (pp == 0)
         {
+            // le linha por linha
+            // o que fazer depende ...
+            // do tipo de proc e do tipo de dado
             fgets(linha, sizeof(linha), filepointer);
 
             // proc ponto fixo com int
@@ -284,7 +308,7 @@ void fill_mem(char *f_name, int tam)
             add_data(val);
         }
         else
-            add_data(0); // isso aqui eh soh pra contar as variaveis
+            add_data(0); // no pp soh conta as variaveis
     }
 
     if (pp == 0) fclose(filepointer);
@@ -292,9 +316,9 @@ void fill_mem(char *f_name, int tam)
 
 // adiciona array na memoria de dados
 // se for array normal, completa com zero
-// se for array inicializado, chama get_addr para preencher
+// se for array inicializado, chama fill_mem para preencher
 // va eh o tamanho do array
-void array_size(int va, char *f_name)
+void add_array(int va, char *f_name)
 {
     // incrementa o tamanho da memoria de acordo
     inc_vcont(va-1);
@@ -305,34 +329,49 @@ void array_size(int va, char *f_name)
         fill_mem(f_name, va);
 }
 
+// executado quando uma diretiva eh encontrada
 void eval_direct(int next_state)
 {
+    // vai pro estado que pega o argumento especifico da diretiva
     state = next_state;
 }
 
-void eval_opcode(int op, int next_state, char *text)
+// executado quando um novo opcode eh encontrado
+void eval_opcode(int op, int next_state, char *text, char *nome)
 {
-    c_op  = op;
-    state = next_state;
-    strcpy(opcd,text);
+    c_op  = op;          // cadastra opcode atual
+    strcpy(opcd,text);   // guarda nome do opcode atual
 
-    if (state == 0) add_instr(op,0); // nao tem operando, ja pode escrever a instrucao
+    // proximo estado depende do tipo de opcode:
+    // 0: nao tem operando
+    // 1: operando eh endereco da memoria de daddos
+    // 2: operando eh endereco da memoria de instrucao
+    state = next_state;
+
+    // nao tem operando, ja pode escrever a instrucao
+    if (state == 0) add_instr(op,0);
+
+    // cadastra mnemonico para alocar recurso em hardware
+    if (strcmp(nome,"") != 0) add_mne(nome);
+
+    // vai usar inversao de bits
+    // entao, precisa checar tamanho da memoria no final
+    if (strcmp(nome, "FFT") == 0) isrf = 1;
 }
 
 void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  1: operando  (va, is_const);                       // operacoes com a ULA
+        case  1: oper_ula  (va, is_const);                       // operacoes com a ULA
                  state = 0;  break;
-        case  2: strcat(opcd, " "); strcat(opcd, va); 
-                 add_instr (c_op, find_label(va));               // label
+        case  2: oper_salto(va);                                 // operacoes de salto
                  state = 0;  break;
-        case  3: add_var   (va,0);                               // declarando array normal
+        case  3: add_var   (va,0);                               // achou um array sem inicializacao
                  state = 4;  break;
-        case  4: array_size(atoi(va), "");                       // tamanho do array normal
+        case  4: add_array (atoi(va), "");                       // declara  array sem inicializacao
                  state = 0;  break;
-        case  5: if (pp) set_name(va);                           // nome do processador
+        case  5: if (pp) set_name  (va);                         // nome do processador
                  state = 0;  break;
         case  6: if (pp) set_nbits (atoi(va));                   // numero de bits de dados
                  state = 0;  break;
@@ -348,11 +387,10 @@ void eval_opernd(char *va, int is_const)
                  state = 0;  break;
         case 12: if (pp) set_nuioou(atoi(va));                   // numero de enderecoes de io - saida
                  state = 0;  break;
-        case 13: if (pp) set_float_point(atoi(va));              // 1 para ponto-flutuante e 0 para ponto-fixo
+        case 13: if (pp) set_float (atoi(va));                   // 1 para ponto-flutuante e 0 para ponto-fixo
                  state = 0;  break;
-        //case 14: if (pp){va[strlen(va)-1] = 92; set_dir(va);}    // diretorio
-                 //state = 0;  break;
-        case 15: if (pp)set_nugain(atoi(va));                    // valor da normalizacao
+      //case 14: era usado para o nome do diretorio
+        case 15: if (pp) set_nugain(atoi(va));                   // valor da normalizacao
                  state = 0;  break;
         case 16: add_var(va,0);                                  // declarando array com arquivo
                  state = 17; break;
@@ -360,7 +398,7 @@ void eval_opernd(char *va, int is_const)
                  state = 18; break;
         case 18: tam_var = atoi(va);                             // pega o tamanho do array com arquivo
                  state = 19; break;
-        case 19: array_size(tam_var,va);                         // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 19: add_array (tam_var,va);                         // preenche memoria com valor do arquivo (zero se nao tem arquivo)
                  state =  0; break;
         case 20: if (pp) set_fftsiz(atoi(va));                   // num de bits pra inverter na fft
                  state =  0; break;
@@ -370,8 +408,13 @@ void eval_opernd(char *va, int is_const)
 
 void eval_label(char *la)
 {
-    if (pp) add_label(la, n_ins);
-    if (strcmp(la,"fim") == 0) eval_fim();
+    if (pp)
+    {
+        add_label(la, n_ins); // cadastra label
+
+        // cadastra endereco da instrucao de fim do programa
+        if (strcmp(la,"fim") == 0) fim_addr = n_ins;
+    }
 }
 
 void eval_finish()

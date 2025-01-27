@@ -1,13 +1,15 @@
 #include "..\Headers\t2t.h"
 #include "..\Headers\veri_comp.h"
 #include "..\Headers\eval.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 
 // converte o inteiro x para binario de comprimento w
-// tentar mudar para conseguir converter int maior de 32 bits
+// tentar mudar para conseguir converter int maior que 32 bits
+// uma forma de mudar eh usar ascii pra x tambem
 char *itob(int x, int w)
 {
 	int z;
