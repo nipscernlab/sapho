@@ -10,6 +10,7 @@ int n_dat;    // numero de variaveis adicionadas
 int n_opc;    // numero de instrucoes no arquivo de traducao
 int isrf;     // diz se achou a instrucao pra fazer FFT
 int itr_addr; // endereco da interrupcao
+int fim_addr;
 
 char v_namo[1000][64];
 int  v_add [1000];
@@ -22,5 +23,6 @@ void eval_opcode(int op, int next_state, char *text);
 void eval_opernd(char *va, int is_const);
 void eval_label (char *la);
 void eval_finish();
+void eval_fim();
 
 #endif // EVAL_H_INCLUDED

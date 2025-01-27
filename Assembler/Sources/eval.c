@@ -51,6 +51,11 @@ void eval_init(int prep)
     }
 }
 
+void eval_fim()
+{
+    if (pp) fim_addr = n_ins;
+}
+
 void add_instr(int opc, int opr)
 {
     // se for fase de pp, soh conta o num de instrucoes
@@ -366,6 +371,7 @@ void eval_opernd(char *va, int is_const)
 void eval_label(char *la)
 {
     if (pp) add_label(la, n_ins);
+    if (strcmp(la,"fim") == 0) eval_fim();
 }
 
 void eval_finish()

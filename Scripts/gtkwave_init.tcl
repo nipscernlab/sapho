@@ -1,6 +1,30 @@
+# Separador de I/O ------------------------------------------------------------
+
+gtkwave::/Edit/Insert_Comment {Sinais *************}
+
 # Insere o clock e o reset --------------------------------------------------------------
 
-set filter [list clk rst]
+set nfacs [gtkwave::getNumFacs]
+
+for {set i 0} {$i < $nfacs } {incr i} {
+    set f_out_en [gtkwave::getFacName $i]
+
+    set index [string first id.out_en $f_out_en]
+    if {$index != -1} {
+        break
+    }
+}
+
+for {set i 0} {$i < $nfacs } {incr i} {
+    set f_req_in [gtkwave::getFacName $i]
+
+    set index [string first id.req_in $f_req_in]
+    if {$index != -1} {
+        break
+    }
+}
+
+set filter [list clk rst $f_req_in $f_out_en]
 gtkwave::addSignalsFromList $filter
 
 # Separador de I/O ------------------------------------------------------------
@@ -10,7 +34,6 @@ gtkwave::/Edit/Insert_Comment {I/O ****************}
 # Sinais de entrada -----------------------------------------------------------
 
 set j 0
-set nfacs [gtkwave::getNumFacs]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
@@ -76,7 +99,7 @@ set tradutor [gtkwave::setCurrentTranslateFile trad_cmm.txt]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
-    set index [string first pc.linetabr $facname]
+    set index [string first pc.linetabs $facname]
     if {$index != -1} {
         set filter [list $facname]
         gtkwave::addSignalsFromList $filter
@@ -144,7 +167,9 @@ for {set i 0} {$i < $var_n } {incr i} {
     gtkwave::highlightSignalsFromList $target
     set name [lindex $var_int_name $i]
     set func [lindex $var_int_func $i]
-    gtkwave::/Edit/Alias_Highlighted_Trace [list int $name em $func]
+    set ftmp [list int $name em $func]
+    set par {()}
+    gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
     gtkwave::/Edit/UnHighlight_All
 }
 
@@ -200,7 +225,9 @@ for {set i 0} {$i < $var_n } {incr i} {
     gtkwave::highlightSignalsFromList $target
     set name [lindex $var_float_name $i]
     set func [lindex $var_float_func $i]
-    gtkwave::/Edit/Alias_Highlighted_Trace [list float $name em $func]
+    set ftmp [list float $name em $func]
+    set par {()}
+    gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
     gtkwave::/Edit/UnHighlight_All
 }
 
@@ -256,7 +283,9 @@ for {set i 0} {$i < $var_n } {incr i} {
     gtkwave::highlightSignalsFromList $target
     set name [lindex $var_comp_name $i]
     set func [lindex $var_comp_func $i]
-    gtkwave::/Edit/Alias_Highlighted_Trace [list comp $name em $func]
+    set ftmp [list comp $name em $func]
+    set par {()}
+    gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
     gtkwave::/Edit/UnHighlight_All
 }  
 

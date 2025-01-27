@@ -227,7 +227,7 @@ void build_tb_file()
     fprintf(f_veri, "   if (proc_req_in == %d) proc_io_in = in_%d;\n", (int)pow(2,i),i);
     fprintf(f_veri, "end\n");
 
-    fprintf(f_veri, "\nalways @ (posedge clk) begin\n");
+    fprintf(f_veri, "\nalways @ (*) begin\n");
     for(i=0;i<nuioou;i++)
     fprintf(f_veri, "   if (proc_out_en == %d) out_%d <= proc_io_out;\n", (int)pow(2,i), i);
 
@@ -279,10 +279,15 @@ void build_pc_file()
     }
     fclose(input );
 
-    fprintf(output, "reg [NBITS-1:0] valr1;\n");
-    fprintf(output, "reg [NBITS-1:0] valr2=0;\n");
+    int nr = 10;
+    for (int i=0;i<nr;i++)
+    {
+        fprintf(output, "reg [NBITS-1:0] valr%d=0;\n",i+1);
+    }
+
     fprintf(output, "reg [19:0] min [0:%d];\n", num_ins-1);
-    fprintf(output, "reg signed [20:0] linetab;\n");
+    fprintf(output, "reg signed [20:0] linetab=-1;\n");
+    fprintf(output, "reg signed [20:0] linetabs=-1;\n");
     fprintf(output, "reg signed [20:0] linetabr=-1;\n");
     fprintf(output, "initial $readmemb(\"in2line.txt\", min);\n");
     fprintf(output, "always @ (posedge clk) begin\n");
@@ -292,9 +297,19 @@ void build_pc_file()
     fprintf(output, "		 linetab <= min[val-%d];\n", top_ins);
     fprintf(output, "	else linetab <= linetab;\n");
     fprintf(output, "	valr1 <= val;\n");
-    fprintf(output, "	valr2 <= valr1;\n");
-    fprintf(output, "	linetabr <= linetab;\n");
+
+    for (int i=2;i<=nr;i++)
+    {
+        fprintf(output, "	valr%d <= valr%d;\n", i, i-1);
+    }
+
+    fprintf(output, "	linetabs <= linetab;\n");
+    fprintf(output, "	linetabr <= linetabs;\n");
     fprintf(output, "end\n\n");
+
+    fprintf(output, "always @ (posedge clk) begin\n");
+    fprintf(output, "   if (valr%d == %d) $finish;\nend\n\n",nr,fim_addr);
+
     fprintf(output, "endmodule\n");
 
     fclose(output);
