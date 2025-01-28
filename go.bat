@@ -8,30 +8,34 @@ rmdir %TESTE_DIR% /s /q
 
 :: Gera diretorios pra teste --------------------------------------------------
 
-set INST_DIR=%TESTE_DIR%\Instalacao
+set INST_DIR=%TESTE_DIR%\saphoComponents
 set BIN_DIR=%INST_DIR%\bin
-set HDL_DIR=%INST_DIR%\hdl
-set MAC_DIR=%INST_DIR%\macros
-set SCR_DIR=%INST_DIR%\script
+set HDL_DIR=%INST_DIR%\HDL
+set MAC_DIR=%INST_DIR%\Macros
+set SCR_DIR=%INST_DIR%\Scripts
+set TMP_DIR=%INST_DIR%\Temp
+set TMP_PRO=%TMP_DIR%\%EXEMPLO%
 
 set USER_DIR=%TESTE_DIR%\Projeto
 set PROC_DIR=%USER_DIR%\%EXEMPLO%
 set SOFT_DIR=%PROC_DIR%\Software
 set HARD_DIR=%PROC_DIR%\Hardware
-
-set TMP_DIR=%TESTE_DIR%\Tmp
+set SIMU_DIR=%PROC_DIR%\Simulation
 
 mkdir %TESTE_DIR%
-mkdir %INST_DIR%
-mkdir %BIN_DIR%
-mkdir %HDL_DIR%
-mkdir %MAC_DIR%
-mkdir %SCR_DIR%
-mkdir %USER_DIR%
-mkdir %PROC_DIR%
-mkdir %SOFT_DIR%
-mkdir %HARD_DIR%
-mkdir %TMP_DIR%
+    mkdir %INST_DIR%
+        mkdir %BIN_DIR%
+        mkdir %HDL_DIR%
+        mkdir %MAC_DIR%
+        mkdir %SCR_DIR%
+        mkdir %TMP_DIR%
+            mkdir %TMP_PRO%
+    mkdir %USER_DIR%
+        mkdir %PROC_DIR%
+            mkdir %HARD_DIR%
+            mkdir %SOFT_DIR%
+            mkdir %SIMU_DIR%
+
 
 :: Copia os arquivos para os diretorios de teste ------------------------------
 
@@ -46,11 +50,11 @@ cp %CMM_FILE% %SOFT_DIR%
 
 cd %ROOT_DIR%\CMMComp\Sources
 
-bison -y -d cmm2asm.y
-flex        cmm2asm.l
-gcc      -o cmm2asm.exe data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c y.tab.c
+bison -y -d CMMComp.y
+flex        CMMComp.l
+gcc      -o CMMComp.exe data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c y.tab.c
 
-mv cmm2asm.exe %BIN_DIR%
+mv CMMComp.exe %BIN_DIR%
 rm lex.yy.c
 rm  y.tab.c
 rm  y.tab.h
@@ -59,11 +63,11 @@ rm  y.tab.h
 
 cd %ROOT_DIR%\Assembler\Sources
 
-flex -oasm2mif.c asm2mif.l
-gcc -o asm2mif.exe asm2mif.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c
+flex -oASMComp.c ASMComp.l
+gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c
 
-mv asm2mif.exe %BIN_DIR%
-rm asm2mif.c
+mv ASMComp.exe %BIN_DIR%
+rm ASMComp.c
 
 :: Gera tradutores de dados pro GtkWave ---------------------------------------
 
@@ -82,11 +86,11 @@ mv comp2gtkw.exe %BIN_DIR%
 set ASM_FILE=%SOFT_DIR%\%EXEMPLO%.asm
 cd %BIN_DIR%
 
-cmm2asm.exe %CMM_FILE% %ASM_FILE% %MAC_DIR% %TMP_DIR%
+CMMComp.exe %CMM_FILE% %ASM_FILE% %MAC_DIR% %TMP_PRO%
 
 :: Executa o compilador Assembler ---------------------------------------------
 
-asm2mif.exe %ASM_FILE% %HARD_DIR% %HDL_DIR% %TMP_DIR% 100 %1
+ASMComp.exe %ASM_FILE% %HARD_DIR% %HDL_DIR% %TMP_PRO% 100 %1
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
@@ -94,18 +98,18 @@ cd %HDL_DIR%
 
 set UDIR=%HARD_DIR%\%EXEMPLO%
 
-iverilog -s %EXEMPLO%_tb -o %TMP_DIR%\%EXEMPLO% %UDIR%_tb.v %UDIR%.v %TMP_DIR%\mem_data_sim.v %TMP_DIR%\pc_sim.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
+iverilog -s %EXEMPLO%_tb -o %TMP_PRO%\%EXEMPLO% %TMP_PRO%\%EXEMPLO%_tb.v %UDIR%.v %TMP_PRO%\mem_data_sim.v %TMP_PRO%\pc_sim.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
 
-cp %UDIR%_data.mif %TMP_DIR%
-cp %UDIR%_inst.mif %TMP_DIR%
-cd %TMP_DIR%
+cp %UDIR%_data.mif %TMP_PRO%
+cp %UDIR%_inst.mif %TMP_PRO%
+cd %TMP_PRO%
 vvp %EXEMPLO%
 
 :: Roda o GtkWave -------------------------------------------------------------
 
-cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
-cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
-cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
+cp %BIN_DIR%\float2gtkw.exe %TMP_PRO%
+cp %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%
+cp %BIN_DIR%\comp2gtkw.exe %TMP_PRO%
 
 if exist %HARD_DIR%\.config.gtkw (gtkwave %HARD_DIR%\.config.gtkw) else (gtkwave %EXEMPLO%_tb.vcd --script=%SCR_DIR%\gtkwave_init.tcl)
 

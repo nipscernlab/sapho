@@ -48,7 +48,7 @@ char *get_vname()
 
 char *get_tb_name()
 {
-    sprintf(tmp, "%s\\%s_tb.v", hard_dir,name);
+    sprintf(tmp, "%s\\%s_tb.v", temp_dir,name);
     return  tmp;
 }
 
