@@ -246,7 +246,7 @@ void build_pc_file()
     fprintf(output, "reg [19:0] min [0:%d];\n\n", num_ins-1);
 
     // linetab eh o valor da linha atual na tabela
-    fprintf(output, "reg signed [20:0] linetab =-1;\n"  );
+    fprintf(output, "reg signed [20:0] linetab =-1;\n");
     // linetabs eh o valor atual registrado
     fprintf(output, "reg signed [20:0] linetabs=-1;\n\n");
 
@@ -256,10 +256,13 @@ void build_pc_file()
     // valores abaixo de top_ins sao instrucoes iniciais
     // elas nao estao em .cmm
     fprintf(output, "always @ (posedge clk) begin\n");
-    fprintf(output, "	if (val < %d)\n", top_ins);
+    fprintf(output, "	if (val <= %d-3)\n", top_ins);
     fprintf(output, "       linetab <= -1;\n");
-    fprintf(output, "	else if (val < %d)\n", num_ins);
-    fprintf(output, "		linetab <= min[val-%d];\n", top_ins);
+    fprintf(output, "	else if (val == %d-2)\n",top_ins);
+    fprintf(output, "       linetab <= -2;\n");
+    fprintf(output, "	else if (val == %d-1)\n",top_ins);
+    fprintf(output, "		linetab <= -3;\n");
+    fprintf(output, "	else linetab <= min[val-%d];\n", top_ins);
 
     // faz o shift register com os atrasos de val
     fprintf(output, "	valr1 <= val;\n");

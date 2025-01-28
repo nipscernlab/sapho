@@ -376,8 +376,10 @@ int main(int argc, char *argv[])
 
   char texto[1001] = "";
   char linha[1001];
+  fputs("-1 INTERNO\n", output);
+  fputs("-2 void main();\n", output);
+  fputs("-3 FIM\n", output);
 
-fputs("-1 NADA\n", output);
   int cnt = 1;
   while(fgets(texto, 1001, input) != NULL)
   {
