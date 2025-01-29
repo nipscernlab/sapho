@@ -262,7 +262,7 @@ void build_pc_file()
     fprintf(output, "       linetab <= -2;\n");
     fprintf(output, "	else if (val == %d-1)\n",top_ins);
     fprintf(output, "		linetab <= -3;\n");
-    fprintf(output, "	else linetab <= min[val-%d];\n", top_ins);
+    fprintf(output, "	else if (val < %d) linetab <= min[val-%d];\n", top_ins+num_ins, top_ins);
 
     // faz o shift register com os atrasos de val
     fprintf(output, "	valr1 <= val;\n");

@@ -17,7 +17,10 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
 {
     // se ainda nao for a funcao main, entao tem que dar um call pra ela antes
     // pois CALL main deve ser a primeira instrucao do processador depois do reset
-    if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
+    // Desabilitei a nao utilizacao de CALL para funcao main sozinho
+    // preciso ver como fazer isso funcionar no gtkwave antes
+    //if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
+    if (mainok == 0)
     {
         fprintf(f_asm, "CALL main\n");
         top_ins++;
