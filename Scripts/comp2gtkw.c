@@ -47,7 +47,7 @@ float i2mf(char *ifl, int nbm, int nbe)
 int main(int argc, char **argv)
 {
     char   fname[64], man[16], exp[16];
-    FILE  *flog = fopen("log.txt", "r");
+    FILE  *flog = fopen("cmm_log.txt", "r");
     fscanf(flog,"%s %s %s", fname, man, exp);
 
     int   nbm = atoi(man);

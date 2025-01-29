@@ -19,13 +19,14 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     // pois CALL main deve ser a primeira instrucao do processador depois do reset
     // Desabilitei a nao utilizacao de CALL para funcao main sozinho
     // preciso ver como fazer isso funcionar no gtkwave antes
-    //if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
-    if (mainok == 0)
+    if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
+    //if (mainok == 0)
     {
         fprintf(f_asm, "CALL main\n");
-        top_ins++;
+        fprintf(f_ltp, "%d %d\n", ++num_ins, -2);
+
         fprintf(f_asm, "@fim JMP fim\n");
-        top_ins++;
+        fprintf(f_ltp, "%d %d\n", ++num_ins, -3);
 
         mainok = 2; // funcao main foi chamada no inicio
     }
@@ -328,7 +329,8 @@ void func_ret(int id) // id -> id da funcao atual
     {
         if (mainok == 0) // soh tem a funcao main
         {
-             if (is_macro() == 0) fprintf(f_asm, "@fim JMP fim\n");
+             fprintf(f_asm, "@fim JMP fim\n");
+        fprintf(f_ltp, "%d %d\n", ++num_ins, -3);
         }
         else if (is_macro() == 0) fprintf(f_asm, "RETURN\n"); // tem subrotinas
 

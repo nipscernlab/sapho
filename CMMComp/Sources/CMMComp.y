@@ -94,8 +94,8 @@ prog : prog_elements | prog prog_elements
 // tirei decla_full por enquanto
 // ate resolver o bug que nao pode ter instrucao antes do CALL main
 // se nao, a linha C+- no gtkwave mostra errado no comeco
-//prog_elements : direct | declar_full | funcao
-prog_elements : direct | declar | funcao
+prog_elements : direct | declar_full | funcao
+//prog_elements : direct | declar | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
@@ -323,23 +323,24 @@ exp:       INUM                               {$$ = num2exp($1,1);}
 
 int main(int argc, char *argv[])
 {
-  yyin  = fopen(argv[1], "r");
-  f_asm = fopen(argv[2], "w");
+  yyin  = fopen(argv[1], "r"); // arquivo .cmm de entrada
+  f_asm = fopen(argv[2], "w"); // arquivo .asm de saida
 
-  strcpy(dir_macro, argv[3]);
-  strcpy(dir_tmp  , argv[4]);
+  strcpy(dir_macro, argv[3]);  // pega o diretorio Macro
+  strcpy(dir_tmp  , argv[4]);  // pega o diretorio Tmp
+
+  // cria arquivos auxiliares -------------------------------------------------
 
   char path[1024];
-  sprintf(path, "%s/%s", dir_tmp, "log.txt");
-  f_log = fopen(path, "w");
-  sprintf(path, "%s/%s", dir_tmp, "in2line.txt");
-  f_lin = fopen(path, "w");
+  sprintf(path, "%s/%s", dir_tmp,    "cmm_log.txt");  f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
+  sprintf(path, "%s/%s", dir_tmp, "pc_sim_mem.txt");  f_lin = fopen(path,"w"); // memoria passando de asm para cmm
+  sprintf(path, "%s/%s", dir_tmp,  "line_temp.txt");  f_ltp = fopen(path,"w");
 
   // da problema com o reset se nao colocar isso se
   // a primeira instrucao for CALL main. Resolver ...
   fprintf(f_asm, "LOAD NULL\n");
-  top_ins = 1;
-  num_ins = 0;
+  num_ins = 1;
+  fprintf(f_ltp, "%d %d\n", num_ins, -1);
 
   // iniciaiza variaveis de estado
   using_macro  = 0;
@@ -357,6 +358,7 @@ int main(int argc, char *argv[])
 	fclose(yyin );
 	fclose(f_asm);
   fclose(f_lin);
+  fclose(f_ltp);
 
 	// carrega macros de ponto flutuante pra proc de ponto fixo
 	// caso precise (espero que nao)
@@ -367,7 +369,7 @@ int main(int argc, char *argv[])
 	// checa consistencia de todas as variaveis e funcoes
 	check_var(); // (variaveis.c)
 
-  fprintf(f_log, "#\n%d\n%d\n", top_ins, num_ins);
+  fprintf(f_log, "#\n%d\n", num_ins);
   fclose(f_log);
 
   FILE *input  = fopen(argv[1], "r");
@@ -389,6 +391,19 @@ int main(int argc, char *argv[])
   }
   fclose(input );
   fclose(output);
+
+  sprintf(path, "%s/%s", dir_tmp, "line_temp.txt");
+  f_ltp = fopen(path, "r");
+  sprintf(path, "%s/%s", dir_tmp, "pc_sim_mem.txt");
+  f_lin = fopen(path, "w");
+
+  int add, data;
+    while (fscanf(f_ltp, "%d %d", &add, &data) != EOF)
+    {
+        fprintf(f_lin, "%s // %d\n", itob(data,20), data);
+    } 
+  fclose(f_ltp);
+  fclose(f_lin);
 
 	return 0;
 }

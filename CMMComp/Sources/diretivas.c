@@ -91,8 +91,9 @@ char *itob(int x, int w)
 
 int is_macro()
 {
-    if (using_macro == 0) fprintf(f_lin, "%s // %d\n", itob(line_num+1,20), line_num+1);
     num_ins++;
+    if (using_macro == 0) fprintf(f_ltp, "%d %d\n", num_ins, line_num+1);
+
     return using_macro;
 }
 

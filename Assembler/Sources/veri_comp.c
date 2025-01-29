@@ -210,19 +210,15 @@ void build_pc_file()
     }
     fclose(input );
 
-    int top_ins; // guarda o numero de instrucoes no inicio do arquivo .asm
     int num_ins; // guarda o num total de instrucoes
 
-    // pega top_ins e num_ins no arquivo log.txt, depois do caractere #
-    sprintf(path, "%s/log.txt", temp_dir);
+    // pega num_ins no arquivo cmm_log.txt, depois do caractere #
+    sprintf(path, "%s/cmm_log.txt", temp_dir);
     input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "#\n") == 0)
         {
-            memset(texto, 0, sizeof(char) * 1001);
-             fgets(texto, 1001, input);
-            top_ins = atoi(texto);
             memset(texto, 0, sizeof(char) * 1001);
              fgets(texto, 1001, input);
             num_ins = atoi(texto);
@@ -246,23 +242,15 @@ void build_pc_file()
     fprintf(output, "reg [19:0] min [0:%d];\n\n", num_ins-1);
 
     // linetab eh o valor da linha atual na tabela
-    fprintf(output, "reg signed [20:0] linetab =-1;\n");
+    fprintf(output, "reg signed [19:0] linetab =-1;\n");
     // linetabs eh o valor atual registrado
-    fprintf(output, "reg signed [20:0] linetabs=-1;\n\n");
+    fprintf(output, "reg signed [19:0] linetabs=-1;\n\n");
 
     // le o arquivo gerado pelo compilador c com o conteudo da tabela
-    fprintf(output, "initial $readmemb(\"in2line.txt\", min);\n\n");
+    fprintf(output, "initial $readmemb(\"pc_sim_mem.txt\", min);\n\n");
 
-    // valores abaixo de top_ins sao instrucoes iniciais
-    // elas nao estao em .cmm
     fprintf(output, "always @ (posedge clk) begin\n");
-    fprintf(output, "	if (val <= %d-3)\n", top_ins);
-    fprintf(output, "       linetab <= -1;\n");
-    fprintf(output, "	else if (val == %d-2)\n",top_ins);
-    fprintf(output, "       linetab <= -2;\n");
-    fprintf(output, "	else if (val == %d-1)\n",top_ins);
-    fprintf(output, "		linetab <= -3;\n");
-    fprintf(output, "	else if (val < %d) linetab <= min[val-%d];\n", top_ins+num_ins, top_ins);
+    fprintf(output, "    if (val < %d) linetab <= min[val];\n", num_ins);
 
     // faz o shift register com os atrasos de val
     fprintf(output, "	valr1 <= val;\n");

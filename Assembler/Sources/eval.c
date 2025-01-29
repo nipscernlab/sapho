@@ -88,7 +88,7 @@ void add_data(int val)
     }
 }
 
-// funcao auxiliar que procura no arquivo log.txt se ...
+// funcao auxiliar que procura no arquivo cmm_log.txt se ...
 // char *va aponta para uma variavel declarada no .cmm
 // tambem retorna o tipo da variavel encontrada
 int is_var(char *va, int *tipo, int *is_global)
@@ -100,7 +100,7 @@ int is_var(char *va, int *tipo, int *is_global)
 
     // abre o arquivo de log
     char path[1024];
-    sprintf(path, "%s/log.txt", temp_dir);
+    sprintf(path, "%s/cmm_log.txt", temp_dir);
     FILE *input = fopen(path, "r");
 
     // pula as 3 primeiras linhas

@@ -141,8 +141,6 @@ void float_begin(FILE *f_asm)
 
 	fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
 	fclose (f_float);
-
-    top_ins = top_ins+20;
 }
 
 // incluir aqui, as macros de matematica que forem sendo criadas
@@ -197,10 +195,16 @@ void math_gen(char *fasm)
 void float_geni(char *fasm)
 {
     char path[1024];
+    char read[1024],write[1024];
 
     sprintf(path, "%s/%s", dir_tmp, "c2aux.asm");
     FILE *f_aux = fopen(path, "w");
     FILE *f_asm = fopen(fasm, "r");
+
+    sprintf(read , "%s/%s", dir_tmp, "line_temp.txt");
+    sprintf(write, "%s/%s", dir_tmp, "line_tmp.txt");
+    FILE *f_tpr = fopen(read , "r");
+    FILE *f_tpw = fopen(write, "w");
 
     char a;
 
@@ -208,6 +212,11 @@ void float_geni(char *fasm)
     do {a = fgetc(f_asm); if (a != EOF) fputc(a, f_aux);} while (a != EOF);
     fclose(f_aux);
     fclose(f_asm);
+
+    // copia todo o codigo original
+    do {a = fgetc(f_tpr); if (a != EOF) fputc(a, f_tpw);} while (a != EOF);
+    fclose(f_tpr);
+    fclose(f_tpw);
 
     sprintf(path, "%s/%s", dir_tmp, "c2aux.asm");
     f_aux = fopen(path, "r");
@@ -218,6 +227,19 @@ void float_geni(char *fasm)
     //agora recoloca o codigo original
     do {a = fgetc(f_aux); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
     fclose(f_aux);
+
+    f_tpr = fopen(write, "r");
+    f_tpw = fopen(read, "w");
+
+    for (int i=0;i<20;i++)
+        fprintf(f_tpw, "%d %d\n", i, -1);
+     num_ins += 20;
+
+    int add, data;
+    while (fscanf(f_tpr, "%d %d", &add, &data) != EOF)
+    {
+        fprintf(f_tpw, "%d %d\n", add+20, data);
+    }   
 
     sprintf(path, "%s/%s", dir_macro, "float_gen.asm");
         f_float  =    fopen  (path, "r");
@@ -271,6 +293,8 @@ void float_geni(char *fasm)
     }
 
     fclose(f_asm);
+    fclose(f_tpr);
+    fclose(f_tpw);
 }
 
 // gera constantes trigonometricas
