@@ -7,7 +7,10 @@
 #include "..\Headers\data_use.h"
 #include "..\Headers\diretivas.h"
 
+#include <string.h>
+
 void yyerror(char *);
+int  conta_linhas(char *texto);
 
 %}
 
@@ -113,11 +116,24 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 
 \n                   line_num++;
 
-{WS}                             ;       /* ignore whitespace   */
-"/*"((\*+[^/*])|([^*]))*\**"*/"  ;       /* comentario em bloco */
-"//"[^\n]*                       ;       /* comentario em linha */
+
+"/*"((\*+[^/*])|([^*]))*\**"*/"  {line_num += conta_linhas(yytext);} 
+
+{WS}                             ;  /* ignore whitespace   */
+"//"[^\n]*                       ;  /* comentario em linha */
 
 .                 {yyerror("Erro do Lexer!\n");}
 %%
 
 int yywrap(void) {return 1;}
+
+int conta_linhas(char *texto)
+{
+   int cnt =0;
+   for(int i=0;i<strlen(texto);i++)
+   {
+      if (texto[i] == '\n') cnt++;
+   }
+
+   return cnt;
+}

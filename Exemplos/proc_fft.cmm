@@ -25,7 +25,7 @@ void fft(int n)
     while (mmax < n)
     {
         istep = mmax*2;
-        w = 1.0;
+        w = 1.0 + 0.0i;
         m = 0;
         while (m < mmax)
         {
