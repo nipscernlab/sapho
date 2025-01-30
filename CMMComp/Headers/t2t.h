@@ -19,4 +19,6 @@ void float_geni (char * fasm);   // gera as instrucoes para float em ponto fixo 
 void float_genf (char * fasm);   // gera constantes para trigonometria
 void  math_gen  (char * fasm);   // gera as instrucoes para funcoes matematicas
 
+char *itob(int x, int w);
+
 #endif // T2T_H_INCLUDED

@@ -323,6 +323,8 @@ exp:       INUM                               {$$ = num2exp($1,1);}
 
 int main(int argc, char *argv[])
 {
+  // pega os argunentos -------------------------------------------------------
+
   yyin  = fopen(argv[1], "r"); // arquivo .cmm de entrada
   f_asm = fopen(argv[2], "w"); // arquivo .asm de saida
 
@@ -332,17 +334,17 @@ int main(int argc, char *argv[])
   // cria arquivos auxiliares -------------------------------------------------
 
   char path[1024];
-  sprintf(path, "%s/%s", dir_tmp,    "cmm_log.txt");  f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
-  sprintf(path, "%s/%s", dir_tmp, "pc_sim_mem.txt");  f_lin = fopen(path,"w"); // memoria passando de asm para cmm
-  sprintf(path, "%s/%s", dir_tmp,  "line_temp.txt");  f_ltp = fopen(path,"w");
+  sprintf(path, "%s/%s", dir_tmp,    "cmm_log.txt"); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
+  sprintf(path, "%s/%s", dir_tmp, "pc_sim_mem.txt"); f_lin = fopen(path,"w"); // memoria no pc_sim.v que passa de asm para cmm
 
-  // da problema com o reset se nao colocar isso se
-  // a primeira instrucao for CALL main. Resolver ...
-  fprintf(f_asm, "LOAD NULL\n");
+  // gera uma instrucao LOAD NULL no inicio (tentar tirar isso) ---------------
+
   num_ins = 1;
-  fprintf(f_ltp, "%d %d\n", num_ins, -1);
+  fprintf(f_asm, "LOAD NULL\n");
+  fprintf(f_lin, "%s\n", itob(-1,20));
 
-  // iniciaiza variaveis de estado
+  // iniciaiza variaveis de estado --------------------------------------------
+
   using_macro  = 0;
   exec_fft_use = 0;
   exec_fft_set = 0;
@@ -352,29 +354,39 @@ int main(int argc, char *argv[])
   mainok       = 0;
   itr_ok       = 0;
 
-  float_init (); // inicializa variaveis de estado pra float (t2t.c)
-	yyparse    (); // aqui a magica acontece!!
+  float_init(); // inicializa variaveis de estado pra float (t2t.c)
+
+  // executa o parse no arquivo .cmm ------------------------------------------
+
+	yyparse   (); // aqui a magica acontece!!
+
+  // terminou o parse, entao fecha os arquivos abertos ------------------------
 
 	fclose(yyin );
 	fclose(f_asm);
   fclose(f_lin);
-  fclose(f_ltp);
 
-	// carrega macros de ponto flutuante pra proc de ponto fixo
-	// caso precise (espero que nao)
-	if (fgen && prtype == 0) float_geni(argv[2]);
+  // checa se precisa adicionar macros no arquivo .asm ------------------------
+
+	if (fgen && prtype == 0) float_geni(argv[2]); // carrega macros de ponto flutuante pra proc de ponto fixo
 	if (mgen && prtype == 1) float_genf(argv[2]);
 	if (mgen           == 1)  math_gen (argv[2]);
 
-	// checa consistencia de todas as variaveis e funcoes
+	// checa consistencia de todas as variaveis e funcoes -----------------------
+  
 	check_var(); // (variaveis.c)
 
-  fprintf(f_log, "#\n%d\n", num_ins);
-  fclose(f_log);
+  // termina o arquivo de log do cmm ------------------------------------------
 
-  FILE *input  = fopen(argv[1], "r");
+  fprintf(f_log, "#\n%d\n", num_ins);
+  fclose (f_log);
+
+  // gera o arquivo de traducao pro codigo cmm --------------------------------
+
   sprintf(path, "%s/%s", dir_tmp, "trad_cmm.txt");
-  FILE *output = fopen(path, "w");
+  
+  FILE *output = fopen(path   , "w");
+  FILE *input  = fopen(argv[1], "r");
 
   char texto[1001] = "";
   char linha[1001];
@@ -391,19 +403,6 @@ int main(int argc, char *argv[])
   }
   fclose(input );
   fclose(output);
-
-  sprintf(path, "%s/%s", dir_tmp, "line_temp.txt");
-  f_ltp = fopen(path, "r");
-  sprintf(path, "%s/%s", dir_tmp, "pc_sim_mem.txt");
-  f_lin = fopen(path, "w");
-
-  int add, data;
-    while (fscanf(f_ltp, "%d %d", &add, &data) != EOF)
-    {
-        fprintf(f_lin, "%s // %d\n", itob(data,20), data);
-    } 
-  fclose(f_ltp);
-  fclose(f_lin);
 
 	return 0;
 }

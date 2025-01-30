@@ -6,7 +6,6 @@
 FILE *f_asm;
 FILE *f_log;
 FILE *f_lin;
-FILE *f_ltp;
 char pr_name[128];
 
 char dir_macro[1024];
@@ -24,7 +23,5 @@ void  use_macro     (char *file_name, int global);
 void  end_macro     ();
 int    is_macro     ();
 void use_inter      ();
-
-char *itob(int x, int w);
 
 #endif // DIRETIVAS_H_INCLUDED

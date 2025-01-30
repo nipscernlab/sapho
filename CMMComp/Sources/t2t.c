@@ -2,8 +2,10 @@
 
 #include "..\Headers\t2t.h"
 #include "..\Headers\diretivas.h"
+
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 FILE *f_float;
 
@@ -11,25 +13,26 @@ FILE *f_float;
 // funcoes auxiliares ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// inicializa as variaveis de estado para compilacao de ponto flutuante
-void float_init()
+// converte o inteiro x para binario de comprimento w
+// tentar mudar para conseguir converter int maior de 32 bits
+char *itob(int x, int w)
 {
-    fgen   = 0; // precisa gerar pf em software?
-    i2f    = 0; // gera macro int2float
-    f2i    = 0; // gera macro float2int
-    fadd   = 0; // gera macro de soma
-    fmlt   = 0; // gera macro de multiplicacao
-    fdiv   = 0; // gera macro de divisao
+	int z;
+    char *b = (char *) malloc(w+1);
+    b[0] = '\0';
 
-     mgen  = 0; // vai usar funcoes aritmeticas
-    fsqrt  = 0; // gera macro pra raiz quadrada (proc float)
-    fsqrti = 0; // gera macro pra raiz quadrada (proc int  )
-    fatan  = 0; // gera macro pra arco tangente (proc float)
-    fatani = 0; // gera macro pra arco tangente (proc int  )
+	int s = (w > 31) ? 31 : w;
+	if (w > 31)
+    {
+        for (z = 0; z < w- 31; z++)
+            if (x < 0) strcat(b,"1");
+            else       strcat(b,"0");
+    }
 
-    // valores otimos achados no trabalho do Manso
-    nbmant = 16;
-    nbexpo =  6;
+    for (z = pow(2,s-1); z > 0; z >>= 1)
+		strcat(b, ((x & z) == z) ? "1" : "0");
+
+    return b;
 }
 
 // converte um numero float (escrito em uma string) em meu float
@@ -93,6 +96,27 @@ void epsilon_taylor(char *inum, char *fnum)
 
     int     numi = f2mf(fnum);
     sprintf(inum, "%d", numi);
+}
+
+// inicializa as variaveis de estado para compilacao de ponto flutuante
+void float_init()
+{
+    fgen   = 0; // precisa gerar pf em software?
+    i2f    = 0; // gera macro int2float
+    f2i    = 0; // gera macro float2int
+    fadd   = 0; // gera macro de soma
+    fmlt   = 0; // gera macro de multiplicacao
+    fdiv   = 0; // gera macro de divisao
+
+     mgen  = 0; // vai usar funcoes aritmeticas
+    fsqrt  = 0; // gera macro pra raiz quadrada (proc float)
+    fsqrti = 0; // gera macro pra raiz quadrada (proc int  )
+    fatan  = 0; // gera macro pra arco tangente (proc float)
+    fatani = 0; // gera macro pra arco tangente (proc int  )
+
+    // valores otimos achados no trabalho do Manso
+    nbmant = 16;
+    nbexpo =  6;
 }
 
 // ----------------------------------------------------------------------------
@@ -201,7 +225,7 @@ void float_geni(char *fasm)
     FILE *f_aux = fopen(path, "w");
     FILE *f_asm = fopen(fasm, "r");
 
-    sprintf(read , "%s/%s", dir_tmp, "line_temp.txt");
+    sprintf(read , "%s/%s", dir_tmp, "pc_sim_mem.txt");
     sprintf(write, "%s/%s", dir_tmp, "line_tmp.txt");
     FILE *f_tpr = fopen(read , "r");
     FILE *f_tpw = fopen(write, "w");
@@ -232,13 +256,14 @@ void float_geni(char *fasm)
     f_tpw = fopen(read, "w");
 
     for (int i=0;i<20;i++)
-        fprintf(f_tpw, "%d %d\n", i, -1);
+        fprintf(f_tpw, "%s\n", itob(-1,20));
      num_ins += 20;
 
     int add, data;
-    while (fscanf(f_tpr, "%d %d", &add, &data) != EOF)
+    char use[64];
+    while (fscanf(f_tpr, "%s", use) != EOF)
     {
-        fprintf(f_tpw, "%d %d\n", add+20, data);
+        fprintf(f_tpw, "%s\n", use);
     }   
 
     sprintf(path, "%s/%s", dir_macro, "float_gen.asm");

@@ -23,10 +23,12 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     //if (mainok == 0)
     {
         fprintf(f_asm, "CALL main\n");
-        fprintf(f_ltp, "%d %d\n", ++num_ins, -2);
+        num_ins++;
+        fprintf(f_lin, "%s\n", itob(-2,20));
 
         fprintf(f_asm, "@fim JMP fim\n");
-        fprintf(f_ltp, "%d %d\n", ++num_ins, -3);
+        num_ins++;
+        fprintf(f_lin, "%s\n", itob(-3,20));
 
         mainok = 2; // funcao main foi chamada no inicio
     }
@@ -330,7 +332,8 @@ void func_ret(int id) // id -> id da funcao atual
         if (mainok == 0) // soh tem a funcao main
         {
              fprintf(f_asm, "@fim JMP fim\n");
-        fprintf(f_ltp, "%d %d\n", ++num_ins, -3);
+             num_ins++;
+        fprintf(f_lin, "%s\n", itob(-3,20));
         }
         else if (is_macro() == 0) fprintf(f_asm, "RETURN\n"); // tem subrotinas
 

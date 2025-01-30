@@ -2,6 +2,7 @@
 #include "..\Headers\variaveis.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\funcoes.h"
+
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -67,32 +68,10 @@ void end_macro()
         using_macro  = 0;
 }
 
-// converte o inteiro x para binario de comprimento w
-// tentar mudar para conseguir converter int maior de 32 bits
-char *itob(int x, int w)
-{
-	int z;
-    char *b = (char *) malloc(w+1);
-    b[0] = '\0';
-
-	int s = (w > 31) ? 31 : w;
-	if (w > 31)
-    {
-        for (z = 0; z < w- 31; z++)
-            if (x < 0) strcat(b,"1");
-            else       strcat(b,"0");
-    }
-
-    for (z = pow(2,s-1); z > 0; z >>= 1)
-		strcat(b, ((x & z) == z) ? "1" : "0");
-
-    return b;
-}
-
 int is_macro()
 {
     num_ins++;
-    if (using_macro == 0) fprintf(f_ltp, "%d %d\n", num_ins, line_num+1);
+    if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
 
     return using_macro;
 }
