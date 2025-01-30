@@ -98,6 +98,43 @@ void epsilon_taylor(char *inum, char *fnum)
     sprintf(inum, "%d", numi);
 }
 
+// cria um novo arquivo e copia o conteudo
+void copy_file(char *n_in, char *n_out)
+{
+    FILE *f_in  = fopen(n_in , "r");
+    FILE *f_out = fopen(n_out, "w");
+
+    char a;
+    do {a = fgetc(f_in); if (a != EOF) fputc(a, f_out);} while (a != EOF);
+
+    fclose(f_in );
+    fclose(f_out);
+}
+
+// concatena conteudo do arquivo read no arquivo write
+void fcat2end(char *n_read, char *n_write)
+{
+    FILE *f_in  = fopen(n_read , "r");
+    FILE *f_out = fopen(n_write, "a");
+
+    char a;
+    do {a = fgetc(f_in); if (a != EOF) fputc(a, f_out);} while (a != EOF);
+
+    fclose(f_in );
+    fclose(f_out);
+}
+
+// concatena, no inicio, conteudo do arquivo app no arquivo orig
+void fcat2begin(char *n_orig, char *n_app)
+{
+    char swap [1024];
+    sprintf(swap , "%s/%s", dir_tmp, "swap.txt");
+
+    copy_file(n_orig,  swap);
+    copy_file(n_app ,n_orig);
+    fcat2end (swap  ,n_orig);
+}
+
 // inicializa as variaveis de estado para compilacao de ponto flutuante
 void float_init()
 {
@@ -124,9 +161,10 @@ void float_init()
 // ----------------------------------------------------------------------------
 
 // deve ser incluido no comeco do arquivo asm (para proc ponto fixo)
-void float_begin(FILE *f_asm)
+void float_begin(char *fasm, char *pc_sim_mem)
 {
     char a;
+    FILE *f_asm = fopen(fasm, "w");
 
     // inicializacao de dados parametrizados ----------------------------------
 
@@ -164,7 +202,20 @@ void float_begin(FILE *f_asm)
 	do {          a = fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 
 	fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
+
 	fclose (f_float);
+    fclose (f_asm);
+
+    // arquivo de memoria do pc_sim.v -----------------------------------------
+
+    int soma_inst = 20; // tem que mudar se acrescentar mais instrucoes acima
+
+    FILE *f_mem = fopen(pc_sim_mem, "w");
+
+    for (int i=0;i<soma_inst;i++) fprintf(f_mem, "%s\n", itob(-1,20));
+    num_ins += soma_inst;
+
+    fclose(f_mem);
 }
 
 // incluir aqui, as macros de matematica que forem sendo criadas
@@ -215,111 +266,60 @@ void math_gen(char *fasm)
     fclose(f_asm);
 }
 
-// gera codigo padrao para rodar float no proc ponto fixo
+// gera codigo asm para rodar float no proc ponto fixo
 void float_geni(char *fasm)
 {
-    char path[1024];
-    char read[1024],write[1024];
+    char tasm[1024];
+    char tmem[1024];
+    char fmem[1024];
 
-    sprintf(path, "%s/%s", dir_tmp, "c2aux.asm");
-    FILE *f_aux = fopen(path, "w");
-    FILE *f_asm = fopen(fasm, "r");
+    sprintf  (tasm, "%s/%s", dir_tmp,       "tasm.txt");
+    sprintf  (tmem, "%s/%s", dir_tmp,       "tmem.txt");
+    sprintf  (fmem, "%s/%s", dir_tmp, "pc_sim_mem.txt");
 
-    sprintf(read , "%s/%s", dir_tmp, "pc_sim_mem.txt");
-    sprintf(write, "%s/%s", dir_tmp, "line_tmp.txt");
-    FILE *f_tpr = fopen(read , "r");
-    FILE *f_tpw = fopen(write, "w");
+    // cria os cabecalhos -----------------------------------------------------
 
-    char a;
+    float_begin(tasm,tmem);
 
-    // copia todo o codigo original em assembler para o arquivo auxiliar
-    do {a = fgetc(f_asm); if (a != EOF) fputc(a, f_aux);} while (a != EOF);
-    fclose(f_aux);
-    fclose(f_asm);
+    // coloca os cabecalhos no inicio dos arquivos ----------------------------
 
-    // copia todo o codigo original
-    do {a = fgetc(f_tpr); if (a != EOF) fputc(a, f_tpw);} while (a != EOF);
-    fclose(f_tpr);
-    fclose(f_tpw);
+    fcat2begin(fasm,tasm);
+    fcat2begin(fmem,tmem);
 
-    sprintf(path, "%s/%s", dir_tmp, "c2aux.asm");
-    f_aux = fopen(path, "r");
-    f_asm = fopen(fasm, "w");
+    // coloca o resto que precisa no final do asm -----------------------------
 
-    // copia o cabecalho para geracao de float em ponto fixo
-    float_begin(f_asm);
-    //agora recoloca o codigo original
-    do {a = fgetc(f_aux); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-    fclose(f_aux);
-
-    f_tpr = fopen(write, "r");
-    f_tpw = fopen(read, "w");
-
-    for (int i=0;i<20;i++)
-        fprintf(f_tpw, "%s\n", itob(-1,20));
-     num_ins += 20;
-
-    int add, data;
-    char use[64];
-    while (fscanf(f_tpr, "%s", use) != EOF)
-    {
-        fprintf(f_tpw, "%s\n", use);
-    }   
-
-    sprintf(path, "%s/%s", dir_macro, "float_gen.asm");
-        f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_gen.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-	                  fclose (f_float);
+     sprintf(tasm, "%s/%s", dir_macro, "float_gen.asm");
+    fcat2end(tasm,fasm);
 
     if (i2f)
     {
-        sprintf(path, "%s/%s", dir_macro, "float_i2f.asm");
-        f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_i2f.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-	                  fclose (f_float);
+         sprintf(tasm, "%s/%s", dir_macro, "float_i2f.asm");
+        fcat2end(tasm,fasm);
     }
 
 	if (f2i)
     {
-        sprintf(path, "%s/%s", dir_macro, "float_f2i.asm");
-        f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_f2i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-	                  fclose (f_float);
+         sprintf(tasm, "%s/%s", dir_macro, "float_f2i.asm");
+        fcat2end(tasm,fasm);
     }
 
     if (fadd)
     {
-        sprintf(path, "%s/%s", dir_macro, "float_soma.asm");
-        f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_soma.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-	                  fclose (f_float);
+         sprintf(tasm, "%s/%s", dir_macro, "float_soma.asm");
+        fcat2end(tasm,fasm);
     }
 
     if (fmlt)
     {
-        sprintf(path, "%s/%s", dir_macro, "float_mult.asm");
-        f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_mult.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-	                  fclose (f_float);
+         sprintf(tasm, "%s/%s", dir_macro, "float_mult.asm");
+        fcat2end(tasm,fasm);
     }
 
     if (fdiv)
     {
-        sprintf(path, "%s/%s", dir_macro, "float_div.asm");
-        f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_div.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
-	                  fclose (f_float);
+         sprintf(tasm, "%s/%s", dir_macro, "float_div.asm");
+        fcat2end(tasm,fasm);
     }
-
-    fclose(f_asm);
-    fclose(f_tpr);
-    fclose(f_tpw);
 }
 
 // gera constantes trigonometricas

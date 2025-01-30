@@ -14,10 +14,11 @@ int nbexpo;                      // numero de bits de expoente
 
 int  f2mf       (char  *va  );   // converte float para meu float
 void float_init (           );   // inicializa as variaveis acima
-void float_begin(FILE *f_asm);   // inicializacao de variaveis float no comeco do .asm
 void float_geni (char * fasm);   // gera as instrucoes para float em ponto fixo que precisam
 void float_genf (char * fasm);   // gera constantes para trigonometria
 void  math_gen  (char * fasm);   // gera as instrucoes para funcoes matematicas
+
+void float_begin(char *fasm, char *pv_sim_mem);
 
 char *itob(int x, int w);
 

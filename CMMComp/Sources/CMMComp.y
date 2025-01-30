@@ -323,7 +323,7 @@ exp:       INUM                               {$$ = num2exp($1,1);}
 
 int main(int argc, char *argv[])
 {
-  // pega os argunentos -------------------------------------------------------
+  // pega os argumentos -------------------------------------------------------
 
   yyin  = fopen(argv[1], "r"); // arquivo .cmm de entrada
   f_asm = fopen(argv[2], "w"); // arquivo .asm de saida
@@ -360,7 +360,7 @@ int main(int argc, char *argv[])
 
 	yyparse   (); // aqui a magica acontece!!
 
-  // terminou o parse, entao fecha os arquivos abertos ------------------------
+  // terminou o parse, entao libera arquivos pra pos-processamento ------------
 
 	fclose(yyin );
 	fclose(f_asm);
@@ -378,7 +378,7 @@ int main(int argc, char *argv[])
 
   // termina o arquivo de log do cmm ------------------------------------------
 
-  fprintf(f_log, "#\n%d\n", num_ins);
+  fprintf(f_log, "#\n%d\n", num_ins); // numero de instrucoes vem na linha depois de #
   fclose (f_log);
 
   // gera o arquivo de traducao pro codigo cmm --------------------------------
@@ -388,19 +388,19 @@ int main(int argc, char *argv[])
   FILE *output = fopen(path   , "w");
   FILE *input  = fopen(argv[1], "r");
 
-  char texto[1001] = "";
-  char linha[1001];
-  fputs("-1 INTERNO\n", output);
-  fputs("-2 void main();\n", output);
-  fputs("-3 FIM\n", output);
+  char linha[1001], texto[1001] = "";
+  fputs("-1 INTERNO\n"     , output); // codigo para inicio do arquivo
+  fputs("-2 void main();\n", output); // codigo pra CALL main
+  fputs("-3 FIM\n"         , output); // codigo para @fim JMP fim
 
   int cnt = 1;
   while(fgets(texto, 1001, input) != NULL)
   {
     sprintf(linha, "%d %s", cnt++, texto);
       fputs(linha, output);
-      memset(texto, 0, sizeof(char) * 1001);
+     memset(texto, 0, sizeof(char) * 1001);
   }
+
   fclose(input );
   fclose(output);
 
