@@ -190,7 +190,7 @@ void build_tb_file()
 void build_pc_file()
 {
     char path[1024];
-    sprintf(path, "%s/pc_sim.v", temp_dir);
+    sprintf(path, "%s/pc_%s.v", temp_dir,name);
 
     FILE *input;
     FILE *output = fopen(path, "w");
@@ -247,7 +247,7 @@ void build_pc_file()
     fprintf(output, "reg signed [19:0] linetabs=-1;\n\n");
 
     // le o arquivo gerado pelo compilador c com o conteudo da tabela
-    fprintf(output, "initial $readmemb(\"pc_sim_mem.txt\", min);\n\n");
+    fprintf(output, "initial $readmemb(\"pc_%s_mem.txt\", min);\n\n", name);
 
     fprintf(output, "always @ (posedge clk) begin\n");
     fprintf(output, "    if (val < %d) linetab <= min[val];\n", num_ins);
@@ -277,7 +277,7 @@ void build_pc_file()
 void build_dt_file()
 {
     char path[1024];
-    sprintf(path, "%s/mem_data_sim.v", temp_dir);
+    sprintf(path, "%s/mem_data_%s.v", temp_dir,name);
 
     FILE *input;
     FILE *output = fopen(path, "w");
@@ -287,6 +287,10 @@ void build_dt_file()
     // copia o conteudo de mem_data.v
     sprintf(path, "%s/mem_data.v", hdl_dir);
     input = fopen(path, "r");
+
+    //fgets(texto, 1001, input);
+    //fprintf(output, "module mem_data_%s\n", name);
+
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "endmodule") != 0)

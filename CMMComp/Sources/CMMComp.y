@@ -334,8 +334,8 @@ int main(int argc, char *argv[])
   // cria arquivos auxiliares -------------------------------------------------
 
   char path[1024];
-  sprintf(path, "%s/%s", dir_tmp,    "cmm_log.txt"); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
-  sprintf(path, "%s/%s", dir_tmp, "pc_sim_mem.txt"); f_lin = fopen(path,"w"); // memoria no pc_sim.v que passa de asm para cmm
+  sprintf(path,   "%s/cmm_log.txt", dir_tmp         ); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
+  sprintf(path, "%s/pc_%s_mem.txt", dir_tmp, argv[5]); f_lin = fopen(path,"w"); // memoria no pc.v que passa de asm para cmm
 
   // gera uma instrucao LOAD NULL no inicio (tentar tirar isso) ---------------
 

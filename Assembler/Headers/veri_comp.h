@@ -25,5 +25,5 @@ void set_float (int n);
 
 void build_vv_file(); // cria arquivo .v com uma instancia do processador
 void build_tb_file(); // cria arquivo de testbench
-void build_pc_file(); // cria arquivo pc_sim.v para (program couter para simulacao)
+void build_pc_file(); // cria arquivo pc.v para (program couter para simulacao)
 void build_dt_file(); // cria arquivo data_mem_sim.v
