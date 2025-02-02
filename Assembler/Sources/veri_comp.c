@@ -163,21 +163,33 @@ void build_tb_file()
 
     int i;
     for(i=0;i<nmioin;i++)
+    {
     fprintf(f_veri, "reg signed [%d:0] in_%d = 0; // coloque aqui a sua entrada\n", s1, i);
+    fprintf(f_veri, "reg req_in_%d = 0;\n", i);
+    }
     fprintf(f_veri,"\n");
 
     for(i=0;i<nuioou;i++)
-    fprintf(f_veri, "reg signed [%d:0] out_%d = 0;\n", s2, i);
+    {
+    fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", s2, i);
+    fprintf(f_veri, "reg out_en_%d = 0;\n", i);
+    }
 
     fprintf(f_veri, "\nalways @ (*) begin\n");
     fprintf(f_veri, "   proc_io_in = 0;\n");
     for(i=0;i<nmioin;i++)
+    {
     fprintf(f_veri, "   if (proc_req_in == %d) proc_io_in = in_%d;\n", (int)pow(2,i),i);
+    fprintf(f_veri, "   req_in_%d = proc_req_in == %d;\n", i, (int)pow(2,i),i);
+    }
     fprintf(f_veri, "end\n");
 
     fprintf(f_veri, "\nalways @ (*) begin\n");
     for(i=0;i<nuioou;i++)
-    fprintf(f_veri, "   if (proc_out_en == %d) out_%d <= proc_io_out;\n", (int)pow(2,i), i);
+    {
+    fprintf(f_veri, "   if (proc_out_en == %d) out_sig_%d <= proc_io_out;\n", (int)pow(2,i), i);
+    fprintf(f_veri, "   out_en_%d = proc_out_en == %d;\n", i, (int)pow(2,i),i);
+    }
 
     fprintf(f_veri, "end\n");
 

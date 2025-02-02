@@ -26,6 +26,8 @@ set HDL_DIR=%INST_DIR%\HDL
 set MAC_DIR=%INST_DIR%\Macros
 set SCR_DIR=%INST_DIR%\Scripts
 set TMP_DIR=%INST_DIR%\Temp
+
+:: Arvore de pastas do projeto sendo executado
 set USER_DIR=%TESTE_DIR%\Projetos
 set PROJ_DIR=%USER_DIR%\%PROJET%
 set TOPL_DIR=%PROJ_DIR%\TopLevel
@@ -120,7 +122,7 @@ for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "TOP_V=!TOP_V!%TOPL_DIR%\%
 :: lista arquivos da pasta Hardware dos processadores encontrados
 for %%a in (%PROC_LIST%) do set "PRO_V=!PRO_V!%PROJ_DIR%\%%a\Hardware\%%a.v "    
 
-iverilog -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
+iverilog -v -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -131,7 +133,7 @@ for %%a in (%PROC_LIST%) do cp %PROJ_DIR%\%%a\Hardware\%%a_data.mif .\
 
 endlocal
 
-vvp %PROJET%
+vvp -v %PROJET% -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
@@ -139,6 +141,6 @@ cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
 
-if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd --script=%SCR_DIR%\gtkwave_init.tcl)
+if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd)
 
 cd %ROOT_DIR%

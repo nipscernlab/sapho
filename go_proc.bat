@@ -119,7 +119,7 @@ cp %UDIR%_inst.mif %TMP_PRO%
 
 cd %TMP_PRO%
 
-vvp %PROC%
+vvp %PROC% -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 

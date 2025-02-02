@@ -1,10 +1,28 @@
-# Separador de I/O ------------------------------------------------------------
+# Separador de Sinais ---------------------------------------------------------
 
 gtkwave::/Edit/Insert_Comment {Sinais *************}
 
-# Insere o clock e o reset --------------------------------------------------------------
+# Insere o clock e o reset ----------------------------------------------------
 
 set nfacs [gtkwave::getNumFacs]
+
+for {set i 0} {$i < $nfacs } {incr i} {
+    set clk [gtkwave::getFacName $i]
+
+    set index [string first core.clk $clk]
+    if {$index != -1} {
+        break
+    }
+}
+
+for {set i 0} {$i < $nfacs } {incr i} {
+    set rst [gtkwave::getFacName $i]
+
+    set index [string first core.rst $rst]
+    if {$index != -1} {
+        break
+    }
+}
 
 for {set i 0} {$i < $nfacs } {incr i} {
     set f_out_en [gtkwave::getFacName $i]
@@ -24,7 +42,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
     }
 }
 
-set filter [list clk rst $f_req_in $f_out_en]
+set filter [list $clk $rst $f_req_in $f_out_en]
 gtkwave::addSignalsFromList $filter
 
 # Separador de I/O ------------------------------------------------------------
@@ -34,39 +52,75 @@ gtkwave::/Edit/Insert_Comment {I/O ****************}
 # Sinais de entrada -----------------------------------------------------------
 
 set j 0
+set req_in [list]
+set entrada [list]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
+    set index [string first tb.req_in $facname]
+    if {$index != -1} {
+        lappend req_in $facname
+        incr j
+    }
+
     set index [string first tb.in_ $facname]
     if {$index != -1} {
-        set filter [list $facname]
-        gtkwave::addSignalsFromList $filter
+        lappend entrada $facname
+    }
+}
+
+for {set i 0} {$i < $j } {incr i} {
+    set filter [list [lindex $req_in $i]]
+    gtkwave::addSignalsFromList $filter
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list req_in $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
+
+    set filter [list [lindex $entrada $i]]
+    gtkwave::addSignalsFromList $filter
         gtkwave::highlightSignalsFromList $filter
         gtkwave::/Edit/Data_Format/Signed_Decimal
         gtkwave::/Edit/Color_Format/Yellow
-        set nome [list Entrada $j]
+        set nome [list Entrada $i]
         gtkwave::/Edit/Alias_Highlighted_Trace $nome
-        incr j
-    }
 }
 
 # Sinais de saida -------------------------------------------------------------
 
 set j 0
+set out_en [list]
+set saida [list]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
-    set index [string first tb.out_ $facname]
+    set index [string first tb.out_en $facname]
     if {$index != -1} {
-        set filter [list $facname]
-        gtkwave::addSignalsFromList $filter
-        gtkwave::highlightSignalsFromList $filter
-        gtkwave::/Edit/Data_Format/Signed_Decimal
-        gtkwave::/Edit/Color_Format/Orange
-        set nome [list Saída $j]
-        gtkwave::/Edit/Alias_Highlighted_Trace $nome
+        lappend out_en $facname
         incr j
     }
+
+    set index [string first tb.out_sig $facname]
+    if {$index != -1} {
+        lappend saida $facname
+    }
+}
+
+for {set i 0} {$i < $j } {incr i} {
+    set filter [list [lindex $out_en $i]]
+    gtkwave::addSignalsFromList $filter
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list out_en $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
+
+    set filter [list [lindex $saida $i]]
+    gtkwave::addSignalsFromList $filter
+        gtkwave::highlightSignalsFromList $filter
+        gtkwave::/Edit/Data_Format/Signed_Decimal
+        gtkwave::/Edit/Color_Format/Yellow
+        set nome [list Saída $i]
+        gtkwave::/Edit/Alias_Highlighted_Trace $nome
 }
 
 # Separador de Instrucoes -----------------------------------------------------
@@ -158,6 +212,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 set v_int [gtkwave::setCurrentTranslateProc f2i_gtkw.exe]
 gtkwave::addSignalsFromList $var_int
 gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Color_Format/Orange
 gtkwave::installProcFilter $v_int
 gtkwave::/Edit/UnHighlight_All
 
@@ -220,6 +275,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 set v_float [gtkwave::setCurrentTranslateProc float2gtkw.exe]
 gtkwave::addSignalsFromList $var_float
 gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Color_Format/Orange
 gtkwave::installProcFilter $v_float
 gtkwave::/Edit/UnHighlight_All
 
@@ -282,6 +338,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 set v_comp [gtkwave::setCurrentTranslateProc comp2gtkw.exe]
 gtkwave::addSignalsFromList $var_comp
 gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Color_Format/Orange
 gtkwave::installProcFilter $v_comp
 gtkwave::/Edit/UnHighlight_All
 
