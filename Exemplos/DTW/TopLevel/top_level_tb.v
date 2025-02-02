@@ -30,11 +30,15 @@ fork
 	#40 rst_geral <= 1'b0;
 join
 
-// Teste do processador
-initial
-fork
-	data_in1 <= $fopen("sinal_harm_q.txt", "r");
-join
+initial begin
+	$dumpfile("top_level_tb.vcd");
+	$dumpvars(0,top_level_tb);
+	#4000000 $finish;
+end
+
+reg signed [15:0] min [0:639];
+reg [9:0] cnt = 0;
+initial $readmemb("sinal_harm_q.mif", min);
 
 always @(posedge clk)
 begin
@@ -42,8 +46,9 @@ begin
 	if (rst_proc)
 	begin
 		// Coloca o dado no barramento
-		$fdisplay(data_in1, data); 
 		//$fscanf(data_in1, "%d", data);
+		data <= min[cnt];
+		cnt <= cnt+1;
 		// Pulso no write req da FIFO
 		wrreq <= 1'b1;
 		#5 wrreq<= 1'b0;

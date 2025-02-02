@@ -1,0 +1,35 @@
+[*]
+[*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
+[*] Sat Feb 01 13:34:25 2025
+[*]
+[dumpfile] "C:\Users\lucia\Documents\sapho-p\Teste\saphoComponents\Temp\top_level_tb.vcd"
+[dumpfile_mtime] "Sat Feb 01 13:29:58 2025"
+[dumpfile_size] 456509009
+[savefile] "C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\dtw.gtkw"
+[timestart] 0
+[size] 1440 829
+[pos] -113 -113
+*-29.683228 3945000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top_level_tb.
+[treeopen] top_level_tb.top_level_inst.
+[sst_width] 197
+[signals_width] 169
+[sst_expanded] 1
+[sst_vpaned_height] 234
+@28
+top_level_tb.clk
+top_level_tb.rst_geral
+@8420
+top_level_tb.data[15:0]
+@20000
+-
+-
+@8420
+top_level_tb.top_level_inst.ProcZeroCross_inst.out4[31:0]
+@20000
+-
+-
+@420
+top_level_tb.top_level_inst.ProcDTWv4_inst.out1[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
