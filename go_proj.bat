@@ -15,7 +15,7 @@ rmdir %TESTE_DIR% /s /q
 set PROJET=DTW
 set PROC_LIST=ZeroCross ProcDTW
 set TB=top_level_tb
-set GTKW=dtw.gtkw
+set GTKW=errado.gtkw
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
 
@@ -141,6 +141,8 @@ cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
 
-if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd)
+echo %PROC_LIST%>proc_list.txt
+
+if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
 
 cd %ROOT_DIR%

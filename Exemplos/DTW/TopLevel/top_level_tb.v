@@ -33,7 +33,7 @@ join
 initial begin
 	$dumpfile("top_level_tb.vcd");
 	$dumpvars(0,top_level_tb);
-	#4000000 $finish;
+	#400000 $finish;
 end
 
 reg signed [15:0] min [0:639];

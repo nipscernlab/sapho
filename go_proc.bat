@@ -14,8 +14,8 @@ rmdir %TESTE_DIR% /s /q
 
 set PROJET=FFT
 set PROC=proc_fft
-set TB=proc_fft_tb
-set GTKW=config.gtkw
+set TB=errado
+set GTKW=errado.gtkw
 set FRE_CLK=100
 set NUM_CLK=20000
 
@@ -107,15 +107,22 @@ ASMComp.exe %ASM_FILE% %HARD_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK%
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
-set UDIR=%HARD_DIR%\%PROC%
+set UPROC=%HARD_DIR%\%PROC%
 cd  %HDL_DIR%
 
-iverilog -s %TB% -o %TMP_PRO%\%PROC% %TMP_PRO%\%TB%.v %UDIR%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
+if exist %SIMU_DIR%\%TB%.v (
+    set TB_MOD=%TB%
+) else (
+    cp %TMP_PRO%\%PROC%_tb.v %SIMU_DIR%
+    set TB_MOD=%PROC%_tb
+)
+
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC% %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
-cp %UDIR%_data.mif %TMP_PRO%
-cp %UDIR%_inst.mif %TMP_PRO%
+cp %UPROC%_data.mif %TMP_PRO%
+cp %UPROC%_inst.mif %TMP_PRO%
 
 cd %TMP_PRO%
 
@@ -127,6 +134,6 @@ cp %BIN_DIR%\float2gtkw.exe %TMP_PRO%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_PRO%
 
-if exist %SIMU_DIR%\%GTKW% (gtkwave %SIMU_DIR%\%GTKW%) else (gtkwave %TB%.vcd --script=%SCR_DIR%\gtkwave_init.tcl)
+if exist %SIMU_DIR%\%GTKW% (gtkwave %SIMU_DIR%\%GTKW%) else (gtkwave %TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
 
 cd %ROOT_DIR%

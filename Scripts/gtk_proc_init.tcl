@@ -2,44 +2,32 @@
 
 gtkwave::/Edit/Insert_Comment {Sinais *************}
 
-# Insere o clock e o reset ----------------------------------------------------
+# Insere sinais ---------------------------------------------------------------
 
 set nfacs [gtkwave::getNumFacs]
 
 for {set i 0} {$i < $nfacs } {incr i} {
-    set clk [gtkwave::getFacName $i]
-
-    set index [string first core.clk $clk]
-    if {$index != -1} {
-        break
-    }
+    set  clk   [gtkwave::getFacName $i]
+    set  index [string first core.clk $clk]
+    if {$index != -1} break
 }
 
 for {set i 0} {$i < $nfacs } {incr i} {
-    set rst [gtkwave::getFacName $i]
-
-    set index [string first core.rst $rst]
-    if {$index != -1} {
-        break
-    }
+    set  rst   [gtkwave::getFacName $i]
+    set  index [string first core.rst $rst]
+    if {$index != -1} break
 }
 
 for {set i 0} {$i < $nfacs } {incr i} {
-    set f_out_en [gtkwave::getFacName $i]
-
-    set index [string first id.out_en $f_out_en]
-    if {$index != -1} {
-        break
-    }
+    set  f_req_in [gtkwave::getFacName $i]
+    set  index    [string first id.req_in $f_req_in]
+    if {$index != -1} break
 }
 
 for {set i 0} {$i < $nfacs } {incr i} {
-    set f_req_in [gtkwave::getFacName $i]
-
-    set index [string first id.req_in $f_req_in]
-    if {$index != -1} {
-        break
-    }
+    set  f_out_en [gtkwave::getFacName $i]
+    set  index    [string first id.out_en $f_out_en]
+    if {$index != -1} break
 }
 
 set filter [list $clk $rst $f_req_in $f_out_en]
@@ -52,7 +40,7 @@ gtkwave::/Edit/Insert_Comment {I/O ****************}
 # Sinais de entrada -----------------------------------------------------------
 
 set j 0
-set req_in [list]
+set req_in  [list]
 set entrada [list]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
@@ -79,11 +67,11 @@ for {set i 0} {$i < $j } {incr i} {
 
     set filter [list [lindex $entrada $i]]
     gtkwave::addSignalsFromList $filter
-        gtkwave::highlightSignalsFromList $filter
-        gtkwave::/Edit/Data_Format/Signed_Decimal
-        gtkwave::/Edit/Color_Format/Yellow
-        set nome [list Entrada $i]
-        gtkwave::/Edit/Alias_Highlighted_Trace $nome
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Data_Format/Signed_Decimal
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list Entrada $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
 }
 
 # Sinais de saida -------------------------------------------------------------
@@ -359,5 +347,6 @@ for {set i 0} {$i < $var_n } {incr i} {
 }  
 
 # Visualizacao ----------------------------------------------------------------
+
 gtkwave::/Time/Zoom/Zoom_Best_Fit
 gtkwave::/View/Left_Justified_Signals
