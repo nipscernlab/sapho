@@ -13,11 +13,7 @@ foreach proc $proc_list {
 
 # Separador de processadores --------------------------------------------------
 
-gtkwave::/Edit/Insert_Comment "### Proc. $proc"
-
-# Separador de Sinais ---------------------------------------------------------
-
-gtkwave::/Edit/Insert_Comment {Sinais *************}
+gtkwave::/Edit/Insert_Comment "###### $proc"
 
 # Insere sinais ---------------------------------------------------------------
 
@@ -39,25 +35,16 @@ for {set i 0} {$i < $nfacs } {incr i} {
     if {$proc_id != -1 && $index != -1} break
 }
 
-# insere req_in
+# insere interrupcao
 for {set i 0} {$i < $nfacs } {incr i} {
-    set f_req_in [gtkwave::getFacName $i]
+    set itr [gtkwave::getFacName $i]
 
-    set  proc_id [string first $proc $f_req_in]
-    set  index   [string first id.req_in $f_req_in]
+    set  proc_id [string first $proc $itr]
+    set  index   [string first core.itr $itr]
     if {$proc_id != -1 && $index != -1} break
 }
 
-# insere out_en
-for {set i 0} {$i < $nfacs } {incr i} {
-    set f_out_en [gtkwave::getFacName $i]
-
-    set  proc_id [string first $proc $f_out_en]
-    set  index   [string first id.out_en $f_out_en]
-    if {$proc_id != -1 && $index != -1} break
-}
-
-set filter [list $clk $rst $f_req_in $f_out_en]
+set filter [list $clk $rst $itr]
 gtkwave::addSignalsFromList $filter
 
 # Separador de I/O ------------------------------------------------------------
@@ -65,6 +52,80 @@ gtkwave::addSignalsFromList $filter
 gtkwave::/Edit/Insert_Comment {I/O ****************}
 
 # Sinais de entrada -----------------------------------------------------------
+
+set j 0
+set req_in [list]
+set entrada [list]
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first "$proc.req_in_sim_" $facname]
+    if {$proc_id != -1 && $index != -1} {
+        lappend req_in $facname
+        incr j
+    }
+
+    set index [string first "$proc.in_sim_" $facname]
+    if {$proc_id != -1 && $index != -1} {
+        lappend entrada $facname
+    }
+}
+
+for {set i 0} {$i < $j } {incr i} {
+    set filter [list [lindex $req_in $i]]
+    gtkwave::addSignalsFromList $filter
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list req_in $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
+
+    set filter [list [lindex $entrada $i]]
+    gtkwave::addSignalsFromList $filter
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Data_Format/Signed_Decimal
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list Entrada $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
+}
+
+# Sinais de saida -------------------------------------------------------------
+
+set j 0
+set out_en [list]
+set saida [list]
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first "$proc.out_en_sim_" $facname]
+    if {$proc_id != -1 && $index != -1} {
+        lappend out_en $facname
+        incr j
+    }
+
+    set index [string first "$proc.out_sig" $facname]
+    if {$proc_id != -1 && $index != -1} {
+        lappend saida $facname
+    }
+}
+
+for {set i 0} {$i < $j } {incr i} {
+    set filter [list [lindex $out_en $i]]
+    gtkwave::addSignalsFromList $filter
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list out_en $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
+
+    set filter [list [lindex $saida $i]]
+    gtkwave::addSignalsFromList $filter
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Data_Format/Signed_Decimal
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list Saída $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
+}
 
 }
 

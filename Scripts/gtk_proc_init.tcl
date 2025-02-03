@@ -104,11 +104,11 @@ for {set i 0} {$i < $j } {incr i} {
 
     set filter [list [lindex $saida $i]]
     gtkwave::addSignalsFromList $filter
-        gtkwave::highlightSignalsFromList $filter
-        gtkwave::/Edit/Data_Format/Signed_Decimal
-        gtkwave::/Edit/Color_Format/Yellow
-        set nome [list Saída $i]
-        gtkwave::/Edit/Alias_Highlighted_Trace $nome
+    gtkwave::highlightSignalsFromList $filter
+    gtkwave::/Edit/Data_Format/Signed_Decimal
+    gtkwave::/Edit/Color_Format/Yellow
+    set nome [list Saída $i]
+    gtkwave::/Edit/Alias_Highlighted_Trace $nome
 }
 
 # Separador de Instrucoes -----------------------------------------------------
