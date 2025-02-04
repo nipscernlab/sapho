@@ -103,7 +103,7 @@ CMMComp.exe %CMM_FILE% %ASM_FILE% %MAC_DIR% %TMP_PRO% %PROC%
 
 :: Executa o compilador Assembler ---------------------------------------------
 
-ASMComp.exe %ASM_FILE% %HARD_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK%
+ASMComp.exe %ASM_FILE% %HARD_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 

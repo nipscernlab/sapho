@@ -107,6 +107,7 @@ int main(int argc, char *argv[])
 
 	clk_frq =  atoi(argv[5]);        // frequencia do clock  de simulacao
 	clk_num =  atoi(argv[6]);        // numero     de clocks da simulacao
+	sim_typ =  atoi(argv[7]);        // 0 pra 1 proc apenas, 1 para multicore
 
     yyin = fopen(argv[1], "r");      // primeiro argumento eh o arquivo .asm de entrada
 	eval_init(1);                    // inicializa fase de pre-processamento (pp)

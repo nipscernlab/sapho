@@ -103,7 +103,7 @@ cd  %BIN_DIR%
 :: Executa o compilador Assembler ---------------------------------------------
 
 (for %%i in (%PROC_LIST%) do (
-    ASMComp.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i\Hardware %HDL_DIR% %TMP_DIR%\%%i 0 0
+    ASMComp.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i\Hardware %HDL_DIR% %TMP_DIR%\%%i 0 0 1
 ))
 
 :: Gera o testbench com o Icarus ----------------------------------------------
@@ -120,10 +120,13 @@ for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "HDL_V=!HDL_V!%HDL_DIR%\%%
 dir %TOPL_DIR%\*.v /b > f_list.txt
 for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "TOP_V=!TOP_V!%TOPL_DIR%\%%a "
 
-:: lista arquivos da pasta Hardware dos processadores encontrados
-for %%a in (%PROC_LIST%) do set "PRO_V=!PRO_V!%PROJ_DIR%\%%a\Hardware\%%a.v "    
+:: lista arquivos dos processadores encontrados (simulacao)
+:: nao vai precisar disso quando eu copiar todos os arqivos da pasta temp
+for %%a in (%PROC_LIST%) do set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a_sim.v "  
 
 iverilog -v -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
+
+for %%a in (%PROC_LIST%) do cp %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulation
 
 :: Roda o testbench com o vvp -------------------------------------------------
 

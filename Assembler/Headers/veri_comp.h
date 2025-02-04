@@ -7,6 +7,7 @@ char  hdl_dir[1024]; // diretorio da pasta HDL
 
 int clk_frq;         // frequencia do cloak (em MHz) para a simulacao
 int clk_num;         // num de clocks maximo a simular
+int sim_typ;         // tipo de simulacao (um proc ou multicore)
 
 void    set_name(char *va);
 char  *get_dname();

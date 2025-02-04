@@ -52,6 +52,72 @@ char *get_tb_name()
     return  tmp;
 }
 
+// cria arquivo de simulacao para o proc
+// eh usado com multicore
+void build_proc_sim()
+{
+    char path[1024];
+    sprintf(path, "%s/%s_sim.v", temp_dir,name);
+
+    FILE *input;
+    FILE *output = fopen(path, "w");
+
+    char texto[1001] = "";
+
+    // copia o conteudo do processador
+    sprintf(path, "%s/%s.v", hard_dir, name);
+    input = fopen(path, "r");
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if(strcmp(texto, "endmodule") != 0)
+        {
+            fputs(texto, output);
+        }
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+    fclose(input );
+
+    int s1 = (float_point) ? nbmant-1      : nbits-1;
+    int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
+
+    fprintf(output, "// Simulacao ------------------------------------------------------------------\n\n");
+
+    int i;
+
+    for(i=0;i<nmioin;i++)
+    {
+    fprintf(output, "reg signed [%d:0] in_sim_%d = 0;\n", s1, i);
+    fprintf(output, "reg req_in_sim_%d = 0;\n", i);
+    }
+    fprintf(output,"\n");
+
+    for(i=0;i<nuioou;i++)
+    {
+    fprintf(output, "reg signed [%d:0] out_sig_%d = 0;\n", s2, i);
+    fprintf(output, "reg out_en_sim_%d = 0;\n", i);
+    }
+
+    fprintf(output, "\nalways @ (*) begin\n");
+    for(i=0;i<nmioin;i++)
+    {
+    fprintf(output, "   if (req_in == %d) in_sim_%d = io_in;\n", (int)pow(2,i),i);
+    fprintf(output, "   req_in_sim_%d = req_in == %d;\n", i, (int)pow(2,i),i);
+    }
+    fprintf(output, "end\n");
+
+    fprintf(output, "\nalways @ (*) begin\n");
+    for(i=0;i<nuioou;i++)
+    {
+    fprintf(output, "   if (out_en == %d) out_sig_%d <= io_out;\n", (int)pow(2,i), i);
+    fprintf(output, "   out_en_sim_%d = out_en == %d;\n", i, (int)pow(2,i),i);
+    }
+    fprintf(output, "end\n\n");
+
+    fprintf(output, "endmodule");
+
+    fclose(output);
+}
+
 // gera arquivo verilog com uma instancia do processador
 void build_vv_file()
 {
@@ -123,42 +189,12 @@ void build_vv_file()
     else
     fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou);
 
-    fprintf(f_veri, "// Simulacao ------------------------------------------------------------------\n\n");
-
-    int i;
-
-    for(i=0;i<nmioin;i++)
-    {
-    fprintf(f_veri, "reg signed [%d:0] in_sim_%d = 0;\n", s1, i);
-    fprintf(f_veri, "reg req_in_sim_%d = 0;\n", i);
-    }
-    fprintf(f_veri,"\n");
-
-    for(i=0;i<nuioou;i++)
-    {
-    fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", s2, i);
-    fprintf(f_veri, "reg out_en_sim_%d = 0;\n", i);
-    }
-
-    fprintf(f_veri, "\nalways @ (*) begin\n");
-    for(i=0;i<nmioin;i++)
-    {
-    fprintf(f_veri, "   if (req_in == %d) in_sim_%d = io_in;\n", (int)pow(2,i),i);
-    fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n", i, (int)pow(2,i),i);
-    }
-    fprintf(f_veri, "end\n");
-
-    fprintf(f_veri, "\nalways @ (*) begin\n");
-    for(i=0;i<nuioou;i++)
-    {
-    fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= io_out;\n", (int)pow(2,i), i);
-    fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n", i, (int)pow(2,i),i);
-    }
-    fprintf(f_veri, "end\n\n");
-
-    fprintf(f_veri, "endmodule\n");
+    fprintf(f_veri, "endmodule");
 
     fclose (f_veri);
+
+    // se for multicore, criar arquivos de simulacao para cada tipo de proc
+    if (sim_typ==1) build_proc_sim();
 }
 
 void build_tb_file()
@@ -270,6 +306,8 @@ void build_pc_file()
         memset(texto, 0, sizeof(char) * 1001);
     }
     fclose(input );
+
+    fprintf(output, "// Simulacao ------------------------------------------------------------------\n\n");
 
     int nr = 10; // numero de atrasos
     for (int i=0;i<nr;i++)
