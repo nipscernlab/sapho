@@ -177,6 +177,202 @@ for {set i 0} {$i < $nfacs } {incr i} {
     }
 }
 
+# Separador de Variaveis ------------------------------------------------------
+
+gtkwave::/Edit/Insert_Comment {Variáveis **********}
+
+# Tipo int --------------------------------------------------------------------
+
+set var_n 0
+set var_int [list]
+set var_int_func [list]
+set var_int_name [list]
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first mdata.me1 $facname]
+    if {$proc_id != -1 && $index != -1} {
+        incr var_n
+        lappend var_int $facname
+
+        # pega funcao
+        set findex [expr $index + 10]
+        for {set j $findex} {$j < [string length $facname]} {incr j} {
+            set char [string index $facname $j]
+            if {[string compare $char "_"] == 0} {
+                set lindex $j
+                break
+            }
+        }
+        set funcao [string range $facname $findex [expr $lindex -1]]
+        lappend var_int_func $funcao
+
+        # pega variavel
+        set findex [expr $j + 1]
+        for {set j $findex} {$j < [string length $facname]} {incr j} {
+            set char [string index $facname $j]
+            if {[string compare $char {[}] == 0} {
+                set lindex $j
+                break
+            }
+        }
+        set variaveis [string range $facname $findex [expr $lindex -1]]
+        lappend var_int_name $variaveis
+	}
+}
+
+set v_int [gtkwave::setCurrentTranslateProc f2i_gtkw.exe]
+gtkwave::addSignalsFromList $var_int
+gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Color_Format/Orange
+gtkwave::installProcFilter $v_int
+gtkwave::/Edit/UnHighlight_All
+
+for {set i 0} {$i < $var_n } {incr i} {
+    set facname [lindex $var_int $i]
+    set target [list $facname]
+    gtkwave::highlightSignalsFromList $target
+    set name [lindex $var_int_name $i]
+    set func [lindex $var_int_func $i]
+    set ftmp [list int $name em $func]
+    set par {()}
+    if {[string compare $func global]==0} {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
+    } else {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    }
+    gtkwave::/Edit/UnHighlight_All
+}
+
+# Tipo float ------------------------------------------------------------------
+
+set var_n 0
+set var_float [list]
+set var_float_func [list]
+set var_float_name [list]
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first mdata.me2 $facname]
+    if {$proc_id != -1 && $index != -1} {
+        incr var_n
+        lappend var_float $facname
+
+        # pega funcao
+        set findex [expr $index + 10]
+        for {set j $findex} {$j < [string length $facname]} {incr j} {
+            set char [string index $facname $j]
+            if {[string compare $char "_"] == 0} {
+                set lindex $j
+                break
+            }
+        }
+        set funcao [string range $facname $findex [expr $lindex -1]]
+        lappend var_float_func $funcao
+
+        # pega variavel
+        set findex [expr $j + 1]
+        for {set j $findex} {$j < [string length $facname]} {incr j} {
+            set char [string index $facname $j]
+            if {[string compare $char {[}] == 0} {
+                set lindex $j
+                break
+            }
+        }
+        set variaveis [string range $facname $findex [expr $lindex -1]]
+        lappend var_float_name $variaveis
+	}
+}
+
+set v_float [gtkwave::setCurrentTranslateProc float2gtkw.exe]
+gtkwave::addSignalsFromList $var_float
+gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Color_Format/Orange
+gtkwave::installProcFilter $v_float
+gtkwave::/Edit/UnHighlight_All
+
+for {set i 0} {$i < $var_n } {incr i} {
+    set facname [lindex $var_float $i]
+    set target [list $facname]
+    gtkwave::highlightSignalsFromList $target
+    set name [lindex $var_float_name $i]
+    set func [lindex $var_float_func $i]
+    set ftmp [list float $name em $func]
+    set par {()}
+    if {[string compare $func global]==0} {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
+    } else {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    }
+    gtkwave::/Edit/UnHighlight_All
+}
+
+# Tipo comp -------------------------------------------------------------------
+
+set var_n 0
+set var_comp [list]
+set var_comp_func [list]
+set var_comp_name [list]
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first mdata.comp_me3 $facname]
+    if {$proc_id != -1 && $index != -1} {
+        incr var_n
+        lappend var_comp $facname
+
+        # pega funcao
+        set findex [expr $index + 15]
+        for {set j $findex} {$j < [string length $facname]} {incr j} {
+            set char [string index $facname $j]
+            if {[string compare $char "_"] == 0} {
+                set lindex $j
+                break
+            }
+        }
+        set funcao [string range $facname $findex [expr $lindex -1]]
+        lappend var_comp_func $funcao
+
+        # pega variavel
+        set findex [expr $j + 1]
+        for {set j $findex} {$j < [string length $facname]} {incr j} {
+            set char [string index $facname $j]
+            if {[string compare $char {[}] == 0} {
+                set lindex $j
+                break
+            }
+        }
+        set variaveis [string range $facname $findex [expr $lindex -1]]
+        lappend var_comp_name $variaveis
+	}
+}
+
+set v_comp [gtkwave::setCurrentTranslateProc comp2gtkw.exe]
+gtkwave::addSignalsFromList $var_comp
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Color_Format/Orange
+gtkwave::installProcFilter $v_comp
+gtkwave::/Edit/UnHighlight_All
+
+for {set i 0} {$i < $var_n } {incr i} {
+    set facname [lindex $var_comp $i]
+    set target [list $facname]
+    gtkwave::highlightSignalsFromList $target
+    set name [lindex $var_comp_name $i]
+    set func [lindex $var_comp_func $i]
+    set ftmp [list comp $name em $func]
+    set par {()}
+    if {[string compare $func global]==0} {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
+    } else {
+        gtkwave::/Edit/Alias_Highlighted_Trace $ftmp$par
+    }
+    gtkwave::/Edit/UnHighlight_All
+}  
+
 incr proc_indx
 
 }

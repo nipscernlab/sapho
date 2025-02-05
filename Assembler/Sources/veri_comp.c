@@ -93,6 +93,8 @@ void build_proc_flx()
             fprintf(output, "core_flx_%s_sim #(.NUBITS(NUBITS),\n", name);
         else if (strcmp(texto,      "core_fl #(.NBMANT(NBMANT),\n") == 0)
             fprintf(output, "core_flx_%s_sim #(.NBMANT(NBMANT),\n", name);
+        else if (strcmp(texto,    "mem_data # (.NADDRE(MDATAS),\n") == 0)
+            fprintf(output,    "mem_data_%s # (.NADDRE(MDATAS),\n", name);
         else
             fputs(texto, output);
         memset(texto, 0, sizeof(char) * 1001);
@@ -447,8 +449,12 @@ void build_dt_file()
     sprintf(path, "%s/mem_data.v", hdl_dir);
     input = fopen(path, "r");
 
-    //fgets(texto, 1001, input);
-    //fprintf(output, "module mem_data_%s\n", name);
+    // soh muda o nome do modulo se for simulacao multicore
+    if (sim_typ == 1)
+    {
+        fgets(texto, 1001, input);
+        fprintf(output, "module mem_data_%s\n", name);
+    }
 
     while(fgets(texto, 1001, input) != NULL)
     {
@@ -488,7 +494,7 @@ void build_dt_file()
         }
     }
 
-    fprintf(output, "\nendmodule\n");
+    fprintf(output, "endmodule\n");
 
     fclose(output);
 }

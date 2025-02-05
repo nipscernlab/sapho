@@ -133,6 +133,7 @@ for %%a in (%PROC_LIST%) do (
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\proc_flx_%%a_sim.v "
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\core_flx_%%a_sim.v "
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\pc_%%a.v "
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\mem_data_%%a.v "
 )     
 
 iverilog -v -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
