@@ -15,6 +15,7 @@ FILE *f_veri;
 // variaveis pra salvar no arquivo .v
 int  sdepth, nmioin, nuioou, nugain; // nuioin eh usado internamente pelo flex e da pau -> usar nmioin!!
 
+// funcoes auxiliares para setar e pegar variaveis globais
 void set_name (char *va){strcpy(name, va);}
 void set_float(int    n){float_point = n ;}
 
@@ -28,28 +29,77 @@ void set_nuioou(int n){nuioou = n;}
 void set_nugain(int n){nugain = n;}
 void set_fftsiz(int n){fftsiz = n;}
 
-char *get_dname()
+char *get_dname  (){sprintf(tmp, "%s\\%s_data.mif", hard_dir,name); return tmp;}
+char *get_iname  (){sprintf(tmp, "%s\\%s_inst.mif", hard_dir,name); return tmp;}
+char *get_vname  (){sprintf(tmp, "%s\\%s.v"       , hard_dir,name); return tmp;}
+char *get_tb_name(){sprintf(tmp, "%s\\%s_tb.v"    , temp_dir,name); return tmp;}
+
+// cria arquivo de simulacao para o core_fx ou core_fl
+// eh usado com multicore
+void build_core_flx()
 {
-    sprintf(tmp, "%s\\%s_data.mif", hard_dir,name);
-    return  tmp;
+    char path[1024];
+    sprintf(path, "%s/core_flx_%s_sim.v",temp_dir,name);
+
+    FILE *input;
+    FILE *output = fopen(path, "w");
+
+    char texto[1001] = "";
+
+    if (float_point) sprintf(path, "%s/core_fl.v", hdl_dir);
+    else             sprintf(path, "%s/core_fx.v", hdl_dir);
+    input = fopen(path, "r");
+
+    fgets(texto, 1001, input);
+    fprintf(output, "module core_flx_%s_sim\n", name);
+
+    // copia o conteudo do processador
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if(strcmp(texto,     "pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);\n") == 0)
+          fprintf(output, "pc_%s #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);\n", name);
+        else
+            fputs(texto, output);
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+
+    fclose(input );
+    fclose(output);    
 }
 
-char *get_iname()
+// cria arquivo de simulacao para o proc_fx ou proc_fl
+// eh usado com multicore
+void build_proc_flx()
 {
-    sprintf(tmp, "%s\\%s_inst.mif", hard_dir,name);
-    return  tmp;
-}
+    char path[1024];
+    sprintf(path, "%s/proc_flx_%s_sim.v",temp_dir,name);
 
-char *get_vname()
-{
-    sprintf(tmp, "%s\\%s.v", hard_dir,name);
-    return  tmp;
-}
+    FILE *input;
+    FILE *output = fopen(path, "w");
 
-char *get_tb_name()
-{
-    sprintf(tmp, "%s\\%s_tb.v", temp_dir,name);
-    return  tmp;
+    char texto[1001] = "";
+
+    if (float_point) sprintf(path, "%s/proc_fl.v", hdl_dir);
+    else             sprintf(path, "%s/proc_fx.v", hdl_dir);
+    input = fopen(path, "r");
+
+    fgets(texto, 1001, input);
+    fprintf(output, "module proc_flx_%s_sim\n", name);
+
+    // copia o conteudo do processador
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if ( strcmp(texto,          "core_fx #(.NUBITS(NUBITS),\n") == 0)
+            fprintf(output, "core_flx_%s_sim #(.NUBITS(NUBITS),\n", name);
+        else if (strcmp(texto,      "core_fl #(.NBMANT(NBMANT),\n") == 0)
+            fprintf(output, "core_flx_%s_sim #(.NBMANT(NBMANT),\n", name);
+        else
+            fputs(texto, output);
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+
+    fclose(input );
+    fclose(output);    
 }
 
 // cria arquivo de simulacao para o proc
@@ -70,10 +120,8 @@ void build_proc_sim()
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "endmodule") != 0)
-        {
             fputs(texto, output);
-        }
-        memset(texto, 0, sizeof(char) * 1001);
+           memset(texto, 0, sizeof(char) * 1001);
     }
     fclose(input );
 
@@ -148,15 +196,31 @@ void build_vv_file()
     fprintf(f_veri, "wire [%d:0] addr_in;\n"   , (int)ceil(log2(nmioin)-1));
     fprintf(f_veri, "wire [%d:0] addr_out;\n\n", (int)ceil(log2(nuioou)-1));
 
-    if (float_point) // exclusivo ponto flutuante
+    if (sim_typ==1)
     {
-        fprintf(f_veri, "proc_fl #(.NBMANT(%d),\n", nbmant);
-        fprintf(f_veri, ".NBEXPO(%d),\n"          , nbexpo); // possivelmente pode ser usado em ambos;
+        if (float_point) // exclusivo ponto flutuante
+        {
+            fprintf(f_veri, "proc_flx_%s_sim #(.NBMANT(%d),\n", name,nbmant);
+            fprintf(f_veri,                   ".NBEXPO(%d),\n"      ,nbexpo);
+        }
+        else             // exclusivo ponto fixo
+        {
+            fprintf(f_veri, "proc_flx_%s_sim #(.NUBITS(%d),\n", name,nbits );
+            fprintf(f_veri,                   ".NUGAIN(%d),\n"      ,nugain);
+        }
     }
-    else             // exclusivo ponto fixo
+    else
     {
-        fprintf(f_veri, "proc_fx #(.NUBITS(%d),\n", nbits );
-        fprintf(f_veri,           ".NUGAIN(%d),\n", nugain);
+        if (float_point)
+        {
+            fprintf(f_veri, "proc_fl #(.NBMANT(%d),\n",nbmant);
+            fprintf(f_veri, ".NBEXPO(%d),\n"          ,nbexpo);
+        }
+        else
+        {
+            fprintf(f_veri, "proc_fx #(.NUBITS(%d),\n",nbits );
+            fprintf(f_veri, ".NUGAIN(%d),\n"          ,nugain);
+        }
     }
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
@@ -194,7 +258,12 @@ void build_vv_file()
     fclose (f_veri);
 
     // se for multicore, criar arquivos de simulacao para cada tipo de proc
-    if (sim_typ==1) build_proc_sim();
+    if (sim_typ==1)
+    {
+        build_proc_sim();
+        build_proc_flx();
+        build_core_flx();
+    }
 }
 
 void build_tb_file()
@@ -280,13 +349,17 @@ void build_pc_file()
     // copia o conteudo de pc.v
     sprintf(path, "%s/pc.v", hdl_dir);
     input = fopen(path, "r");
+
+    if (sim_typ == 1)
+    {
+        fgets  (texto , 1001, input);
+        fprintf(output, "module pc_%s\n", name);
+    }
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "endmodule") != 0)
-        {
             fputs(texto, output);
-        }
-        memset(texto, 0, sizeof(char) * 1001);
+           memset(texto, 0, sizeof(char) * 1001);
     }
     fclose(input );
 
@@ -295,6 +368,7 @@ void build_pc_file()
     // pega num_ins no arquivo cmm_log.txt, depois do caractere #
     sprintf(path, "%s/cmm_log.txt", temp_dir);
     input = fopen(path, "r");
+
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "#\n") == 0)
@@ -346,9 +420,12 @@ void build_pc_file()
     fprintf(output, "   linetabs <= linetab;\n");
     fprintf(output, "end\n\n");
 
+    if (sim_typ == 0)
+    {
     // para a simulacao nr clocks depois de achar a instrucao @fim JMP fim
     fprintf(output, "always @ (posedge clk) begin\n");
     fprintf(output, "   if (valr%d == %d) $finish;\nend\n\n",nr,fim_addr);
+    }
 
     fprintf(output, "endmodule\n");
 
@@ -406,9 +483,7 @@ void build_dt_file()
                 char im[64];
                 sprintf(im, "%s_i", v_namo[i]);
                 if (strcmp(v_namo[j],im) == 0)
-                {
                     fprintf(output,"wire [NBDATA*2-1:0] comp_%s = {%s, %s};\n", v_namo[i], v_namo[i], v_namo[j]);
-                }
             }
         }
     }

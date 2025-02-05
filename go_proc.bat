@@ -12,11 +12,18 @@ rmdir %TESTE_DIR% /s /q
 
 :: Parametros definidos pelo usuario do SAPHO para compilacao -----------------
 
+:: nome da pasta do projeto
 set PROJET=FFT
+:: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
 set PROC=proc_fft
+:: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
+:: se nao achar, usa simulacao padrao
 set TB=errado
+:: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
 set GTKW=errado.gtkw
+:: frequencia de operacao do processador em MHz
 set FRE_CLK=100
+:: numero de clocks a ser simulado
 set NUM_CLK=20000
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------

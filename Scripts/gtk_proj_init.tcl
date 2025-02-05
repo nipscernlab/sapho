@@ -5,10 +5,16 @@ gets  $fileID   linha
 set   proc_list [split $linha " "]
 close $fileID
 
+set   fileID    [open "proc_type.txt" r]
+gets  $fileID   linha
+set   proc_type [split $linha " "]
+close $fileID
+
 # Loop nos processadores ------------------------------------------------------
 
 set nfacs [gtkwave::getNumFacs]
 
+set proc_indx 0
 foreach proc $proc_list {
 
 # Separador de processadores --------------------------------------------------
@@ -126,6 +132,52 @@ for {set i 0} {$i < $j } {incr i} {
     set nome [list Saída $i]
     gtkwave::/Edit/Alias_Highlighted_Trace $nome
 }
+
+# Separador de Instrucoes -----------------------------------------------------
+
+gtkwave::/Edit/Insert_Comment {Instruções *********}
+
+# Assembly --------------------------------------------------------------------
+
+set tradutor [gtkwave::setCurrentTranslateFile "[list [lindex $proc_type $proc_indx]]/trad_opcode.txt"]
+
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first pc.valr2 $facname]
+    if {$proc_id != -1 && $index != -1} {
+        set filter [list $facname]
+        gtkwave::addSignalsFromList $filter
+        gtkwave::highlightSignalsFromList $filter
+        gtkwave::/Edit/Data_Format/Decimal
+        gtkwave::/Edit/Color_Format/Indigo
+        gtkwave::installFileFilter $tradutor
+        gtkwave::/Edit/Alias_Highlighted_Trace Assembly
+    }
+}
+
+# C+- -------------------------------------------------------------------------
+
+set tradutor [gtkwave::setCurrentTranslateFile "[list [lindex $proc_type $proc_indx]]/trad_cmm.txt"]
+
+for {set i 0} {$i < $nfacs } {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    set proc_id [string first $proc $facname]
+    set index [string first pc.linetabs $facname]
+    if {$proc_id != -1 && $index != -1} {
+        set filter [list $facname]
+        gtkwave::addSignalsFromList $filter
+        gtkwave::highlightSignalsFromList $filter
+        gtkwave::/Edit/Data_Format/Signed_Decimal
+        gtkwave::/Edit/Color_Format/Violet
+        gtkwave::installFileFilter $tradutor
+        gtkwave::/Edit/Alias_Highlighted_Trace C+-
+    }
+}
+
+incr proc_indx
 
 }
 

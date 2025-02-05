@@ -12,10 +12,17 @@ rmdir %TESTE_DIR% /s /q
 
 :: Parametros definidos pelo usuario do SAPHO para compilacao -----------------
 
+:: nome da pasta do projeto
 set PROJET=DTW
+:: lista dos tipo de processadores que tem no projeto (nomes das sub-pastas do projeto)
 set PROC_LIST=ZeroCross ProcDTW
+:: lista das instancias que serao simuladas (um mesmo  proc pode ter varias instancias)
 set INST_LIST=ZeroCross_inst DTWv4_inst
+:: lista do tipo de processador para cada instancia (tem que ser do mesmo tamanho de PROC_LIST)
+set PROC_TYPE=ZeroCross ProcDTW
+:: nome do test bench (sem .v) a ser simulado (tem que estar na pasta TopLevel)
 set TB=top_level_tb
+:: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
 set GTKW=errado.gtkw
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
@@ -121,8 +128,12 @@ dir %TOPL_DIR%\*.v /b > f_list.txt
 for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "TOP_V=!TOP_V!%TOPL_DIR%\%%a "
 
 :: lista arquivos dos processadores encontrados (simulacao)
-:: nao vai precisar disso quando eu copiar todos os arqivos da pasta temp
-for %%a in (%PROC_LIST%) do set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a_sim.v "  
+for %%a in (%PROC_LIST%) do (
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a_sim.v "
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\proc_flx_%%a_sim.v "
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\core_flx_%%a_sim.v "
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\pc_%%a.v "
+)     
 
 iverilog -v -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
 
@@ -134,6 +145,7 @@ dir %TOPL_DIR%\*.mif /b > f_list.txt
 for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do cp %TOPL_DIR%\%%a .\
 for %%a in (%PROC_LIST%) do cp %PROJ_DIR%\%%a\Hardware\%%a_inst.mif .\
 for %%a in (%PROC_LIST%) do cp %PROJ_DIR%\%%a\Hardware\%%a_data.mif .\
+for %%a in (%PROC_LIST%) do cp %TMP_DIR%\%%a\pc_%%a_mem.txt .\
 
 endlocal
 
@@ -146,6 +158,8 @@ cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
 
 echo %INST_LIST%>proc_list.txt
+echo %PROC_TYPE%>proc_type.txt
+
 
 if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
 
