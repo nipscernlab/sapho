@@ -30,10 +30,16 @@ fork
 	#40 rst_geral <= 1'b0;
 join
 
+integer i;
 initial begin
 	$dumpfile("top_level_tb.vcd");
 	$dumpvars(0,top_level_tb);
-	#400000 $finish;
+    for (i = 10; i <= 100; i = i + 10) begin
+		#400000;  // Simulate delay
+        $display("Progress: %0d%% complete", i);
+    end
+    $display("Simulation Complete!");
+    $finish;
 end
 
 reg signed [15:0] min [0:639];

@@ -1,35 +1,217 @@
 [*]
 [*] GTKWave Analyzer v3.3.100 (w)1999-2019 BSI
-[*] Sat Feb 01 13:34:25 2025
+[*] Wed Feb 05 21:51:46 2025
 [*]
-[dumpfile] "C:\Users\lucia\Documents\sapho-p\Teste\saphoComponents\Temp\top_level_tb.vcd"
-[dumpfile_mtime] "Sat Feb 01 13:29:58 2025"
-[dumpfile_size] 456509009
-[savefile] "C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\dtw.gtkw"
+[dumpfile] "C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\top_level_tb.vcd"
+[savefile] "C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\dtw.gtkw"
 [timestart] 0
 [size] 1440 829
-[pos] -113 -113
-*-29.683228 3945000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
-[treeopen] top_level_tb.
-[treeopen] top_level_tb.top_level_inst.
+[pos] -35 -35
+*-29.856939 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 197
-[signals_width] 169
+[signals_width] 286
 [sst_expanded] 1
 [sst_vpaned_height] 234
+@200
+-###### ZeroCross_inst
 @28
-top_level_tb.clk
-top_level_tb.rst_geral
-@8420
-top_level_tb.data[15:0]
-@20000
--
--
-@8420
-top_level_tb.top_level_inst.ProcZeroCross_inst.out4[31:0]
-@20000
--
--
+top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.genblk1.core.clk
+top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.genblk1.core.rst
+top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.genblk1.core.itr
+@200
+-I/O ****************
+@28
+[color] 3
++{req_in 0} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.req_in_sim_0
 @420
-top_level_tb.top_level_inst.ProcDTWv4_inst.out1[31:0]
+[color] 3
++{Entrada 0} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.in_sim_0[22:0]
+@28
+[color] 3
++{req_in 1} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.req_in_sim_1
+@420
+[color] 3
++{Entrada 1} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.in_sim_1[22:0]
+@28
+[color] 3
++{out_en 0} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_en_sim_0
+@420
+[color] 3
++{Saída 0} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_sig_0[31:0]
+@28
+[color] 3
++{out_en 1} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_en_sim_1
+@420
+[color] 3
++{Saída 1} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_sig_1[31:0]
+@28
+[color] 3
++{out_en 2} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_en_sim_2
+@420
+[color] 3
++{Saída 2} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_sig_2[31:0]
+@28
+[color] 3
++{out_en 3} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_en_sim_3
+@420
+[color] 3
++{Saída 3} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_sig_3[31:0]
+@28
+[color] 3
++{out_en 4} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_en_sim_4
+@420
+[color] 3
++{Saída 4} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.out_sig_4[31:0]
+@200
+-Instruções *********
+@2024
+[color] 6
+^1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\ZeroCross\trad_opcode.txt
++{Assembly} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.genblk1.core.pc.valr2[7:0]
+@2420
+[color] 7
+^2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\ZeroCross\trad_cmm.txt
++{C+-} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.genblk1.core.pc.linetabs[19:0]
+@204
+-Variáveis **********
+@4024
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float amostra_anterior em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_amostra_anterior[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float sinal_entrada em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_sinal_entrada[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x1_n1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x1_n1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x1_n2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x1_n2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x2_n1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x2_n1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x2_n2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x2_n2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x3 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x3[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x3_n1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x3_n1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float x3_n2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_x3_n2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y1_n1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y1_n1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y1_n2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y1_n2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y2_n1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y2_n1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y2_n2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y2_n2[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y3 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y3[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y3_n1 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y3_n1[31:0]
+[color] 2
+^>2 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\float2gtkw.exe
++{float y3_n2 em global} top_level_tb.top_level_inst.ProcZeroCross_inst.ZeroCross_inst.p_ZeroCross.mdata.me2_global_y3_n2[31:0]
+@200
+-###### DTWv4_inst
+@28
+top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.genblk1.core.clk
+top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.genblk1.core.rst
+top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.genblk1.core.itr
+@200
+-I/O ****************
+@28
+[color] 3
++{req_in 0} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.req_in_sim_0
+@420
+[color] 3
++{Entrada 0} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.in_sim_0[31:0]
+@28
+[color] 3
++{req_in 1} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.req_in_sim_1
+@420
+[color] 3
++{Entrada 1} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.in_sim_1[31:0]
+@28
+[color] 3
++{req_in 2} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.req_in_sim_2
+@420
+[color] 3
++{Entrada 2} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.in_sim_2[31:0]
+@28
+[color] 3
++{out_en 0} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.out_en_sim_0
+@420
+[color] 3
++{Saída 0} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.out_sig_0[31:0]
+@28
+[color] 3
++{out_en 1} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.out_en_sim_1
+@420
+[color] 3
++{Saída 1} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.out_sig_1[31:0]
+@28
+[color] 3
++{out_en 2} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.out_en_sim_2
+@420
+[color] 3
++{Saída 2} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.out_sig_2[31:0]
+@200
+-Instruções *********
+@2024
+[color] 6
+^3 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\ProcDTW\trad_opcode.txt
++{Assembly} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.genblk1.core.pc.valr2[8:0]
+@2420
+[color] 7
+^4 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\ProcDTW\trad_cmm.txt
++{C+-} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.genblk1.core.pc.linetabs[19:0]
+@200
+-Variáveis **********
+@4024
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int cont em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_cont[31:0]
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int j em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_j[31:0]
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int k em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_k[31:0]
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int len_data em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_len_data[31:0]
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int len_ref em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_len_ref[31:0]
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int menor em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_menor[31:0]
+[color] 2
+^>1 C:\Users\lucia\Documents\sapho-p\Exemplos\DTW\TopLevel\f2i_gtkw.exe
++{int val_final em global} top_level_tb.top_level_inst.ProcDTWv4_inst.DTWv4_inst.p_ProcDTW.mdata.me1_global_val_final[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

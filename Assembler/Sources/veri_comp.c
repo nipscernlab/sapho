@@ -277,6 +277,7 @@ void build_tb_file()
     fprintf(f_veri,      "`timescale 1ns/1ps\n\n", name);
     fprintf(f_veri,         "module %s_tb();\n\n", name);
     fprintf(f_veri,           "reg clk, rst;\n\n"      );
+    fprintf(f_veri,              "integer i;\n"        );
     fprintf(f_veri,           "initial begin\n\n"      );
     fprintf(f_veri, "$dumpfile(\"%s_tb.vcd\");\n", name);
     fprintf(f_veri,     "$dumpvars(0,%s_tb);\n\n", name);
@@ -285,7 +286,10 @@ void build_tb_file()
     fprintf(f_veri,   "rst = 1;\n"     );
     fprintf(f_veri,       "#%f;\n",   T);
     fprintf(f_veri, "rst = 0;\n\n"     );
-    fprintf(f_veri, "#%f;\n", T*clk_num);
+    fprintf(f_veri, "for (i = 10; i <= 100; i = i + 10) begin\n");
+    fprintf(f_veri, "#%f;\n", T*clk_num/100);
+    fprintf(f_veri, "$display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
+    fprintf(f_veri, "end\n"            );
     fprintf(f_veri, "$finish;\n\n"     );
     fprintf(f_veri,      "end\n\n"     );
 
@@ -426,7 +430,10 @@ void build_pc_file()
     {
     // para a simulacao nr clocks depois de achar a instrucao @fim JMP fim
     fprintf(output, "always @ (posedge clk) begin\n");
-    fprintf(output, "   if (valr%d == %d) $finish;\nend\n\n",nr,fim_addr);
+    fprintf(output, "if (valr%d == %d) begin\n",nr,fim_addr);
+    fprintf(f_veri, "$display(\"Fim do programa!\");\n");
+    fprintf(f_veri, "$finish;\n");
+    fprintf(output, "end\nend\n\n");
     }
 
     fprintf(output, "endmodule\n");

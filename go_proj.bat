@@ -5,7 +5,7 @@
 :: Configura o ambiente -------------------------------------------------------
 
 cls
-::echo off
+echo off
 set ROOT_DIR=%cd%
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
@@ -136,7 +136,7 @@ for %%a in (%PROC_LIST%) do (
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\mem_data_%%a.v "
 )     
 
-iverilog -v -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
+iverilog -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
 
 for %%a in (%PROC_LIST%) do cp %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulation
 
@@ -150,13 +150,14 @@ for %%a in (%PROC_LIST%) do cp %TMP_DIR%\%%a\pc_%%a_mem.txt .\
 
 endlocal
 
-vvp -v %PROJET% -fst
+vvp %PROJET% -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
 cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
+cp %TMP_DIR%\%TB%.vcd %TOPL_DIR%
 
 echo %INST_LIST%>proc_list.txt
 echo %PROC_TYPE%>proc_type.txt
