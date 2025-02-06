@@ -24,7 +24,7 @@ set GTKW=errado.gtkw
 :: frequencia de operacao do processador em MHz
 set FRE_CLK=100
 :: numero de clocks a ser simulado
-set NUM_CLK=20000
+set NUM_CLK=2000
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
 
@@ -110,7 +110,7 @@ CMMComp.exe %CMM_FILE% %ASM_FILE% %MAC_DIR% %TMP_PRO% %PROC%
 
 :: Executa o compilador Assembler ---------------------------------------------
 
-ASMComp.exe %ASM_FILE% %HARD_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
+ASMComp.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 

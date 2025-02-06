@@ -220,10 +220,8 @@ void fill_mem(char *f_name, int tam)
     {
         int tamanho = strlen(f_name); // tamanho da string do nome do arquivo
         int idxToDel = tamanho-1;     // indice para deletar, nesse caso o ultimo, as aspas.
-        strcpy(addr_tab, "");
         memmove(&f_name[idxToDel], &f_name[idxToDel +1], 1); // deletando de fato o indice
-        strcat(addr_tab, hard_dir);
-        strcat(addr_tab, f_name);
+        sprintf(addr_tab, "%s/Software/%s", proc_dir, f_name);
 
         filepointer = fopen(addr_tab, "r");
         if (filepointer == NULL)
@@ -338,6 +336,7 @@ void add_array(int va, char *f_name)
     // incrementa o tamanho da memoria de acordo
     inc_vcont(va-1);
 
+    // se nao tem arquivo, preenche com zero
     if (strcmp(f_name, "") == 0)
         for (int i = 0; i < va; i++) add_data(0);
     else

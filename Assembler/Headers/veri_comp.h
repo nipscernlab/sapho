@@ -1,7 +1,7 @@
 int  ndstac, nbmant, nbexpo, nbits, fftsiz;
 int  float_point;    // diz se o processador eh com ponto flutuante
 
-char hard_dir[1024]; // diretorio da pasta Hardware
+char proc_dir[1024]; // diretorio do processador
 char temp_dir[1024]; // diretorio da pasta Tmp
 char  hdl_dir[1024]; // diretorio da pasta HDL
 

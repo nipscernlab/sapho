@@ -5,7 +5,7 @@
 :: Configura o ambiente -------------------------------------------------------
 
 cls
-echo off
+::echo off
 set ROOT_DIR=%cd%
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
@@ -13,15 +13,15 @@ rmdir %TESTE_DIR% /s /q
 :: Parametros definidos pelo usuario do SAPHO para compilacao -----------------
 
 :: nome da pasta do projeto
-set PROJET=DTW
+set PROJET=PulseSim
 :: lista dos tipo de processadores que tem no projeto (nomes das sub-pastas do projeto)
-set PROC_LIST=ZeroCross ProcDTW
-:: lista das instancias que serao simuladas (um mesmo  proc pode ter varias instancias)
-set INST_LIST=ZeroCross_inst DTWv4_inst
+set PROC_LIST=proc_sim
+:: lista das instancias que serao simuladas (um mesmo proc pode ter varias instancias)
+set INST_LIST=proc
 :: lista do tipo de processador para cada instancia (tem que ser do mesmo tamanho de PROC_LIST)
-set PROC_TYPE=ZeroCross ProcDTW
+set PROC_TYPE=proc_sim
 :: nome do test bench (sem .v) a ser simulado (tem que estar na pasta TopLevel)
-set TB=top_level_tb
+set TB=pulse_sim_tb
 :: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
 set GTKW=errado.gtkw
 
@@ -110,7 +110,7 @@ cd  %BIN_DIR%
 :: Executa o compilador Assembler ---------------------------------------------
 
 (for %%i in (%PROC_LIST%) do (
-    ASMComp.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i\Hardware %HDL_DIR% %TMP_DIR%\%%i 0 0 1
+    ASMComp.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i %HDL_DIR% %TMP_DIR%\%%i 0 0 1
 ))
 
 :: Gera o testbench com o Icarus ----------------------------------------------

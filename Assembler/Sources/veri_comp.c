@@ -29,10 +29,10 @@ void set_nuioou(int n){nuioou = n;}
 void set_nugain(int n){nugain = n;}
 void set_fftsiz(int n){fftsiz = n;}
 
-char *get_dname  (){sprintf(tmp, "%s\\%s_data.mif", hard_dir,name); return tmp;}
-char *get_iname  (){sprintf(tmp, "%s\\%s_inst.mif", hard_dir,name); return tmp;}
-char *get_vname  (){sprintf(tmp, "%s\\%s.v"       , hard_dir,name); return tmp;}
-char *get_tb_name(){sprintf(tmp, "%s\\%s_tb.v"    , temp_dir,name); return tmp;}
+char *get_dname  (){sprintf(tmp, "%s/Hardware/%s_data.mif", proc_dir,name); return tmp;}
+char *get_iname  (){sprintf(tmp, "%s/Hardware/%s_inst.mif", proc_dir,name); return tmp;}
+char *get_vname  (){sprintf(tmp, "%s/Hardware/%s.v"       , proc_dir,name); return tmp;}
+char *get_tb_name(){sprintf(tmp, "%s/%s_tb.v"             , temp_dir,name); return tmp;}
 
 // cria arquivo de simulacao para o core_fx ou core_fl
 // eh usado com multicore
@@ -117,7 +117,7 @@ void build_proc_sim()
     char texto[1001] = "";
 
     // copia o conteudo do processador
-    sprintf(path, "%s/%s.v", hard_dir, name);
+    sprintf(path, "%s/Hardware/%s.v", proc_dir, name);
     input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
@@ -287,7 +287,7 @@ void build_tb_file()
     fprintf(f_veri,       "#%f;\n",   T);
     fprintf(f_veri, "rst = 0;\n\n"     );
     fprintf(f_veri, "for (i = 10; i <= 100; i = i + 10) begin\n");
-    fprintf(f_veri, "#%f;\n", T*clk_num/100);
+    fprintf(f_veri, "#%f;\n", T*clk_num/10);
     fprintf(f_veri, "$display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
     fprintf(f_veri, "end\n"            );
     fprintf(f_veri, "$finish;\n\n"     );
