@@ -452,7 +452,7 @@ void build_dt_file()
 
     char texto[1001] = "";
 
-    // copia o conteudo de mem_data.v
+    // abre mem_data.v para leitura
     sprintf(path, "%s/mem_data.v", hdl_dir);
     input = fopen(path, "r");
 
@@ -463,6 +463,7 @@ void build_dt_file()
         fprintf(output, "module mem_data_%s\n", name);
     }
 
+    // copia ate achar endmodule
     while(fgets(texto, 1001, input) != NULL)
     {
         if(strcmp(texto, "endmodule") != 0)
@@ -475,13 +476,25 @@ void build_dt_file()
 
     int i;
     // cria um registrador para cada variavel encontrada
-    for (i = 0; i < v_cont; i++) fprintf(output, "reg [NBDATA-1:0] %s=0;\n", v_namo[i]);
+    for (i = 0; i < v_cont; i++)
+    {
+        if ((v_tipo[i] == 2) || ((v_tipo[i] == 1) && float_point))
+            fprintf(output, "reg [16+NBDATA-1:0] %s=0;\n", v_namo[i]);
+        else
+            fprintf(output, "reg [NBDATA-1:0] %s=0;\n"   , v_namo[i]);
+    }
     
     // inicia o always para registrar as variaveis
     fprintf(output, "\nalways @ (posedge clk) begin\n");
 
     // registra cada variavel, dependendo do endereco de cada uma
-    for (i = 0; i < v_cont; i++) fprintf(output, "   if (addr_w == %d && wr) %s <= data_in;\n", v_add[i], v_namo[i]);
+    for (i = 0; i < v_cont; i++)
+    {
+        if ((v_tipo[i] == 2) || ((v_tipo[i] == 1) && float_point))
+            fprintf(output, "   if (addr_w == %d && wr) %s <= {8'd%d,8'd%d,data_in};\n", v_add[i], v_namo[i], nbmant, nbexpo);
+        else
+            fprintf(output, "   if (addr_w == %d && wr) %s <= data_in;\n", v_add[i], v_namo[i]);
+    }
 
     fprintf(output, "end\n\n");
 
@@ -496,12 +509,12 @@ void build_dt_file()
                 char im[64];
                 sprintf(im, "%s_i", v_namo[i]);
                 if (strcmp(v_namo[j],im) == 0)
-                    fprintf(output,"wire [NBDATA*2-1:0] comp_%s = {%s, %s};\n", v_namo[i], v_namo[i], v_namo[j]);
+                    fprintf(output,"wire [16+NBDATA*2-1:0] comp_%s = {8'd%d, 8'd%d, %s, %s};\n", v_namo[i], nbmant, nbexpo, v_namo[i], v_namo[j]);
             }
         }
     }
 
-    fprintf(output, "endmodule\n");
+    fprintf(output, "\nendmodule\n");
 
     fclose(output);
 }

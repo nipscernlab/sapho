@@ -273,9 +273,9 @@ void float_geni(char *fasm)
     char tmem[1024];
     char fmem[1024];
 
-    sprintf  (tasm, "%s/%s", dir_tmp,       "tasm.txt");
-    sprintf  (tmem, "%s/%s", dir_tmp,       "tmem.txt");
-    sprintf  (fmem, "%s/%s", dir_tmp, "pc_sim_mem.txt");
+    sprintf  (tasm, "%s/%s", dir_tmp, "tasm.txt");
+    sprintf  (tmem, "%s/%s", dir_tmp, "tmem.txt");
+    sprintf  (fmem, "%s/pc_%s_mem.txt", dir_tmp, pr_name);
 
     // cria os cabecalhos -----------------------------------------------------
 

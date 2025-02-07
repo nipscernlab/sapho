@@ -1,3 +1,9 @@
+# Pega infos do processador ---------------------------------------------------
+
+set   fileID    [open "proc_data.txt" r]
+gets  $fileID   pdata
+close $fileID
+
 # Separador de Sinais ---------------------------------------------------------
 
 gtkwave::/Edit/Insert_Comment {Sinais *************}
@@ -199,9 +205,14 @@ for {set i 0} {$i < $nfacs } {incr i} {
 
 set v_int [gtkwave::setCurrentTranslateProc f2i_gtkw.exe]
 gtkwave::addSignalsFromList $var_int
-gtkwave::/Edit/Data_Format/Decimal
+if {[string compare $pdata "float"] == 0} {
+    gtkwave::/Edit/Data_Format/Binary
+    gtkwave::installProcFilter $v_int
+} else {
+    gtkwave::/Edit/Data_Format/Signed_Decimal
+}
+
 gtkwave::/Edit/Color_Format/Orange
-gtkwave::installProcFilter $v_int
 gtkwave::/Edit/UnHighlight_All
 
 for {set i 0} {$i < $var_n } {incr i} {
@@ -262,7 +273,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 
 set v_float [gtkwave::setCurrentTranslateProc float2gtkw.exe]
 gtkwave::addSignalsFromList $var_float
-gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Data_Format/Binary
 gtkwave::/Edit/Color_Format/Orange
 gtkwave::installProcFilter $v_float
 gtkwave::/Edit/UnHighlight_All

@@ -20,6 +20,8 @@ set PROC_LIST=proc_sim
 set INST_LIST=proc
 :: lista do tipo de processador para cada instancia (tem que ser do mesmo tamanho de PROC_LIST)
 set PROC_TYPE=proc_sim
+:: lista o tipo de dado da instancia do processador (int ou float)
+set PROC_DATA=float
 :: nome do test bench (sem .v) a ser simulado (tem que estar na pasta TopLevel)
 set TB=pulse_sim_tb
 :: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
@@ -161,7 +163,7 @@ cp %TMP_DIR%\%TB%.vcd %TOPL_DIR%
 
 echo %INST_LIST%>proc_list.txt
 echo %PROC_TYPE%>proc_type.txt
-
+echo %PROC_DATA%>proc_data.txt
 
 if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
 

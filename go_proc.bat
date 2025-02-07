@@ -16,6 +16,8 @@ rmdir %TESTE_DIR% /s /q
 set PROJET=FFT
 :: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
 set PROC=proc_fft
+:: tipo de processador (int ou float)
+set PROC_DATA=float
 :: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
 :: se nao achar, usa simulacao padrao
 set TB=errado
@@ -24,7 +26,7 @@ set GTKW=errado.gtkw
 :: frequencia de operacao do processador em MHz
 set FRE_CLK=100
 :: numero de clocks a ser simulado
-set NUM_CLK=2000
+set NUM_CLK=20000
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
 
@@ -140,6 +142,8 @@ vvp %PROC% -fst
 cp %BIN_DIR%\float2gtkw.exe %TMP_PRO%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_PRO%
+
+echo %PROC_DATA%>proc_data.txt
 
 if exist %SIMU_DIR%\%GTKW% (gtkwave %SIMU_DIR%\%GTKW%) else (gtkwave %TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
 
