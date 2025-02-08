@@ -5,7 +5,7 @@
 :: Configura o ambiente -------------------------------------------------------
 
 cls
-::echo off
+echo off
 set ROOT_DIR=%cd%
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
@@ -13,19 +13,19 @@ rmdir %TESTE_DIR% /s /q
 :: Parametros definidos pelo usuario do SAPHO para compilacao -----------------
 
 :: nome da pasta do projeto
-set PROJET=PulseSim
+set PROJET=DTW
 :: lista dos tipo de processadores que tem no projeto (nomes das sub-pastas do projeto)
-set PROC_LIST=proc_sim
+set PROC_LIST=ProcDTW ZeroCross
 :: lista das instancias que serao simuladas (um mesmo proc pode ter varias instancias)
-set INST_LIST=proc
+set INST_LIST=ZeroCross_inst DTWv4_inst
 :: lista do tipo de processador para cada instancia (tem que ser do mesmo tamanho de PROC_LIST)
-set PROC_TYPE=proc_sim
+set PROC_TYPE=ZeroCross ProcDTW
 :: lista o tipo de dado da instancia do processador (int ou float)
-set PROC_DATA=float
+set PROC_DATA=float int
 :: nome do test bench (sem .v) a ser simulado (tem que estar na pasta TopLevel)
-set TB=pulse_sim_tb
+set TB=top_level_tb
 :: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
-set GTKW=errado.gtkw
+set GTKW=dtw.gtkw
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
 
@@ -59,10 +59,10 @@ mkdir %TESTE_DIR%
 
 :: Copia os arquivos para os diretorios de teste ------------------------------
 
-xcopy Exemplos %USER_DIR% /e /i /q
-xcopy HDL %HDL_DIR% /q /y
-xcopy Macros %MAC_DIR% /q /y
-xcopy Scripts %SCR_DIR% /q /y
+xcopy Exemplos %USER_DIR% /e /i /q>%TMP_DIR%\xcopy.txt
+xcopy HDL %HDL_DIR% /q /y>%TMP_DIR%\xcopy.txt
+xcopy Macros %MAC_DIR% /q /y>%TMP_DIR%\xcopy.txt
+xcopy Scripts %SCR_DIR% /q /y>%TMP_DIR%\xcopy.txt
 
 :: Gera o compilador CMM ------------------------------------------------------
 
@@ -159,12 +159,12 @@ vvp %PROJET% -fst
 cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
-cp %TMP_DIR%\%TB%.vcd %TOPL_DIR%
 
 echo %INST_LIST%>proc_list.txt
 echo %PROC_TYPE%>proc_type.txt
 echo %PROC_DATA%>proc_data.txt
+echo %TMP_DIR%>tmp_dir.txt
 
-if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW%) else (gtkwave %TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
+if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
 
 cd %ROOT_DIR%

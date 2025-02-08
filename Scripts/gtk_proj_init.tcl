@@ -1,4 +1,4 @@
-# Pega a lista de processadores -----------------------------------------------
+# Pega parametros -------------------------------------------------------------
 
 set   fileID    [open "proc_list.txt" r]
 gets  $fileID   linha
@@ -13,6 +13,10 @@ close $fileID
 set   fileID    [open "proc_data.txt" r]
 gets  $fileID   linha
 set   proc_data [split $linha " "]
+close $fileID
+
+set   fileID    [open "tmp_dir.txt" r]
+gets  $fileID   tmp_dir
 close $fileID
 
 # Loop nos processadores ------------------------------------------------------
@@ -144,7 +148,7 @@ gtkwave::/Edit/Insert_Comment {Instruções *********}
 
 # Assembly --------------------------------------------------------------------
 
-set tradutor [gtkwave::setCurrentTranslateFile "[list [lindex $proc_type $proc_indx]]/trad_opcode.txt"]
+set tradutor [gtkwave::setCurrentTranslateFile "$tmp_dir/[list [lindex $proc_type $proc_indx]]/trad_opcode.txt"]
 
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
@@ -164,7 +168,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 
 # C+- -------------------------------------------------------------------------
 
-set tradutor [gtkwave::setCurrentTranslateFile "[list [lindex $proc_type $proc_indx]]/trad_cmm.txt"]
+set tradutor [gtkwave::setCurrentTranslateFile "$tmp_dir/[list [lindex $proc_type $proc_indx]]/trad_cmm.txt"]
 
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
@@ -229,7 +233,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 
 set pdata [lindex $proc_data $proc_indx]
 
-set v_int [gtkwave::setCurrentTranslateProc f2i_gtkw.exe]
+set v_int [gtkwave::setCurrentTranslateProc $tmp_dir/f2i_gtkw.exe]
 gtkwave::addSignalsFromList $var_int
 if {[string compare $pdata "float"] == 0} {
     gtkwave::/Edit/Data_Format/Binary
@@ -297,7 +301,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 	}
 }
 
-set v_float [gtkwave::setCurrentTranslateProc float2gtkw.exe]
+set v_float [gtkwave::setCurrentTranslateProc $tmp_dir/float2gtkw.exe]
 gtkwave::addSignalsFromList $var_float
 gtkwave::/Edit/Data_Format/Binary
 gtkwave::/Edit/Color_Format/Orange
@@ -361,7 +365,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 	}
 }
 
-set v_comp [gtkwave::setCurrentTranslateProc comp2gtkw.exe]
+set v_comp [gtkwave::setCurrentTranslateProc $tmp_dir/comp2gtkw.exe]
 gtkwave::addSignalsFromList $var_comp
 gtkwave::/Edit/Data_Format/Binary
 gtkwave::/Edit/Color_Format/Orange

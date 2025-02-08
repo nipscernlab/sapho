@@ -22,7 +22,7 @@ set PROC_DATA=float
 :: se nao achar, usa simulacao padrao
 set TB=errado
 :: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
-set GTKW=errado.gtkw
+set GTKW=teste.gtkw
 :: frequencia de operacao do processador em MHz
 set FRE_CLK=100
 :: numero de clocks a ser simulado
@@ -60,10 +60,10 @@ mkdir %TESTE_DIR%
 
 :: Copia os arquivos para os diretorios de teste ------------------------------
 
-xcopy Exemplos %USER_DIR% /e /i /q
-xcopy HDL %HDL_DIR% /q /y
-xcopy Macros %MAC_DIR% /q /y
-xcopy Scripts %SCR_DIR% /q /y
+xcopy Exemplos %USER_DIR% /e /i /q>%TMP_PRO%\xcopy.txt
+xcopy HDL %HDL_DIR% /q /y>%TMP_PRO%\xcopy.txt
+xcopy Macros %MAC_DIR% /q /y>%TMP_PRO%\xcopy.txt
+xcopy Scripts %SCR_DIR% /q /y>%TMP_PRO%\xcopy.txt
 
 :: Gera o compilador CMM ------------------------------------------------------
 
@@ -144,7 +144,8 @@ cp %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%
 cp %BIN_DIR%\comp2gtkw.exe %TMP_PRO%
 
 echo %PROC_DATA%>proc_data.txt
+echo %TMP_PRO%>tmp_dir.txt
 
-if exist %SIMU_DIR%\%GTKW% (gtkwave %SIMU_DIR%\%GTKW%) else (gtkwave %TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
+if exist %SIMU_DIR%\%GTKW% (gtkwave %SIMU_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
 
 cd %ROOT_DIR%
