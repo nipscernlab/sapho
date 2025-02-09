@@ -72,10 +72,10 @@ bison -y -d CMMComp.y
 flex        CMMComp.l
 gcc      -o CMMComp.exe data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c y.tab.c
 
-mv CMMComp.exe %BIN_DIR%
-rm lex.yy.c
-rm  y.tab.c
-rm  y.tab.h
+move CMMComp.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
+del lex.yy.c
+del  y.tab.c
+del  y.tab.h
 
 :: Gera o compilador Assembler ------------------------------------------------
 
@@ -84,8 +84,8 @@ cd %ROOT_DIR%\Assembler\Sources
 flex -oASMComp.c ASMComp.l
 gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c
 
-mv ASMComp.exe %BIN_DIR%
-rm ASMComp.c
+move ASMComp.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
+del ASMComp.c
 
 :: Gera tradutores de dados ---------------------------------------------------
 
@@ -96,10 +96,10 @@ gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
 gcc -o itob.exe itob.c
 
-mv float2gtkw.exe %BIN_DIR%
-mv f2i_gtkw.exe   %BIN_DIR%
-mv comp2gtkw.exe  %BIN_DIR%
-mv itob.exe       %BIN_DIR%
+move float2gtkw.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
+move f2i_gtkw.exe   %BIN_DIR%>%TMP_DIR%\xcopy.txt
+move comp2gtkw.exe  %BIN_DIR%>%TMP_DIR%\xcopy.txt
+move itob.exe       %BIN_DIR%>%TMP_DIR%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
 
@@ -140,15 +140,15 @@ for %%a in (%PROC_LIST%) do (
 
 iverilog -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
 
-for %%a in (%PROC_LIST%) do cp %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulation
+for %%a in (%PROC_LIST%) do copy %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulation>%TMP_DIR%\xcopy.txt
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
 dir %TOPL_DIR%\*.mif /b > f_list.txt
-for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do cp %TOPL_DIR%\%%a .\
-for %%a in (%PROC_LIST%) do cp %PROJ_DIR%\%%a\Hardware\%%a_inst.mif .\
-for %%a in (%PROC_LIST%) do cp %PROJ_DIR%\%%a\Hardware\%%a_data.mif .\
-for %%a in (%PROC_LIST%) do cp %TMP_DIR%\%%a\pc_%%a_mem.txt .\
+for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do copy %TOPL_DIR%\%%a .\>%TMP_DIR%\xcopy.txt
+for %%a in (%PROC_LIST%) do copy %PROJ_DIR%\%%a\Hardware\%%a_inst.mif .\>%TMP_DIR%\xcopy.txt
+for %%a in (%PROC_LIST%) do copy %PROJ_DIR%\%%a\Hardware\%%a_data.mif .\>%TMP_DIR%\xcopy.txt
+for %%a in (%PROC_LIST%) do copy %TMP_DIR%\%%a\pc_%%a_mem.txt .\>%TMP_DIR%\xcopy.txt
 
 endlocal
 
@@ -156,9 +156,9 @@ vvp %PROJET% -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
-cp %BIN_DIR%\float2gtkw.exe %TMP_DIR%
-cp %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%
-cp %BIN_DIR%\comp2gtkw.exe %TMP_DIR%
+copy %BIN_DIR%\float2gtkw.exe %TMP_DIR%>%TMP_DIR%\xcopy.txt
+copy %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%>%TMP_DIR%\xcopy.txt
+copy %BIN_DIR%\comp2gtkw.exe %TMP_DIR%>%TMP_DIR%\xcopy.txt
 
 echo %INST_LIST%>proc_list.txt
 echo %PROC_TYPE%>proc_type.txt

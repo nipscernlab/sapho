@@ -73,10 +73,10 @@ bison -y -d CMMComp.y
 flex        CMMComp.l
 gcc      -o CMMComp.exe data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c y.tab.c
 
-mv CMMComp.exe %BIN_DIR%
-rm lex.yy.c
-rm  y.tab.c
-rm  y.tab.h
+move CMMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+del lex.yy.c
+del  y.tab.c
+del  y.tab.h
 
 :: Gera o compilador Assembler ------------------------------------------------
 
@@ -85,8 +85,8 @@ cd %ROOT_DIR%\Assembler\Sources
 flex -oASMComp.c ASMComp.l
 gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c
 
-mv ASMComp.exe %BIN_DIR%
-rm ASMComp.c
+move ASMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+del ASMComp.c
 
 :: Gera tradutores de dados pro GtkWave ---------------------------------------
 
@@ -97,10 +97,10 @@ gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
 gcc -o itob.exe itob.c
 
-mv float2gtkw.exe %BIN_DIR%
-mv f2i_gtkw.exe   %BIN_DIR%
-mv comp2gtkw.exe  %BIN_DIR%
-mv itob.exe       %BIN_DIR%
+move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move f2i_gtkw.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move itob.exe       %BIN_DIR%>%TMP_PRO%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
 
@@ -122,7 +122,7 @@ cd  %HDL_DIR%
 if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%TB%
 ) else (
-    cp %TMP_PRO%\%PROC%_tb.v %SIMU_DIR%
+    copy %TMP_PRO%\%PROC%_tb.v %SIMU_DIR%>%TMP_PRO%\xcopy.txt
     set TB_MOD=%PROC%_tb
 )
 
@@ -130,8 +130,8 @@ iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC% %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PR
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
-cp %UPROC%_data.mif %TMP_PRO%
-cp %UPROC%_inst.mif %TMP_PRO%
+copy %UPROC%_data.mif %TMP_PRO%>%TMP_PRO%\xcopy.txt
+copy %UPROC%_inst.mif %TMP_PRO%>%TMP_PRO%\xcopy.txt
 
 cd %TMP_PRO%
 
@@ -139,9 +139,9 @@ vvp %PROC% -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
-cp %BIN_DIR%\float2gtkw.exe %TMP_PRO%
-cp %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%
-cp %BIN_DIR%\comp2gtkw.exe %TMP_PRO%
+copy %BIN_DIR%\float2gtkw.exe %TMP_PRO%>%TMP_PRO%\xcopy.txt
+copy %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%>%TMP_PRO%\xcopy.txt
+copy %BIN_DIR%\comp2gtkw.exe %TMP_PRO%>%TMP_PRO%\xcopy.txt
 
 echo %PROC_DATA%>proc_data.txt
 echo %TMP_PRO%>tmp_dir.txt
