@@ -1,7 +1,7 @@
 #ifndef VARIAVEIS_H_INCLUDED
 #define VARIAVEIS_H_INCLUDED
 
-#define NVARMAX 999999     // tamanho maximo da tabela de simbolos
+#define NVARMAX 999999            // tamanho maximo da tabela de simbolos
 
 extern char  fname         [512]; // nome da funcao atual sendo parseada
 extern char v_name[NVARMAX][512]; // nome da variavel ou funcao

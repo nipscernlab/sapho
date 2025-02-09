@@ -18,7 +18,7 @@ void declar_var(int id)
 {
     if (v_type[id] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a vari�vel %s j� existe, t� doido?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
@@ -57,7 +57,7 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
 {
     if (v_type[id_var] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a vari�vel %s j� existe, t� doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
         return;
     }
 
@@ -172,7 +172,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
 
     if (v_type[id_var] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a vari�vel %s j� existe, t� doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
         return;
     }
 

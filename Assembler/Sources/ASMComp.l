@@ -128,8 +128,8 @@ int main(int argc, char *argv[])
 
 	eval_finish();                   // executa finalizacao do assembler
 
-	//fprintf(stdout, "###### Mem�ria de instru  es: %d\n", n_ins);
-	//fprintf(stdout, "###### Mem ria de dados: %d\n"     , n_dat);
+	fprintf(stdout, "######  Memória de instruções: %d\n", n_ins);
+	fprintf(stdout, "######  Memória de dados: %d\n"     , n_dat);
 
     return 0;
 }

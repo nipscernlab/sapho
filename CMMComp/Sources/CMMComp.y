@@ -1,27 +1,27 @@
 /*
-    Coisas que s� tem em C+-
+    Coisas que só tem em C+-
 
-    - Diretivas #USEMAC #ENDMAC: seleciona trechos do c�digo que ser�o substituidos por Macros otimizados em assembly
+    - Diretivas #USEMAC #ENDMAC: seleciona trechos do código que serão substituidos por Macros otimizados em assembly
     - Diretiva  #INTERPOINT     : marca ponto de retorno para um reset no pino itr
 
-    - tipo de dados comp (para n�meros complexos) : ex: comp a = 3+4i;
+    - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
 
     - StdLib   in(.,.): leitura de dados externos
     - StdLib  out(.,.): escrita pra fora do processador
-    - StdLib   norm(.): fun��o que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divis�o da ULA)
-    - StdLib   pset(.): fun��o que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
-    - StdLib    abs(.): fun��o que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o m�dulo
+    - StdLib   norm(.): função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
+    - StdLib   pset(.): função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
+    - StdLib    abs(.): função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
     - StdLib   sqrt(.): retorna raiz quadrada. Gera um float
     - StdLib   atan(.): retorna o arco-tg. Gera um float
-    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele a� pra vc ver)
-    - StdLib   real(.): retorna a parte real de um n�mero complexo
-    - StdLib   imag(.): retorna a parte imag de um n�mero complexo
-    - StdLib   fase(.): retorna a fase de um n�mero complexo
+    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
+    - StdLib   real(.): retorna a parte real de um número complexo
+    - StdLib   imag(.): retorna a parte imag de um número complexo
+    - StdLib   fase(.): retorna a fase de um número complexo
 
-    - Operador   >>>  : deslocamento � direta com complemento a dois (desloca mantendo o sinal)
+    - Operador   >>>  : deslocamento é direta com complemento a dois (desloca mantendo o sinal)
 
-    - Array inicializ�vel por arquivo. A mem�ria do array j� � preenchida em tempo de compila��o. (ex: int x[128] "valores.txt";)
-    - Array com �ndice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i s�o invertidos.
+    - Array inicializável por arquivo. A memória do array já é preenchida em tempo de compilação. (ex: int x[128] "valores.txt";)
+    - Array com índice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sâo invertidos.
 */
 
 %{
@@ -419,5 +419,5 @@ int main(int argc, char *argv[])
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	fprintf (stderr, "P�, presta aten��o na sintaxe da linha %d!\n", line_num+1);
+	fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
 }

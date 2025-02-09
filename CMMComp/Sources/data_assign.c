@@ -61,7 +61,7 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
     // testa se ja foi declarada pra poder dar uma atribuicao
     if (v_type[id] == 0)
     {
-        fprintf (stderr, "Erro na linha %d: se voc� declarar a vari�vel %s eu agrade�o.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: se você declarar a variável %s eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
@@ -71,25 +71,25 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
     if ((v_isar[id] == 0) && (is_array > 0))
     {
-        fprintf (stderr, "Erro na linha %d: %s n�o � um array.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: %s não é um array.\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
     if ((v_isar[id] > 0) && (is_array == 0))
     {
-        fprintf (stderr, "Erro na linha %d: %s � um array. Cad� o �ndice?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: %s é um array. Cadê o índice?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
     if ((v_isar[id] == 1) && (is_array == 2))
     {
-        fprintf (stderr, "Erro na linha %d: t� sobrando �ndice no array %s. Era pra ser de uma dimens�o s�!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: tá sobrando índice no array %s. Era pra ser de uma dimensão só!\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
     if ((v_isar[id] == 2) && (is_array == 1))
     {
-        fprintf (stderr, "Erro na linha %d: t� faltando �ndice no array %s. Era pra ser de duas dimens�es!\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: tá faltando índice no array %s. Era pra ser de duas dimensões!\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
@@ -137,7 +137,7 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
     if ((left_type == 1) && (righ_type == 2))
     {
-        if (warn) fprintf(stdout, "Aten��o na linha %d: vari�vel %s � int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        if (warn) fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         if (prtype == 0)
         {
@@ -151,7 +151,7 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
     if ((left_type == 2) && (righ_type == 1))
     {
-        if (warn) fprintf(stdout, "Aten��o na linha %d: vari�vel %s � float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        if (warn) fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         if (prtype == 0)
         {
@@ -222,7 +222,7 @@ void var_set_comp(int id, int et, int is_array)
 
     if ((t_left == 1) && (t_right == 5))
     {
-        fprintf (stdout, "Aten��o na linha %d: nessa convers�o, eu vou arredondar a parte real hein!\n", line_num+1);
+        fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
         split_cmp_const(et,&et_r,&et_i);
                 var_set(id, et_r,is_array,0,0,1);
@@ -232,7 +232,7 @@ void var_set_comp(int id, int et, int is_array)
 
     if ((t_left == 1) && (t_right == 3) && (mem != 0))
     {
-        fprintf (stdout, "Aten��o na linha %d: nessa convers�o, eu vou arredondar a parte real hein!\n", line_num+1);
+        fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
         get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
             var_set(id, et_r,is_array,0,0,1);
@@ -242,7 +242,7 @@ void var_set_comp(int id, int et, int is_array)
 
     if ((t_left == 1) && (t_right == 3) && (mem == 0))
     {
-        fprintf (stdout, "Aten��o na linha %d: nessa convers�o, eu vou arredondar a parte real hein!\n", line_num+1);
+        fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
         if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
         var_set(id,2*OFST,is_array,0,0,1);
@@ -252,7 +252,7 @@ void var_set_comp(int id, int et, int is_array)
 
     if ((t_left == 2) && (t_right == 5))
     {
-        fprintf (stdout, "Aten��o na linha %d: vou pegar s� a parte real!\n", line_num+1);
+        fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
         split_cmp_const(et,&et_r,&et_i);
                 var_set(id, et_r,is_array,0,0,1);
@@ -262,7 +262,7 @@ void var_set_comp(int id, int et, int is_array)
 
     if ((t_left == 2) && (t_right == 3) && (mem != 0))
     {
-        fprintf (stdout, "Aten��o na linha %d: vou pegar s� a parte real!\n", line_num+1);
+        fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
         get_cmp_ets(et,&et_r,&et_i); // pega os IDs estendidos do right na memoria
             var_set(id, et_r,is_array,0,0,1);
@@ -272,7 +272,7 @@ void var_set_comp(int id, int et, int is_array)
 
     if ((t_left == 2) && (t_right == 3) && (mem == 0))
     {
-        fprintf (stdout, "Aten��o na linha %d: vou pegar s� a parte real!\n", line_num+1);
+        fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
         if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
         var_set(id,2*OFST,is_array,0,0,1);
