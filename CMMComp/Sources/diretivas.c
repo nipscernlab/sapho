@@ -7,6 +7,15 @@
 #include <stdlib.h>
 #include <math.h>
 
+// redeclaracao de variaveis globais
+FILE *f_lin;       // arquivo de linhas
+int  itr_ok  = 0;  // se ja usou ou nao interrupcao
+int  num_ins = 0;  // numero de instrucoes do parse
+int  mainok  = 0;  // status da funcao main: 0 -> nao usada, 1 -> declarada, 2 -> chamada no inicio
+int  nbmant  = 0;  // numero de bits de mantissa
+int  nbexpo  = 0;  // numero de bits de expoente
+char pr_name[128]; // nome do processador
+
 // escreve as diretivas de compilacao no arquivo asm
 void exec_diretivas(char *dir, int id, int t)
 {
@@ -21,8 +30,8 @@ void exec_diretivas(char *dir, int id, int t)
         case 2: nbmant = ival; fprintf(f_log, "%d\n", nbmant); break;
         case 3: nbexpo = ival; fprintf(f_log, "%d\n", nbexpo); break;
         // rever essa questao do num de i/o
-        case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
-        case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
+        case 4: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que vocï¿½ quer um processador sem entrada de dados?\n", line_num+1); break;
+        case 5: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que vocï¿½ quer um processador sem saï¿½da de dados?\n"  , line_num+1); break;
         case 6: strcpy (pr_name,v_name[id]); fprintf(f_log, "%s\n",v_name[id]); break;
     }
 }
@@ -32,7 +41,7 @@ void exec_diretivas(char *dir, int id, int t)
 void use_macro(char *f_name, int global)
 {
     if (using_macro == 1)
-        fprintf(stderr, "Erro na linha %d: Tá chamando uma macro dentro da outra. Você é uma pessoa confusa!\n", line_num+1);
+        fprintf(stderr, "Erro na linha %d: Tï¿½ chamando uma macro dentro da outra. Vocï¿½ ï¿½ uma pessoa confusa!\n", line_num+1);
 
     // se for global, tem q ver se tem que chamar a funcao main ainda
     if ((mainok == 0) && (global == 1))
@@ -54,7 +63,7 @@ void use_macro(char *f_name, int global)
     FILE *f_macro;
     char a;
         f_macro  =    fopen  (file_name, "r");
-    if (f_macro == 0) fprintf(stderr, "Erro na linha %d: Cadê a macro %s? Tinha que estar na pasta do projeto do SAPHO!\n", line_num+1, file_name);
+    if (f_macro == 0) fprintf(stderr, "Erro na linha %d: Cadï¿½ a macro %s? Tinha que estar na pasta do projeto do SAPHO!\n", line_num+1, file_name);
 	do {      a  =    fgetc  (f_macro); if (a != EOF) fputc(a,f_asm);} while (a != EOF);
 	                  fclose (f_macro);
 
@@ -64,7 +73,7 @@ void use_macro(char *f_name, int global)
 // libera o parser pra salvar no arquivo assembler
 void end_macro()
 {
-    if (using_macro == 0) fprintf(stderr, "Erro na linha %d: Não estou achando o começo da macro\n", line_num+1);
+    if (using_macro == 0) fprintf(stderr, "Erro na linha %d: Nï¿½o estou achando o comeï¿½o da macro\n", line_num+1);
         using_macro  = 0;
 }
 
@@ -102,7 +111,7 @@ int main () {
 // talvez um warning ja sirva
 void use_inter()
 {
-    if (itr_ok      == 1) fprintf(stderr, "Erro na linha %d: já tem uma interrupção rolando em outro ponto antes desse!\n", line_num+1);
+    if (itr_ok      == 1) fprintf(stderr, "Erro na linha %d: jï¿½ tem uma interrupï¿½ï¿½o rolando em outro ponto antes desse!\n", line_num+1);
     if (using_macro == 0) fprintf( f_asm, "#ITRAD\n");
 
     itr_ok = 1;

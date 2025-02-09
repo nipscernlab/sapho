@@ -1,13 +1,13 @@
-int  ndstac, nbmant, nbexpo, nbits, fftsiz;
-int  float_point;    // diz se o processador eh com ponto flutuante
+extern int  ndstac, nbmant, nbexpo, nbits, fftsiz;
+extern int  float_point;    // diz se o processador eh com ponto flutuante
 
-char proc_dir[1024]; // diretorio do processador
-char temp_dir[1024]; // diretorio da pasta Tmp
-char  hdl_dir[1024]; // diretorio da pasta HDL
+extern char proc_dir[1024]; // diretorio do processador
+extern char temp_dir[1024]; // diretorio da pasta Tmp
+extern char  hdl_dir[1024]; // diretorio da pasta HDL
 
-int clk_frq;         // frequencia do cloak (em MHz) para a simulacao
-int clk_num;         // num de clocks maximo a simular
-int sim_typ;         // tipo de simulacao (um proc ou multicore)
+extern int clk_frq;         // frequencia do cloak (em MHz) para a simulacao
+extern int clk_num;         // num de clocks maximo a simular
+extern int sim_typ;         // tipo de simulacao (um proc ou multicore)
 
 void    set_name(char *va);
 char  *get_dname();

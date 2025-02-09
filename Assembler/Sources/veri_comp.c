@@ -56,8 +56,8 @@ void build_core_flx()
     // copia o conteudo do processador
     while(fgets(texto, 1001, input) != NULL)
     {
-        if(strcmp(texto,     "pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);\n") == 0)
-          fprintf(output, "pc_%s #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);\n", name);
+        if(strstr(texto,     "pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);") != NULL)
+          fprintf(output, "pc_%s #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);\n",  name);
         else
             fputs(texto, output);
         memset(texto, 0, sizeof(char) * 1001);
@@ -89,12 +89,12 @@ void build_proc_flx()
     // copia o conteudo do processador
     while(fgets(texto, 1001, input) != NULL)
     {
-        if ( strcmp(texto,          "core_fx #(.NUBITS(NUBITS),\n") == 0)
-            fprintf(output, "core_flx_%s_sim #(.NUBITS(NUBITS),\n", name);
-        else if (strcmp(texto,      "core_fl #(.NBMANT(NBMANT),\n") == 0)
-            fprintf(output, "core_flx_%s_sim #(.NBMANT(NBMANT),\n", name);
-        else if (strcmp(texto,    "mem_data # (.NADDRE(MDATAS),\n") == 0)
-            fprintf(output,    "mem_data_%s # (.NADDRE(MDATAS),\n", name);
+        if ( strstr(texto,          "core_fx #(.NUBITS(NUBITS),") != NULL)
+            fprintf(output, "core_flx_%s_sim #(.NUBITS(NUBITS),\n",  name);
+        else if (strstr(texto,      "core_fl #(.NBMANT(NBMANT),")    != 0)
+            fprintf(output, "core_flx_%s_sim #(.NBMANT(NBMANT),\n",  name);
+        else if (strstr(texto,    "mem_data # (.NADDRE(MDATAS),")    != 0)
+            fprintf(output,    "mem_data_%s # (.NADDRE(MDATAS),\n",  name);
         else
             fputs(texto, output);
         memset(texto, 0, sizeof(char) * 1001);
@@ -121,7 +121,9 @@ void build_proc_sim()
     input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
-        if(strcmp(texto, "endmodule") != 0)
+        if (((strstr(texto, "proc_fx") != NULL) || (strstr(texto, "proc_fl") != NULL)) && (sim_typ == 1))
+            fprintf(f_veri, "proc_flx_%s_sim\n", name);
+        else if(strcmp(texto, "endmodule") != 0)
             fputs(texto, output);
            memset(texto, 0, sizeof(char) * 1001);
     }
@@ -198,31 +200,15 @@ void build_vv_file()
     fprintf(f_veri, "wire [%d:0] addr_in;\n"   , (int)ceil(log2(nmioin)-1));
     fprintf(f_veri, "wire [%d:0] addr_out;\n\n", (int)ceil(log2(nuioou)-1));
 
-    if (sim_typ==1)
+    if (float_point)
     {
-        if (float_point) // exclusivo ponto flutuante
-        {
-            fprintf(f_veri, "proc_flx_%s_sim #(.NBMANT(%d),\n", name,nbmant);
-            fprintf(f_veri,                   ".NBEXPO(%d),\n"      ,nbexpo);
-        }
-        else             // exclusivo ponto fixo
-        {
-            fprintf(f_veri, "proc_flx_%s_sim #(.NUBITS(%d),\n", name,nbits );
-            fprintf(f_veri,                   ".NUGAIN(%d),\n"      ,nugain);
-        }
+        fprintf(f_veri, "proc_fl\n#(.NBMANT(%d),\n",nbmant);
+        fprintf(f_veri, ".NBEXPO(%d),\n"           ,nbexpo);
     }
     else
     {
-        if (float_point)
-        {
-            fprintf(f_veri, "proc_fl #(.NBMANT(%d),\n",nbmant);
-            fprintf(f_veri, ".NBEXPO(%d),\n"          ,nbexpo);
-        }
-        else
-        {
-            fprintf(f_veri, "proc_fx #(.NUBITS(%d),\n",nbits );
-            fprintf(f_veri, ".NUGAIN(%d),\n"          ,nugain);
-        }
+        fprintf(f_veri, "proc_fx\n#(.NUBITS(%d),\n",nbits );
+        fprintf(f_veri, ".NUGAIN(%d),\n"           ,nugain);
     }
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
@@ -377,7 +363,7 @@ void build_pc_file()
 
     while(fgets(texto, 1001, input) != NULL)
     {
-        if(strcmp(texto, "#\n") == 0)
+        if(strstr(texto, "#") != NULL)
         {
             memset(texto, 0, sizeof(char) * 1001);
              fgets(texto, 1001, input);

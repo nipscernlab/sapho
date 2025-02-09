@@ -1,27 +1,27 @@
 /*
-    Coisas que só tem em C+-
+    Coisas que sï¿½ tem em C+-
 
-    - Diretivas #USEMAC #ENDMAC: seleciona trechos do código que serão substituidos por Macros otimizados em assembly
+    - Diretivas #USEMAC #ENDMAC: seleciona trechos do cï¿½digo que serï¿½o substituidos por Macros otimizados em assembly
     - Diretiva  #INTERPOINT     : marca ponto de retorno para um reset no pino itr
 
-    - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
+    - tipo de dados comp (para nï¿½meros complexos) : ex: comp a = 3+4i;
 
     - StdLib   in(.,.): leitura de dados externos
     - StdLib  out(.,.): escrita pra fora do processador
-    - StdLib   norm(.): função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
-    - StdLib   pset(.): função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
-    - StdLib    abs(.): função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
+    - StdLib   norm(.): funï¿½ï¿½o que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisï¿½o da ULA)
+    - StdLib   pset(.): funï¿½ï¿½o que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
+    - StdLib    abs(.): funï¿½ï¿½o que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o mï¿½dulo
     - StdLib   sqrt(.): retorna raiz quadrada. Gera um float
     - StdLib   atan(.): retorna o arco-tg. Gera um float
-    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
-    - StdLib   real(.): retorna a parte real de um número complexo
-    - StdLib   imag(.): retorna a parte imag de um número complexo
-    - StdLib   fase(.): retorna a fase de um número complexo
+    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aï¿½ pra vc ver)
+    - StdLib   real(.): retorna a parte real de um nï¿½mero complexo
+    - StdLib   imag(.): retorna a parte imag de um nï¿½mero complexo
+    - StdLib   fase(.): retorna a fase de um nï¿½mero complexo
 
-    - Operador   >>>  : deslocamento à direta com complemento a dois (desloca mantendo o sinal)
+    - Operador   >>>  : deslocamento ï¿½ direta com complemento a dois (desloca mantendo o sinal)
 
-    - Array inicializável por arquivo. A memória do array já é preenchida em tempo de compilação. (ex: int x[128] "valores.txt";)
-    - Array com índice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i são invertidos.
+    - Array inicializï¿½vel por arquivo. A memï¿½ria do array jï¿½ ï¿½ preenchida em tempo de compilaï¿½ï¿½o. (ex: int x[128] "valores.txt";)
+    - Array com ï¿½ndice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sï¿½o invertidos.
 */
 
 %{
@@ -40,13 +40,18 @@
 
 #include <string.h>
 
+// redeclaracao de variaveis globais
+int fgen = 0; // flag de geracao de macros de ponto flutuante
+
 // variaveis obrigatorias do flex/bison
 
-FILE *yyin;
+extern FILE *yyin;
 int   yylex  (void);
 void  yyerror(char const *s);
 
 %}
+
+%union {int ival;} // valor associado a um token
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
@@ -56,12 +61,11 @@ void  yyerror(char const *s);
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK     // saltos
 %token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
-%token NORM EQNE                                               // assignments especiais de dois caracteres
 %token PPLUS                                                   // operador ++. pode ser usado pra reduzir exp e tb pra assignments
 
 // tokens terminais -----------------------------------------------------------
 
-%token TYPE ID STRING INUM FNUM CNUM                           // vem do lexer com um valor associado
+%token <ival> TYPE ID STRING INUM FNUM CNUM                           // vem do lexer com um valor associado
 
 // elimina conflito if com e sem else
 %nonassoc THEN
@@ -83,6 +87,11 @@ void  yyerror(char const *s);
 %left '+' '-'
 %left '*' '/' '%'
 %left '!' '~' PPLUS
+
+%type <ival> par_list
+%type <ival> exp
+%type <ival> func_call
+%type <ival> std_in std_pst std_abs std_sign std_nrm std_sqrt std_real std_imag std_atan std_fase
 
 %%
 
@@ -410,5 +419,5 @@ int main(int argc, char *argv[])
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
+	fprintf (stderr, "Pï¿½, presta atenï¿½ï¿½o na sintaxe da linha %d!\n", line_num+1);
 }

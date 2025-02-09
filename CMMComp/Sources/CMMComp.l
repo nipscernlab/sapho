@@ -75,40 +75,38 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "&&"                          return LAND;
 "||"                          return LOR;
 
-"/>"                          return NORM;
-"=-"                          return EQNE;
 "++"                          return PPLUS;
 
-"comp"   {fgen = 1; type_tmp = 3; yylval = 3; return TYPE;}
-"float"  {fgen = 1; type_tmp = 2; yylval = 2; return TYPE;}
-"int"    {          type_tmp = 1; yylval = 1; return TYPE;}
-"void"   {                        yylval = 0; return TYPE;}
+"comp"   {fgen = 1; type_tmp = 3; yylval.ival = 3; return TYPE;}
+"float"  {fgen = 1; type_tmp = 2; yylval.ival = 2; return TYPE;}
+"int"    {          type_tmp = 1; yylval.ival = 1; return TYPE;}
+"void"   {                        yylval.ival = 0; return TYPE;}
 
 {VARIA}           {
-                     yylval = exec_id(yytext);
+                     yylval.ival = exec_id(yytext);
                      return ID;
                   }
 
 {INNUM}           {
-                     yylval = exec_num(yytext);
+                     yylval.ival = exec_num(yytext);
                      return INUM;
                   }
 
 {FLNUM}           {  //[0-9]*\.?[0-9]+
-                     yylval = exec_num(yytext);
+                     yylval.ival = exec_num(yytext);
                      fgen = 1;
                      return FNUM;
                   }
 
 {CONUM}           {
-                     yylval = exec_cnum(yytext);
+                     yylval.ival = exec_cnum(yytext);
                      fgen = 1;
                      return CNUM;
                   }
 
 \"(\\.|[^\\"])*\" {
                      if (find_var(yytext) == -1) add_var(yytext);
-                     yylval = find_var(yytext);
+                     yylval.ival = find_var(yytext);
                      return STRING;
                   }
 
@@ -122,7 +120,7 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 {WS}                             ;  /* ignore whitespace   */
 "//"[^\n]*                       ;  /* comentario em linha */
 
-.                 {yyerror("Erro do Lexer!\n");}
+. {if (yytext[0] != '\r') yyerror("");}
 %%
 
 int yywrap(void) {return 1;}

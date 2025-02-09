@@ -16,6 +16,26 @@
 #include <math.h>
 #include <string.h>
 
+// redeclaracao de variaveis globais
+int  fftsiz = 0;          // tamanho da fft
+int  nbexpo;              // numero de bits do expoente
+int  nbmant;              // numero de bits da mantissa
+int  fim_addr;            // endereco do fim do programa
+int  v_tipo[1000];        // tipo da variavel encontrada
+int  v_add [1000];        // endereco da variavel encontrada
+char v_namo[1000][64];    // nome da variavel encontrada
+int  float_point;         // se o processador eh ponto flutuante
+int  nbits;               // numero de bits do processador
+char opcd[64];            // guarda opcode atual
+int  ndstac;              // numero de destinos de acesso direto
+int  isrf;                // diz se achou a instrucao pra fazer FFT
+int  n_opc;               // numero de instrucoes no arquivo de traducao
+int  v_cont;              // numero de variaveis encontradas
+int  n_dat;               // numero de variaveis adicionadas
+int  m_count;             // contador de macros
+char m_name[NMNEMAX][64]; // nome das macros
+
+
 #define NBITS_OPC 6     // tem que mudar no verilog de acordo (em proc_fx.v e proc_fl.v)
 
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
@@ -113,7 +133,7 @@ int is_var(char *va, int *tipo, int *is_global)
     while(fgets(texto, 1001, input) != NULL)
     {
         // secao de variaveis termina quando encontra um #
-        if (strcmp(texto, "#\n") == 0) break;
+        if (strstr(texto, "#") != NULL) break;
 
         sscanf (texto, "%s %s %d", funcao, variav, tipo);
 
@@ -225,7 +245,7 @@ void fill_mem(char *f_name, int tam)
 
         filepointer = fopen(addr_tab, "r");
         if (filepointer == NULL)
-        fprintf(stderr, "Erro: Não rolou de abrir/achar o arquivo %s!!\n", addr_tab);
+        fprintf(stderr, "Erro: Nï¿½o rolou de abrir/achar o arquivo %s!!\n", addr_tab);
     }
 
     // agora le o arquivo -----------------------------------------------------

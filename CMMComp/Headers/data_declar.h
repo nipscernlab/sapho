@@ -1,7 +1,7 @@
 #ifndef DATA_DECLAR_H_INCLUDED
 #define DATA_DECLAR_H_INCLUDED
 
-int  type_tmp; // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l)
+extern int type_tmp; // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l)
 
 void declar_var   (int id);
 void declar_img   (int id);

@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+// redeclaracao de variaveis globais
+char dir_macro[1024]; // diretorio de macros
+char dir_tmp  [1024]; // diretorio temporario
+
 FILE *f_float;
 
 // ----------------------------------------------------------------------------
@@ -198,7 +202,7 @@ void float_begin(char *fasm, char *pc_sim_mem)
     sprintf(path, "%s/%s", dir_macro, "float_init.asm");
 
         f_float =     fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_init.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+    if (f_float == 0) fprintf(stderr, "Cadï¿½ a macro float_init.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {          a = fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 
 	fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
@@ -231,7 +235,7 @@ void math_gen(char *fasm)
     {
         sprintf(path, "%s/%s", dir_macro, "float_sqrt.asm");
         f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+    if (f_float == 0) fprintf(stderr, "Cadï¿½ a macro float_sqrt.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
     }
@@ -240,7 +244,7 @@ void math_gen(char *fasm)
     {
         sprintf(path, "%s/%s", dir_macro, "float_sqrti.asm");
         f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+    if (f_float == 0) fprintf(stderr, "Cadï¿½ a macro float_sqrt_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
     }
@@ -249,7 +253,7 @@ void math_gen(char *fasm)
     {
         sprintf(path, "%s/%s", dir_macro, "float_atan.asm");
         f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_atan.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+    if (f_float == 0) fprintf(stderr, "Cadï¿½ a macro float_atan.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
     }
@@ -258,7 +262,7 @@ void math_gen(char *fasm)
     {
         sprintf(path, "%s/%s", dir_macro, "float_atan_i.asm");
         f_float  =    fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_atan_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
+    if (f_float == 0) fprintf(stderr, "Cadï¿½ a macro float_atan_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
 	                  fclose (f_float);
     }

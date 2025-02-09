@@ -5,7 +5,13 @@
 #include "..\Headers\data_use.h"
 #include "..\Headers\data_assign.h"
 #include "..\Headers\stdlib.h"
+
 #include <string.h>
+
+// redeclaracao de variaveis globais
+int fadd = 0; // se vai precisar de macros de ponto flutuante
+int fdiv = 0; // se vai precisar de macros de ponto flutuante
+int fmlt = 0; // se vai precisar de macros de ponto flutuante
 
 // gera instrucao pra negar a reducao pra exp
 // eu nao vou implementar uma instrucao SUB

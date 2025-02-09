@@ -5,6 +5,13 @@
 
 #include <string.h>
 
+// redeclaracao de variaveis globais
+char temp_dir[1024], hdl_dir[1024], proc_dir[1024];
+int  sim_typ, clk_frq, clk_num;
+int  itr_addr = 0;
+int  n_ins	  = 0;
+int  pp       = 0;
+
 %}
 
 CONST    [-+]?[0-9]*\.?[0-9]+
@@ -121,7 +128,7 @@ int main(int argc, char *argv[])
 
 	eval_finish();                   // executa finalizacao do assembler
 
-	//fprintf(stdout, "###### Memória de instru  es: %d\n", n_ins);
+	//fprintf(stdout, "###### Memï¿½ria de instru  es: %d\n", n_ins);
 	//fprintf(stdout, "###### Mem ria de dados: %d\n"     , n_dat);
 
     return 0;

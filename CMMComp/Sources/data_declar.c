@@ -6,12 +6,19 @@
 #include <string.h>
 #include <stdlib.h>
 
+// redeclaracao de variaveis globais
+FILE *f_log;         // arquivo de log
+int using_macro = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
+int v_fnid[NVARMAX]; // ID da funcao a qual a variavel pertence
+int v_used[NVARMAX]; // se ID ja foi usado
+int type_tmp;        // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l)
+
 // declara variavel (sem ser array)
 void declar_var(int id)
 {
     if (v_type[id] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variï¿½vel %s jï¿½ existe, tï¿½ doido?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
@@ -50,7 +57,7 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
 {
     if (v_type[id_var] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variï¿½vel %s jï¿½ existe, tï¿½ doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
         return;
     }
 
@@ -165,7 +172,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
 
     if (v_type[id_var] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        fprintf (stderr, "Erro na linha %d: puts, a variï¿½vel %s jï¿½ existe, tï¿½ doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
         return;
     }
 
