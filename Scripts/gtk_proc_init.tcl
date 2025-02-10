@@ -10,7 +10,7 @@ close $fileID
 
 # Separador de Sinais ---------------------------------------------------------
 
-gtkwave::/Edit/Insert_Comment {Sinais *************}
+gtkwave::/Edit/Insert_Comment {Signals ************}
 
 # Insere sinais ---------------------------------------------------------------
 
@@ -80,7 +80,7 @@ for {set i 0} {$i < $j } {incr i} {
     gtkwave::highlightSignalsFromList $filter
     gtkwave::/Edit/Data_Format/Signed_Decimal
     gtkwave::/Edit/Color_Format/Yellow
-    set nome [list Entrada $i]
+    set nome [list Input $i]
     gtkwave::/Edit/Alias_Highlighted_Trace $nome
 }
 
@@ -117,13 +117,13 @@ for {set i 0} {$i < $j } {incr i} {
     gtkwave::highlightSignalsFromList $filter
     gtkwave::/Edit/Data_Format/Signed_Decimal
     gtkwave::/Edit/Color_Format/Yellow
-    set nome [list Saída $i]
+    set nome [list Output $i]
     gtkwave::/Edit/Alias_Highlighted_Trace $nome
 }
 
 # Separador de Instrucoes -----------------------------------------------------
 
-gtkwave::/Edit/Insert_Comment {Instruções *********}
+gtkwave::/Edit/Insert_Comment {Instructions *******}
 
 # Assembly --------------------------------------------------------------------
 
@@ -165,7 +165,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
 
 # Separador de Variaveis ------------------------------------------------------
 
-gtkwave::/Edit/Insert_Comment {Variáveis **********}
+gtkwave::/Edit/Insert_Comment {Variables **********}
 
 # Tipo int --------------------------------------------------------------------
 
@@ -225,7 +225,7 @@ for {set i 0} {$i < $var_n } {incr i} {
     gtkwave::highlightSignalsFromList $target
     set name [lindex $var_int_name $i]
     set func [lindex $var_int_func $i]
-    set ftmp [list int $name em $func]
+    set ftmp [list int $name in $func]
     set par {()}
     if {[string compare $func global]==0} {
         gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
@@ -288,7 +288,7 @@ for {set i 0} {$i < $var_n } {incr i} {
     gtkwave::highlightSignalsFromList $target
     set name [lindex $var_float_name $i]
     set func [lindex $var_float_func $i]
-    set ftmp [list float $name em $func]
+    set ftmp [list float $name in $func]
     set par {()}
     if {[string compare $func global]==0} {
         gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
@@ -351,7 +351,7 @@ for {set i 0} {$i < $var_n } {incr i} {
     gtkwave::highlightSignalsFromList $target
     set name [lindex $var_comp_name $i]
     set func [lindex $var_comp_func $i]
-    set ftmp [list comp $name em $func]
+    set ftmp [list comp $name in $func]
     set par {()}
     if {[string compare $func global]==0} {
         gtkwave::/Edit/Alias_Highlighted_Trace $ftmp
