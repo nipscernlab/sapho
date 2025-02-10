@@ -57,13 +57,13 @@ void declar_firstpar(int id)
     {
         // primeiro pega o img da pilha
         int idi = get_img_id(id);
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[idi]);
+        add_instr("SETP %s\n", v_name[idi]);
     }
     // fim do teste -----------------------------------------------------------
 
     // o primeiro parametro da funcao eh com SET (pq eh o ultimo a ser chamado)
     // os proximos (se houver) sao com SETP em outra funcao
-    if (is_macro() == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+    add_instr("SET %s\n", v_name[id]);
 }
 
 // pega a partir do segundo parametro
@@ -87,11 +87,11 @@ void set_par(int id)
     if (v_type[id] > 2)
     {
         int idi = get_img_id(id);
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[idi]);
+        add_instr("SETP %s\n", v_name[idi]);
     }
     // fim do teste -----------------------------------------------------------
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n" , v_name[id]);
+        add_instr("SETP %s\n" , v_name[id]);
 }
 
 // quando acha a palavra chave return
@@ -130,7 +130,7 @@ void declar_ret(int et, int ret)
         {
             fprintf(stdout, "Atenção na linha %d: vai mesmo retornar float para int na função %s? Vou meter um monte de instruções assembly pra isso?\n", line_num+1, v_name[fun_id1]);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+            add_instr("CALL float2int\n");
             f2i = 1;
         }
         else
@@ -145,7 +145,7 @@ void declar_ret(int et, int ret)
 
         if (prtype == 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+            add_instr("CALL int2float\n");
             i2f = 1;
         }
     }
@@ -156,7 +156,7 @@ void declar_ret(int et, int ret)
 
     if (ret == 0) return;
 
-    if (is_macro() == 0) fprintf(f_asm, "RETURN\n");
+    add_instr("RETURN\n");
 
     acc_ok = 0; // apesar de ter exp no acc, tem q liberar para comecar outra funcao
     ret_ok = 1; // apareceu a palavra chave return na funcao certinho
@@ -198,7 +198,7 @@ void declar_ret_cmp(int et)
     {
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP aux_img\n");
+        add_instr("SETP aux_img\n");
         declar_ret(2*OFST,1);
     }
 
@@ -228,7 +228,7 @@ void declar_ret_cmp(int et)
     {
         fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP aux_img\n");
+        add_instr("SETP aux_img\n");
         declar_ret(2*OFST,1);
     }
 
@@ -343,12 +343,12 @@ void func_ret(int id) // id -> id da funcao atual
              num_ins++;
         fprintf(f_lin, "%s\n", itob(-3,20));
         }
-        else if (is_macro() == 0) fprintf(f_asm, "RETURN\n"); // tem subrotinas
+        else add_instr("RETURN\n"); // tem subrotinas
 
         v_used[id] = 1; // funcao main foi usada
         mainok     = 1; // funcao main foi parseada
     }
-    else if (v_type[id] == 6) {if (is_macro() == 0) fprintf(f_asm, "RETURN\n");} // se eh tipo void, ainda precisa gerar um RETURN
+    else if (v_type[id] == 6) {add_instr("RETURN\n");} // se eh tipo void, ainda precisa gerar um RETURN
 
     // variavel de ambiente fname fica vazia (saiu de uma funcao)
     strcpy(fname, "");
@@ -364,9 +364,9 @@ void void_ret()
 
     if ((strcmp(fname, "main") == 0) && (mainok == 0))       // se eh funcao main e soh tem ela ...
     {
-         if (is_macro() == 0) fprintf(f_asm, "JMP fim\n");  // ai nao usa RETURN, pula pro fim
+         add_instr("JMP fim\n");  // ai nao usa RETURN, pula pro fim
     }
-    else if (is_macro() == 0) fprintf(f_asm, "RETURN\n");   // se nao, usa return padrao
+    else add_instr("RETURN\n");   // se nao, usa return padrao
 }
 
 // ----------------------------------------------------------------------------
@@ -459,7 +459,7 @@ void vcall(int id)
         fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função %s.\n", line_num+1, rem_fname(v_name[id], fname));
     }
 
-    if (is_macro() == 0) fprintf(f_asm, "CALL %s\n", v_name[id]);
+    add_instr("CALL %s\n", v_name[id]);
 
     v_used[id] = 1; // funcao ja foi chamada
     acc_ok     = 0; // acc ta liberado
@@ -485,7 +485,7 @@ int fcall(int id)
         return 0;
     }
 
-    if (is_macro() == 0) fprintf(f_asm, "CALL %s\n",v_name[id]);
+    add_instr("CALL %s\n",v_name[id]);
 
     v_used[id] = 1;             // funcao ja foi usada
 
@@ -549,7 +549,7 @@ void par_check(int et)
 
         if (prtype == 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+            add_instr("CALL float2int\n");
             f2i = 1;
         }
     }
@@ -562,7 +562,7 @@ void par_check(int et)
 
         if (prtype == 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+            add_instr("CALL int2float\n");
             i2f = 1;
         }
     }

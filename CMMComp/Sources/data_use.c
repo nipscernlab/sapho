@@ -57,7 +57,7 @@ void load_check(int et, int neg)
     // entao coloca o indice na pilha e da LOAD
     if (v_isar[id] > 0)
     {
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", srf, v_name[id]);
+        add_instr("%s %s\n", srf, v_name[id]);
     }
     else // se nao eh array, carrega a variavel
     {
@@ -66,11 +66,11 @@ void load_check(int et, int neg)
         // se o acc nao tem nenhum resultado, carrega normalmente
         if (acc_ok == 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n" , num);
+            add_instr("LOAD %s\n" , num);
         }
         else // se acc carregado, empurra o valor pra pilha e carrega o novo
         {
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n"  , num);
+            add_instr("PLD %s\n"  , num);
         }
     }
 
@@ -105,7 +105,7 @@ void array_1d_check(int id, int et, int flag)
         {
             fprintf(stdout, "Atenção na linha %d: índice de array tem que ser do tipo int. Vou quebrar o teu galho.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+            add_instr("CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
@@ -123,7 +123,7 @@ void array_1d_check_cmp(int et)
 
     // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
     // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
-    if (is_macro() == 0) fprintf(f_asm, "SET aux_idx%d\n", ++a_cnt);
+    add_instr("SET aux_idx%d\n", ++a_cnt);
     acc_ok = 0; // libera o acumulador
 }
 
@@ -150,7 +150,7 @@ void array_2d_check(int id, int et1, int et2)
         v_used[id] = 1;
         v_asgn[id] = 1;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
     }
 
     // da load no primeiro argumento do array
@@ -165,13 +165,13 @@ void array_2d_check(int id, int et1, int et2)
         {
             fprintf(stdout, "Atenção na linha %d: primeiro índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+            add_instr("CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
 
     // multiplica pelo tamanho da primeira dimensao
-    if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+    add_instr("MLT %s_arr_size\n", v_name[id]);
 
     // da load no segundo argumento do array
     load_check(et2,0);
@@ -185,13 +185,13 @@ void array_2d_check(int id, int et1, int et2)
         {
             fprintf(stdout, "Atenção na linha %d: segundo índice do array tá dando float. Vou arredondar pra baixo.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+            add_instr("CALL float2int\n");
             f2i = 1; // seta a variavel de estado que diz que usou a macro float2int
         }
     }
 
     // soma com a conta anterior
-    if (is_macro() == 0) fprintf(f_asm, "SADD\n");
+    add_instr("SADD\n");
 
     // teste com numeros complexos --------------------------------------------
     if (v_type[id] > 2) array_2d_check_cmp(et1,et2);
@@ -206,7 +206,7 @@ void array_2d_check_cmp(int et1, int et2)
 
     // salva o indice na variavel aux_cmpx, pra usar depois na parte complexa
     // esse incremento serve tanto para array no lado esquerdo, quanto para lado direito
-    if (is_macro() == 0) fprintf(f_asm, "SET aux_idx%d\n", ++a_cnt);
+    add_instr("SET aux_idx%d\n", ++a_cnt);
     acc_ok = 0; // libera o acumulador
 }
 
@@ -288,14 +288,14 @@ int array1d2exp(int id, int et, int fft)
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc
@@ -303,7 +303,7 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float na memoria
@@ -311,8 +311,8 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria
@@ -322,8 +322,8 @@ int array1d2exp(int id, int et, int fft)
 
             split_cmp_const(et, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc
@@ -331,8 +331,8 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_cmp\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria
@@ -340,8 +340,8 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
     }
 
@@ -352,14 +352,14 @@ int array1d2exp(int id, int et, int fft)
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc
@@ -367,8 +367,8 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float na memoria
@@ -378,9 +378,9 @@ int array1d2exp(int id, int et, int fft)
 
             prepar_oper(num, et % OFST, et, 0);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, num);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria
@@ -391,9 +391,9 @@ int array1d2exp(int id, int et, int fft)
             split_cmp_const(et, &etr, &eti);
             prepar_oper(num, etr % OFST, etr, 0);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, num);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc
@@ -401,9 +401,9 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_cmp\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria
@@ -413,9 +413,9 @@ int array1d2exp(int id, int et, int fft)
 
             prepar_oper(num, et % OFST, et, 0);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, num);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
     }
 
@@ -426,19 +426,19 @@ int array1d2exp(int id, int et, int fft)
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n"  , ldi, v_name[et % OFST]);
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD %s\n" ,      v_name[et % OFST]);
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc
@@ -446,10 +446,10 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float na memoria
@@ -457,10 +457,10 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n"  , ldi, v_name[et % OFST]);
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD %s\n" ,      v_name[et % OFST]);
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria
@@ -470,10 +470,10 @@ int array1d2exp(int id, int et, int fft)
 
             split_cmp_const(et, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n"  , ldi, v_name[etr % OFST]);
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD %s\n" ,      v_name[etr % OFST]);
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc
@@ -481,11 +481,11 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_ind_right\n");
+            add_instr("SET  aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria
@@ -493,10 +493,10 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n"  , ldi, v_name[et % OFST]);
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD %s\n" ,      v_name[et % OFST]);
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
     }
 
@@ -507,19 +507,19 @@ int array1d2exp(int id, int et, int fft)
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldi, v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n" ,      v_name[et % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n"  , ldi, v_name[et % OFST]);
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD %s\n" ,      v_name[et % OFST]);
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc
@@ -527,11 +527,11 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"   ); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"   ); f2i = 1;
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float na memoria
@@ -541,12 +541,12 @@ int array1d2exp(int id, int et, int fft)
 
             prepar_oper(num, et % OFST, et, 0);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n" ); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, num);
+            add_instr("CALL float2int\n" ); f2i = 1;
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria
@@ -557,12 +557,12 @@ int array1d2exp(int id, int et, int fft)
             split_cmp_const(et, &etr, &eti);
             prepar_oper(num, etr % OFST, etr, 0);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, num);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc
@@ -570,12 +570,12 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_cmp\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria
@@ -585,12 +585,12 @@ int array1d2exp(int id, int et, int fft)
 
             prepar_oper(num, et % OFST, et, 0);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, num);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n"  , ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_ind_right\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, num);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
     }
 
@@ -645,18 +645,18 @@ int array2d2exp(int id, int et1, int et2)
         // int no acc e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e float no acc
@@ -664,10 +664,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e float na memoria
@@ -675,9 +675,9 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e comp const na memoria
@@ -687,9 +687,9 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e comp no acc
@@ -697,11 +697,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e comp na memoria
@@ -709,27 +709,27 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e float no acc
@@ -737,10 +737,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e float na memoria
@@ -748,10 +748,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp const na memoria
@@ -761,10 +761,10 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp no acc
@@ -772,12 +772,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT  %s_arr_size\n", v_name[id]);
+            add_instr("ADD  aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp na memoria
@@ -785,10 +785,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e int no acc
@@ -796,10 +796,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e int na memoria
@@ -807,9 +807,9 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e float no acc
@@ -817,10 +817,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e comp const na memoria
@@ -830,9 +830,9 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e comp no acc
@@ -840,11 +840,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e comp na memoria
@@ -852,9 +852,9 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int no acc
@@ -864,11 +864,11 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int na memoria
@@ -878,10 +878,10 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float no acc
@@ -891,11 +891,11 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float na memoria
@@ -905,10 +905,10 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp const na memoria
@@ -917,12 +917,12 @@ int array2d2exp(int id, int et1, int et2)
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
             split_cmp_const(et1, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp no acc
@@ -932,12 +932,12 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp na memoria
@@ -947,10 +947,10 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e int no acc
@@ -958,11 +958,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e int na memoria
@@ -970,10 +970,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e float no acc
@@ -981,11 +981,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e float na memoria
@@ -993,10 +993,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp const na memoria
@@ -1006,10 +1006,10 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp no acc
@@ -1017,12 +1017,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp na memoria
@@ -1030,10 +1030,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int no acc
@@ -1041,10 +1041,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int na memoria
@@ -1052,10 +1052,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float no acc
@@ -1063,10 +1063,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float na memoria
@@ -1074,10 +1074,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp const na memoria
@@ -1087,10 +1087,10 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp no acc
@@ -1098,12 +1098,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp na memoria
@@ -1111,10 +1111,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
     }
 
@@ -1125,18 +1125,18 @@ int array2d2exp(int id, int et1, int et2)
         // int no acc e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e float no acc
@@ -1144,11 +1144,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e float na memoria
@@ -1156,11 +1156,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e comp const na memoria
@@ -1170,11 +1170,11 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e comp no acc
@@ -1182,12 +1182,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int no acc e comp na memoria
@@ -1195,29 +1195,29 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e float no acc
@@ -1225,11 +1225,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e float na memoria
@@ -1237,12 +1237,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp const na memoria
@@ -1252,12 +1252,12 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp no acc
@@ -1265,13 +1265,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT  %s_arr_size\n", v_name[id]);
+            add_instr("ADD  aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp na memoria
@@ -1279,12 +1279,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e int no acc
@@ -1292,11 +1292,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e int na memoria
@@ -1304,10 +1304,10 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e float no acc
@@ -1315,12 +1315,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e comp const na memoria
@@ -1330,12 +1330,12 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e comp no acc
@@ -1343,13 +1343,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // float no acc e comp na memoria
@@ -1357,12 +1357,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int no acc
@@ -1372,13 +1372,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int na memoria
@@ -1388,11 +1388,11 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float no acc
@@ -1402,13 +1402,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float na memoria
@@ -1418,13 +1418,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp const na memoria
@@ -1433,15 +1433,15 @@ int array2d2exp(int id, int et1, int et2)
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
             split_cmp_const(et1, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp no acc
@@ -1451,14 +1451,14 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp na memoria
@@ -1468,13 +1468,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e int no acc
@@ -1482,12 +1482,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e int na memoria
@@ -1495,11 +1495,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e float no acc
@@ -1507,13 +1507,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e float na memoria
@@ -1521,13 +1521,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp const na memoria
@@ -1537,13 +1537,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp no acc
@@ -1551,14 +1551,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp na memoria
@@ -1566,13 +1566,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int no acc
@@ -1580,11 +1580,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int na memoria
@@ -1592,11 +1592,11 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float no acc
@@ -1604,12 +1604,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float na memoria
@@ -1617,13 +1617,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp const na memoria
@@ -1633,13 +1633,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp no acc
@@ -1647,14 +1647,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp na memoria
@@ -1662,13 +1662,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
     }
 
@@ -1679,24 +1679,24 @@ int array2d2exp(int id, int et1, int et2)
         // int no acc e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e float no acc
@@ -1704,13 +1704,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e float na memoria
@@ -1718,12 +1718,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e comp const na memoria
@@ -1733,12 +1733,12 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e comp no acc
@@ -1746,14 +1746,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e comp na memoria
@@ -1761,33 +1761,33 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
         }
 
         // int na memoria e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e float no acc
@@ -1795,13 +1795,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e float na memoria
@@ -1809,13 +1809,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp const na memoria
@@ -1825,13 +1825,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp no acc
@@ -1839,18 +1839,19 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT  %s_arr_size\n", v_name[id]);
+            add_instr("ADD  aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp na memoria
@@ -1858,13 +1859,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e int no acc
@@ -1872,13 +1873,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e int na memoria
@@ -1886,12 +1887,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e float no acc
@@ -1899,13 +1900,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e comp const na memoria
@@ -1915,12 +1916,12 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e comp no acc
@@ -1928,14 +1929,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e comp na memoria
@@ -1943,12 +1944,12 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int no acc
@@ -1958,14 +1959,14 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int na memoria
@@ -1975,13 +1976,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float no acc
@@ -1991,14 +1992,14 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float na memoria
@@ -2008,13 +2009,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp const na memoria
@@ -2023,15 +2024,15 @@ int array2d2exp(int id, int et1, int et2)
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
             split_cmp_const(et1, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp no acc
@@ -2041,15 +2042,15 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp na memoria
@@ -2059,13 +2060,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e int no acc
@@ -2073,14 +2074,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e int na memoria
@@ -2088,13 +2089,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e float no acc
@@ -2102,14 +2103,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e float na memoria
@@ -2117,13 +2118,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp const na memoria
@@ -2133,13 +2134,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp no acc
@@ -2147,15 +2148,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp na memoria
@@ -2163,13 +2164,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int no acc
@@ -2177,13 +2178,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int na memoria
@@ -2191,13 +2192,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float no acc
@@ -2205,13 +2206,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float na memoria
@@ -2219,13 +2220,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp const na memoria
@@ -2235,13 +2236,13 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[etr % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp no acc
@@ -2249,15 +2250,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp na memoria
@@ -2265,13 +2266,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
     }
 
@@ -2282,24 +2283,24 @@ int array2d2exp(int id, int et1, int et2)
         // int no acc e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e float no acc
@@ -2307,14 +2308,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e float na memoria
@@ -2322,14 +2323,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e comp const na memoria
@@ -2339,14 +2340,14 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e comp no acc
@@ -2354,15 +2355,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int no acc e comp na memoria
@@ -2370,38 +2371,38 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e int no acc
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e int na memoria
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e float no acc
@@ -2409,14 +2410,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e float na memoria
@@ -2424,15 +2425,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp const na memoria
@@ -2442,15 +2443,15 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp no acc
@@ -2458,16 +2459,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT  %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("MLT  %s_arr_size\n", v_name[id]);
+            add_instr("ADD  aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // int na memoria e comp na memoria
@@ -2475,15 +2476,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e int no acc
@@ -2491,14 +2492,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e int na memoria
@@ -2506,13 +2507,13 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e float no acc
@@ -2520,15 +2521,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e comp const na memoria
@@ -2538,15 +2539,15 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e comp no acc
@@ -2554,16 +2555,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // float no acc e comp na memoria
@@ -2571,15 +2572,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int no acc
@@ -2589,16 +2590,16 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e int na memoria
@@ -2608,14 +2609,14 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float no acc
@@ -2625,16 +2626,16 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e float na memoria
@@ -2644,16 +2645,16 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp const na memoria
@@ -2662,18 +2663,18 @@ int array2d2exp(int id, int et1, int et2)
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
             split_cmp_const(et1, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp no acc
@@ -2683,17 +2684,17 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp const na memoria e comp na memoria
@@ -2703,16 +2704,16 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e int no acc
@@ -2720,15 +2721,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e int na memoria
@@ -2736,14 +2737,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e float no acc
@@ -2751,16 +2752,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e float na memoria
@@ -2768,16 +2769,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp const na memoria
@@ -2787,16 +2788,16 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp no acc
@@ -2804,17 +2805,17 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_lixo\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SETP aux_index_y\n");
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp no acc e comp na memoria
@@ -2822,16 +2823,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int no acc
@@ -2839,14 +2840,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e int na memoria
@@ -2854,14 +2855,14 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float no acc
@@ -2869,15 +2870,15 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("PLD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e float na memoria
@@ -2885,16 +2886,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp const na memoria
@@ -2904,16 +2905,16 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et2, &etr, &eti);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[etr % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp no acc
@@ -2921,17 +2922,17 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "SETP aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SET  aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "ADD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
         // comp na memoria e comp na memoria
@@ -2939,16 +2940,16 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldi, v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "MLT %s_arr_size\n", v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD %s\n", v_name[et2 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n"); f2i = 1;
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", ldv, v_name[id]);
-            if (is_macro() == 0) fprintf(f_asm, "PLD aux_index_y\n");
-            if (is_macro() == 0) fprintf(f_asm, "%s %s_i\n", ldv, v_name[id]);
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
         }
     }
 

@@ -31,14 +31,14 @@ int negacao(int et)
         // se for float em ponto fixo, usa uma macro pra trocar o bit de sinal
         if ((prtype == 0) && (et >= 2*OFST))
         {
-            if (is_macro() == 0) fprintf(f_asm, "PLD float_nbits\n");
-            if (is_macro() == 0) fprintf(f_asm, "SHL 1\n");
-            if (is_macro() == 0) fprintf(f_asm, "SADD\n");
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
         }
         // tenho que fazer se for int em ponto flutuante aqui ainda
         else
         {
-            if (is_macro() == 0) fprintf(f_asm, "NEG\n"); // negacao em ponto fixo
+            add_instr("NEG\n"); // negacao em ponto fixo
         }
     }
 
@@ -80,7 +80,7 @@ int negacao_cmp(int et)
         int id = exec_id("aux_neg");
         eti = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0; negacao(etr);
         acc_ok = 1; negacao(eti);
     }
@@ -122,7 +122,7 @@ void oper_fl(int et1, int et2, char *iop)
         // LOAD no segundo operador
         load_check(et2,0);
         // faz operacao com o endereco de memoria de et1
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", iop, v_name[et1 % OFST]);
+        add_instr("%s %s\n", iop, v_name[et1 % OFST]);
     }
 
     // acc e memoria ----------------------------------------------------------
@@ -132,7 +132,7 @@ void oper_fl(int et1, int et2, char *iop)
         // LOAD no segundo operador jogando o primeiro pra pilha
         load_check(et2,0);
         // executa instrucao com a pilha
-        if (is_macro() == 0) fprintf(f_asm, "S%s\n", iop);
+        add_instr("S%s\n", iop);
     }
 
     // memoria e acc ----------------------------------------------------------
@@ -140,7 +140,7 @@ void oper_fl(int et1, int et2, char *iop)
     if ((et1 % OFST != 0) && (et2 % OFST == 0))
     {
         // nao precisa dar load, basta fazer a instrucao com et1 na memoria
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", iop, v_name[et1 % OFST]);
+        add_instr("%s %s\n", iop, v_name[et1 % OFST]);
     }
 
     // pilha e acc ------------------------------------------------------------
@@ -148,7 +148,7 @@ void oper_fl(int et1, int et2, char *iop)
     if ((et1 % OFST == 0) && (et2 % OFST == 0))
     {
         // os dois operando ja estao no acc e pilha
-        if (is_macro() == 0) fprintf(f_asm, "S%s\n", iop);
+        add_instr("S%s\n", iop);
     }
 }
 
@@ -161,7 +161,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     {
         // carrega et2 depois faz instrucao com memoria de et1
         load_check(et2,0);
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", iop, v_name[et1 % OFST]);
+        add_instr("%s %s\n", iop, v_name[et1 % OFST]);
     }
 
     // int memoria e float memoria --------------------------------------------
@@ -170,7 +170,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     {
         // carrega et1 e converte pra float
         load_check(et1,0);
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+        add_instr("CALL int2float\n");
         // carrega et2, jogando et1 pra pilha
         load_check(et2,0);
         // os dois operandos ja estao em ponto flutuante dentro do proc
@@ -190,7 +190,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
         // joga et1 pra pilha e pega et2
         load_check(et2,0);
         // converte et2 pra float
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+        add_instr("CALL int2float\n");
         // execta a macro float correspondente
         fprintf(f_asm, "%s\n", fop);
         for (int i = 0; i<nin; i++) is_macro();
@@ -218,7 +218,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
         // joga et1 pra pilha e carrega et2
         load_check(et2,0);
         // executa instrucao sem operando (ja ta todo mundo dentro do proc)
-        if (is_macro() == 0) fprintf(f_asm, "S%s\n", iop);
+        add_instr("S%s\n", iop);
     }
 
     // int acc e float memoria ------------------------------------------------
@@ -226,7 +226,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     if (iacc(et1) && fmem(et2))
     {
         // pega o et1 (que ja esta no acc) e converte pra float
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+        add_instr("CALL int2float\n");
         // empurra et1 pra pilha e carrega et2
         load_check(et2,0);
         // executa macro float
@@ -243,7 +243,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
         // xuxa et1 na pilha e carrega et2
         load_check(et2,0);
         // converte et2 pra float
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+        add_instr("CALL int2float\n");
         // executa a macro float
         fprintf(f_asm, "%s\n", fop);
         for (int i = 0; i<nin; i++) is_macro();
@@ -268,7 +268,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     if (imem(et1) && iacc(et2))
     {
         // executa instrucao com et1 no argumento, sem pilha
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", iop, v_name[et1 % OFST]);
+        add_instr("%s %s\n", iop, v_name[et1 % OFST]);
     }
 
     // int memoria e float acc ------------------------------------------------
@@ -282,10 +282,10 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
             // salva o acc em float_aux5 temporariamente, pra converter et1 pra float (nao pode jogar ele pra pilha)
             // salva et2 em float_aux5, carrega et1, converte pra float, empurra et1 na pilha e pega et2 de novo
         {
-            if (is_macro() == 0) fprintf(f_asm, "SET float_aux5\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD %s\n", v_name[et1 % OFST]);
-            if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
-            if (is_macro() == 0) fprintf(f_asm, "PLD float_aux5\n");
+            add_instr("SET float_aux5\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL int2float\n");
+            add_instr("PLD float_aux5\n");
         }
             // depois daqui, o et1 ta na pilha e o et2 no acc (ordem correta pra chamar as macros)
         else
@@ -294,7 +294,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
             // xuxa et2 na pilha e pega et1
             load_check(et1, 0);
             // converte et1 pra float
-            if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+            add_instr("CALL int2float\n");
         }
         // executa a macro da operacao
         fprintf(f_asm, "%s\n", fop);
@@ -308,7 +308,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     if (fmem(et1) && iacc(et2))
     {
         // converte et2 pra float
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+        add_instr("CALL int2float\n");
 
         // if a ordem importa
         if ((strcmp(iop, "DIV") == 0) ||
@@ -317,13 +317,13 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
         {
             // a ordem importa
             // entao salva et2 temporariamente em float_aux4
-            if (is_macro() == 0) fprintf(f_asm, "SET float_aux4\n");
+            add_instr("SET float_aux4\n");
             // diz que acc ta liberado
             acc_ok = 0;
             // pega et1
             load_check(et1, 0);
             // xuxa et1 pra pilha e pega et2
-            if (is_macro() == 0) fprintf(f_asm, "PLD float_aux4\n");
+            add_instr("PLD float_aux4\n");
         }
         else
             // se a ordem nao importa
@@ -346,10 +346,10 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
             (strcmp(iop, "LES") == 0) ||
             (strcmp(iop, "GRE") == 0))
         {
-            if (is_macro() == 0) fprintf(f_asm, "SET float_aux4\n");
+            add_instr("SET float_aux4\n");
             acc_ok = 0;
             load_check(et1, 0);
-            if (is_macro() == 0) fprintf(f_asm, "PLD float_aux4\n");
+            add_instr("PLD float_aux4\n");
         }
         else
             // se a ordem nao importa, xuxa et2 pra pilha e carrega et1
@@ -365,7 +365,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     if (iacc(et1) && iacc(et2))
     {
         // instrucoes com uso da pilha, ja na ordem certa
-        if (is_macro() == 0) fprintf(f_asm, "S%s\n", iop);
+        add_instr("S%s\n", iop);
     }
 
     // int pilha e float acc --------------------------------------------------
@@ -374,9 +374,9 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     {
         // salva et2 em float_aux5 e pega a pilha
         // converte et1 pra float e empurra ele pra pilha, carregando o et2 de volta
-        if (is_macro() == 0) fprintf(f_asm, "SETP float_aux5\n");
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
-        if (is_macro() == 0) fprintf(f_asm, "PLD float_aux5\n");
+        add_instr("SETP float_aux5\n");
+        add_instr("CALL int2float\n");
+        add_instr("PLD float_aux5\n");
         fprintf(f_asm, "%s\n", fop);
         for (int i = 0; i<nin; i++) is_macro();
         *op = 1;
@@ -388,7 +388,7 @@ void oper_fx(int et1, int et2, char *iop, char *fop, int *op, int nin)
     if (facc(et1) && iacc(et2))
     {
         // converte et2 pra float
-        if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+        add_instr("CALL int2float\n");
         // executa macro da operacao
         fprintf(f_asm, "%s\n", fop);
         for (int i = 0; i<nin; i++) is_macro();
@@ -439,7 +439,7 @@ int int_oper(int et1, int et2, char *op, char *code, int fok)
     if (et2 == 0)
     {
         load_check(et1,0);
-        if (is_macro() == 0) fprintf(f_asm, "%s\n", code); // vai ser uma instrucao sem parametro
+        add_instr("%s\n", code); // vai ser uma instrucao sem parametro
     }
     else
     {
@@ -592,7 +592,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id = exec_id("aux_et2");
         et2 = OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -614,7 +614,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id = exec_id("aux_et2");
         et2 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -648,7 +648,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -670,7 +670,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -692,7 +692,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -726,7 +726,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -750,7 +750,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -774,7 +774,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -808,7 +808,7 @@ int oper_cmp_cmp(int et1, int et2, int op)
         id  = exec_id("aux_et2");
         et2 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
         acc_ok = 0;
 
         et1 =   mod_sqr(et1);
@@ -832,15 +832,15 @@ int oper_cmp(int et1, int et2, int op)
         case 1: operacoes(et1,et2, "GRE", "CALL denorm\nLOAD float_aux3\nGRE float_aux1", &fgen, 3); // >
                 break;
         case 2: operacoes(et1,et2, "LES", "CALL denorm\nLOAD float_aux3\nLES float_aux1", &fgen, 3); // >=
-                if (is_macro() == 0) fprintf(f_asm, "LINV\n");
+                add_instr("LINV\n");
                 break;
         case 3: operacoes(et1,et2, "GRE", "CALL denorm\nLOAD float_aux3\nGRE float_aux1", &fgen, 3); // <=
-                if (is_macro() == 0) fprintf(f_asm, "LINV\n");
+                add_instr("LINV\n");
                 break;
         case 4: operacoes(et1,et2, "EQU", "CALL denorm\nLOAD float_aux3\nEQU float_aux1", &fgen, 3); // ==
                 break;
         case 5: operacoes(et1,et2, "EQU", "CALL denorm\nLOAD float_aux3\nEQU float_aux1", &fgen, 3); // !=
-                if (is_macro() == 0) fprintf(f_asm, "LINV\n");
+                add_instr("LINV\n");
                 break;
     }
 
@@ -882,15 +882,15 @@ void ari_int_cmp(int op, int et1, int et2_r, int et2_i)
                  oper_ari(et2_i ,et2_i ,0); // parte imag ao quadrado
                  oper_ari(2*OFST,2*OFST,2); // soma os quadrados
 
-                 if (is_macro() == 0) fprintf(f_asm, "SET aux_cmp\n"); // salva o resultado
+                 add_instr("SET aux_cmp\n"); // salva o resultado
                  acc_ok = 0;
 
                  oper_ari(et1,et2_r,0);                                 // mult int com parte real
-                 if (is_macro() == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                 add_instr("PLD aux_cmp\n"); // pega o denominador
                  oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
 
                  oper_ari(et1,et2_i,0);                                 // mult int com parte imag
-                 if (is_macro() == 0) fprintf(f_asm, "PLD aux_cmp\n"); // pega o denominador
+                 add_instr("PLD aux_cmp\n"); // pega o denominador
                  oper_ari(2*OFST,2*OFST,1);                             // faz a divisao
                   negacao(2*OFST);
                  break;
@@ -933,7 +933,7 @@ void ari_cmp_cmp(int op, int et1_r, int et1_i, int et2_r, int et2_i)
 
                  int id = exec_id("aux_cmp_r");
                  int et = 2*OFST + id;
-                 if (is_macro() == 0) fprintf(f_asm, "SET %s\n", v_name[id]);
+                 add_instr("SET %s\n", v_name[id]);
                  acc_ok = 0;
 
                  oper_ari(et1_r ,et2_r ,0);
@@ -990,8 +990,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SET  %s\n", v_name[id2_r]);
         acc_ok = 0;
 
         ari_int_cmp(op,et1,et2_r,et2_i);
@@ -1004,7 +1004,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         id  = exec_id("aux_int");
         et1 = OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id]);
+        add_instr("SET  %s\n", v_name[id]);
         acc_ok = 0;
 
         split_cmp_const(   et2,&et2_r,&et2_i);
@@ -1018,7 +1018,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         id  = exec_id("aux_int");
         et1 = OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id]);
+        add_instr("SET  %s\n", v_name[id]);
         acc_ok = 0;
 
         get_cmp_ets(   et2,&et2_r,&et2_i);
@@ -1037,9 +1037,9 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_r]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SETP %s\n", v_name[id2_r]);
+        add_instr("SET  %s\n", v_name[id   ]);
         acc_ok = 0;
 
         ari_int_cmp(op,et1,et2_r,et2_i);
@@ -1070,8 +1070,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SET  %s\n", v_name[id2_r]);
         acc_ok = 0;
 
         ari_int_cmp(op,et1,et2_r,et2_i);
@@ -1084,7 +1084,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         id  = exec_id("aux_flt");
         et1 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SET %s\n", v_name[id   ]);
+        add_instr("SET %s\n", v_name[id   ]);
         acc_ok = 0;
 
         split_cmp_const(   et2,&et2_r,&et2_i);
@@ -1098,7 +1098,7 @@ int oper_ari_cmp(int et1, int et2, int op)
         id  = exec_id("aux_flt");
         et1 = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        add_instr("SET  %s\n", v_name[id   ]);
         acc_ok = 0;
 
         get_cmp_ets(   et2,&et2_r,&et2_i);
@@ -1117,9 +1117,9 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_r]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id   ]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SETP %s\n", v_name[id2_r]);
+        add_instr("SET  %s\n", v_name[id   ]);
         acc_ok = 0;
 
         ari_int_cmp(op,et1,et2_r,et2_i);
@@ -1188,8 +1188,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SET  %s\n", v_name[id2_r]);
         acc_ok = 0;
 
         ari_cmp_cmp(op,et1_r,et1_i,et2_r,et2_i);
@@ -1258,8 +1258,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id2_r]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SET  %s\n", v_name[id2_r]);
         acc_ok = 0;
 
         ari_cmp_cmp(op,et1_r,et1_i,et2_r,et2_i);
@@ -1274,8 +1274,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et1_r = 2*OFST + id1_r;
         et1_i = 2*OFST + id1_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         ari_cmp_int(op,et1_r,et1_i,et2);
@@ -1290,8 +1290,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et1_r = 2*OFST + id1_r;
         et1_i = 2*OFST + id1_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         ari_cmp_int(op,et1_r,et1_i,et2);
@@ -1306,8 +1306,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et1_r = 2*OFST + id1_r;
         et1_i = 2*OFST + id1_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         ari_cmp_int(op,et1_r,et1_i,et2);
@@ -1323,8 +1323,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et1_r = 2*OFST + id1_r;
         et1_i = 2*OFST + id1_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         ari_cmp_int(op,et1_r,et1_i,et2);
@@ -1339,8 +1339,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et1_r = 2*OFST + id1_r;
         et1_i = 2*OFST + id1_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         split_cmp_const(et2,&et2_r,&et2_i);
@@ -1357,8 +1357,8 @@ int oper_ari_cmp(int et1, int et2, int op)
         et1_r = 2*OFST + id1_r;
         et1_i = 2*OFST + id1_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         get_cmp_ets(et2,&et2_r,&et2_i);
@@ -1379,10 +1379,10 @@ int oper_ari_cmp(int et1, int et2, int op)
         et2_r = 2*OFST + id2_r;
         et2_i = 2*OFST + id2_i;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id2_r]);
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id1_i]);
-        if (is_macro() == 0) fprintf(f_asm, "SET  %s\n", v_name[id1_r]);
+        add_instr("SETP %s\n", v_name[id2_i]);
+        add_instr("SETP %s\n", v_name[id2_r]);
+        add_instr("SETP %s\n", v_name[id1_i]);
+        add_instr("SET  %s\n", v_name[id1_r]);
         acc_ok = 0;
 
         ari_cmp_cmp(op,et1_r,et1_i,et2_r,et2_i);

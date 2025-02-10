@@ -22,6 +22,7 @@ void  exec_diretivas(char *dir, int id , int t     ); // t ajuda nas expressoes 
 void  use_macro     (char *file_name, int global);
 void  end_macro     ();
 int    is_macro     ();
+void  add_instr     (char *inst, ...) ;
 void use_inter      ();
 
 #endif // DIRETIVAS_H_INCLUDED

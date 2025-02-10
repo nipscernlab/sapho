@@ -28,7 +28,7 @@ int exec_in(int et)
     {
         fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. SÓ me dando trabalho a toa!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+        add_instr("CALL float2int\n");
         f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
     }
 
@@ -38,8 +38,8 @@ int exec_in(int et)
     // fim do teste -----------------------------------------------------------
 
     // executa instrucao IN
-    if (is_macro() == 0) fprintf(f_asm, "PUSH\n");
-    if (is_macro() == 0) fprintf(f_asm, "IN\n");
+    add_instr("PUSH\n");
+    add_instr("IN\n");
 
     // o retorno de IN depende do processador
     return (prtype == 0) ? OFST : 2*OFST;
@@ -67,7 +67,7 @@ int exec_abs(int et)
 
         fgen = 1;
     }
-    else if (is_macro() == 0) fprintf(f_asm, "ABS\n");
+    else add_instr("ABS\n");
 
     return get_type(et)*OFST;
 }
@@ -177,7 +177,7 @@ int exec_pst(int et)
     {
         fprintf(stdout, "Atenção na linha %d: essa conversão pra inteiro gasta muito recurso!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+        add_instr("CALL float2int\n");
         f2i = 1;
     }
 
@@ -186,7 +186,7 @@ int exec_pst(int et)
         fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
     // fim do teste -----------------------------------------------------------
 
-    if (is_macro() == 0) fprintf(f_asm, "PSET\n");
+    add_instr("PSET\n");
 
     return (prtype == 0) ? OFST : 2*OFST;
 }
@@ -208,7 +208,7 @@ void exec_out1(int et)
     {
         fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. SÓ me dando trabalho a toa!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+        add_instr("CALL float2int\n");
         f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
     }
 }
@@ -228,11 +228,11 @@ void exec_out2(int et)
     {
         fprintf(stdout, "Atenção na linha %d: o processador é ponto fixo e você quer mandar um ponto flutuante pra fora? Vai gerar muito código!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm , "CALL float2int\n");
+        add_instr("CALL float2int\n");
         f2i = 1;
     }
 
-    if (is_macro() == 0) fprintf(f_asm, "OUT\n");
+    add_instr("OUT\n");
 
     acc_ok = 0; // libera acc
 }
@@ -256,8 +256,8 @@ int exec_sign(int et1, int et2)
             if ((et1%OFST != 0) && (et2%OFST != 0))
             {
                 load_check(et1,0);
-                if (is_macro() == 0) fprintf(f_asm , "AND %d\n", 1 << (nbmant+nbexpo));
-                if (is_macro() == 0) fprintf(f_asm , "ADD %s\n", v_name[et2%OFST]);
+                add_instr("AND %d\n", 1 << (nbmant+nbexpo));
+                add_instr("ADD %s\n", v_name[et2%OFST]);
             }
             // completar ...
             return 2*OFST;
@@ -305,8 +305,8 @@ int exec_sqrt(int et)
     if ((prtype == 0) && (type < 3))
     {
         if (type == 1)
-        if (is_macro() == 0) fprintf(f_asm , "CALL int2float\n"  );
-        if (is_macro() == 0) fprintf(f_asm , "CALL float_sqrti\n");
+        add_instr("CALL int2float\n"  );
+        add_instr("CALL float_sqrti\n");
 
         fgen   = 1;
         fsqrti = 1;
@@ -317,7 +317,7 @@ int exec_sqrt(int et)
 
     if ((prtype == 1) && (type < 3))
     {
-        if (is_macro() == 0) fprintf(f_asm , "CALL float_sqrt\n");
+        add_instr("CALL float_sqrt\n");
 
         fsqrt = 1;
     }
@@ -370,8 +370,8 @@ int exec_atan(int et)
     if ((prtype == 0) && (type < 3))
     {
         if (type == 1)
-        if (is_macro() == 0) fprintf(f_asm , "CALL int2float\n"  );
-        if (is_macro() == 0) fprintf(f_asm , "CALL float_atani\n");
+        add_instr("CALL int2float\n"  );
+        add_instr("CALL float_atani\n");
 
         fgen   = 1;
         fatani = 1;
@@ -382,7 +382,7 @@ int exec_atan(int et)
 
     if ((prtype == 1) && (type < 3))
     {
-        if (is_macro() == 0) fprintf(f_asm , "CALL float_atan\n");
+        add_instr("CALL float_atan\n");
 
         fatan = 1;
     }
@@ -427,7 +427,7 @@ int exec_fase(int et)
         id   = exec_id("aux_cmp_i");
         et_i = 2*OFST + id;
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP %s\n", v_name[id]);
+        add_instr("SETP %s\n", v_name[id]);
 
         oper_ari(et_i,2*OFST,1);
     }
@@ -462,7 +462,7 @@ int exec_real(int et)
     // comp no acc
     if ((get_type(et) == 3) && (id == 0))
     {
-        if (is_macro() == 0) fprintf(f_asm , "SETP aux_cmp\n");
+        add_instr("SETP aux_cmp\n");
     }
 
     acc_ok = 1;
@@ -494,8 +494,8 @@ int exec_imag(int et)
     // comp no acc
     if ((get_type(et) == 3) && (id == 0))
     {
-        if (is_macro() == 0) fprintf(f_asm , "SETP aux_cmp\n");
-        if (is_macro() == 0) fprintf(f_asm , "LOAD aux_cmp\n");
+        add_instr("SETP aux_cmp\n");
+        add_instr("LOAD aux_cmp\n");
     }
 
     acc_ok = 1;

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdarg.h>
 
 // redeclaracao de variaveis globais
 FILE *f_lin;       // arquivo de linhas
@@ -83,26 +84,18 @@ int is_macro()
     if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
 
     return using_macro;
-
-/*usar vprintf como no codigo abaixo
-
-#include <stdarg.h>
- 
-void WriteFrmtd(char *format, ...) {
-   va_list args;
-   
-   va_start(args, format);
-   vprintf(format, args);
-   va_end(args);
 }
 
-int main () {
-   WriteFrmtd("%d variable argument\n", 1);
-   WriteFrmtd("%d variable %s\n", 2, "arguments");
-   
-   return(0);
-}*/
+// adiciona instrucao no arquivo asm
+void add_instr(char *inst, ...)
+{
+    va_list  args;
+    va_start(args , inst);
+    vfprintf(f_asm, inst, args);
+    va_end  (args);
 
+    num_ins++;
+    if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
 }
 
 // gera diretiva #ITRAD

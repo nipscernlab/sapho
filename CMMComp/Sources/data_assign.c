@@ -130,7 +130,7 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
     if ((left_type == 1) && (righ_type == 1))
     {
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+        add_instr("%s %s\n", cset, v_name[id]);
     }
 
     // float pra int ----------------------------------------------------------
@@ -141,10 +141,10 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
         if (prtype == 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "CALL float2int\n");
+            add_instr("CALL float2int\n");
             f2i = 1;
         }
-            if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+            add_instr("%s %s\n", cset, v_name[id]);
     }
 
     // int pra float ----------------------------------------------------------
@@ -155,17 +155,17 @@ void var_set(int id, int et, int is_array, int pop, int warn, int is_cmp)
 
         if (prtype == 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "CALL int2float\n");
+            add_instr("CALL int2float\n");
             i2f = 1;
         }
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+        add_instr("%s %s\n", cset, v_name[id]);
     }
 
     // float pra float --------------------------------------------------------
 
     if ((left_type == 2) && (righ_type == 2))
     {
-        if (is_macro() == 0) fprintf(f_asm, "%s %s\n", cset, v_name[id]);
+        add_instr("%s %s\n", cset, v_name[id]);
     }
 
     // se vem do var_set_comp, nao altera por aqui
@@ -244,7 +244,7 @@ void var_set_comp(int id, int et, int is_array)
     {
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        add_instr("SETP aux_cmp\n");
         var_set(id,2*OFST,is_array,0,0,1);
     }
 
@@ -274,7 +274,7 @@ void var_set_comp(int id, int et, int is_array)
     {
         fprintf (stdout, "Atenção na linha %d: vou pegar só a parte real!\n", line_num+1);
 
-        if (is_macro() == 0) fprintf(f_asm, "SETP aux_cmp\n");
+        add_instr("SETP aux_cmp\n");
         var_set(id,2*OFST,is_array,0,0,1);
     }
 
@@ -294,9 +294,9 @@ void var_set_comp(int id, int et, int is_array)
     {
         if (is_array > 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "SET auxr_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
-            if (is_macro() == 0) fprintf(f_asm, "PLD auxr_cmp\n");
+            add_instr("SET auxr_cmp\n");
+            add_instr("LOAD aux_idx%d\n", a_cnt);
+            add_instr("PLD auxr_cmp\n");
         }
 
         v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
@@ -319,9 +319,9 @@ void var_set_comp(int id, int et, int is_array)
     {
         if (is_array > 0)
         {
-            if (is_macro() == 0) fprintf(f_asm, "SET auxr_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
-            if (is_macro() == 0) fprintf(f_asm, "PLD auxr_cmp\n");
+            add_instr("SET auxr_cmp\n");
+            add_instr("LOAD aux_idx%d\n", a_cnt);
+            add_instr("PLD auxr_cmp\n");
         }
 
         v_type[id] = 2; var_set(id,et,is_array,0,0,1); v_type[id] = 3;
@@ -338,7 +338,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            add_instr("LOAD aux_idx%d\n", a_cnt);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -346,7 +346,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
+            add_instr("LOAD aux_idx%d\n", a_cnt--);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -362,7 +362,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
+            add_instr("LOAD aux_idx%d\n", a_cnt);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -370,7 +370,7 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // tem que salvar o indice momentaneamente em aux_cmpx
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
+            add_instr("LOAD aux_idx%d\n", a_cnt--);
             acc_ok = 1; // pra nao perder o indice
         }
 
@@ -385,10 +385,10 @@ void var_set_comp(int id, int et, int is_array)
 
         if (is_array > 0)
         {   // precisa tirar o img e o real da pilha pra botar o indice do array depois o img
-            if (is_macro() == 0) fprintf(f_asm, "SETP auxi_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "SET auxr_cmp\n");
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt);
-            if (is_macro() == 0) fprintf(f_asm, "PLD auxi_cmp\n");
+            add_instr("SETP auxi_cmp\n");
+            add_instr("SET auxr_cmp\n");
+            add_instr("LOAD aux_idx%d\n", a_cnt);
+            add_instr("PLD auxi_cmp\n");
         }
 
         int pop = (is_array < 1); // se for array, usa PSET pra nao perder o img, se nao, usa SET
@@ -397,8 +397,8 @@ void var_set_comp(int id, int et, int is_array)
         if (is_array > 0)
             // agora coloca o indice e a parte real pra fazer o SET
         {   // esse decremento eh para o indice do array do lado esquerdo (ex: d[3] = x;)
-            if (is_macro() == 0) fprintf(f_asm, "LOAD aux_idx%d\n", a_cnt--);
-            if (is_macro() == 0) fprintf(f_asm, "PLD auxr_cmp\n");
+            add_instr("LOAD aux_idx%d\n", a_cnt--);
+            add_instr("PLD auxr_cmp\n");
         }
 
         v_type[id_r] = 2; var_set(id_r,2*OFST,is_array,0,0,1); v_type[id_r] = 3;

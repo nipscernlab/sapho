@@ -19,7 +19,7 @@ void if_exp(int et)
 {
     load_check(et, 0);
     int n = push_lab(0);
-    if (is_macro() == 0) fprintf(f_asm, "JZ L%delse\n", n); // 0 -> if
+    add_instr("JZ L%delse\n", n); // 0 -> if
     acc_ok = 0;
 }
 
@@ -33,7 +33,7 @@ void if_stmt()
 // antes dos statments do else
 void else_stmt()
 {
-    if (is_macro() == 0) fprintf(f_asm, "JMP L%dend\n@L%delse ", get_lab(), get_lab());
+    add_instr("JMP L%dend\n@L%delse ", get_lab(), get_lab());
 }
 
 // cria label do final do if/else
@@ -51,15 +51,15 @@ void if_fim()
 void while_stmt()
 {
     int n = pop_lab();
-    if (is_macro() == 0) fprintf(f_asm, "JMP L%d\n@L%dend ",n,n);
+    add_instr("JMP L%d\n@L%dend ",n,n);
 }
 
 // da um JMP pro final do while
 void exec_break()
 {
     // checa se o break esta dentro de um while
-    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aí tá perdido!\n",  line_num+1);
-    if (is_macro() == 0) fprintf(f_asm , "JMP L%dend\n"                                 , get_while());
+    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aï¿½ tï¿½ perdido!\n",  line_num+1);
+    add_instr("JMP L%dend\n", get_while());
 }
 
 // somente a palavra-chave while - gera um label nesse ponto
@@ -73,7 +73,7 @@ void while_expp()
 void while_expexp(int et)
 {
     load_check(et, 0);
-    if (is_macro() == 0) fprintf(f_asm, "JZ L%dend\n", get_lab());
+    add_instr("JZ L%dend\n", get_lab());
     acc_ok = 0;
 }
 
@@ -94,7 +94,7 @@ void case_test(int id, int type)
     // faz operacao de comparacao
     oper_cmp(et1,et2,4);
 
-    if (is_macro() == 0) fprintf(f_asm, "JZ sw_case_%d_%d\n", swit_cnt, case_cnt+1);
+    add_instr("JZ sw_case_%d_%d\n", swit_cnt, case_cnt+1);
     acc_ok = 0;
 }
 
@@ -108,14 +108,14 @@ void defaut_test()
 // executa break do switch case
 void switch_break()
 {
-    if (is_macro() == 0) fprintf(f_asm, "JMP switch_end_%d\n", swit_cnt);
+    add_instr("JMP switch_end_%d\n", swit_cnt);
 }
 
 // inicio do switch case
 void exec_switch(int et)
 {
     if (switching == 1)
-    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Você é uma pessoa confusa!\n",  line_num+1);
+    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Vocï¿½ ï¿½ uma pessoa confusa!\n",  line_num+1);
 
     // acha a variavel switch_exp (lexer)
     if (find_var("switch_exp") == -1) add_var("switch_exp");
@@ -125,7 +125,7 @@ void exec_switch(int et)
     v_used[id] = 0;
     // equivalente a var_set
     load_check(et,0);
-    if (is_macro() == 0) fprintf(f_asm, "SET switch_exp\n");
+    add_instr("SET switch_exp\n");
 
     acc_ok     = 0;
     v_asgn[id] = 1;
