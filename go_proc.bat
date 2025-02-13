@@ -126,7 +126,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC% %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -134,18 +134,16 @@ copy %UPROC%_data.mif %TMP_PRO%>%TMP_PRO%\xcopy.txt
 copy %UPROC%_inst.mif %TMP_PRO%>%TMP_PRO%\xcopy.txt
 
 cd %TMP_PRO%
+del xcopy.txt
 
-vvp %PROC% -fst
+vvp %PROC%.vvp -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
-copy %BIN_DIR%\float2gtkw.exe %TMP_PRO%>%TMP_PRO%\xcopy.txt
-copy %BIN_DIR%\f2i_gtkw.exe %TMP_PRO%>%TMP_PRO%\xcopy.txt
-copy %BIN_DIR%\comp2gtkw.exe %TMP_PRO%>%TMP_PRO%\xcopy.txt
+echo %PROC_DATA%>tcl_infos.txt
+echo %TMP_PRO%>>tcl_infos.txt
+echo %BIN_DIR%>>tcl_infos.txt
 
-echo %PROC_DATA%>proc_data.txt
-echo %TMP_PRO%>tmp_dir.txt
-
-if exist %SIMU_DIR%\%GTKW% (gtkwave %SIMU_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
+if exist %SIMU_DIR%\%GTKW% (gtkwave --dark %SIMU_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave --dark %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
 
 cd %ROOT_DIR%

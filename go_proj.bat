@@ -138,7 +138,7 @@ for %%a in (%PROC_LIST%) do (
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\mem_data_%%a.v "
 )     
 
-iverilog -s %TB% -o %TMP_DIR%\%PROJET% %HDL_V% %PRO_V% %TOP_V%
+iverilog -s %TB% -o %TMP_DIR%\%PROJET%.vvp %HDL_V% %PRO_V% %TOP_V%
 
 for %%a in (%PROC_LIST%) do copy %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulation>%TMP_DIR%\xcopy.txt
 
@@ -152,19 +152,19 @@ for %%a in (%PROC_LIST%) do copy %TMP_DIR%\%%a\pc_%%a_mem.txt .\>%TMP_DIR%\xcopy
 
 endlocal
 
-vvp %PROJET% -fst
+del f_list.txt
+del xcopy.txt
+
+vvp %PROJET%.vvp -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
-copy %BIN_DIR%\float2gtkw.exe %TMP_DIR%>%TMP_DIR%\xcopy.txt
-copy %BIN_DIR%\f2i_gtkw.exe %TMP_DIR%>%TMP_DIR%\xcopy.txt
-copy %BIN_DIR%\comp2gtkw.exe %TMP_DIR%>%TMP_DIR%\xcopy.txt
+echo %INST_LIST%> tcl_infos.txt
+echo %PROC_TYPE%>>tcl_infos.txt
+echo %PROC_DATA%>>tcl_infos.txt
+echo %TMP_DIR%>>  tcl_infos.txt
+echo %BIN_DIR%>>  tcl_infos.txt
 
-echo %INST_LIST%>proc_list.txt
-echo %PROC_TYPE%>proc_type.txt
-echo %PROC_DATA%>proc_data.txt
-echo %TMP_DIR%>tmp_dir.txt
-
-if exist %TOPL_DIR%\%GTKW% (gtkwave %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
+if exist %TOPL_DIR%\%GTKW% (gtkwave --dark %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave --dark %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl)
 
 cd %ROOT_DIR%
