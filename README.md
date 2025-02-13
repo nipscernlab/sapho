@@ -77,7 +77,7 @@ CMM Code (.cmm) → ASM Code (.asm) → Verilog (.v) + MIF → Testbench → Sim
 ## Contact
 
 For questions and support, contact us at:
-- Email: nipscern@contac.com
+- Email: contact@nipscern.com
 
 ## Contributing
 
