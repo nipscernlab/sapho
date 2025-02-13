@@ -44,20 +44,16 @@ cd sapho-p
 ## Project Structure
 
 ```
-sapho-p/
+project-folder/
 ├── processor_name/
 │   ├── Hardware/
 │   │   └── [Hardware implementation files]
 │   ├── Software/
 │   │   └── [Your .cmm source files go here]
-│   ├── Simulation/
-│   │   └── [Simulation files]
-│   └── temp/
-│       └── [Temporary compilation files]
-├── CMMComp/
-│   └── [CMM to ASM compiler files]
-└── ASMComp/
-    └── [ASM to Verilog compiler files]
+│   └── Simulation/
+│       └── [Simulation files]
+└── Temp/
+    └── [Temporary compilation files]
 ```
 
 ## Usage
@@ -95,7 +91,7 @@ Contributions are welcome! To contribute:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Working on it!
 
 ## Acknowledgments
 
