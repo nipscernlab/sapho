@@ -11,11 +11,15 @@ SAPHO Compilers is a project developed by NIPSCERN Lab at the Federal University
 1. **CMMComp**: Translates CMM code (our custom language) to ASM instructions
 2. **ASMComp**: Compiles ASM code to Verilog (.v) and generates Memory Initialization File (.mif)
 
+The project includes automatic testbench generation and simulation visualization using Icarus Verilog and GTKWave.
+
 ## Prerequisites
 
 - Cygwin64
 - Flex
 - Bison
+- Icarus Verilog
+- GTKWave
 - Git
 
 ## Installation
@@ -26,11 +30,7 @@ git clone https://github.com/nipscernlab/sapho-p.git
 cd sapho-p
 ```
 
-2. Ensure the following directories exist in your project:
-- Hardware
-- Software
-- Simulation
-
+2. Ensure the proper project structure exists (see Project Structure below)
 3. Configure your processor settings:
 - Set the desired clock frequency
 - Configure the number of clock cycles
@@ -45,9 +45,15 @@ cd sapho-p
 
 ```
 sapho-p/
-├── Hardware/
-├── Software/
-├── Simulation/
+├── processor_name/
+│   ├── Hardware/
+│   │   └── [Hardware implementation files]
+│   ├── Software/
+│   │   └── [Your .cmm source files go here]
+│   ├── Simulation/
+│   │   └── [Simulation files]
+│   └── temp/
+│       └── [Temporary compilation files]
 ├── CMMComp/
 │   └── [CMM to ASM compiler files]
 └── ASMComp/
@@ -56,10 +62,21 @@ sapho-p/
 
 ## Usage
 
-1. Write your CMM code following the custom language specification
-2. Use CMMComp to translate it to ASM
-3. Use ASMComp to generate Verilog and MIF files
-4. The resulting files can be used in your hardware implementation
+1. Place your CMM source code in the `processor_name/Software` directory
+2. Run the compilation process which will:
+   - Translate CMM to ASM using CMMComp
+   - Generate Verilog and MIF files using ASMComp
+   - Automatically create a testbench
+   - Run simulation using Icarus Verilog to generate VCD file
+   - Open GTKWave to visualize the simulation results
+
+All intermediate files will be stored in the `temp` directory during the compilation process.
+
+## Compilation Flow
+
+```
+CMM Code (.cmm) → ASM Code (.asm) → Verilog (.v) + MIF → Testbench → Simulation (.vcd) → GTKWave
+```
 
 ## Contact
 
