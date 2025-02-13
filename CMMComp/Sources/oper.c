@@ -13,6 +13,33 @@ int fadd = 0; // se vai precisar de macros de ponto flutuante
 int fdiv = 0; // se vai precisar de macros de ponto flutuante
 int fmlt = 0; // se vai precisar de macros de ponto flutuante
 
+int negacao_new(int et)
+{
+    if (prtype == 0)
+    {
+        // se for um int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("LOAD %s\n", v_name[et % OFST]);
+            add_instr("NEG\n");
+        }
+
+        // se for um int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            int id = exec_id("aux_neg");
+            add_instr("SETP %s\n", v_name[id]);
+            acc_ok = 0;
+            add_instr("NEG\n");
+            acc_ok = 1;
+        }
+    }
+    else
+    {
+
+    }
+}
+
 // gera instrucao pra negar a reducao pra exp
 // eu nao vou implementar uma instrucao SUB
 // nego o segundo arqumento e somo

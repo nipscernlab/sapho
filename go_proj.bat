@@ -94,12 +94,10 @@ cd %SCR_DIR%
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
-gcc -o itob.exe itob.c
 
 move float2gtkw.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 move f2i_gtkw.exe   %BIN_DIR%>%TMP_DIR%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_DIR%\xcopy.txt
-move itob.exe       %BIN_DIR%>%TMP_DIR%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
 
