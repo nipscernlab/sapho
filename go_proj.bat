@@ -144,7 +144,7 @@ for %%a in (%PROC_LIST%) do copy %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulatio
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
-dir %TOPL_DIR%\*.mif /b > f_list.txt
+dir %TOPL_DIR%\*.txt /b > f_list.txt
 for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do copy %TOPL_DIR%\%%a .\>%TMP_DIR%\xcopy.txt
 for %%a in (%PROC_LIST%) do copy %PROJ_DIR%\%%a\Hardware\%%a_inst.mif .\>%TMP_DIR%\xcopy.txt
 for %%a in (%PROC_LIST%) do copy %PROJ_DIR%\%%a\Hardware\%%a_data.mif .\>%TMP_DIR%\xcopy.txt

@@ -1,4 +1,5 @@
 `timescale 1ns/1ps
+
 module top_level_tb();
 
 // Variaveis da instancia
@@ -15,8 +16,6 @@ wire signed [15:0] q;
 wire signed [6:0] usedw;
 // Variaveis intermediarias para Leitura
 
-integer data_in1 = -16'd11172;
-
 // Clock
 always #2 clk <= ~clk;
 
@@ -30,8 +29,9 @@ fork
 	#40 rst_geral <= 1'b0;
 join
 
-integer i;
+integer i, data_in1;
 initial begin
+	data_in1 = $fopen("sinal_harm_q.txt", "r");
 	$dumpfile("top_level_tb.vcd");
 	$dumpvars(0,top_level_tb);
     for (i = 10; i <= 100; i = i + 10) begin
@@ -42,19 +42,14 @@ initial begin
     $finish;
 end
 
-reg signed [15:0] min [0:639];
-reg [9:0] cnt = 0;
-initial $readmemb("sinal_harm_q.mif", min);
-
+integer scan_result;
 always @(posedge clk)
 begin
 //	if (req_in[1] == 1'b1)
 	if (rst_proc)
 	begin
 		// Coloca o dado no barramento
-		//$fscanf(data_in1, "%d", data);
-		data <= min[cnt];
-		cnt <= cnt+1;
+		scan_result = $fscanf(data_in1, "%d", data);
 		// Pulso no write req da FIFO
 		wrreq <= 1'b1;
 		#5 wrreq<= 1'b0;
