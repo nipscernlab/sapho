@@ -1,7 +1,7 @@
 # SAPHO Compilers
 
 <div align="center">
-  <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/icons/icon_home_psychology.svg" alt="SAPHO Logo" width="200"/>
+  <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/icons/icon_sapho_memory_128.svg" alt="SAPHO Logo" width="200"/>
 </div>
 
 ## About
