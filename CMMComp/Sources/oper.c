@@ -13,106 +13,185 @@ int fadd = 0; // se vai precisar de macros de ponto flutuante
 int fdiv = 0; // se vai precisar de macros de ponto flutuante
 int fmlt = 0; // se vai precisar de macros de ponto flutuante
 
-int negacao_new(int et)
+int negacao(int et)
 {
+    int  etr, eti;
+    char ld [10 ];
+    char num[128];
+
+    if (acc_ok == 0) strcpy(ld, "LOAD"); else strcpy(ld, "PLD");
+
     if (prtype == 0)
     {
-        // se for um int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
+        // se for um int constante na memoria
+        if ((get_type(et) == 1) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
         {
-            add_instr("LOAD %s\n", v_name[et % OFST]);
+            add_instr("%s -%s\n", ld, v_name[et % OFST]);
+        }
+
+        // se for um int variavel na memoria
+        if ((get_type(et) == 1) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et % OFST]);
             add_instr("NEG\n");
         }
 
         // se for um int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            int id = exec_id("aux_neg");
-            add_instr("SETP %s\n", v_name[id]);
-            acc_ok = 0;
             add_instr("NEG\n");
-            acc_ok = 1;
         }
-    }
-    else
-    {
 
-    }
-}
+        // se for um float constante na memoria
+        if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
+        {
+            sprintf  (num, "-%s",       v_name[et % OFST]);
+            add_instr("%s %d // %s\n", ld, f2mf(num), num);
+        }
 
-// gera instrucao pra negar a reducao pra exp
-// eu nao vou implementar uma instrucao SUB
-// nego o segundo arqumento e somo
-int negacao(int et)
-{
-    // testes com numeros complexos -------------------------------------------
-    if (get_type(et) > 2) return negacao_cmp(et);
-    // se for uma constante, soh coloca um sinal de - na frente
-    if (v_isco[et % OFST])
-        load_check(et,1); // o segundo parametro faz a necagao
-    // se eh uma variavel, da LOAD normal e depois um NEG
-    else
-    {
-        load_check(et,0);
+        // se for um float variavel na memoria
+        if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et % OFST]);
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
+        }
 
-        // se for float em ponto fixo, usa uma macro pra trocar o bit de sinal
-        if ((prtype == 0) && (et >= 2*OFST))
+        // se for um float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
         {
             add_instr("PLD float_nbits\n");
             add_instr("SHL 1\n");
             add_instr("SADD\n");
         }
-        // tenho que fazer se for int em ponto flutuante aqui ainda
-        else
+
+        // se for um comp constante na memoria
+        if (get_type(et) == 5)
         {
-            add_instr("NEG\n"); // negacao em ponto fixo
+            split_cmp_const(et,&etr,&eti);
+
+            // the real constant is never negative
+            sprintf  (num, "-%s",       v_name[etr % OFST]);
+            add_instr("%s %u // -%s\n", ld, f2mf(num), num);
+            
+            // the imaginary constant must be negated by code
+            sprintf  (num, "%s",    v_name[eti % OFST]);
+            add_instr("PLD %u // %s\n", f2mf(num), num);
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
+        }
+
+        // se for um comp variavel na memoria
+        if ((get_type(et) == 3) && (et % OFST != 0))
+        {
+            get_cmp_ets(et,&etr,&eti);
+
+            add_instr("%s %s\n", ld, v_name[etr % OFST]);
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n", v_name[eti % OFST]);
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
+        }
+
+        // se for um comp no acc
+        if ((get_type(et) == 3) && (et % OFST == 0))
+        {
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
+            add_instr("SETP neg_aux\n");
+
+            add_instr("PLD float_nbits\n");
+            add_instr("SHL 1\n");
+            add_instr("SADD\n");
+            add_instr("PLD neg_aux\n");
+        }
+    }
+    else
+    {
+        // se for um int constante na memoria
+        if ((get_type(et) == 1) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
+        {
+            add_instr("%s -%s\n", ld, v_name[et % OFST]);
+        }
+
+        // se for um int variavel na memoria
+        if ((get_type(et) == 1) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et % OFST]);
+            add_instr("NEG\n");
+        }
+
+        // se for um int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("NEG\n");
+        }
+
+        // se for um float constante na memoria
+        if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
+        {
+            add_instr("%s -%s\n", ld, v_name[et % OFST]);
+        }
+
+        // se for um float variavel na memoria
+        if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et % OFST]);
+            add_instr("NEG\n");
+        }
+
+        // se for um float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("NEG\n");
+        }
+
+        // se for um comp constante na memoria
+        if (get_type(et) == 5)
+        {
+            split_cmp_const(et,&etr,&eti);
+
+            // the real constant is never negative
+            add_instr("%s -%s\n", ld, v_name[etr % OFST]);
+            
+            // the imaginary constant must be negated by code
+            add_instr("PLD %s\n" ,    v_name[eti % OFST]);
+            add_instr("NEG\n");
+        }
+
+        // se for um comp variavel na memoria
+        if ((get_type(et) == 3) && (et % OFST != 0))
+        {
+            get_cmp_ets(et,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[etr % OFST]);
+            add_instr("NEG\n");
+            add_instr("PLD %s\n",     v_name[eti % OFST]);
+            add_instr("NEG\n");
+        }
+
+        // se for um comp no acc
+        if ((get_type(et) == 3) && (et % OFST == 0))
+        {
+            add_instr("NEG\n");
+            add_instr("SETP neg_aux\n");
+
+            add_instr("NEG\n");
+            add_instr("PLD neg_aux\n");
         }
     }
 
-    return get_type(et)*OFST; // et padrao para reducao exp
-}
+    acc_ok = 1;
+    if (get_type(et) == 5) et = 3*OFST;
 
-//  negacao com numeros complexos
-int negacao_cmp(int et)
-{
-    int etr,eti;
-
-    // comp constante ---------------------------------------------------------
-
-    if (get_type(et) == 5)
-    {
-        split_cmp_const(et,&etr,&eti);
-        v_isco[etr%OFST] = 0;
-        v_isco[eti%OFST] = 0;
-        negacao(etr);
-        negacao(eti);
-        v_isco[etr%OFST] = 1;
-        v_isco[eti%OFST] = 1;
-    }
-
-    // comp var ---------------------------------------------------------------
-
-    if ((get_type(et) == 3) && (et%OFST != 0))
-    {
-        get_cmp_ets(et,&etr,&eti);
-        negacao(etr);
-        negacao(eti);
-    }
-
-    // comp acc ---------------------------------------------------------------
-
-    if ((get_type(et) == 3) && (et%OFST == 0))
-    {
-        etr = 2*OFST;
-        int id = exec_id("aux_neg");
-        eti = 2*OFST + id;
-
-        add_instr("SETP %s\n", v_name[id]);
-        acc_ok = 0; negacao(etr);
-        acc_ok = 1; negacao(eti);
-    }
-
-    return 3*OFST;
+    return get_type(et)*OFST;
 }
 
 // checa se o acc esta com ponto fixo

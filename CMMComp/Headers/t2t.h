@@ -12,11 +12,11 @@ extern int fatan, fatani;               // gerar macro pra arco tangente
 extern int nbmant;                      // numero de bits de mantissa
 extern int nbexpo;                      // numero de bits de expoente
 
-int  f2mf       (char  *va  );          // converte float para meu float
-void float_init (           );          // inicializa as variaveis acima
-void float_geni (char * fasm);          // gera as instrucoes para float em ponto fixo que precisam
-void float_genf (char * fasm);          // gera constantes para trigonometria
-void  math_gen  (char * fasm);          // gera as instrucoes para funcoes matematicas
+unsigned int  f2mf       (char  *va  );          // converte float para meu float
+         void float_init (           );          // inicializa as variaveis acima
+         void float_geni (char * fasm);          // gera as instrucoes para float em ponto fixo que precisam
+         void float_genf (char * fasm);          // gera constantes para trigonometria
+         void  math_gen  (char * fasm);          // gera as instrucoes para funcoes matematicas
 
 void float_begin(char *fasm, char *pv_sim_mem);
 

@@ -40,13 +40,13 @@ char *itob(int x, int w)
 }
 
 // converte um numero float (escrito em uma string) em meu float
-int f2mf(char *va)
+unsigned int f2mf(char *va)
 {
     float f = atof(va);
 
     if (f == 0.0) return 1 << (nbmant + nbexpo -1);
 
-    int *ifl = (int*)&f; // isso aqui ta perigoso
+    int *ifl = (int*)&f;
 
     // desempacota padrao IEEE ------------------------------------------------
 
@@ -84,7 +84,7 @@ int f2mf(char *va)
         m = m >> sh;
         if (carry) m = m+1; // arredonda
     }
-    return s + e + m;
+    return (unsigned)(s + e + m);
 }
 
 // valor a ser usado na convergencia dos funcoes aritmeticas iterativas
