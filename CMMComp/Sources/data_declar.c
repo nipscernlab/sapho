@@ -33,7 +33,7 @@ void declar_var(int id)
     else
         strcpy(func, fname);
 
-    fprintf(f_log, "%s %s %d\n", func, rem_fname(v_name[id], fname), type_tmp);
+    fprintf(f_log, "%s %s %d\n"  , func, rem_fname(v_name[id], fname), type_tmp);
     if (type_tmp == 3)
     fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
 

@@ -10,7 +10,7 @@
              PLD     sqrt_x
              CALL    denorm
              CALL    float_add
-             PLD     3178496 // 0.5
+             PLD     um_div_2 // 0.5
              CALL    float_mult
              SET     sqrt_raiz
 

@@ -196,6 +196,10 @@ void float_begin(char *fasm, char *pc_sim_mem)
     fprintf(f_asm, "\nLOAD %d           // pi/2 usado em funcoes trigonimetricas\n", f2mf("1.57079632679489661923"));
     fprintf(f_asm, "SET  pi_div_2\n\n");
 
+    // 1/2
+    fprintf(f_asm, "LOAD %d           // 1/2\n", f2mf("0.5"));
+    fprintf(f_asm, "SET  um_div_2\n\n");
+
     // inicializacao de dados genericos ---------------------------------------
 
     char path[1024];
@@ -212,7 +216,7 @@ void float_begin(char *fasm, char *pc_sim_mem)
 
     // arquivo de memoria do pc_sim.v -----------------------------------------
 
-    int soma_inst = 20; // tem que mudar se acrescentar mais instrucoes acima
+    int soma_inst = 22; // tem que mudar se acrescentar mais instrucoes acima
 
     FILE *f_mem = fopen(pc_sim_mem, "w");
 
@@ -242,7 +246,7 @@ void math_gen(char *fasm)
 
     if (fsqrti == 1)
     {
-        sprintf(path, "%s/%s", dir_macro, "float_sqrti.asm");
+        sprintf(path, "%s/%s", dir_macro, "float_sqrt_i.asm");
         f_float  =    fopen  (path, "r");
     if (f_float == 0) fprintf(stderr, "Cadê a macro float_sqrt_i.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
 	do {      a  =    fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
