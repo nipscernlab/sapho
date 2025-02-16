@@ -6,12 +6,17 @@
 
 ## About
 
-SAPHO Compilers is a project developed by NIPSCERN Lab at the Federal University of Juiz de Fora (UFJF), Brazil. It consists of two compilers built using Flex and Bison with Cygwin64:
+SAPHO Compiler is a project developed by NIPSCERN Lab at the Federal University of Juiz de Fora (UFJF), Brazil, in collaboration with researchers at CERN. It consists of two compilers built using Flex and Bison with Cygwin64:
 
 1. **CMMComp**: Translates CMM code (our custom language) to ASM instructions
 2. **ASMComp**: Compiles ASM code to Verilog (.v) and generates Memory Initialization File (.mif)
 
-The project includes automatic testbench generation and simulation visualization using Icarus Verilog and GTKWave.
+This project has been widely used in research and development, particularly in the ATLAS collaboration at CERN, where it helps researchers, students, and faculty members in optimizing hardware design and simulation. The project includes automatic testbench generation and simulation visualization using Icarus Verilog and GTKWave.
+
+<div align="center">
+  <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/background/sapho_working_github_2.png" alt="Using GTKWave for FFT simulation" width="500"/>
+  <p>Using GTKWave for visualization of FFT simulation</p>
+</div>
 
 ## Prerequisites
 
@@ -74,6 +79,10 @@ All intermediate files will be stored in the `temp` directory during the compila
 CMM Code (.cmm) → ASM Code (.asm) → Verilog (.v) + MIF → Testbench → Simulation (.vcd) → GTKWave
 ```
 
+<div align="center"> <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/background/sapho_working_github_1.png" alt="AURORA IDE with SAPHO" width="500"/> <p>AURORA IDE with SAPHO</p> </div>
+
+<div align="center"> <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/background/sapho_working_github_3.png" alt="Version control for AURORA IDE" width="500"/> <p>Version control for AURORA IDE</p> </div>
+
 ## Contact
 
 For questions and support, contact us at:
@@ -96,6 +105,7 @@ Working on it!
 ## Acknowledgments
 
 - NIPSCERN Lab
+- CERN
 - Federal University of Juiz de Fora (UFJF)
 - All contributors to this project
 
