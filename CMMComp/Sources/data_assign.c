@@ -691,7 +691,7 @@ void get_1d_index(int id, int et)
     acc_ok = 1; // acc carregado
 }
 
-void array_1d_set(int id, int et)
+void array_1d_set(int id, int et, int fft)
 {
     // testa se ja foi declarada pra poder dar uma atribuicao
     if (v_type[id] == 0)
@@ -720,7 +720,10 @@ void array_1d_set(int id, int et)
     // executa o set ----------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    int etr, eti;
+    char set_type[16];
+    int  etr, eti;
+
+    if (fft == 0) strcpy(set_type, "SRF"); else  strcpy(set_type, "ISRF");
 
     if (prtype == 0)
     {
@@ -729,7 +732,7 @@ void array_1d_set(int id, int et)
         if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST != 0))
         {
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -737,7 +740,7 @@ void array_1d_set(int id, int et)
 
         if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST == 0))
         {
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -749,7 +752,7 @@ void array_1d_set(int id, int et)
 
             add_instr("PLD %s\n", v_name[et % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -760,7 +763,7 @@ void array_1d_set(int id, int et)
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
             
             add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -774,7 +777,7 @@ void array_1d_set(int id, int et)
             
             add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -788,7 +791,7 @@ void array_1d_set(int id, int et)
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -800,7 +803,7 @@ void array_1d_set(int id, int et)
     
             add_instr("SETP lixo\n");
             add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -812,7 +815,7 @@ void array_1d_set(int id, int et)
 
             add_instr("PLD %s\n", v_name[et % OFST]);
             add_instr("CALL int2float\n"); i2f = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -823,7 +826,7 @@ void array_1d_set(int id, int et)
             fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
             
             add_instr("CALL int2float\n"); i2f = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -832,7 +835,7 @@ void array_1d_set(int id, int et)
         if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST != 0))
         {
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n" , v_name[id]);
         }
 
@@ -840,7 +843,7 @@ void array_1d_set(int id, int et)
 
         if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST == 0))
         {
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -853,7 +856,7 @@ void array_1d_set(int id, int et)
             split_cmp_const(et,&etr,&eti);
             
             add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -866,7 +869,7 @@ void array_1d_set(int id, int et)
             get_cmp_ets(et,&etr,&eti);
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -877,7 +880,7 @@ void array_1d_set(int id, int et)
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
     
             add_instr("SETP lixo\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -890,12 +893,12 @@ void array_1d_set(int id, int et)
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[et % OFST]);
             add_instr("CALL int2float\n"); i2f = 1;
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD float_zero\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -909,12 +912,12 @@ void array_1d_set(int id, int et)
             add_instr("SETP aux_tmp\n");
             add_instr("SET aux_index\n");
             add_instr("PLD aux_tmp\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD float_zero\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -926,12 +929,12 @@ void array_1d_set(int id, int et)
 
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n" , v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD float_zero\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -944,12 +947,12 @@ void array_1d_set(int id, int et)
             add_instr("SETP aux_tmp\n");
             add_instr("SET aux_index\n");
             add_instr("PLD aux_tmp\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD float_zero\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -961,12 +964,12 @@ void array_1d_set(int id, int et)
             
             add_instr("SET aux_index\n");
             add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -978,12 +981,12 @@ void array_1d_set(int id, int et)
             
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD %s\n", v_name[eti % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -996,12 +999,12 @@ void array_1d_set(int id, int et)
             add_instr("SET aux_index\n");
 
             add_instr("PLD aux_tmp_r\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD aux_tmp_i\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
     }
@@ -1012,7 +1015,7 @@ void array_1d_set(int id, int et)
         if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST != 0))
         {
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1020,7 +1023,7 @@ void array_1d_set(int id, int et)
 
         if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST == 0))
         {
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1031,7 +1034,7 @@ void array_1d_set(int id, int et)
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1041,7 +1044,7 @@ void array_1d_set(int id, int et)
         {
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
             
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1054,7 +1057,7 @@ void array_1d_set(int id, int et)
             split_cmp_const(et,&etr,&eti);
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1067,7 +1070,7 @@ void array_1d_set(int id, int et)
             get_cmp_ets(et,&etr,&eti);
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1078,7 +1081,7 @@ void array_1d_set(int id, int et)
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
             add_instr("SETP lixo\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1089,7 +1092,7 @@ void array_1d_set(int id, int et)
             fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1099,7 +1102,7 @@ void array_1d_set(int id, int et)
         {
             fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
             
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1108,7 +1111,7 @@ void array_1d_set(int id, int et)
         if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST != 0))
         {
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n" , v_name[id]);
         }
 
@@ -1116,7 +1119,7 @@ void array_1d_set(int id, int et)
 
         if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST == 0))
         {
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1129,7 +1132,7 @@ void array_1d_set(int id, int et)
             split_cmp_const(et,&etr,&eti);
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1142,7 +1145,7 @@ void array_1d_set(int id, int et)
             get_cmp_ets(et,&etr,&eti);
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1153,7 +1156,7 @@ void array_1d_set(int id, int et)
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
     
             add_instr("SETP lixo\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -1165,12 +1168,12 @@ void array_1d_set(int id, int et)
 
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD 0.0\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -1183,12 +1186,12 @@ void array_1d_set(int id, int et)
             add_instr("SETP aux_tmp\n");
             add_instr("SET aux_index\n");
             add_instr("PLD aux_tmp\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD 0.0\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -1200,12 +1203,12 @@ void array_1d_set(int id, int et)
 
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n" , v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD 0.0\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -1218,12 +1221,12 @@ void array_1d_set(int id, int et)
             add_instr("SETP aux_tmp\n");
             add_instr("SET aux_index\n");
             add_instr("PLD aux_tmp\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD 0.0\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -1235,12 +1238,12 @@ void array_1d_set(int id, int et)
             
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD %s\n", v_name[eti % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -1252,12 +1255,12 @@ void array_1d_set(int id, int et)
             
             add_instr("SET aux_index\n");
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD %s\n", v_name[eti % OFST]);
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
 
@@ -1270,12 +1273,12 @@ void array_1d_set(int id, int et)
             add_instr("SET aux_index\n");
 
             add_instr("PLD aux_tmp_r\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD aux_tmp_i\n");
-            add_instr("SRF\n");
+            add_instr("%s\n", set_type);
             add_instr("SET %s_i\n",  v_name[id]);
         }
     }
