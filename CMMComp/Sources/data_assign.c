@@ -535,6 +535,755 @@ void var_set_new(int id, int et)
     v_asgn[id] = 1;  // variavel recebeu um valor
 }
 
+void get_1d_index(int id, int et)
+{
+    // ------------------------------------------------------------------------
+    // teste de argumentos ----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // tem que ver se eh array mesmo
+    if (v_isar[id] == 0)
+        fprintf (stderr, "Erro na linha %d: %s não é array não, abensoado!\n", line_num+1, rem_fname(v_name[id], fname));
+
+    // tem que ver se eh array 1D mesmo
+    if (v_isar[id] == 2)
+        fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n"  , line_num+1, rem_fname(v_name[id], fname));
+
+    // ------------------------------------------------------------------------
+    // executa o get index ----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    int etr, eti;
+
+    if (prtype == 0)
+    {
+        // se int na memoria --------------------------------------------------
+
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("LOAD %s\n", v_name[et % OFST]);
+        }
+
+        // se int no acc ------------------------------------------------------
+
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            
+        }
+
+        // se float na memoria ------------------------------------------------
+
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("LOAD %s\n", v_name[et % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+
+        // se float no acc ----------------------------------------------------
+
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+
+        // se comp const na memoria -------------------------------------------
+
+        if (get_type(et) == 5)
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
+
+            split_cmp_const(et, &etr, &eti);
+
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+
+        // se comp no acc -----------------------------------------------------
+
+        if ((get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
+
+            add_instr("SETP lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+
+        // se comp na memoria -------------------------------------------------
+
+        if ((get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
+
+            get_cmp_ets(et,&etr,&eti);
+
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+    }
+    else
+    {
+        // se int na memoria --------------------------------------------------
+
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("LOAD %s\n", v_name[et % OFST]);
+        }
+
+        // se int no acc ------------------------------------------------------
+
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            
+        }
+
+        // se float na memoria ------------------------------------------------
+
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("LOAD %s\n", v_name[et % OFST]);
+        }
+
+        // se float no acc ----------------------------------------------------
+
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+        }
+
+        // se comp const na memoria -------------------------------------------
+
+        if (get_type(et) == 5)
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
+
+            split_cmp_const(et, &etr, &eti);
+
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+        }
+
+        // se comp no acc -----------------------------------------------------
+
+        if ((get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
+
+            add_instr("SETP lixo\n");
+        }
+
+        // se comp na memoria -------------------------------------------------
+
+        if ((get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
+
+            get_cmp_ets(et,&etr,&eti);
+
+            add_instr("LOAD %s\n", v_name[etr % OFST]);
+        }
+    }
+
+    acc_ok = 1; // acc carregado
+}
+
+void array_1d_set(int id, int et)
+{
+    // testa se ja foi declarada pra poder dar uma atribuicao
+    if (v_type[id] == 0)
+    {
+        fprintf (stderr, "Erro na linha %d: se você declarar a variável %s eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
+        return;
+    }
+
+    // ------------------------------------------------------------------------
+    // varias checagens entre array e nao-array -------------------------------
+    // ------------------------------------------------------------------------
+
+    if (v_isar[id] == 0)
+    {
+        fprintf (stderr, "Erro na linha %d: %s não é um array.\n", line_num+1, rem_fname(v_name[id], fname));
+        return;
+    }
+
+    if (v_isar[id] == 2)
+    {
+        fprintf (stderr, "Erro na linha %d: tá faltando índice no array %s. Era pra ser de duas dimensões!\n", line_num+1, rem_fname(v_name[id], fname));
+        return;
+    }
+
+    // ------------------------------------------------------------------------
+    // executa o set ----------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    int etr, eti;
+
+    if (prtype == 0)
+    {
+        // left int e right int na memoria ------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right int no acc ----------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right float na memoria ----------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right float no acc --------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right comp const ----------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 5))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+            split_cmp_const(et,&etr,&eti);
+            
+            add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right comp na memoria -----------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+            get_cmp_ets(et,&etr,&eti);
+            
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right comp no acc ---------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+    
+            add_instr("SETP lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right int na memoria ----------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right int no acc --------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right float na memoria --------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n" , v_name[id]);
+        }
+
+        // left float e right float no acc ------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right comp const --------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 5))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
+
+            split_cmp_const(et,&etr,&eti);
+            
+            add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right comp na memoria ---------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
+
+            get_cmp_ets(et,&etr,&eti);
+            
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right comp no acc -------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
+    
+            add_instr("SETP lixo\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left comp e right int na memoria -----------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD float_zero\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right int no acc ---------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SETP aux_tmp\n");
+            add_instr("SET aux_index\n");
+            add_instr("PLD aux_tmp\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD float_zero\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right float na memoria ---------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n" , v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD float_zero\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right float no acc -------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("SETP aux_tmp\n");
+            add_instr("SET aux_index\n");
+            add_instr("PLD aux_tmp\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD float_zero\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right comp const ---------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 5))
+        {
+            split_cmp_const(et,&etr,&eti);
+            
+            add_instr("SET aux_index\n");
+            add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right comp na memoria ----------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 3) && (et % OFST != 0))
+        {
+            get_cmp_ets(et,&etr,&eti);
+            
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD %s\n", v_name[eti % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right comp no acc --------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 3) && (et % OFST == 0))
+        {    
+            add_instr("SETP aux_tmp_i\n");
+            add_instr("SETP aux_tmp_r\n");
+            add_instr("SET aux_index\n");
+
+            add_instr("PLD aux_tmp_r\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD aux_tmp_i\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+    }
+    else
+    {
+        // left int e right int na memoria ------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right int no acc ----------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right float na memoria ----------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right float no acc --------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right comp const ----------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 5))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+            split_cmp_const(et,&etr,&eti);
+            
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right comp na memoria -----------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+
+            get_cmp_ets(et,&etr,&eti);
+            
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left int e right comp no acc ---------------------------------------
+
+        if ((v_type[id] == 1) && (get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
+    
+            add_instr("SETP lixo\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right int na memoria ----------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right int no acc --------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right float na memoria --------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n" , v_name[id]);
+        }
+
+        // left float e right float no acc ------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right comp const --------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 5))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
+
+            split_cmp_const(et,&etr,&eti);
+            
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right comp na memoria ---------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
+
+            get_cmp_ets(et,&etr,&eti);
+            
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left float e right comp no acc -------------------------------------
+
+        if ((v_type[id] == 2) && (get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
+    
+            add_instr("SETP lixo\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+        }
+
+        // left comp e right int na memoria -----------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD 0.0\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right int no acc ---------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("SETP aux_tmp\n");
+            add_instr("SET aux_index\n");
+            add_instr("PLD aux_tmp\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD 0.0\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right float na memoria ---------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[et % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n" , v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD 0.0\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right float no acc -------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+            
+            add_instr("SETP aux_tmp\n");
+            add_instr("SET aux_index\n");
+            add_instr("PLD aux_tmp\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD 0.0\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right comp const ---------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 5))
+        {
+            split_cmp_const(et,&etr,&eti);
+            
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD %s\n", v_name[eti % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right comp na memoria ----------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 3) && (et % OFST != 0))
+        {
+            get_cmp_ets(et,&etr,&eti);
+            
+            add_instr("SET aux_index\n");
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD %s\n", v_name[eti % OFST]);
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+
+        // left comp e right comp no acc --------------------------------------
+
+        if ((v_type[id] == 3) && (get_type(et) == 3) && (et % OFST == 0))
+        {    
+            add_instr("SETP aux_tmp_i\n");
+            add_instr("SETP aux_tmp_r\n");
+            add_instr("SET aux_index\n");
+
+            add_instr("PLD aux_tmp_r\n");
+            add_instr("SRF\n");
+            add_instr("SET %s\n",  v_name[id]);
+
+            add_instr("LOAD aux_index\n");
+            add_instr("PLD aux_tmp_i\n");
+            add_instr("SRF\n");
+            add_instr("SET %s_i\n",  v_name[id]);
+        }
+    }
+
+    acc_ok     = 0;  // liberou o acc
+    v_asgn[id] = 1;  // variavel recebeu um valor
+}
+
 // faz a checagem e execucao das funcoes de atribuicao
 // o hardware ja tem ULA com pros processamento para
 // ja fazer o assign com operacoes unarias
