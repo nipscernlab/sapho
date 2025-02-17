@@ -245,16 +245,16 @@ break      : BREAK ';'                     {exec_break  (  );}
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '=' exp ';'          {declar_var($2); var_set_new($2,$4);} //var_set($2,$4,0,0,1,0);
+            | TYPE ID '=' exp ';'          {declar_var($2); var_set($2,$4);}
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '=' exp ';'                       {var_set_new($1,$3);} //{var_set($1,$3,0,0,1,0);}
+assignment : ID  '=' exp ';'                       {var_set($1,$3);}
            // incremento
-           | ID                          PPLUS ';' {  pplus_assign($1      );}
-           | ID  '[' exp ']'             PPLUS ';' {  aplus_assign($1,$3   );}
-           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {  aplu2_assign($1,$3,$6);}
+           | ID                          PPLUS ';' {pplus_assign($1      );}
+           | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
+           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
            // array normal
            | ID  '[' exp ']'  '='                  {get_1d_index($1,$3);}
                      exp ';'                       {array_set ($1,$7,0);}
