@@ -142,6 +142,10 @@ echo %PROC_DATA%>tcl_infos.txt
 echo %TMP_PRO%>>tcl_infos.txt
 echo %BIN_DIR%>>tcl_infos.txt
 
-if exist %SIMU_DIR%\%GTKW% (gtkwave --dark %SIMU_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl) else (gtkwave --dark %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl)
+if exist %SIMU_DIR%\%GTKW% (
+    gtkwave --rcvar "hide_sst on" --dark %SIMU_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
+) else (
+    gtkwave --rcvar "hide_sst on" --dark %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl
+)
 
 cd %ROOT_DIR%

@@ -257,13 +257,13 @@ assignment : ID  '=' exp ';'                       {var_set_new($1,$3);} //{var_
            | ID  '[' exp ']' '[' exp ']' PPLUS ';' {  aplu2_assign($1,$3,$6);}
            // array normal
            | ID  '[' exp ']'  '='                  {get_1d_index($1,$3);}
-                     exp ';'                       {array_1d_set($1,$7,0);}
+                     exp ';'                       {array_set ($1,$7,0);}
            // array invertido
            | ID  '[' exp ')'  '='                  {get_1d_index($1,$3);}
-                     exp ';'                       {array_1d_set($1,$7,1);}
+                     exp ';'                       {array_set ($1,$7,1);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='       {array_2d_check($1, $3,$6    );}
-                     exp ';'                       {var_set       ($1,$10, 2,0,1,0);}
+           | ID  '[' exp ']' '[' exp ']' '='       {get_2d_index($1, $3,$6);}
+                     exp ';'                       {array_set   ($1,$10, 0);}
 
 // expressoes -----------------------------------------------------------------
 

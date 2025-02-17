@@ -6,7 +6,8 @@ void aplus_assign(int id, int et);                                              
 void aplu2_assign(int id, int et1, int et2);                                     // implements i++ pra array 2D
 
 void get_1d_index(int id, int et);                                               // pega o indice de um array
-void array_1d_set(int id, int et, int fft);                                      // faz o assign de um array 1D
+void get_2d_index(int id, int et1, int et2);                                     // pega o indice de um array
+void array_set   (int id, int et , int fft);                                     // faz o assign de um array 1D
 
 // testes com variaveis complexas ---------------------------------------------
 void split_cmp_const(int et, int *et_r, int *et_i);
