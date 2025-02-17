@@ -6,7 +6,7 @@
 
 ## About
 
-SAPHO Compiler is a project developed by NIPSCERN Lab at the Federal University of Juiz de Fora (UFJF), Brazil, in collaboration with researchers at CERN. It consists of two compilers built using Flex and Bison with Cygwin64:
+SAPHO Compiler is a project developed by [NIPSCERN Lab](https://nipscern.com) at the Federal University of Juiz de Fora (UFJF), Brazil, in collaboration with researchers at CERN. It consists of two compilers built using Flex and Bison with Cygwin64:
 
 1. **CMMComp**: Translates CMM code (our custom language) to ASM instructions
 2. **ASMComp**: Compiles ASM code to Verilog (.v) and generates Memory Initialization File (.mif)
