@@ -14,8 +14,7 @@ int  exec_fase(int et );
 
 // testes com numeros complexos -----------------------------------------------
 int    mod_sqr(int et );          // modulo ao quadrado
-int   abs_comp(int et );
-int   neg_comp(int et );
+int   abs_comp(int et );          // valor absoluto de um numero complexo
 int  exec_real(int et );
 int  exec_imag(int et );
 // fim do teste ---------------------------------------------------------------

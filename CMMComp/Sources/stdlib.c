@@ -162,47 +162,6 @@ int exec_abs(int et)
     return get_type(et)*OFST;
 }
 
-// nega um num complexo
-// apesar de estar em stdlib, nao vou fazer uma funcao explicita
-// vai ser usada na reducao -exp -> exp
-// e tb no assign x =- y;
-int neg_comp(int et)
-{
-    int type = get_type(et);
-
-    int etr, eti;
-
-    // se for uma constante ---------------------------------------------------
-
-    if (type == 5)
-    {
-        split_cmp_const(et ,&etr,&eti); // pega o et de cada constante float
-        negacao(etr); // nega parte real
-        negacao(eti); // nega parte imag
-    }
-
-    // se estiver na memoria --------------------------------------------------
-
-    if ((type == 3) && (et % OFST != 0))
-    {
-        get_cmp_ets    (et ,&etr,&eti); // pega o et de cada constante float
-        negacao(etr); // nega parte real
-        negacao(eti); // nega parte imag
-    }
-
-    // se estiver no acumulador -----------------------------------------------
-
-    if ((type == 3) && (et % OFST == 0))
-    {
-        negacao(2*OFST);
-        fprintf(f_asm, "SETP aux_cmp\n"); // salva temp e pega parte real
-        negacao(2*OFST);
-        fprintf(f_asm, "PLD aux_cmp\n");
-    }
-
-    return 3*OFST;
-}
-
 int exec_pst(int et)
 {
     char ld[10];
@@ -459,10 +418,28 @@ int exec_sign(int et1, int et2)
 // executa instrucao NORM
 int exec_norm(int et)
 {
-    if (get_type(et) != 1)
-        fprintf (stderr, "Erro na linha %d: nada a ver! norm é só pra inteiro!\n", line_num+1);
+    if ((get_type(et) != 1) || (prtype == 1))
+        fprintf (stderr, "Erro na linha %d: nada a ver! norm() é só pra inteiro e quando não tem ponto-flutuante em hardware!\n", line_num+1);
 
-    return int_oper(et,0,"norm(.)","NORM",0);
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    // int na memoria
+    if ((get_type(et) == 1) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et%OFST]);
+        add_instr("NORM\n");
+    }
+
+    // int no acc
+    if ((get_type(et) == 1) && (et % OFST == 0))
+    {
+        add_instr("NORM\n");
+    }
+
+    acc_ok = 1;
+
+    return OFST;
 }
 
 // codigo em C+- para calcular raiz quadrada para float
