@@ -89,9 +89,9 @@ void  yyerror(char const *s);
 %left '!' '~' PPLUS
 
 %type <ival> par_list
-%type <ival> exp
 %type <ival> func_call
 %type <ival> std_in std_pst std_abs std_sign std_nrm std_sqrt std_real std_imag std_atan std_fase
+%type <ival> exp terminal
 
 %%
 
@@ -202,7 +202,7 @@ exp_list :                                                          // pode ser 
 
 std_out  : OUT  '(' exp ','                {     exec_out1($3   );} // saida de dados
                     exp ')'     ';'        {     exec_out2($6   );}
-std_in   : IN   '(' exp ')'                {$$ = exec_in  ($3   );} // entrada de dados
+std_in   : IN   '(' INUM ')'               {$$ = exec_in  ($3   );} // entrada de dados
 std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao pset(x)   -> zera se negativo
 std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
 std_sign : SIGN '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
@@ -267,18 +267,7 @@ assignment : ID  '=' exp ';'                       {var_set($1,$3);}
 
 // expressoes -----------------------------------------------------------------
 
-// $$ gera o id extendido (et) da variavel
-// se vem de uma reducao generica, o valor pode ser OFST ou 2*OFST (int ou float)
-// se vem de uma variavel ou constante, o valor eh OFST + id (int) ou 2*OFST + id (float)
-// a regra aqui eh muito importante: cada reducao pra exp (menos variaveis e constantes) deve ser
-// associada a um valor novo no acc
-
-         // constantes
-exp:       INUM                               {$$ = num2exp($1,1);}
-         | FNUM                               {$$ = num2exp($1,2);}
-         | CNUM                               {$$ = num2exp($1,5);}
-         // variaveis
-         | ID                                 {$$ =  id2exp($1  );}
+exp:       terminal                           {$$ = $1;}
          // arrays
          | ID '[' exp ']'                     {$$ = array1d2exp($1,$3, 0);}
          | ID '[' exp ')'                     {$$ = array1d2exp($1,$3, 1);}
@@ -327,6 +316,15 @@ exp:       INUM                               {$$ = num2exp($1,1);}
          | exp LESEQ   exp                    {$$ = oper_cmp($1,$3, 3);}
          | exp EQU     exp                    {$$ = oper_cmp($1,$3, 4);}
          | exp DIF     exp                    {$$ = oper_cmp($1,$3, 5);}
+
+// terminais ------------------------------------------------------------------
+
+         // constantes
+terminal : INUM                               {$$ = num2exp($1,1);}
+         | FNUM                               {$$ = num2exp($1,2);}
+         | CNUM                               {$$ = num2exp($1,5);}
+         // variaveis
+         | ID                                 {$$ =  id2exp($1  );}
 
 %%
 

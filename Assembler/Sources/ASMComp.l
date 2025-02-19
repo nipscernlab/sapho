@@ -88,6 +88,7 @@ LINHA          \n
  "SRS"   eval_opcode(43,1, yytext, "SRS" );
 "SSRS"   eval_opcode(44,0, yytext, "SRS" );
 "PSET"   eval_opcode(45,0, yytext, "PST" );
+"SSGN"   eval_opcode(46,0, yytext, "SGN" );
 "NORM"   eval_opcode(47,0, yytext, "NRM" );
 "ABS"    eval_opcode(49,0, yytext, "ABS" );
 "ILDI"   eval_opcode(50,1, yytext, "FFT" );

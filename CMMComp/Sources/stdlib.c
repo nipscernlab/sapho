@@ -7,6 +7,7 @@
 #include "..\Headers\oper.h"
 
 #include <math.h>
+#include <string.h>
 
 // redeclaracao de variaveis globais
 int fatan  = 0; // se vai precisar de macros de ponto flutuante
@@ -15,61 +16,18 @@ int fsqrt  = 0; // se vai precisar de macros de ponto flutuante
 int fsqrti = 0; // se vai precisar de macros de ponto flutuante
 int mgen   = 0; // se gera ou nao macros de ponto flutuante
 
-// executa instrucao IN
-// et -> id estendido com endereco da porta
-// tem que verificar se eh um inteiro (numero da porta)
-int exec_in(int et)
+int exec_in(int id)
 {
-    // da LOAD no endereco da porta, caso precise
-    load_check(et,0); // porta eh sem sinal
-
-    // se a porta eh um float e proc eh int, reclama e converte pra inteiro
-    if ((prtype == 0) && (get_type(et) == 2))
-    {
-        fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. SÓ me dando trabalho a toa!\n", line_num+1);
-
-        add_instr("CALL float2int\n");
-        f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
-    }
-
-    // testes com numeros complexos -------------------------------------------
-    if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: Ah não, endereço de porta com número complexo já é demais!\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
+    if (acc_ok == 0) add_instr("LOAD %s\n", v_name[id]); else add_instr("PLD %s\n", v_name[id]);
 
     // executa instrucao IN
     add_instr("PUSH\n");
     add_instr("IN\n");
 
+    acc_ok = 1;  // diz que o acc agora tem um valor carregado
+
     // o retorno de IN depende do processador
     return (prtype == 0) ? OFST : 2*OFST;
-}
-
-// executa instrucao ABS
-// et eh o exp pra pegar o valor absoluto
-// o tipo de dado de entrada e saida sao de acordo com o tipo do et
-int exec_abs(int et)
-{
-    // teste com numeros complexos --------------------------------------------
-    if (get_type(et) > 2) return abs_comp(et);
-    // fim do teste -----------------------------------------------------------
-
-    // ve se precisa carregar o argumento
-    load_check(et,0);
-
-    // abs em ponto flutuante para proc em ponto fixo
-    if ((prtype == 0) && (get_type(et) == 2))
-    {
-        if (is_macro() == 0)
-        {
-            fprintf(f_asm, "AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
-        }
-
-        fgen = 1;
-    }
-    else add_instr("ABS\n");
-
-    return get_type(et)*OFST;
 }
 
 // modulo ao quadrado de um num complexo
@@ -125,6 +83,85 @@ int abs_comp(int et)
     return exec_sqrt(mod_sqr(et));          // computa a raiz quadrada do modulo ao quadrdo
 }
 
+int exec_abs(int et)
+{
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    if (prtype == 0)
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("ABS\n");
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("ABS\n");
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            fprintf(f_asm, "AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(f_asm, "AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            et = abs_comp(et);
+        }
+    }
+    else
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("ABS\n");
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("ABS\n");
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("ABS\n");
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("ABS\n");
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            et = abs_comp(et);
+        }
+    }
+
+    acc_ok = 1;
+
+    return get_type(et)*OFST;
+}
+
 // nega um num complexo
 // apesar de estar em stdlib, nao vou fazer uma funcao explicita
 // vai ser usada na reducao -exp -> exp
@@ -166,27 +203,74 @@ int neg_comp(int et)
     return 3*OFST;
 }
 
-// executa instrucao PSET
-// et eh o exp resultante
 int exec_pst(int et)
 {
-    // ve se precisa carregar o argumento
-    load_check(et,0);
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
 
-    if ((prtype == 0) && (get_type(et) == 2))
+    if (prtype == 0)
     {
-        fprintf(stdout, "Atenção na linha %d: essa conversão pra inteiro gasta muito recurso!\n", line_num+1);
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
 
-        add_instr("CALL float2int\n");
-        f2i = 1;
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+
+        // float na memoria e no acc
+        if (get_type(et) == 2)
+        {
+            fprintf (stderr, "Erro na linha %d: Pra usar float no argumento de pset() tem que habilitar ponto-flutuante em hardware!\n", line_num+1);
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
+        }
+    }
+    else
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
+        }   
     }
 
-    // testes com numeros complexos -------------------------------------------
-    if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
-
     add_instr("PSET\n");
+
+    acc_ok = 1;
 
     return (prtype == 0) ? OFST : 2*OFST;
 }
@@ -208,8 +292,7 @@ void exec_out1(int et)
     {
         fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. SÓ me dando trabalho a toa!\n", line_num+1);
 
-        add_instr("CALL float2int\n");
-        f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
+        add_instr("CALL float2int\n"); f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
     }
 }
 
@@ -237,35 +320,140 @@ void exec_out2(int et)
     acc_ok = 0; // libera acc
 }
 
-// executa a instrucao SIGN
 int exec_sign(int et1, int et2)
 {
-    // testes com numeros complexos -------------------------------------------
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    if (prtype == 0)
+    {
+        // int na memoria e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        }
+
+        // int na memoria e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        }
+
+        // int na memoria e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld,     v_name[et1%OFST] );
+            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
+            add_instr("PLD %s\n",        v_name[et2%OFST] );
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
+            add_instr("SADD\n");
+        }
+
+        // int na memoria e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
+            add_instr("PLD %s\n",       v_name[et1%OFST]  );
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
+            add_instr("SADD\n");
+        }
+
+        // int no acc e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("SSGN\n");
+        }
+
+        // int no acc e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            add_instr("SSGN\n");
+        }
+
+        // int no acc e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
+            add_instr("PLD %s\n",       v_name[et2%OFST]  );
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
+            add_instr("SADD\n");
+        }
+
+        // int no acc e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            add_instr("SETP aux_sign\n");
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
+            add_instr("PLD aux_sign\n");
+            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
+            add_instr("SADD\n");
+        }
+    }
+    else
+    {
+        // int na memoria e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        }
+
+        // int na memoria e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        }
+
+        // int na memoria e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        }
+
+        // int na memoria e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        }
+
+        // int no acc e int na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("SSGN\n");
+        }
+
+        // int no acc e int no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            add_instr("SSGN\n");
+        }
+
+        // int no acc e float na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("SSGN\n");
+        }
+
+        // int no acc e float no acc
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            add_instr("SSGN\n");
+        }
+    }
+
     if ((get_type(et1) > 2) || (get_type(et2) > 2))
     {
         fprintf (stderr, "Erro na linha %d: não faz sentido o uso de sign(.,.) com números complexos!\n", line_num+1);
     }
-    // fim do teste -----------------------------------------------------------
 
-    if (prtype == 0)
-    {
-        // se for pra colocar o sinal em um float
-        if (get_type(et2) == 2)
-        {
-            // mem com mem
-            if ((et1%OFST != 0) && (et2%OFST != 0))
-            {
-                load_check(et1,0);
-                add_instr("AND %d\n", 1 << (nbmant+nbexpo));
-                add_instr("ADD %s\n", v_name[et2%OFST]);
-            }
-            // completar ...
-            return 2*OFST;
-        }
-    }
+    acc_ok = 1;
 
-    int aux1, aux2;                                  // precisa mas nao vai ser usado
-    return operacoes(et1,et2,"SIGN","",&aux1, aux2); // nao vou usar pf em software pro sign por aqui
+    return get_type(et2)*OFST;
 }
 
 // executa instrucao NORM

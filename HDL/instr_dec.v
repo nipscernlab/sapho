@@ -185,7 +185,7 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
-		   21  : begin
+		    21  : begin
 						ula_op  <= 5'd12;    // AND  -> and bit a bit com memoria
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
@@ -358,6 +358,13 @@ always @ (posedge clk or posedge rst) begin
 						 srf    <= 1'b0;     // fazer o PST com memoria?
 						invr    <= 1'b0;
 					   req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			46  : begin
+						ula_op  <= 5'd10;    // SSIGN  -> SIGN com pilha
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			47  : begin
@@ -733,6 +740,13 @@ always @ (*) begin
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			46: begin                     // SSIGN
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
 						ldi      <= 1'b0;
 						invl     <= 1'b0;
 					end
