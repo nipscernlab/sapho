@@ -367,7 +367,7 @@ int array1d2exp(int id, int et, int fft)
         }
     }
 
-    // left comp no proc em ponto flixo ---------------------------------------
+    // left comp no proc em ponto fixo ----------------------------------------
 
     else if ((type > 2) && (prtype == 0))
     {
