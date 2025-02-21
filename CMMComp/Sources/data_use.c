@@ -238,14 +238,22 @@ int array1d2exp(int id, int et, int fft)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
+        // float var na memoria
+        if ((get_type(et) == 2) && (v_isco[et%OFST] == 0) && (et % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
 
-            prepar_oper(num, et % OFST, et, 0);
+            add_instr("%s %s\n", ldi, v_name[et % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
 
-            add_instr("%s %s\n", ldi, num);
+        // float const na memoria
+        if ((get_type(et) == 2) && (v_isco[et%OFST] == 1) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et % OFST]), v_name[et % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("%s %s\n", ldv, v_name[id]);
         }
@@ -401,14 +409,25 @@ int array1d2exp(int id, int et, int fft)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
+        // float var na memoria
+        if ((get_type(et) == 2) && (v_isco[et%OFST] == 0) && (et % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
 
-            prepar_oper(num, et % OFST, et, 0);
+            add_instr("%s %s\n", ldi, v_name[et % OFST]);
+            add_instr("CALL float2int\n" ); f2i = 1;
+            add_instr("SET aux_ind_right\n");
+            add_instr("%s %s\n"  , ldv, v_name[id]);
+            add_instr("PLD aux_ind_right\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
 
-            add_instr("%s %s\n", ldi, num);
+        // float const na memoria
+        if ((get_type(et) == 2) && (v_isco[et%OFST] == 1) && (et % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array tá dando float. Vai gerar muito código pra arredondar!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et % OFST]), v_name[et % OFST]);
             add_instr("CALL float2int\n" ); f2i = 1;
             add_instr("SET aux_ind_right\n");
             add_instr("%s %s\n"  , ldv, v_name[id]);
@@ -1018,13 +1037,25 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
-        // int no acc e float na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // int no acc e float var na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1099,14 +1130,27 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
-        // int na memoria e float na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // int na memoria e float var na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1190,6 +1234,32 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
+        // float no acc e float var na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float no acc e float const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
         // float no acc e comp const na memoria
         if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
         {
@@ -1224,6 +1294,230 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e int no acc
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e int na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e float no acc
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e float var na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e float const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e comp const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e comp no acc
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s \n", v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e comp na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e int no acc
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e int na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o primeiro índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e float no acc
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que os índices do array estão em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e float var na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e float const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e comp const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et2, &etr, &eti);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e comp no acc
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e comp na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (v_isco[et1%OFST]==1) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
@@ -1278,8 +1572,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
-        // comp const na memoria e float na memoria
-        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // comp const na memoria e float var na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
@@ -1289,6 +1583,22 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float const na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1383,8 +1693,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
-        // comp no acc e float na memoria
-        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // comp no acc e float var na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
@@ -1392,6 +1702,20 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1479,8 +1803,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldv, v_name[id]);
         }
 
-        // comp na memoria e float na memoria
-        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // comp na memoria e float var na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
@@ -1488,6 +1812,20 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -2185,13 +2523,28 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
-        // int no acc e float na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // int no acc e float var na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int no acc e float const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2287,14 +2640,30 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
-        // int na memoria e float na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // int na memoria e float var na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // int na memoria e float const na memoria
+        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2399,6 +2768,38 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
+        // float no acc e float var na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float no acc e float const na memoria
+        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
         // float no acc e comp const na memoria
         if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
         {
@@ -2439,6 +2840,280 @@ int array2d2exp(int id, int et1, int et2)
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e int no acc
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e int na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e float no acc
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e float var na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e float const na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e comp const na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+
+            split_cmp_const(et2, &etr, &eti);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e comp no acc
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float var na memoria e comp na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 0) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e int no acc
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 1) && (get_type(et2) == 1) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e int na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD %s\n", v_name[et2 % OFST]);
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e float no acc
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET aux_index_y\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e float var na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e float const na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e comp const na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 5) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+
+            split_cmp_const(et2, &etr, &eti);
+            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e comp no acc
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST == 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SET  aux_index_y\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("ADD aux_index_y\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // float const na memoria e comp na memoria
+        if ((get_type(et1) == 2) && (v_isco[et1%OFST] == 1) && (et1 % OFST != 0) && (get_type(et2) == 3) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1 % OFST]), v_name[et1 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
@@ -2505,8 +3180,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
-        // comp const na memoria e float na memoria
-        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // comp const na memoria e float var na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
@@ -2516,6 +3191,25 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp const na memoria e float const na memoria
+        if ((get_type(et1) == 5) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            split_cmp_const(et1, &etr, &eti);
+
+            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2631,8 +3325,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
-        // comp no acc e float na memoria
-        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // comp no acc e float var na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0)  && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
@@ -2640,6 +3334,23 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp no acc e float const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("SETP aux_index_y\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2748,8 +3459,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s_i\n", ldv, v_name[id]);
         }
 
-        // comp na memoria e float na memoria
-        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
+        // comp na memoria e float var na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 0) && (et2 % OFST != 0))
         {
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
@@ -2757,6 +3468,23 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("SADD\n");
+            add_instr("SET aux_index_y\n");
+            add_instr("%s %s\n", ldv, v_name[id]);
+            add_instr("PLD aux_index_y\n");
+            add_instr("%s %s_i\n", ldv, v_name[id]);
+        }
+
+        // comp na memoria e float const na memoria
+        if ((get_type(et1) == 3) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST] == 1) && (et2 % OFST != 0))
+        {
+            fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("MLT %s_arr_size\n", v_name[id]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");

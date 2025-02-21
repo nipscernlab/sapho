@@ -80,4 +80,3 @@ void main()
     out(0,1000.0*real(data[7)));
     out(1,1000.0*imag(data[7)));
 }
-
