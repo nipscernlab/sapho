@@ -374,11 +374,11 @@ void void_ret()
 // ----------------------------------------------------------------------------
 
 // da LOAD no primeiro parametro (se houver)
-// get_type da o tipo de parametro (0, 1, 2) (void, int, float)
+// get_type da o tipo de parametro (0, 1, 2, 3) (void, int, float, comp)
 // p_test consegue guardar a posicao e tipo de todos os parametros na chamada da funcao
 void par_exp(int et)
 {
-    p_test = 0;
+    p_test = 0; // inicializa a variavel de estado p_test
 
     if (get_type(et) < 3)
     {

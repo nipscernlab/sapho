@@ -774,46 +774,91 @@ int exec_sqrt(int et)
     return resultado;
 }*/
 
-int exec_atan_new(int et)
-{
-
-}
-
-// executa macro atan
 int exec_atan(int et)
 {
-    load_check(et,0);
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
 
-    int type = get_type(et);
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
 
-    if ((prtype == 0) && (type < 3))
+    if (prtype == 0)
     {
-        if (type == 1)
-        add_instr("CALL int2float\n"  ); i2f = 1;
-        add_instr("CALL float_atani\n");
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("CALL int2float\n");
+            add_instr("CALL float_atani\n");
 
-        fgen   = 1;
-        fatani = 1;
-        fadd   = 1;
-        fmlt   = 1;
-        fdiv   = 1;
+            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("CALL int2float\n");
+            add_instr("CALL float_atani\n");
+
+            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+        }
+
+        // float var na memoria
+        if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("CALL float_atani\n");
+
+            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+        }
+        
+        // float const na memoria
+        if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
+            add_instr("CALL float_atani\n");
+
+            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("CALL float_atani\n");
+
+            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+        }
+    }
+    else
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("CALL float_atan\n"); fatan = 1;
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("CALL float_atan\n"); fatan = 1;
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("CALL float_atan\n"); fatan = 1;
+        }
+        
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("CALL  float_atan\n"); fatan = 1;
+        }
     }
 
-    if ((prtype == 1) && (type < 3))
-    {
-        add_instr("CALL float_atan\n");
-
-        fatan = 1;
-    }
-
-    // testes com numeros complexos -------------------------------------------
-    if (type > 2)
-    {
-        fprintf (stderr, "Erro na linha %d: não implementei atan(.) de número complexo ainda. Se vira!\n", line_num+1);
-    }
-    // fim do teste -----------------------------------------------------------
-
-    mgen = 1; // gera macros para funcoes aritmeticas
+    mgen   = 1; // gera macros para funcoes aritmeticas
+    acc_ok = 1;
 
     return 2*OFST;
 }
