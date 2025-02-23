@@ -11,7 +11,7 @@ SET sqrt_raiz
 
 NEG                          // abs(x - raiz)
 ADD sqrt_x
-ABS                          // precisa mesmo desse ABS?
+//ABS                        // precisa mesmo desse ABS?
 
 GRE epsilon_taylor           // checa tolerancia
 JZ L2else_sqrt

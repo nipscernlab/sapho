@@ -317,7 +317,7 @@ exp:       terminal                           {$$ = $1;}
          | exp EQU     exp                    {$$ = oper_cmp($1,$3, 4);}
          | exp DIF     exp                    {$$ = oper_cmp($1,$3, 5);}
 
-// terminais ------------------------------------------------------------------
+// terminais usados em reducao pra expressoes ---------------------------------
 
          // constantes
 terminal : INUM                               {$$ = num2exp($1,1);}

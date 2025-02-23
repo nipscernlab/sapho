@@ -1,62 +1,84 @@
 
 // Funcao arco-tangente para float --------------------------------------------
 
-@float_atan SET arctan_x          // pega parametro
+@float_atan SET my_atan_x                  // pega parametro x
 
+LOAD 0.0                                   // if (x == 0)
+EQU  my_atan_x
+JZ   L1else
+
+LOAD 0.0                                   // return 0.0;
+RETURN
+
+JMP L1end                                  // else if (abs(x) == 1.0)
+@L1else LOAD my_atan_x
 ABS
-LES 1.0                           // testa se esta entre -1 e 1
-JZ at_L4else
+PLD 1.0
+SEQU
+JZ L2else
 
-LOAD 1.57079632679489661923       // carrega pi/2
-SIGN arctan_x                     // coloca o sinal de x em pi/2
+LOAD 0.5                                   // return sign(x,pi2*0.5);
+MLT  1.57079632679
+SIGN my_atan_x
+RETURN
+JMP  L2end
 
-PLD arctan_x                      // chama recursivo com 1/x (se abs(x) > 1)
-DIV 1.0
-CALL float_atan
-
-NEG                               // subtrai o resultado de pi/2 com sinal
-SADD
-RETURN                            // retorna
-
-@at_L4else LOAD arctan_x          // salva x em termo
-SET arctan_termo
-
-LOAD arctan_x                     // calcula x^2
-MLT arctan_x
-SET arctan_x2
-
-LOAD arctan_termo                 // salva termo em resultado
-SET arctan_resultado
-
-LOAD arctan_x2                    // calcula a tolerancia
-DIV epsilon_taylor
-SET arctan_tolerancia
-
-LOAD 3                            // inicializa indice com 3
-SET arctan_indiceX
-
-@at_L5 LOAD arctan_termo          // inicio: testa se abs(termo) > tolerancia
+@L2else LOAD my_atan_x                     // else if (abs(x) > 1.0)
 ABS
-PLD arctan_tolerancia
+PLD 1.0
 SGRE
-JZ at_L5end
+JZ L3else
 
-LOAD -2                           // calculo principal: termo = termo * (- x2 * (indiceX - 2)) / indiceX;
-ADD arctan_indiceX
-MLT arctan_x2
+LOAD 1.57079632679                         // return sign(x,pi2) - atan(1.0/x);
+SIGN my_atan_x
+PLD  my_atan_x
+DIV  1.0
+CALL float_atan
 NEG
-MLT arctan_termo
-PLD arctan_indiceX
+SADD
+RETURN
+
+@L3else @L2end @L1end LOAD my_atan_x       // float termo = x;
+SET my_atan_termo
+
+LOAD my_atan_x                             // float x2 = x*x;
+MLT  my_atan_x
+SET  my_atan_x2
+
+LOAD my_atan_termo                         // float resultado  = termo;
+SET  my_atan_resultado
+
+LOAD my_atan_x2                            // float tolerancia = 0.000008/x2;
+DIV  0.000008
+SET  my_atan_tolerancia
+
+LOAD 3                                     // int indiceX = 3;
+SET my_atan_indiceX
+
+@L4 LOAD my_atan_termo                     // while (abs(termo) > tolerancia) {
+ABS
+PLD my_atan_tolerancia
+SGRE
+JZ L4end
+
+LOAD -2                                    // termo = termo * (- x2 * (indiceX - 2)) / indiceX;
+ADD  my_atan_indiceX
+MLT  my_atan_x2
+NEG
+MLT  my_atan_termo
+PLD  my_atan_indiceX
 SDIV
-SET arctan_termo
+SET  my_atan_termo
 
-ADD arctan_resultado              // atualiza o resultado
-SET arctan_resultado
+LOAD my_atan_termo                         // resultado = resultado + termo;
+ADD  my_atan_resultado
+SET  my_atan_resultado
 
-LOAD 2                            // atualiza o indice
-ADD arctan_indiceX
-SET arctan_indiceX
-JMP at_L5                         // e volta
+LOAD 2                                     // indiceX = indiceX + 2;
+ADD  my_atan_indiceX
+SET  my_atan_indiceX
 
-@at_L5end LOAD arctan_resultado   // fim
+JMP L4                                     // }
+
+@L4end LOAD my_atan_resultado              // return resultado;
 RETURN

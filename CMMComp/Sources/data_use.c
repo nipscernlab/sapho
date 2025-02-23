@@ -132,7 +132,7 @@ int array1d2exp(int id, int et, int fft)
 
     // prepara os comandos de LOAD --------------------------------------------
 
-    // prepara o tipo de load da variavel
+    // prepara o tipo de load do array (ivertido ou nao)
     char ldv[10];
     if (fft    == 1) strcpy(ldv,"ILDI"); else strcpy(ldv,"LDI" );
 
@@ -264,9 +264,7 @@ int array1d2exp(int id, int et, int fft)
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
 
             split_cmp_const(et, &etr, &eti);
-            prepar_oper(num, etr % OFST, etr, 0);
-
-            add_instr("%s %s\n", ldi, num);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("%s %s\n", ldv, v_name[id]);
         }
@@ -441,9 +439,7 @@ int array1d2exp(int id, int et, int fft)
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
 
             split_cmp_const(et, &etr, &eti);
-            prepar_oper(num, etr % OFST, etr, 0);
-
-            add_instr("%s %s\n", ldi, num);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET aux_ind_right\n");
             add_instr("%s %s\n"  , ldv, v_name[id]);
@@ -1069,7 +1065,7 @@ int array2d2exp(int id, int et1, int et2)
             split_cmp_const(et2, &etr, &eti);
 
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1165,7 +1161,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1269,7 +1265,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1379,7 +1375,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1491,7 +1487,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %d // %s\n", ldi, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1535,7 +1531,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("LOAD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD aux_index_y\n");
@@ -1549,7 +1545,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD %s\n", v_name[et2 % OFST]);
@@ -1565,7 +1561,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("LOAD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD aux_index_y\n");
@@ -1579,7 +1575,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
@@ -1595,7 +1591,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
@@ -1610,12 +1606,12 @@ int array2d2exp(int id, int et1, int et2)
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
             split_cmp_const(et1, &etr, &eti);
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1631,7 +1627,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("SETP aux_index_y\n");
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET  aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("LOAD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD aux_index_y\n");
@@ -1645,7 +1641,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
@@ -1731,7 +1727,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("SETP aux_index_y\n");
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1841,7 +1837,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -2561,7 +2557,7 @@ int array2d2exp(int id, int et1, int et2)
             split_cmp_const(et2, &etr, &eti);
 
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2681,7 +2677,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2809,7 +2805,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -2944,7 +2940,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -3081,7 +3078,8 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -3134,7 +3132,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("LOAD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD aux_index_y\n");
@@ -3151,7 +3149,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD %s\n", v_name[et2 % OFST]);
@@ -3170,7 +3168,7 @@ int array2d2exp(int id, int et1, int et2)
 
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("LOAD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD aux_index_y\n");
@@ -3187,7 +3185,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
@@ -3206,7 +3204,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
@@ -3224,12 +3222,12 @@ int array2d2exp(int id, int et1, int et2)
             fprintf (stdout, "Atenção na linha %d: Esses índices do array estão uma bagunça. você é uma pessoa confusa!\n", line_num+1);
 
             split_cmp_const(et1, &etr, &eti);
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
 
             split_cmp_const(et2, &etr, &eti);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -3248,7 +3246,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("SETP aux_index_y\n");
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET  aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
+            add_instr("LOAD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("ADD aux_index_y\n");
@@ -3265,7 +3263,7 @@ int array2d2exp(int id, int et1, int et2)
 
             split_cmp_const(et1, &etr, &eti);
 
-            add_instr("%s %s\n", ldi, v_name[etr % OFST]);
+            add_instr("%s %d // %s\n", ldi, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
             add_instr("PLD %s\n", v_name[et2 % OFST]);
@@ -3369,7 +3367,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("SETP aux_index_y\n");
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");
@@ -3503,7 +3501,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("%s %s\n", ldi, v_name[et1 % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("MLT %s_arr_size\n", v_name[id]);
-            add_instr("PLD %s\n", v_name[etr % OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SADD\n");
             add_instr("SET aux_index_y\n");

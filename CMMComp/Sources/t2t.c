@@ -200,6 +200,14 @@ void float_begin(char *fasm, char *pc_sim_mem)
     fprintf(f_asm, "LOAD %d           // 1/2\n", f2mf("0.5"));
     fprintf(f_asm, "SET  um_div_2\n\n");
 
+    // tudo 1 menos bit de sinal
+    fprintf(f_asm, "LOAD %d           // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+    fprintf(f_asm, "SET  tudo_um\n\n");
+
+    // numero 1.0
+    fprintf(f_asm, "LOAD %d           // numero 1.0 em float\n", f2mf("1.0"));
+    fprintf(f_asm, "SET  num_um\n\n");
+
     // inicializacao de dados genericos ---------------------------------------
 
     char path[1024];
@@ -216,7 +224,7 @@ void float_begin(char *fasm, char *pc_sim_mem)
 
     // arquivo de memoria do pc_sim.v -----------------------------------------
 
-    int soma_inst = 22; // tem que mudar se acrescentar mais instrucoes acima
+    int soma_inst = 26; // tem que mudar se acrescentar mais instrucoes acima
 
     FILE *f_mem = fopen(pc_sim_mem, "w");
 

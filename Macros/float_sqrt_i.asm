@@ -22,10 +22,10 @@
              CALL    denorm
              CALL    float_add
 
-             PLD     float_nbits               // abs(.)
-             SHL     1
-             INV
-             SAND
+             //PLD     float_nbits               // abs(.)
+             //SHL     1
+             //INV
+             //SAND
 
              PLD     epsilon_taylor            // checa tolerancia
              CALL    denorm
