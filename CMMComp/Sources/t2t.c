@@ -165,7 +165,7 @@ void float_init()
 // ----------------------------------------------------------------------------
 
 // deve ser incluido no comeco do arquivo asm (para proc ponto fixo)
-void float_begin(char *fasm, char *pc_sim_mem)
+void header_int(char *fasm, char *pc_sim_mem)
 {
     char a;
     FILE *f_asm = fopen(fasm, "w");
@@ -285,9 +285,9 @@ void math_gen(char *fasm)
 // gera codigo asm para rodar float no proc ponto fixo
 void float_geni(char *fasm)
 {
-    char tasm[1024];
-    char tmem[1024];
-    char fmem[1024];
+    char tasm[1024]; // arquivo temporario para o asm
+    char tmem[1024]; // arquivo temporario para a tabela de memoria
+    char fmem[1024]; // arquivo final para a tabela de memoria
 
     sprintf  (tasm, "%s/%s", dir_tmp, "tasm.txt");
     sprintf  (tmem, "%s/%s", dir_tmp, "tmem.txt");
@@ -295,7 +295,7 @@ void float_geni(char *fasm)
 
     // cria os cabecalhos -----------------------------------------------------
 
-    float_begin(tasm,tmem);
+    header_int(tasm,tmem);
 
     // coloca os cabecalhos no inicio dos arquivos ----------------------------
 
@@ -338,21 +338,13 @@ void float_geni(char *fasm)
     }
 }
 
-// gera constantes trigonometricas
-void float_genf(char *fasm)
+// deve ser incluido no comeco do arquivo asm (para proc float)
+void header_float(char *fasm, char *pc_sim_mem)
 {
-    FILE *f_aux = fopen("c2aux.asm", "w");
-    FILE *f_asm = fopen(fasm       , "r");
-
     char a;
+    FILE *f_asm = fopen(fasm, "w");
 
-    // copia todo o codigo original em assembler para o arquivo auxiliar
-    do {a = fgetc(f_asm); if (a != EOF) fputc(a, f_aux);} while (a != EOF);
-    fclose(f_aux);
-    fclose(f_asm);
-
-    f_aux = fopen("c2aux.asm", "r");
-    f_asm = fopen(fasm       , "w");
+    // inicializacao de dados parametrizados ----------------------------------
 
     fprintf(f_asm, "// Inicializacao de parametros para operacoes aritmeticas ---------------------\n\n");
 
@@ -367,9 +359,36 @@ void float_genf(char *fasm)
 
     fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
 
-    //agora recoloca o codigo original
-    do {a = fgetc(f_aux); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+    fclose (f_asm);
 
-    fclose(f_aux);
-    fclose(f_asm);
+    // arquivo de memoria do pc_sim.v -----------------------------------------
+
+    int soma_inst = 3; // tem que mudar se acrescentar mais instrucoes acima
+
+    FILE *f_mem = fopen(pc_sim_mem, "w");
+
+    for (int i=0;i<soma_inst;i++) fprintf(f_mem, "%s\n", itob(-1,20));
+    num_ins += soma_inst;
+
+    fclose(f_mem);
+}
+
+void float_genf(char *fasm)
+{
+    char tasm[1024]; // arquivo temporario para o asm
+    char tmem[1024]; // arquivo temporario para a tabela de memoria
+    char fmem[1024]; // arquivo final para a tabela de memoria
+
+    sprintf  (tasm, "%s/%s", dir_tmp, "tasm.txt");
+    sprintf  (tmem, "%s/%s", dir_tmp, "tmem.txt");
+    sprintf  (fmem, "%s/pc_%s_mem.txt", dir_tmp, pr_name);
+
+    // cria os cabecalhos -----------------------------------------------------
+
+    header_float(tasm,tmem);
+
+    // coloca os cabecalhos no inicio dos arquivos ----------------------------
+
+    fcat2begin(fasm,tasm);
+    fcat2begin(fmem,tmem);
 }
