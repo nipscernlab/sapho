@@ -1,6 +1,3 @@
-#ifndef FUNCOES_H_INCLUDED
-#define FUNCOES_H_INCLUDED
-
 extern int  ret_ok;  // diz se teve um retorno da funcao corretamente
 extern int  mainok;  // status da funcao main: 0 -> nao usada, 1 -> declarada, 2 -> chamada no inicio
 extern int fun_id1;  // guarda id da funcao sendo parseada
@@ -30,8 +27,5 @@ int   get_npar       (int par); // calcula  numero de parametros
 void  par_check      (int et ); // checa se numero de parametros na declaracao eh igual na chamada
 
 // testes com numeros complexos -----------------------------------------------
-void    par_exp_cmp  (int et );
 void declar_ret_cmp  (int et );
 // fim do teste ---------------------------------------------------------------
-
-#endif // FUNCOES_H_INCLUDED
