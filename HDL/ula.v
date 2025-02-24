@@ -111,17 +111,17 @@ module ula_ifx
 	parameter [EXP-1:0] MAN = 23,
 
  //Operacoes aritmeticas
- //parameter ADD  = 0,
- //parameter MLT  = 0,
- //parameter DIV  = 0,
+  //parameter ADD  = 0,
+  //parameter MLT  = 0,
+  //parameter DIV  = 0,
 	parameter MOD  = 0,
- //parameter NEG  = 0,
+  //parameter NEG  = 0,
 
  //Operacoes criadas
 	parameter NRM  = 0, // divide pela constante NUGAIN
- //parameter ABS  = 0, // valor absoluto
- //parameter PST  = 0, // zera se form negativo
- //parameter SGN  = 0, // pega o sinal de in1 e coloca em in2
+  //parameter ABS  = 0, // valor absoluto
+  //parameter PST  = 0, // zera se form negativo
+  //parameter SGN  = 0, // pega o sinal de in1 e coloca em in2
 
  //Operacoes Logicas bitwise
 	parameter OR   = 0,
@@ -130,14 +130,14 @@ module ula_ifx
 	parameter XOR  = 0,
 
  //Operacoes de comparacao
- //parameter LES  = 0,
- //parameter GRE  = 0,
- //parameter EQU  = 0,
+  //parameter LES  = 0,
+  //parameter GRE  = 0,
+  //parameter EQU  = 0,
 
  //Operacoes Logicas que resultam em 1 bit (usado em if else while)
- //parameter LIN  = 0,
- //parameter LAN  = 0,
- //parameter LOR  = 0,
+  //parameter LIN  = 0,
+  //parameter LAN  = 0,
+  //parameter LOR  = 0,
 
  //Operacoes de deslocamento de bits
 	parameter SHR  = 0,
@@ -327,8 +327,8 @@ opr_mux #(EXP,MAN) om(op,out_ufl,out_ufx,iz_ufl,iz_ufx,out,is_zero);
 
 end else begin
 
-assign out = out_ufl;
-assign is_zero = iz_ufl;
+assign out     = out_ufl;
+assign is_zero =  iz_ufl;
 
 end
 

@@ -102,10 +102,10 @@ module outmux
 	input     [NBITS-1:0] in1,in2,
 	input     [NBITS-1:0] sum,mul,div,/*mod,*/neg,
 	input     [NBITS-1:0] /*nrm,*/abs,pst,sgn,
- //input     [NBITS-1:0] orr,ann,inv,cor,
+  //input     [NBITS-1:0] orr,ann,inv,cor,
 	input     [NBITS-1:0] les,gre,equ,
 	input     [NBITS-1:0] lin,lan,lor,
- //input     [NBITS-1:0] shl,shr,srs,
+  //input     [NBITS-1:0] shl,shr,srs,
 
   output reg [NBITS-1:0] out
 );
@@ -118,18 +118,18 @@ always @ (*) begin
 		5'd2   : out <= sum; // ADD
 		5'd3   : out <= mul; // MLT
 		5'd4   : out <= div; // DIV
-	 //5'd5   : out <= mod; // MOD    soh na ula_fx
+	  //5'd5   : out <= mod; // MOD    soh na ula_fx
 		5'd6   : out <= neg; // NEG
   
-	 //5'd7   : out <= nrm; // NORM   soh na ula_fx
+	  //5'd7   : out <= nrm; // NORM   soh na ula_fx
 		5'd8   : out <= abs; // ABS
 		5'd9   : out <= pst; // PST
 		5'd10  : out <= sgn; // SIGN
   
-	 //5'd11  : out <= orr; // OR     ainda nao implementei na ula_fl
-	 //5'd12  : out <= ann; // AND    precisa?
-	 //5'd13  : out <= inv; // INV
-	 //5'd14  : out <= cor; // XOR
+	  //5'd11  : out <= orr; // OR
+	  //5'd12  : out <= ann; // AND
+	  //5'd13  : out <= inv; // INV
+	  //5'd14  : out <= cor; // XOR
   
 		5'd15  : out <= les; // LES
 		5'd16  : out <= gre; // GRE
@@ -139,9 +139,9 @@ always @ (*) begin
 		5'd19  : out <= lan; // LAN
 		5'd20  : out <= lor; // LOR
   
-	 //5'd21  : out <= shl; // SHL    soh na ula_fx
-	 //5'd22  : out <= shr; // SHR
-	 //5'd23  : out <= srs; // SRS
+	  //5'd21  : out <= shl; // SHL    soh na ula_fx
+	  //5'd22  : out <= shr; // SHR
+	  //5'd23  : out <= srs; // SRS
 
 		default: out <= {NBITS{1'bx}};
 	endcase
@@ -326,7 +326,7 @@ assign out = {s_out, e_out, m_out};
 
 endmodule
 
-// INV ------------------------------------------------------------------------
+// Logic INV ------------------------------------------------------------------
 
 module myinv
 #(
@@ -461,20 +461,20 @@ module ula_fl
 	parameter ADD  = 0,
 	parameter MLT  = 0,
 	parameter DIV  = 0,
- //parameter MOD  = 0,    soh pra ula_fx
+  //parameter MOD  = 0,    soh pra ula_fx
 	parameter NEG  = 0,
 
  //Operacoes criadas
- //parameter NRM  = 0, // divide pela constante NUGAIN
+  //parameter NRM  = 0, // divide pela constante NUGAIN
 	parameter ABS  = 0, // valor absoluto
 	parameter PST  = 0, // zera se form negativo
 	parameter SGN  = 0, // pega o sinal de in1 e coloca em in2
 
  //Operacoes Logicas bitwise
- //parameter OR   = 0,    soh pra ula_fx
- //parameter AND  = 0,
- //parameter INV  = 0,
- //parameter XOR  = 0,
+  //parameter OR   = 0,    soh pra ula_fx
+  //parameter AND  = 0,
+  //parameter INV  = 0,
+  //parameter XOR  = 0,
 
  //Operacoes de comparacao
 	parameter LES  = 0,
@@ -487,9 +487,9 @@ module ula_fl
 	parameter LOR  = 0
 
  //Operacoes de deslocamento de bits
- //parameter SHR  = 0,    soh pra ula_fx
- //parameter SHL  = 0,
- //parameter SRS  = 0
+  //parameter SHR  = 0,    soh pra ula_fx
+  //parameter SHL  = 0,
+  //parameter SRS  = 0
 )
 (
 	input         [      4:0] op,

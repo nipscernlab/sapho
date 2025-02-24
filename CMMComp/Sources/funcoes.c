@@ -713,4 +713,189 @@ void par_check(int et)
             // nao faz nada
         }
     }
+    else
+    {
+        // original eh int e chamada eh int var -------------------------------
+
+        if ((t_fun == 1) && (t_cal == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // original eh int e chamada eh int acc -------------------------------
+
+        if ((t_fun == 1) && (t_cal == 1) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+
+        // original eh int e chamada eh float ---------------------------------
+
+        if ((t_fun == 1) && (t_cal == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // original eh int e chamada eh float acc -----------------------------
+
+        if ((t_fun == 1) && (t_cal == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+        }
+
+        // original eh int e chamada eh comp const ----------------------------
+
+        if ((t_fun == 1) && (t_cal == 5))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            split_cmp_const(et,&etr,&eti);
+
+            add_instr("%s %s\n", ld, v_name[etr%OFST]);
+        }
+
+        // original eh int e chamada eh comp var ------------------------------
+
+        if ((t_fun == 1) && (t_cal == 3) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // original eh int e chamada eh comp acc ------------------------------
+
+        if ((t_fun == 1) && (t_cal == 3) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("SETP lixo_aux\n");
+        }
+
+        // original eh float e chamada eh int var -----------------------------
+
+        if ((t_fun == 2) && (t_cal == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+            
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // original eh float e chamada eh int acc -----------------------------
+
+        if ((t_fun == 2) && (t_cal == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+        }
+
+        // original eh float e chamada eh float -------------------------------
+
+        if ((t_fun == 2) && (t_cal == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // original eh float e chamada eh float acc ---------------------------
+
+        if ((t_fun == 2) && (t_cal == 2) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+
+        // original eh float e chamada eh comp const --------------------------
+
+        if ((t_fun == 2) && (t_cal == 5))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            split_cmp_const(et,&etr,&eti);
+
+            add_instr("%s %s\n", ld, v_name[etr%OFST]);
+        }
+
+        // original eh float e chamada eh comp var ----------------------------
+
+        if ((t_fun == 2) && (t_cal == 3) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // original eh float e chamada eh comp acc ----------------------------
+
+        if ((t_fun == 2) && (t_cal == 3) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("SETP lixo_aux\n");
+        }
+
+        // original eh comp e chamada eh int var ------------------------------
+
+        if ((t_fun == 3) && (t_cal == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+            
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("PLD 0.0\n");
+        }
+
+        // original eh comp e chamada eh int acc ------------------------------
+
+        if ((t_fun == 3) && (t_cal == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("PLD 0.0\n");
+        }
+
+        // original eh comp e chamada eh float var ----------------------------
+
+        if ((t_fun == 3) && (t_cal == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("PLD 0.0");
+        }
+
+        // original eh comp e chamada eh float acc ----------------------------
+
+        if ((t_fun == 3) && (t_cal == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
+
+            add_instr("PLD 0.0");
+        }
+
+        // original eh comp e chamada eh comp const ---------------------------
+
+        if ((t_fun == 3) && (t_cal == 5))
+        {
+            split_cmp_const(et,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+        }
+
+        // original eh comp e chamada eh comp var -----------------------------
+
+        if ((t_fun == 3) && (t_cal == 3) && (et % OFST != 0))
+        {
+            get_cmp_ets(et,&etr,&eti); // pega os IDs estendidos do right na memoria
+
+            add_instr("%s %s\n" , ld, v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+        }
+
+        // original eh comp e chamada eh comp acc -----------------------------
+
+        if ((t_fun == 3) && (t_cal == 3) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+    }
 }

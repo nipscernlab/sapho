@@ -289,27 +289,27 @@ exp:       terminal                           {$$ = $1;}
          |    '+' exp                         {$$ = $2;}
          // operadores unarios
          |    '-' exp                         {$$ =     negacao($2      );}
-         |    '!' exp                         {$$ =    oper_int($2, 0, 0);}
-         |    '~' exp                         {$$ =    oper_int($2, 0, 1);}
+         |    '!' exp                         {$$ =   oper_linv($2      );}
+         |    '~' exp                         {$$ =    oper_inv($2      );}
          | ID                         PPLUS   {$$ =   exp_pplus($1      );}
          | ID '[' exp ']'             PPLUS   {$$ = array_pplus($1,$3   );}
          | ID '[' exp ']' '[' exp ']' PPLUS   {$$ = array_2plus($1,$3,$6);}
-         // operadores logicos
-         | exp  SHIFTL exp                    {$$ = oper_int($1,$3, 2);}
-         | exp  SHIFTR exp                    {$$ = oper_int($1,$3, 3);}
-         | exp SSHIFTR exp                    {$$ = oper_int($1,$3, 4);}
+         // operadores bitwise
+         | exp  SHIFTL exp                    {$$ = oper_shift($1,$3, 0);}
+         | exp  SHIFTR exp                    {$$ = oper_shift($1,$3, 1);}
+         | exp SSHIFTR exp                    {$$ = oper_shift($1,$3, 2);}
          | exp '&'     exp                    {$$ = oper_int($1,$3, 5);}
          | exp '|'     exp                    {$$ = oper_int($1,$3, 6);}
          | exp '^'     exp                    {$$ = oper_int($1,$3, 7);}
-         | exp LAND    exp                    {$$ = oper_int($1,$3, 8);}
-         | exp LOR     exp                    {$$ = oper_int($1,$3, 9);}
          // operadores aritmeticos
          | exp '%'     exp                    {$$ = oper_int($1,$3,10);}
          | exp '*'     exp                    {$$ = oper_ari($1,$3, 0);}
          | exp '/'     exp                    {$$ = oper_ari($1,$3, 1);}
          | exp '+'     exp                    {$$ = oper_ari($1,$3, 2);}
          | exp '-'     exp                    {$$ = oper_ari($1,$3, 3);}
-         // operadores de comparacao
+         // operadores true/false
+         | exp  LAND   exp                    {$$ = oper_int($1,$3, 8);}
+         | exp  LOR    exp                    {$$ = oper_int($1,$3, 9);}
          | exp '<'     exp                    {$$ = oper_cmp($1,$3, 0);}
          | exp '>'     exp                    {$$ = oper_cmp($1,$3, 1);}
          | exp GREQU   exp                    {$$ = oper_cmp($1,$3, 2);}

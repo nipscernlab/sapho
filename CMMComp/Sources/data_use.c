@@ -3555,10 +3555,8 @@ int array2d2exp(int id, int et1, int et2)
 // reducao de ++ pra exp
 int exp_pplus(int id)
 {
-    // testes com numeros complexos -------------------------------------------
     if (v_type[id] > 2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
 
     // equivalente a pegar o x na expressao (x+1)
     int et = id2exp(id);
@@ -3571,10 +3569,8 @@ int exp_pplus(int id)
     int type = get_type(et);
     // depois o parser
     int et1 = num2exp(lval,type);
-
     // depois faz operacao de soma
     int ret = oper_ari(et,et1,2);
-
     // por ultimo, atribui de volta pra id
     var_set(id, ret);
 
@@ -3586,14 +3582,11 @@ int exp_pplus(int id)
 // reducao de ++ pra exp em array 1D
 int array_pplus(int id, int ete)
 {
-    // testes com numeros complexos -------------------------------------------
     if (v_type[id] > 2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
 
     // equivalente a pegar o x na expressao (x+1)
     int et = array1d2exp(id,ete,0);
-
     // agora transforma o 1 em um exp
     // primeiro faz o lexer do 1
     if (find_var("1") == -1) add_var("1");
@@ -3602,10 +3595,8 @@ int array_pplus(int id, int ete)
     int type = get_type(et);
     // depois o parser
     int et1 = num2exp(lval,type);
-
     // depois faz operacao de soma
     int ret = oper_ari(et,et1,2);
-
     // faz o load no indice do array novamente
     get_1d_index(id, ete);
     // por ultimo, atribui de volta pra id
@@ -3619,14 +3610,11 @@ int array_pplus(int id, int ete)
 // reducao de ++ pra exp em array 2D
 int array_2plus(int id, int et1, int et2)
 {
-    // testes com numeros complexos -------------------------------------------
     if (v_type[id] > 2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
 
     // equivalente a pegar o x na expressao (x+1)
     int et = array2d2exp(id,et1,et2);
-
     // agora transforma o 1 em um exp
     // primeiro faz o lexer do 1
     if (find_var("1") == -1) add_var("1");
@@ -3635,10 +3623,8 @@ int array_2plus(int id, int et1, int et2)
     int type = get_type(et);
     // depois o parser
     int etx = num2exp(lval,type);
-
     // depois faz operacao de soma
     int ret = oper_ari(et,etx,2);
-
     // faz o load no indice do array novamente
     get_2d_index(id, et1, et2);
     // por ultimo, atribui de volta pra id
