@@ -36,7 +36,7 @@ int f2mf(char *va)
 {
     float f = atof(va);
 
-    if (f == 0.0) return 0;
+    if (f == 0.0) return 1 << (nbmant + nbexpo -1);
 
     int *ifl = (int*)&f;
 

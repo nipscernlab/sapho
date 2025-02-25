@@ -272,7 +272,7 @@ exp:       terminal                           {$$ = $1;}
          | ID '[' exp ']'                     {$$ = array1d2exp($1,$3, 0);}
          | ID '[' exp ')'                     {$$ = array1d2exp($1,$3, 1);}
          | ID '[' exp ']' '[' exp ']'         {$$ = array2d2exp($1,$3,$6);}
-         // std library
+         // std library que retorna valores
          | std_in                             {$$ = $1;}
          | std_pst                            {$$ = $1;}
          | std_abs                            {$$ = $1;}
@@ -283,6 +283,7 @@ exp:       terminal                           {$$ = $1;}
          | std_imag                           {$$ = $1;}
          | std_atan                           {$$ = $1;}
          | std_fase                           {$$ = $1;}
+         // chamada de funcao
          | func_call                          {$$ = $1;}
          // operadores nulos
          |    '(' exp ')'                     {$$ = $2;}
@@ -294,28 +295,29 @@ exp:       terminal                           {$$ = $1;}
          | ID                         PPLUS   {$$ =   exp_pplus($1      );}
          | ID '[' exp ']'             PPLUS   {$$ = array_pplus($1,$3   );}
          | ID '[' exp ']' '[' exp ']' PPLUS   {$$ = array_2plus($1,$3,$6);}
-         // operadores bitwise
+         // operadores de deslocamento
          | exp  SHIFTL exp                    {$$ = oper_shift($1,$3, 0);}
          | exp  SHIFTR exp                    {$$ = oper_shift($1,$3, 1);}
          | exp SSHIFTR exp                    {$$ = oper_shift($1,$3, 2);}
-         | exp '&'     exp                    {$$ = oper_int($1,$3, 5);}
-         | exp '|'     exp                    {$$ = oper_int($1,$3, 6);}
-         | exp '^'     exp                    {$$ = oper_int($1,$3, 7);}
+         // operadores bitwise
+         | exp   '&'   exp                    {$$ = oper_bitw ($1,$3, 0);}
+         | exp   '|'   exp                    {$$ = oper_bitw ($1,$3, 1);}
+         | exp   '^'   exp                    {$$ = oper_bitw ($1,$3, 2);}
          // operadores aritmeticos
-         | exp '%'     exp                    {$$ = oper_int($1,$3,10);}
-         | exp '*'     exp                    {$$ = oper_ari($1,$3, 0);}
-         | exp '/'     exp                    {$$ = oper_ari($1,$3, 1);}
-         | exp '+'     exp                    {$$ = oper_ari($1,$3, 2);}
-         | exp '-'     exp                    {$$ = oper_ari($1,$3, 3);}
+         | exp   '%'   exp                    {$$ = oper_mod ($1,$3);}
+         | exp   '+'   exp                    {$$ = oper_soma($1,$3);}
+         | exp   '-'   exp                    {$$ = oper_ari($1,$3, 3);}
+         | exp   '*'   exp                    {$$ = oper_ari($1,$3, 0);}
+         | exp   '/'   exp                    {$$ = oper_ari($1,$3, 1);}
          // operadores true/false
          | exp  LAND   exp                    {$$ = oper_int($1,$3, 8);}
          | exp  LOR    exp                    {$$ = oper_int($1,$3, 9);}
-         | exp '<'     exp                    {$$ = oper_cmp($1,$3, 0);}
-         | exp '>'     exp                    {$$ = oper_cmp($1,$3, 1);}
-         | exp GREQU   exp                    {$$ = oper_cmp($1,$3, 2);}
-         | exp LESEQ   exp                    {$$ = oper_cmp($1,$3, 3);}
-         | exp EQU     exp                    {$$ = oper_cmp($1,$3, 4);}
-         | exp DIF     exp                    {$$ = oper_cmp($1,$3, 5);}
+         | exp   '<'   exp                    {$$ = oper_cmp($1,$3, 0);}
+         | exp   '>'   exp                    {$$ = oper_cmp($1,$3, 1);}
+         | exp  GREQU  exp                    {$$ = oper_cmp($1,$3, 2);}
+         | exp  LESEQ  exp                    {$$ = oper_cmp($1,$3, 3);}
+         | exp  EQU    exp                    {$$ = oper_cmp($1,$3, 4);}
+         | exp  DIF    exp                    {$$ = oper_cmp($1,$3, 5);}
 
 // terminais usados em reducao pra expressoes ---------------------------------
 
