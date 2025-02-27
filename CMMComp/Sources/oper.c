@@ -46,7 +46,7 @@ int negacao(int et)
         if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
         {
             sprintf  (num, "-%s",       v_name[et % OFST]);
-            add_instr("%s %d // %s\n", ld, f2mf(num), num);
+            add_instr("%s %u // %s\n", ld, f2mf(num), num);
         }
 
         // se for um float variavel na memoria
@@ -1726,8 +1726,8 @@ int oper_soma(int et1, int et2)
             add_instr("CALL denorm\n");
             add_instr("CALL float_add\n"); fadd = 1;
 
-            add_instr("PLD imag1\n");
-            add_instr("PLD imag2\n");
+            add_instr("PLD aux_imag1\n");
+            add_instr("PLD aux_imag2\n");
             add_instr("CALL denorm\n");
             add_instr("CALL float_add\n"); fadd = 1;
         }
@@ -2165,6 +2165,1256 @@ int oper_soma(int et1, int et2)
             add_instr("SETP aux_imag2\n");
             add_instr("ADD aux_real2\n");
             add_instr("PLD aux_imag2\n");
+        }
+    }
+
+    acc_ok = 1;
+
+    int type;
+         if ((get_type(et1) > 2) || (get_type(et2) > 2))
+         type = 3;
+    else if ((get_type(et1) > 1) || (get_type(et2) > 1))
+         type = 2;
+    else type = 1;
+
+    return type*OFST;
+}
+
+int oper_subt(int et1, int et2)
+{
+    return oper_soma(et1,negacao(et2));
+}
+
+int oper_mult(int et1, int et2)
+{
+    int etr, eti;
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    // 8*8 combinacoes para prtype = 0
+    if (prtype == 0)
+    {
+        // int var com int var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("MLT %s\n",     v_name[et2%OFST]);
+        }
+
+        // int var com int acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+        }
+
+        // int var com float var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %s\n" , v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // int var com float const
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %d // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // int var com float acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("PLD %s\n", v_name[et1%OFST]);
+            add_instr("CALL int2float\n");  i2f  = 1;
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // int var com comp const
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            oper_mult(et1,etr);
+            oper_mult(et1,eti);
+        }
+
+        // int var com comp var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            oper_mult(et1,etr);
+            oper_mult(et1,eti);
+        }
+
+        // int var com comp acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_mult\n");
+            oper_mult(et1,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,2*OFST);
+        }
+
+        // int acc com int var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // int acc com int acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("SMLT\n");
+        }
+
+        // int acc com float var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // int acc com float const
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // int acc com float acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_soma\n");
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD aux_soma\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // int acc com comp const
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            oper_mult(et1,etr);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,eti);
+        }
+
+        // int acc com comp var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            oper_mult(et1,etr);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,eti);
+        }
+
+        // int acc com comp acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_imag  \n");
+            add_instr("SETP aux_real  \n");
+            add_instr("CALL int2float \n"); i2f  = 1;
+            add_instr("SET  aux_mult  \n");
+            add_instr("PLD  aux_real  \n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD  aux_imag  \n");
+            add_instr("PLD  aux_mult  \n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float var com int var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %s\n",     v_name[et1%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float var com int acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %s\n",     v_name[et1%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float var com float var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("PLD %s\n",     v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float var com float const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("%s %s\n", ld, v_name[et1%OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float var com float acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("PLD %s\n", v_name[et1%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float var com comp const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            oper_mult(et1,etr);
+            oper_mult(et1,eti);
+        }
+
+        // float var com comp var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            oper_mult(et1,etr);
+            oper_mult(et1,eti);
+        }
+
+        // float var com comp acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_mult\n");
+            oper_mult(et1,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,2*OFST);
+        }
+
+        // float const com int var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float const com int acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float const com float var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float const com float const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float const com float acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float const com comp const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            oper_mult(et1,etr);
+            oper_mult(et1,eti);
+        }
+
+        // float const com comp var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            oper_mult(et1,etr);
+            oper_mult(et1,eti);
+        }
+
+        // float const com comp acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_mult\n");
+            oper_mult(et1,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,2*OFST);
+        }
+
+        // float acc com int var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float acc com int acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float acc com float var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float acc com float const
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float acc com float acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // float acc com comp const
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            oper_mult(et1,etr);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,eti);
+        }
+
+        // float acc com comp var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            oper_mult(et1,etr);
+            add_instr("PLD aux_mult\n");
+            oper_mult(et1,eti);
+        }
+
+        // float acc com comp acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_imag  \n");
+            add_instr("SETP aux_real  \n");
+            add_instr("SET  aux_mult  \n");
+            add_instr("PLD  aux_real  \n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD  aux_imag  \n");
+            add_instr("PLD  aux_mult  \n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // comp const com int var
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            oper_mult(etr,et2);
+            oper_mult(eti,et2);
+        }
+
+        // comp const com int acc
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SET aux_mult\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(eti,2*OFST);
+        }
+
+        // comp const com float var
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            oper_mult(etr,et2);
+            oper_mult(eti,et2);
+        }
+
+        // comp const com float const
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            oper_mult(etr,et2);
+            oper_mult(eti,et2);
+        }
+
+        // comp const com float acc
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(eti,2*OFST);
+        }
+
+        // comp const com comp const
+        if ((get_type(et1)==5) && (get_type(et2)==5))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            split_cmp_const(et1,&et1r,&et1i);
+            split_cmp_const(et2,&et2r,&et2i);
+
+            oper_mult(et1r,et2r);
+            oper_mult(et1i,et2i);
+            oper_subt(2*OFST,2*OFST);
+
+            oper_mult(et1r,et2i);
+            oper_mult(et1i,et2r);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp const com comp var
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_ets    (et2,&et2r,&et2i);
+
+            oper_mult(et1r,et2r);
+            oper_mult(et1i,et2i);
+            oper_subt(2*OFST,2*OFST);
+
+            oper_mult(et1r,et2i);
+            oper_mult(et1i,et2r);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp const com comp acc
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET aux_real\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_imag\n");
+            oper_mult(eti,2*OFST);
+            oper_subt(2*OFST,2*OFST);
+
+            add_instr("PLD aux_imag\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_real\n");
+            oper_mult(eti,2*OFST);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp var com int var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            oper_mult(etr,et2);
+            oper_mult(eti,et2);
+        }
+
+        // comp var com int acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SET aux_mult\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(eti,2*OFST);
+        }
+
+        // comp var com float var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            oper_mult(etr,et2);
+            oper_mult(eti,et2);
+        }
+
+        // comp var com float const
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            oper_mult(etr,et2);
+            oper_mult(eti,et2);
+        }
+
+        // comp var com float acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_mult\n");
+            oper_mult(eti,2*OFST);
+        }
+
+        // comp var com comp const
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            get_cmp_ets    (et1,&et1r,&et1i);
+            split_cmp_const(et2,&et2r,&et2i);
+
+            oper_mult(et1r,et2r);
+            oper_mult(et1i,et2i);
+            oper_subt(2*OFST,2*OFST);
+
+            oper_mult(et1r,et2i);
+            oper_mult(et1i,et2r);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp var com comp var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            get_cmp_ets(et1,&et1r,&et1i);
+            get_cmp_ets(et2,&et2r,&et2i);
+
+            oper_mult(et1r,et2r);
+            oper_mult(et1i,et2i);
+            oper_subt(2*OFST,2*OFST);
+
+            oper_mult(et1r,et2i);
+            oper_mult(et1i,et2r);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp var com comp acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET aux_real\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_imag\n");
+            oper_mult(eti,2*OFST);
+            oper_subt(2*OFST,2*OFST);
+
+            add_instr("PLD aux_imag\n");
+            oper_mult(etr,2*OFST);
+            add_instr("PLD aux_real\n");
+            oper_mult(eti,2*OFST);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp acc com int var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SET aux_float\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD aux_imag\n");
+            add_instr("PLD aux_float\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // comp acc com int acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SETP aux_float\n");
+            add_instr("SETP aux_imag\n");
+            add_instr("PLD aux_float\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD aux_imag\n");
+            add_instr("PLD aux_float\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // comp acc com float var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD aux_imag\n");
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // comp acc com float const
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD aux_imag\n");
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // comp acc com float acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_float\n");
+            add_instr("SETP aux_imag\n");
+            add_instr("PLD aux_float\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("PLD aux_imag\n");
+            add_instr("PLD aux_float\n");
+            add_instr("CALL float_mult\n"); fmlt = 1;
+        }
+
+        // comp acc com comp const
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET aux_real\n");
+            oper_mult(2*OFST,etr);
+            add_instr("PLD aux_imag\n");
+            oper_mult(2*OFST,eti);
+            oper_subt(2*OFST,2*OFST);
+
+            add_instr("PLD aux_imag\n");
+            oper_mult(2*OFST,etr);
+            add_instr("PLD aux_real\n");
+            oper_mult(2*OFST,eti);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp acc com comp var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET aux_real\n");
+            oper_mult(2*OFST,etr);
+            add_instr("PLD aux_imag\n");
+            oper_mult(2*OFST,eti);
+            oper_subt(2*OFST,2*OFST);
+
+            add_instr("PLD aux_imag\n");
+            oper_mult(2*OFST,etr);
+            add_instr("PLD aux_real\n");
+            oper_mult(2*OFST,eti);
+            oper_soma(2*OFST,2*OFST);
+        }
+
+        // comp acc com comp acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_imag2\n");
+            add_instr("SETP aux_real2\n");
+            add_instr("SETP aux_imag1\n");
+            add_instr("SET  aux_real1\n");
+            add_instr("PLD  aux_real2\n");
+            oper_mult(2*OFST,2*OFST);
+            add_instr("PLD  aux_imag1\n");
+            add_instr("PLD  aux_imag2\n");
+            oper_mult(2*OFST,2*OFST);
+            oper_subt(2*OFST,2*OFST);
+
+            add_instr("PLD  aux_imag1\n");
+            add_instr("PLD  aux_real2\n");
+            oper_mult(2*OFST,2*OFST);
+            add_instr("PLD  aux_real1\n");
+            add_instr("PLD  aux_imag2\n");
+            oper_mult(2*OFST,2*OFST);
+            oper_soma(2*OFST,2*OFST);
+        }
+    }
+    else // 7*7 combinacoes para prtype = 1
+    {
+        // int var com int var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("MLT %s\n",     v_name[et2%OFST]);
+        }
+
+        // int var com int acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+        }
+
+        // int var com float var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("MLT %s\n",     v_name[et2%OFST]);
+        }
+
+        // int var com float acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+        }
+
+        // int var com comp const
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[etr%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+        }
+
+        // int var com comp var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[etr%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+        }
+
+        // int var com comp acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_soma\n");
+            add_instr("MLT  %s\n", v_name[et1%OFST]);
+            add_instr("PLD  aux_soma\n");
+            add_instr("MLT  %s\n", v_name[et1%OFST]);
+        }
+
+        // int acc com int var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // int acc com int acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("SMLT\n");
+        }
+
+        // int acc com float var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // int acc com float acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SMLT\n");
+        }
+
+        // int acc com comp const
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // int acc com comp var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // int acc com comp acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("SETP aux_real\n");
+            add_instr("SET aux_int\n");
+            add_instr("MLT aux_real\n");
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT aux_int\n");
+        }
+
+        // float var com int var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+        }
+
+        // float var com int acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+        }
+
+        // float var com float var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+        }
+
+        // float var com float acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+        }
+
+        // float var com comp const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+        }
+
+        // float var com comp var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et1%OFST]);
+        }
+
+        // float var com comp acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_soma\n");
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+            add_instr("PLD aux_soma\n");
+            add_instr("MLT %s\n", v_name[et1%OFST]);
+        }
+
+        // float acc com int var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // float acc com int acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("SMLT\n");
+        }
+
+        // float acc com float var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // float acc com float acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SMLT\n");
+        }
+
+        // float acc com comp const
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // float acc com comp var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // float acc com comp acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("SETP aux_real\n");
+            add_instr("SET aux_float\n");
+            add_instr("MLT aux_real\n");
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT aux_float\n");
+        }
+
+        // comp const com int var
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et2%OFST]);
+        }
+
+        // comp const com int acc
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // comp const com float var
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n" ,    v_name[et2%OFST]);
+        }
+
+        // comp const com float acc
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // comp const com comp const
+        if ((get_type(et1)==5) && (get_type(et2)==5))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            split_cmp_const(et1,&et1r,&et1i);
+            split_cmp_const(et2,&et2r,&et2i);
+
+            add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n" ,    v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("SADD\n");
+        }
+
+        // comp const com comp var
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_ets    (et2,&et2r,&et2i);
+
+            add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n" ,    v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("SADD\n");
+        }
+
+        // comp const com comp acc
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            split_cmp_const(et1,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET  aux_real\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_imag\n");
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n", v_name[etr%OFST]);
+            add_instr("MLT aux_imag\n");
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_real\n");
+            add_instr("SADD\n");
+        }
+
+        // comp var com int var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et2%OFST]);
+        }
+
+        // comp var com int acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // comp var com float var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+            add_instr("MLT %s\n",     v_name[etr%OFST]);
+            add_instr("PLD %s\n",     v_name[eti%OFST]);
+            add_instr("MLT %s\n",     v_name[et2%OFST]);
+        }
+
+        // comp var com float acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("SET aux_mult\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_mult\n");
+        }
+
+        // comp var com comp const
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            get_cmp_ets    (et1,&et1r,&et1i);
+            split_cmp_const(et2,&et2r,&et2i);
+
+            add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("NEG\n" );
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n" ,    v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("SADD\n");
+        }
+
+        // comp var com comp var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            int et1r,et2r;
+            int et1i,et2i;
+
+            get_cmp_ets(et1,&et1r,&et1i);
+            get_cmp_ets(et2,&et2r,&et2i);
+
+            add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("NEG\n" );
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n" ,    v_name[et1r%OFST]);
+            add_instr("MLT %s\n",     v_name[et2i%OFST]);
+            add_instr("PLD %s\n",     v_name[et1i%OFST]);
+            add_instr("MLT %s\n",     v_name[et2r%OFST]);
+            add_instr("SADD\n");
+        }
+
+        // comp var com comp acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            get_cmp_ets(et1,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET  aux_real\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_imag\n");
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD %s\n", v_name[etr%OFST]);
+            add_instr("MLT aux_imag\n");
+            add_instr("PLD %s\n", v_name[eti%OFST]);
+            add_instr("MLT aux_real\n");
+            add_instr("SADD\n");
+        }
+
+        // comp acc com int var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // comp acc com int acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_int\n");
+            add_instr("SETP aux_imag\n");
+            add_instr("MLT aux_int\n");
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT aux_int\n");
+        }
+
+        // comp acc com float var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("SETP aux_imag\n");
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT %s\n", v_name[et2%OFST]);
+        }
+
+        // comp acc com float acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_int\n");
+            add_instr("SETP aux_imag\n");
+            add_instr("MLT aux_int\n");
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT aux_int\n");
+        }
+
+        // comp acc com comp const
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            split_cmp_const(et2,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET aux_real\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT %s\n", v_name[eti%OFST]);
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD aux_real\n");
+            add_instr("MLT %s\n", v_name[eti%OFST]);
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("SADD\n");
+        }
+
+        // comp acc com comp var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            get_cmp_ets(et2,&etr,&eti);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET aux_real\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT %s\n", v_name[eti%OFST]);
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD aux_real\n");
+            add_instr("MLT %s\n", v_name[eti%OFST]);
+            add_instr("PLD aux_imag\n");
+            add_instr("MLT %s\n", v_name[etr%OFST]);
+            add_instr("SADD\n");
+        }
+
+        // comp acc com comp acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_imag2\n");
+            add_instr("SETP aux_real2\n");
+            add_instr("SETP aux_imag1\n");
+            add_instr("SET  aux_real1\n");
+            add_instr("MLT  aux_real2\n");
+            add_instr("PLD  aux_imag1\n");
+            add_instr("MLT  aux_imag2\n");
+            add_instr("NEG\n");
+            add_instr("SADD\n");
+
+            add_instr("PLD  aux_real1\n");
+            add_instr("MLT  aux_imag2\n");
+            add_instr("PLD  aux_real2\n");
+            add_instr("MLT  aux_imag1\n");
+            add_instr("SADD\n");
         }
     }
 
