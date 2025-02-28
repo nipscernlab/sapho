@@ -13,5 +13,6 @@ int oper_soma (int et1, int et2);
 int oper_subt (int et1, int et2);
 int oper_mult (int et1, int et2);
 int oper_divi (int et1, int et2);
+int oper_lanor(int et1, int et2, int type);
 
 int oper_ari_cmp(int et1, int et2, int op);

@@ -345,7 +345,7 @@ generate if (LES) assign les = in1 < in2 ; else assign les = {NUBITS{1'bx}}; end
 
 generate if (LIN) my_lin #(NUBITS) my_lin(     in2, lin); else assign lin = {NUBITS{1'bx}}; endgenerate
 generate if (LAN) my_lan #(NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
-generate if (LIN) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
+generate if (LOR) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
 
 ula_fx_mux #(NUBITS)um(op,
                        in1, in2,

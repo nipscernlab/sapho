@@ -5276,6 +5276,53 @@ int oper_divi(int et1, int et2)
     return type*OFST;
 }
 
+int oper_lanor(int et1, int et2, int type)
+{
+    if ((get_type(et1) > 1) || (get_type(et2) > 1))
+    fprintf(stderr, "Erro na linha %d: Operação lógica, só entre números inteiros!\n", line_num+1);
+
+    int etr, eti;
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    char op[16];
+    switch (type)
+    {
+        case 0: strcpy(op, "LAND"); break;
+        case 1: strcpy(op, "LOR" ); break;
+    }
+
+    // int var com int var
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("%s %s\n", op, v_name[et1%OFST]);
+    }
+
+    // int var com int acc
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        add_instr("%s %s\n", op, v_name[et1%OFST]);
+    }
+
+    // int acc com int var
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n", op, v_name[et2%OFST]);
+    }
+
+    // int acc com int acc
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        add_instr("S%s\n", op);
+    }
+
+    acc_ok = 1;
+
+    return OFST;
+}
+
 // prepara a operacao com inteiro
 int oper_int(int et1, int et2, int op)
 {

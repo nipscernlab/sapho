@@ -310,13 +310,13 @@ exp:       terminal                           {$$ = $1;}
          | exp   '*'   exp                    {$$ = oper_mult($1,$3);}
          | exp   '/'   exp                    {$$ = oper_divi($1,$3);}
          // operadores true/false
-         | exp  LAND   exp                    {$$ = oper_int($1,$3, 8);}
-         | exp  LOR    exp                    {$$ = oper_int($1,$3, 9);}
+         | exp  LAND   exp                    {$$ = oper_lanor($1,$3,0);}
+         | exp  LOR    exp                    {$$ = oper_lanor($1,$3,1);}
          | exp   '<'   exp                    {$$ = oper_cmp($1,$3, 0);}
          | exp   '>'   exp                    {$$ = oper_cmp($1,$3, 1);}
+         | exp  EQU    exp                    {$$ = oper_cmp($1,$3, 4);}
          | exp  GREQU  exp                    {$$ = oper_cmp($1,$3, 2);}
          | exp  LESEQ  exp                    {$$ = oper_cmp($1,$3, 3);}
-         | exp  EQU    exp                    {$$ = oper_cmp($1,$3, 4);}
          | exp  DIF    exp                    {$$ = oper_cmp($1,$3, 5);}
 
 // terminais usados em reducao pra expressoes ---------------------------------

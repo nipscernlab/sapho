@@ -284,9 +284,7 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
 
-            prepar_oper(num, et % OFST, et, 0);
-
-            add_instr("%s %s\n", ldi, num);
+            add_instr("%s %s\n", ldi, v_name[et%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("%s %s\n", ldv, v_name[id]);
         }
@@ -465,9 +463,7 @@ int array1d2exp(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou arredondar a parte real.\n", line_num+1);
 
-            prepar_oper(num, et % OFST, et, 0);
-
-            add_instr("%s %s\n", ldi, num);
+            add_instr("%s %s\n", ldi, v_name[et%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
             add_instr("SET aux_ind_right\n");
             add_instr("%s %s\n"  , ldv, v_name[id]);
