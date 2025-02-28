@@ -308,7 +308,7 @@ exp:       terminal                           {$$ = $1;}
          | exp   '+'   exp                    {$$ = oper_soma($1,$3);}
          | exp   '-'   exp                    {$$ = oper_subt($1,$3);}
          | exp   '*'   exp                    {$$ = oper_mult($1,$3);}
-         | exp   '/'   exp                    {$$ = oper_ari($1,$3, 1);}
+         | exp   '/'   exp                    {$$ = oper_divi($1,$3);}
          // operadores true/false
          | exp  LAND   exp                    {$$ = oper_int($1,$3, 8);}
          | exp  LOR    exp                    {$$ = oper_int($1,$3, 9);}
