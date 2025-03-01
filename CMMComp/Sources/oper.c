@@ -5691,31 +5691,1243 @@ int oper_cmp_cmp(int et1, int et2, int op)
     return OFST;
 }
 
-// operacoes de comparacao devem ser feitas por aqui
-int oper_cmp(int et1, int et2, int op)
+int oper_cmp(int et1, int et2, int type)
 {
-    // teste com numeros complexos --------------------------------------------
-    if ((get_type(et1) > 2) || (get_type(et2) > 2)) return oper_cmp_cmp(et1,et2,op);
-    // fim do teste -----------------------------------------------------------
+    int  etr, eti;
 
-    switch (op)
+    char ld [10 ];
+    if (acc_ok == 0) strcpy(ld, "LOAD"); else strcpy(ld, "PLD");
+
+    char op[16];
+    switch (type)
     {
-        case 0: operacoes(et1,et2, "LES", "CALL denorm\nLOAD float_aux3\nLES float_aux1", &fgen, 3); // <
-                break;
-        case 1: operacoes(et1,et2, "GRE", "CALL denorm\nLOAD float_aux3\nGRE float_aux1", &fgen, 3); // >
-                break;
-        case 2: operacoes(et1,et2, "LES", "CALL denorm\nLOAD float_aux3\nLES float_aux1", &fgen, 3); // >=
-                add_instr("LINV\n");
-                break;
-        case 3: operacoes(et1,et2, "GRE", "CALL denorm\nLOAD float_aux3\nGRE float_aux1", &fgen, 3); // <=
-                add_instr("LINV\n");
-                break;
-        case 4: operacoes(et1,et2, "EQU", "CALL denorm\nLOAD float_aux3\nEQU float_aux1", &fgen, 3); // ==
-                break;
-        case 5: operacoes(et1,et2, "EQU", "CALL denorm\nLOAD float_aux3\nEQU float_aux1", &fgen, 3); // !=
-                add_instr("LINV\n");
-                break;
+        case 0: strcpy(op, "LES"); break;
+        case 1: strcpy(op, "GRE"); break;
+        case 2: strcpy(op, "EQU"); break;
     }
+
+    // 8*8 combinacoes para prtype = 0
+    if (prtype == 0)
+    {
+        // int var com int var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com int acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("%s %s\n", ld, v_name[et1%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %s\n" , v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // int var com float const
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("%s %s\n", ld, v_name[et1%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %d // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // int var com float acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SET aux_cmp\n");
+            add_instr("LOAD %s\n", v_name[et1%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD aux_cmp\n");
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // int var com comp const
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int var com comp var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int var com comp acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SET  aux_cmpr\n");
+            acc_ok = 0;
+
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int acc com int var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com int acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // int acc com float const
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // int acc com float acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SETP aux_cmp\n");
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("PLD aux_cmp\n");
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // int acc com comp const
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int acc com comp var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int acc com comp acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SETP aux_cmpr\n");
+            add_instr("SET  aux_cmp \n");
+
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // float var com int var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et1%OFST]);
+            add_instr("PLD %s\n"   , v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float var com int acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SET aux_cmp\n");
+            add_instr("LOAD %s\n", v_name[et1%OFST]);
+            add_instr("PLD aux_cmp\n");
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float var com float var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("PLD %s\n",     v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float var com float const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float var com float acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SET aux_float\n");
+            add_instr("LOAD %s\n", v_name[et1%OFST]);
+            add_instr("PLD aux_float\n");
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float var com comp const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float var com comp var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float var com comp acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SET  aux_cmpr\n");
+            acc_ok = 0;
+
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float const com int var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %d // %s\n" , ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float const com int acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("SET aux_cmp\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD aux_cmp\n");
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float const com float var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("%s %d // %s\n" , ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD %s\n",     v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float const com float const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("%s  %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD %d // %s\n",     f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float const com float acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("SET aux_float\n");
+            add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+            add_instr("PLD aux_float\n");
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float const com comp const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float const com comp var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float const com comp acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SET  aux_cmpr\n");
+            acc_ok = 0;
+
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float acc com int var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL int2float\n"); i2f = 1;
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float acc com int acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("CALL int2float\n"); i2f  = 1;
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float acc com float var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float acc com float const
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float acc com float acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("CALL denorm\n");
+            add_instr("LOAD float_aux3\n");
+            add_instr("%s float_aux1\n", op);
+        }
+
+        // float acc com comp const
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float acc com comp var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float acc com comp acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SETP aux_cmpr\n");
+            add_instr("SET  aux_cmp \n");
+
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com int var
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp const com int acc
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp const com float var
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com float const
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com float acc
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com comp const
+        if ((get_type(et1)==5) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com comp var
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com comp acc
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET  aux_real\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_real\n");
+            add_instr("PLD aux_imag\n");
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com int var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp var com int acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp var com float var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com float const
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com float acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com comp const
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com comp var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com comp acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET  aux_real\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_real\n");
+            add_instr("PLD aux_imag\n");
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com int var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp acc com int acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmp\n");
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp acc com float var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com float const
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com float acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmp2\n");
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp2\n");
+            add_instr("PLD aux_cmp2\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com comp const
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com comp var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com comp acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SETP aux_real\n");
+            mod_sqr  (et1);
+            add_instr("PLD aux_real\n");
+            add_instr("PLD aux_imag\n");
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+    }
+    else // 7*7 combinacoes para prtype = 1
+    {
+        // int var com int var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com int acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com comp const
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int var com comp var
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int var com comp acc
+        if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SET  aux_cmpr\n");
+            acc_ok = 0;
+
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int acc com int var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com int acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com comp const
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int acc com comp var
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // int acc com comp acc
+        if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SETP aux_cmpr\n");
+            add_instr("SET  aux_cmp \n");
+
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // float var com int var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // float var com int acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // float var com float var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // float var com float acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // float var com comp const
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (OFST,2*OFST,type);
+        }
+
+        // float var com comp var
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float var com comp acc
+        if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SET  aux_cmpr\n");
+            acc_ok = 0;
+
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float acc com int var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // float acc com int acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // float acc com float var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // float acc com float acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // float acc com comp const
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float acc com comp var
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // float acc com comp acc
+        if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmpi\n");
+            add_instr("SETP aux_cmpr\n");
+            add_instr("SET  aux_cmp \n");
+
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et1,et1);
+            add_instr("PLD aux_cmpr\n");
+            add_instr("PLD aux_cmpi\n");
+            mod_sqr  (3*OFST);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com int var
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp const com int acc
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+            
+        }
+
+        // comp const com float var
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com float acc
+        if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com comp const
+        if ((get_type(et1)==5) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com comp var
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp const com comp acc
+        if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET  aux_real\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_real\n");
+            add_instr("PLD aux_imag\n");
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com int var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp var com int acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp var com float var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com float acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SET aux_cmp\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com comp const
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com comp var
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp var com comp acc
+        if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SET  aux_real\n");
+            acc_ok = 0;
+            mod_sqr  (et1);
+            add_instr("PLD aux_real\n");
+            add_instr("PLD aux_imag\n");
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com int var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp acc com int acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmp\n");
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,OFST,type);
+        }
+
+        // comp acc com float var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com float acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_cmp\n");
+            mod_sqr  (et1);
+            add_instr("PLD aux_cmp\n");
+            add_instr("PLD aux_cmp\n");
+            oper_mult(et2,et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com comp const
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com comp var
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            mod_sqr  (et1);
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+
+        // comp acc com comp acc
+        if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
+
+            add_instr("SETP aux_imag\n");
+            add_instr("SETP  aux_real\n");
+            mod_sqr  (et1);
+            add_instr("PLD aux_real\n");
+            add_instr("PLD aux_imag\n");
+            mod_sqr  (et2);
+            oper_cmp (2*OFST,2*OFST,type);
+        }
+    }
+
+    acc_ok = 1;
 
     return OFST;
 }
