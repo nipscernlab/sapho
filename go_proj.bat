@@ -70,7 +70,7 @@ cd %ROOT_DIR%\CMMComp\Sources
 
 bison -y -d CMMComp.y
 flex        CMMComp.l
-gcc      -o CMMComp.exe data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c y.tab.c
+gcc      -o CMMComp.exe data_assign.c data_declar.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c global.c y.tab.c
 
 move CMMComp.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 del lex.yy.c

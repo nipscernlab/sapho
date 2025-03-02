@@ -3,6 +3,7 @@
 #include "..\Headers\variaveis.h"
 #include "..\Headers\diretivas.h"
 #include "..\Headers\t2t.h"
+#include "..\Headers\global.h"
 
 #include <string.h>
 

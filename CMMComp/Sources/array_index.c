@@ -4,6 +4,7 @@
 #include "..\Headers\diretivas.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\data_assign.h"
+#include "..\Headers\global.h"
 
 #include <stdio.h>
 #include <string.h>

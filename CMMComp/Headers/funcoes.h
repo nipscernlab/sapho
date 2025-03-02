@@ -6,22 +6,22 @@ extern int  p_test;  // identifica parametros na chamada de funcoes (parecido co
 
 // declaracoes ----------------------------------------------------------------
 
-void  declar_fun     (int id1, int id2); // tipo e nome
-void  declar_firstpar(int id);           // primeiro/unico parametro
-int   declar_par     (int   t, int id ); // proximo parametro
-void     set_par     (int id);           // SET no parametro
-void  declar_ret     (int  et, int ret); // achou uma palavra-chave return
-void    func_ret     (int id);           // fim/return da funcao
-void    void_ret     (      );
+void  declar_fun(int id1, int id2); // tipo e nome
+void  declar_fst(int id);           // primeiro/unico parametro
+int   declar_par(int   t, int id ); // proximo parametro
+void     set_par(int id);           // SET no parametro
+void  declar_ret(int  et, int ret); // achou uma palavra-chave return
+void    func_ret(int id);           // fim/return da funcao
+void    void_ret(      );           // fim de uma funcao void
 
 // utilizacao -----------------------------------------------------------------
 
-void  par_exp        (int et ); // carrega primeiro parametro (se houver)
-void  par_listexp    (int et ); // carrega os proximos parametros (se houver)
-void  vcall          (int id ); // CALL de funcao com retorno
-int   fcall          (int id ); // CALL de funcao void
+void  par_exp    (int et ); // carrega primeiro parametro (se houver)
+void  par_listexp(int et ); // carrega os proximos parametros (se houver)
+void  vcall      (int id ); // CALL de funcao com retorno
+int   fcall      (int id ); // CALL de funcao void
 
 // funcoes auxiliares ---------------------------------------------------------
 
-int   get_npar       (int par); // calcula  numero de parametros
-void  par_check      (int et ); // checa se numero de parametros na declaracao eh igual na chamada
+int   get_npar   (int par); // calcula  numero de parametros
+void  par_check  (int et ); // checa se numero de parametros na declaracao eh igual na chamada

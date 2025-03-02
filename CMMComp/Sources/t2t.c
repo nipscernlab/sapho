@@ -2,6 +2,7 @@
 
 #include "..\Headers\t2t.h"
 #include "..\Headers\diretivas.h"
+#include "..\Headers\global.h"
 
 #include <math.h>
 #include <stdlib.h>

@@ -4,6 +4,7 @@
 #include "..\Headers\data_assign.h"
 #include "..\Headers\oper.h"
 #include "..\Headers\array_index.h"
+#include "..\Headers\global.h"
 
 // redeclaracao de variaveis globais
 int v_isco[NVARMAX];  // se variavel eh uma constante

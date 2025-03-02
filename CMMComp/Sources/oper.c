@@ -5,15 +5,24 @@
 #include "..\Headers\data_use.h"
 #include "..\Headers\data_assign.h"
 #include "..\Headers\stdlib.h"
+#include "..\Headers\global.h"
 
 #include <string.h>
 
-// redeclaracao de variaveis globais
-int fadd = 0; // se vai precisar de macros de ponto flutuante
-int fdiv = 0; // se vai precisar de macros de ponto flutuante
-int fmlt = 0; // se vai precisar de macros de ponto flutuante
+// ----------------------------------------------------------------------------
+// redeclaracao de variaveis globais ------------------------------------------
+// ----------------------------------------------------------------------------
 
-int negacao(int et)
+int fadd = 0; // se vai precisar de macro de soma    em ponto flutuante
+int fdiv = 0; // se vai precisar de macro de divisao em ponto flutuante
+int fmlt = 0; // se vai precisar de macro de multipl em ponto flutuante
+
+// ----------------------------------------------------------------------------
+// operacoes aritmeticas ------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+// nega um numero
+int oper_neg(int et)
 {
     int  etr, eti;
     char ld [10 ];
@@ -194,454 +203,7 @@ int negacao(int et)
     return get_type(et)*OFST;
 }
 
-int oper_inv(int et)
-{
-    if (get_type(et) > 1)
-        fprintf(stderr, "Erro na linha %d: uso incorreto do operador '~'. Tem que passar tipo int. Viajou?\n", line_num+1);
-
-    int etr, eti;
-
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    // se for um int na memoria
-    if ((get_type(et) == 1) && (et % OFST != 0)) add_instr("%s %s\n", ld, v_name[et%OFST]);
-    add_instr("INV\n");
-
-    acc_ok = 1;
-
-    return OFST; // retorna o id extendido de int
-}
-
-int oper_shift(int et1, int et2, int type)
-{
-    if (get_type(et1) == 2)
-        fprintf(stderr, "Erro na linha %d: deslocamento de bit em variáel float? Você é uma pessoa confusa!\n", line_num+1);
-
-    if (get_type(et1) > 2)
-        fprintf(stderr, "Erro na linha %d: como você quer que eu desloque bits de um número complexo? Viajou?\n", line_num+1);
-
-    if (get_type(et2) > 2)
-        fprintf(stderr, "Erro na linha %d: usando comp pra deslocar bits? Você é uma pessoa confusa!\n", line_num+1);
-
-
-    char op[16];
-    switch (type)
-    {
-        case  0: strcpy(op, "SHL"); break;
-        case  1: strcpy(op, "SHR"); break;
-        case  2: strcpy(op, "SRS"); break;
-    }
-
-    int etr, eti;
-
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    if (prtype == 0)
-    {
-        // int var com int var
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com int acc
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-        {
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com float var
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com float const
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com float acc
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
-        {
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int acc com int var
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-        {
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com int acc
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-        {
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com float var
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com float const
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com float acc
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-            
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("S%s\n", op);
-        }
-    }
-    else
-    {
-        // int var com int var
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com int acc
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-        {
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com float var
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com float const
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int var com float acc
-        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
-        {
-            add_instr("%s %s\n", op, v_name[et1%OFST]);
-        }
-
-        // int acc com int var
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-        {
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com int acc
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-        {
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com float var
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com float const
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("S%s\n", op);
-        }
-
-        // int acc com float acc
-        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
-
-            add_instr("S%s\n", op);
-        }
-    }
-
-    acc_ok = 1;
-
-    return OFST; // retorna o id extendido de int
-}
-
-int oper_bitw(int et1, int et2, int type)
-{
-    if ((get_type(et1) > 1) || (get_type(et2) > 1))
-        fprintf(stderr, "Erro na linha %d: qual o sentido de fazer operações bitwise sem ser com número inteiro? Vai se tratar!\n", line_num+1);
-
-    char op[16];
-    switch (type)
-    {
-        case  0: strcpy(op, "AND"); break;
-        case  1: strcpy(op, "OR" ); break;
-        case  2: strcpy(op, "XOR"); break;
-    }
-
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    // int var com int var
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-    {
-        add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("%s %s\n", op, v_name[et1%OFST]);
-    }
-
-    // int var com int acc
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-    {
-        add_instr("%s %s\n", op, v_name[et1%OFST]);
-    }
-
-    // int acc com int var
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-    {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", op);
-    }
-
-    // int acc com int acc
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-    {
-        add_instr("S%s\n", op);
-    }
-
-    acc_ok = 1;
-
-    return OFST; // retorna o id extendido de int
-}
-
-int oper_linv(int et)
-{
-    int etr, eti;
-
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    if (prtype == 0)
-    {
-        // se for um int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("LINV\n");
-        }
-
-        // se for um int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("LINV\n");
-        }
-
-        // se for um float var na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0) && (v_isco[et%OFST] == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
-
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("LINV\n");
-        }
-
-        // se for um float const na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0) && (v_isco[et%OFST] == 1))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
-
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("LINV\n");
-        }
-
-        // se for um float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
-
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("LINV\n");
-        }
-
-        // se for um comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
-
-            get_cmp_cst(et,&etr,&eti);
-
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("LINV\n");
-        }
-
-        // se for um comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
-
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("LINV\n");
-        }
-
-        // se for um comp no acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
-
-            add_instr("SETP aux_lixo\n");
-            add_instr("CALL float2int\n"); f2i = 1;
-            add_instr("LINV\n");
-        }
-    }
-    else
-    {
-        // se for um int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("LINV\n");
-        }
-
-        // se for um int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("LINV\n");
-        }
-
-        // se for um float var na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
-
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("LINV\n");
-        }
-
-        // se for um float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
-
-            add_instr("LINV\n");
-        }
-
-        // se for um comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
-
-            get_cmp_cst(et,&etr,&eti);
-
-            add_instr("%s %s\n", ld, v_name[etr%OFST]);
-            add_instr("LINV\n");
-        }
-
-        // se for um comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
-
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("LINV\n");
-        }
-
-        // se for um comp no acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
-
-            add_instr("SETP aux_lixo\n");
-            add_instr("LINV\n");
-        }
-    }
-
-    acc_ok = 1;
-
-    return OFST; // retorna o id extendido de int
-}
-
-int oper_mod(int et1, int et2)
-{
-    if ((get_type(et1) > 1) || (get_type(et2) > 1))
-        fprintf(stderr, "Erro na linha %d: qual o sentido de calcular o resto da divisão ser com número inteiro? Vai se tratar!\n", line_num+1);
-
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    // int var com int var
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-    {
-        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-        add_instr("MOD %s\n",     v_name[et1%OFST]);
-    }
-
-    // int var com int acc
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-    {
-        add_instr("MOD %s\n", v_name[et1%OFST]);
-    }
-
-    // int acc com int var
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
-    {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("SMOD\n");
-    }
-
-    // int acc com int acc
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
-    {
-        add_instr("SMOD\n");
-    }
-
-    acc_ok = 1;
-
-    return OFST; // retorna o id extendido de int
-}
-
+// soma dois numeros
 int oper_soma(int et1, int et2)
 {
     int etr, eti;
@@ -1818,11 +1380,13 @@ int oper_soma(int et1, int et2)
     return type*OFST;
 }
 
+// subtracao entre dos numeros
 int oper_subt(int et1, int et2)
 {
-    return oper_soma(et1,negacao(et2));
+    return oper_soma(et1,oper_neg(et2));
 }
 
+// multiplica dois numeros
 int oper_mult(int et1, int et2)
 {
     int etr, eti;
@@ -3068,6 +2632,7 @@ int oper_mult(int et1, int et2)
     return type*OFST;
 }
 
+// divisao entre dois numeros
 int oper_divi(int et1, int et2)
 {
     int etr, eti;
@@ -3137,7 +2702,7 @@ int oper_divi(int et1, int et2)
             oper_mult(et1,eti);         // mult int com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // int var com comp var
@@ -3158,7 +2723,7 @@ int oper_divi(int et1, int et2)
             oper_mult(et1,eti);         // mult int com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // int var com comp acc
@@ -3188,7 +2753,7 @@ int oper_divi(int et1, int et2)
             add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
-            add_instr("PLD float_nbits\n");           // faz a negacao
+            add_instr("PLD float_nbits\n");           // faz a oper_neg
             add_instr("SHL 1\n");
             add_instr("SADD\n");
         }
@@ -3254,7 +2819,7 @@ int oper_divi(int et1, int et2)
             oper_mult(2*OFST,eti);      // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // int acc com comp var
@@ -3280,7 +2845,7 @@ int oper_divi(int et1, int et2)
             oper_mult(2*OFST,eti);      // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // int acc com comp acc
@@ -3312,7 +2877,7 @@ int oper_divi(int et1, int et2)
             add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
-            add_instr("PLD float_nbits\n");           // faz a negacao
+            add_instr("PLD float_nbits\n");           // faz a oper_neg
             add_instr("SHL 1\n");
             add_instr("SADD\n");
         }
@@ -3379,7 +2944,7 @@ int oper_divi(int et1, int et2)
             oper_mult(et1,eti);         // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // float var com comp var
@@ -3400,7 +2965,7 @@ int oper_divi(int et1, int et2)
             oper_mult(et1,eti);         // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // float var com comp acc
@@ -3428,7 +2993,7 @@ int oper_divi(int et1, int et2)
             add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
-            add_instr("PLD float_nbits\n");           // faz a negacao
+            add_instr("PLD float_nbits\n");           // faz a oper_neg
             add_instr("SHL 1\n");
             add_instr("SADD\n");
         }
@@ -3495,7 +3060,7 @@ int oper_divi(int et1, int et2)
             oper_mult(et1,eti);         // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // float const com comp var
@@ -3516,7 +3081,7 @@ int oper_divi(int et1, int et2)
             oper_mult(et1,eti);         // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // float const com comp acc
@@ -3544,7 +3109,7 @@ int oper_divi(int et1, int et2)
             add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
-            add_instr("PLD float_nbits\n");           // faz a negacao
+            add_instr("PLD float_nbits\n");           // faz a oper_neg
             add_instr("SHL 1\n");
             add_instr("SADD\n");
         }
@@ -3606,7 +3171,7 @@ int oper_divi(int et1, int et2)
             oper_mult(2*OFST,eti);      // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // float acc com comp var
@@ -3631,7 +3196,7 @@ int oper_divi(int et1, int et2)
             oper_mult(2*OFST,eti);      // mult float com parte imag
             add_instr("PLD aux_cmp\n"); // pega o denominador
             oper_divi(2*OFST,2*OFST);   // faz a divisao
-            negacao  (2*OFST);
+            oper_neg  (2*OFST);
         }
 
         // float acc com comp acc
@@ -3662,7 +3227,7 @@ int oper_divi(int et1, int et2)
             add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
-            add_instr("PLD float_nbits\n");           // faz a negacao
+            add_instr("PLD float_nbits\n");           // faz a oper_neg
             add_instr("SHL 1\n");
             add_instr("SADD\n");
         }
@@ -4200,7 +3765,7 @@ int oper_divi(int et1, int et2)
             add_instr("MLT aux_imag   \n");           // mult com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("SDIV           \n");           // faz a divisao
-            add_instr("NEG            \n");           // faz a negacao
+            add_instr("NEG            \n");           // faz a oper_neg
         }
 
         // int acc com int var
@@ -4304,7 +3869,7 @@ int oper_divi(int et1, int et2)
             add_instr("MLT aux_imag   \n");           // multiplica com parte imag
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("SDIV           \n");           // faz a divisao
-            add_instr("NEG            \n");           // faz a negacao
+            add_instr("NEG            \n");           // faz a oper_neg
         }
 
         // float var com int var
@@ -4396,7 +3961,7 @@ int oper_divi(int et1, int et2)
             add_instr("MLT aux_imag   \n");           // mult com parte imaginaria
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("SDIV           \n");           // faz a divisao
-            add_instr("NEG            \n");           // faz a negacao
+            add_instr("NEG            \n");           // faz a oper_neg
         }
 
         // float acc com int var
@@ -4500,7 +4065,7 @@ int oper_divi(int et1, int et2)
             add_instr("MLT aux_imag   \n");           // multiplica com parte imag
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("SDIV           \n");           // faz a divisao
-            add_instr("NEG            \n");           // faz a negacao
+            add_instr("NEG            \n");           // faz a oper_neg
         }
 
         // comp const com int var
@@ -4914,53 +4479,51 @@ int oper_divi(int et1, int et2)
     return type*OFST;
 }
 
-int oper_lanor(int et1, int et2, int type)
+// resto da divisao
+int oper_mod(int et1, int et2)
 {
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
-    fprintf(stderr, "Erro na linha %d: Operação lógica, só entre números inteiros!\n", line_num+1);
-
-    int etr, eti;
+        fprintf(stderr, "Erro na linha %d: qual o sentido de calcular o resto da divisão ser com número inteiro? Vai se tratar!\n", line_num+1);
 
     char ld[10];
     if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
 
-    char op[16];
-    switch (type)
-    {
-        case 0: strcpy(op, "LAND"); break;
-        case 1: strcpy(op, "LOR" ); break;
-    }
-
     // int var com int var
-    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("%s %s\n", op, v_name[et1%OFST]);
+        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+        add_instr("MOD %s\n",     v_name[et1%OFST]);
     }
 
     // int var com int acc
-    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        add_instr("%s %s\n", op, v_name[et1%OFST]);
+        add_instr("MOD %s\n", v_name[et1%OFST]);
     }
 
     // int acc com int var
-    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        add_instr("%s %s\n", op, v_name[et2%OFST]);
+        add_instr("PLD %s\n", v_name[et2%OFST]);
+        add_instr("SMOD\n");
     }
 
     // int acc com int acc
-    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        add_instr("S%s\n", op);
+        add_instr("SMOD\n");
     }
 
     acc_ok = 1;
 
-    return OFST;
+    return OFST; // retorna o id extendido de int
 }
 
+// ----------------------------------------------------------------------------
+// operacoes de comparacao ----------------------------------------------------
+// ----------------------------------------------------------------------------
+
+// compara maio, menor e igual
 int oper_cmp(int et1, int et2, int type)
 {
     int  etr, eti;
@@ -6202,17 +5765,492 @@ int oper_cmp(int et1, int et2, int type)
     return OFST;
 }
 
+// compara maior e igual (contrario de menor)
 int oper_greq(int et1, int et2)
 {
     return oper_linv(oper_cmp(et1,et2,0));
 }
 
+// compara menor e igual (contrasrio de maior)
 int oper_leeq(int et1, int et2)
 {
     return oper_linv(oper_cmp(et1,et2,1));
 }
 
+// comparar se eh diferente (contrario de igual)
 int oper_dife(int et1, int et2)
 {
     return oper_linv(oper_cmp(et1,et2,2));
+}
+
+// ----------------------------------------------------------------------------
+// operacoes logicas (if else while) ------------------------------------------
+// ----------------------------------------------------------------------------
+
+// inversao logica (!)
+int oper_linv(int et)
+{
+    int etr, eti;
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    if (prtype == 0)
+    {
+        // se for um int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("LINV\n");
+        }
+
+        // se for um int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("LINV\n");
+        }
+
+        // se for um float var na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0) && (v_isco[et%OFST] == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("LINV\n");
+        }
+
+        // se for um float const na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0) && (v_isco[et%OFST] == 1))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("LINV\n");
+        }
+
+        // se for um float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("LINV\n");
+        }
+
+        // se for um comp const
+        if (get_type(et) == 5)
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
+
+            get_cmp_cst(et,&etr,&eti);
+
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("LINV\n");
+        }
+
+        // se for um comp var
+        if ((get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("LINV\n");
+        }
+
+        // se for um comp no acc
+        if ((get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
+
+            add_instr("SETP aux_lixo\n");
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("LINV\n");
+        }
+    }
+    else
+    {
+        // se for um int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("LINV\n");
+        }
+
+        // se for um int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("LINV\n");
+        }
+
+        // se for um float var na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("LINV\n");
+        }
+
+        // se for um float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
+
+            add_instr("LINV\n");
+        }
+
+        // se for um comp const
+        if (get_type(et) == 5)
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
+
+            get_cmp_cst(et,&etr,&eti);
+
+            add_instr("%s %s\n", ld, v_name[etr%OFST]);
+            add_instr("LINV\n");
+        }
+
+        // se for um comp var
+        if ((get_type(et) == 3) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
+
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("LINV\n");
+        }
+
+        // se for um comp no acc
+        if ((get_type(et) == 3) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
+
+            add_instr("SETP aux_lixo\n");
+            add_instr("LINV\n");
+        }
+    }
+
+    acc_ok = 1;
+
+    return OFST; // retorna o id extendido de int
+}
+
+// and ou logicos (&& ||)
+int oper_lanor(int et1, int et2, int type)
+{
+    if ((get_type(et1) > 1) || (get_type(et2) > 1))
+    fprintf(stderr, "Erro na linha %d: Operação lógica, só entre números inteiros!\n", line_num+1);
+
+    int etr, eti;
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    char op[16];
+    switch (type)
+    {
+        case 0: strcpy(op, "LAND"); break;
+        case 1: strcpy(op, "LOR" ); break;
+    }
+
+    // int var com int var
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("%s %s\n", op, v_name[et1%OFST]);
+    }
+
+    // int var com int acc
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        add_instr("%s %s\n", op, v_name[et1%OFST]);
+    }
+
+    // int acc com int var
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n", op, v_name[et2%OFST]);
+    }
+
+    // int acc com int acc
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        add_instr("S%s\n", op);
+    }
+
+    acc_ok = 1;
+
+    return OFST;
+}
+
+// ----------------------------------------------------------------------------
+// opercao com portas logicas bitwise (~ & |) ---------------------------------
+// ----------------------------------------------------------------------------
+
+// porta inversora
+int oper_inv(int et)
+{
+    if (get_type(et) > 1)
+        fprintf(stderr, "Erro na linha %d: uso incorreto do operador '~'. Tem que passar tipo int. Viajou?\n", line_num+1);
+
+    int etr, eti;
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    // se for um int na memoria
+    if ((get_type(et) == 1) && (et % OFST != 0)) add_instr("%s %s\n", ld, v_name[et%OFST]);
+    add_instr("INV\n");
+
+    acc_ok = 1;
+
+    return OFST; // retorna o id extendido de int
+}
+
+// portas logicas de duas entradas (& | ^)
+int oper_bitw(int et1, int et2, int type)
+{
+    if ((get_type(et1) > 1) || (get_type(et2) > 1))
+        fprintf(stderr, "Erro na linha %d: qual o sentido de fazer operações bitwise sem ser com número inteiro? Vai se tratar!\n", line_num+1);
+
+    char op[16];
+    switch (type)
+    {
+        case  0: strcpy(op, "AND"); break;
+        case  1: strcpy(op, "OR" ); break;
+        case  2: strcpy(op, "XOR"); break;
+    }
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    // int var com int var
+    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("%s %s\n", op, v_name[et1%OFST]);
+    }
+
+    // int var com int acc
+    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+    {
+        add_instr("%s %s\n", op, v_name[et1%OFST]);
+    }
+
+    // int acc com int var
+    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+    {
+        add_instr("PLD %s\n", v_name[et2%OFST]);
+        add_instr("S%s\n", op);
+    }
+
+    // int acc com int acc
+    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+    {
+        add_instr("S%s\n", op);
+    }
+
+    acc_ok = 1;
+
+    return OFST; // retorna o id extendido de int
+}
+
+// ----------------------------------------------------------------------------
+// operacoes de deslocamento de bits ------------------------------------------
+// ----------------------------------------------------------------------------
+
+int oper_shift(int et1, int et2, int type)
+{
+    if (get_type(et1) == 2)
+        fprintf(stderr, "Erro na linha %d: deslocamento de bit em variáel float? Você é uma pessoa confusa!\n", line_num+1);
+
+    if (get_type(et1) > 2)
+        fprintf(stderr, "Erro na linha %d: como você quer que eu desloque bits de um número complexo? Viajou?\n", line_num+1);
+
+    if (get_type(et2) > 2)
+        fprintf(stderr, "Erro na linha %d: usando comp pra deslocar bits? Você é uma pessoa confusa!\n", line_num+1);
+
+
+    char op[16];
+    switch (type)
+    {
+        case  0: strcpy(op, "SHL"); break;
+        case  1: strcpy(op, "SHR"); break;
+        case  2: strcpy(op, "SRS"); break;
+    }
+
+    int etr, eti;
+
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    if (prtype == 0)
+    {
+        // int var com int var
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com int acc
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float var
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float const
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float acc
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
+        {
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int acc com int var
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+        {
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com int acc
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float var
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float const
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float acc
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+            
+            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("S%s\n", op);
+        }
+    }
+    else
+    {
+        // int var com int var
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com int acc
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float var
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float const
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int var com float acc
+        if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
+        {
+            add_instr("%s %s\n", op, v_name[et1%OFST]);
+        }
+
+        // int acc com int var
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+        {
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com int acc
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+        {
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float var
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float const
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0) && (v_isco[et2%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("S%s\n", op);
+        }
+
+        // int acc com float acc
+        if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+
+            add_instr("S%s\n", op);
+        }
+    }
+
+    acc_ok = 1;
+
+    return OFST; // retorna o id extendido de int
 }

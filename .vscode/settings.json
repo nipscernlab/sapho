@@ -3,6 +3,7 @@
         "oper.h": "c",
         "data_use.h": "c",
         "string.h": "c",
-        "t2t.h": "c"
+        "t2t.h": "c",
+        "diretivas.h": "c"
     }
 }

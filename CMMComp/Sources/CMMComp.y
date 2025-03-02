@@ -38,6 +38,7 @@
 #include "..\Headers\data_use.h"    // utilizacao de dados
 #include "..\Headers\data_assign.h" // atribuicao de dados
 #include "..\Headers\array_index.h"
+#include "..\Headers\global.h"
 
 #include <string.h>
 
@@ -109,18 +110,18 @@ prog_elements : direct | declar_full | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
-direct : PRNAME  ID    {exec_diretivas("#PRNAME",$2,6);} // nome do processador
-       | DIRNAM STRING {exec_diretivas("#DIRNAM",$2,0);} // diretorio
-       | DATYPE INUM   {exec_diretivas("#DATYPE",$2,1);} // tipo: 0 -> ponto fixo, 1 -> ponto flutuante
-       | NUBITS INUM   {exec_diretivas("#NUBITS",$2,0);} // tamanho da palavra da ULA
-       | NBMANT INUM   {exec_diretivas("#NBMANT",$2,2);} // numero de bits da mantissa
-       | NBEXPO INUM   {exec_diretivas("#NBEXPO",$2,3);} // numero de bits do expoente
-       | NDSTAC INUM   {exec_diretivas("#NDSTAC",$2,0);} // tamanho da pilha de dados
-       | SDEPTH INUM   {exec_diretivas("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
-       | NUIOIN INUM   {exec_diretivas("#NUIOIN",$2,4);} // numero de portas de entrada
-       | NUIOOU INUM   {exec_diretivas("#NUIOOU",$2,5);} // numero de portas de saida
-       | NUGAIN INUM   {exec_diretivas("#NUGAIN",$2,0);} // contante de divisao (norm(.))
-       | FFTSIZ INUM   {exec_diretivas("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
+direct : PRNAME  ID    {exec_dire("#PRNAME",$2,6);} // nome do processador
+       | DIRNAM STRING {exec_dire("#DIRNAM",$2,0);} // diretorio
+       | DATYPE INUM   {exec_dire("#DATYPE",$2,1);} // tipo: 0 -> ponto fixo, 1 -> ponto flutuante
+       | NUBITS INUM   {exec_dire("#NUBITS",$2,0);} // tamanho da palavra da ULA
+       | NBMANT INUM   {exec_dire("#NBMANT",$2,2);} // numero de bits da mantissa
+       | NBEXPO INUM   {exec_dire("#NBEXPO",$2,3);} // numero de bits do expoente
+       | NDSTAC INUM   {exec_dire("#NDSTAC",$2,0);} // tamanho da pilha de dados
+       | SDEPTH INUM   {exec_dire("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
+       | NUIOIN INUM   {exec_dire("#NUIOIN",$2,4);} // numero de portas de entrada
+       | NUIOOU INUM   {exec_dire("#NUIOOU",$2,5);} // numero de portas de saida
+       | NUGAIN INUM   {exec_dire("#NUGAIN",$2,0);} // contante de divisao (norm(.))
+       | FFTSIZ INUM   {exec_dire("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
        | USEMAC STRING {     use_macro(  v_name[$2],1);} // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
        | ENDMAC        {     end_macro(              );} // ponto de termino do uso da macro
 
@@ -145,7 +146,7 @@ IID : ID                                  {declar_var   ($1         );}
 // Declaracao de funcoes ------------------------------------------------------
 
 funcao : TYPE ID '('                      {declar_fun     ($1,$2);} // inicio da declaracao de uma funcao
-         par_list ')'                     {declar_firstpar($5   );} // seta o primeiro parametro na variavel correspondente
+         par_list ')'                     {declar_fst($5   );} // seta o primeiro parametro na variavel correspondente
          '{' stmt_list '}'                {func_ret       ($2   );} // checa se foi tudo ok
        | TYPE ID '('   ')'                {declar_fun     ($1,$2);} // funcao sem parametros
          '{' stmt_list '}'                {func_ret       ($2   );}
@@ -290,7 +291,7 @@ exp:       terminal                           {$$ = $1;}
          |    '(' exp ')'                     {$$ = $2;}
          |    '+' exp                         {$$ = $2;}
          // operadores unarios
-         |    '-' exp                         {$$ =     negacao($2      );}
+         |    '-' exp                         {$$ =     oper_neg($2      );}
          |    '!' exp                         {$$ =   oper_linv($2      );}
          |    '~' exp                         {$$ =    oper_inv($2      );}
          | ID                         PPLUS   {$$ =   exp_pplus($1      );}

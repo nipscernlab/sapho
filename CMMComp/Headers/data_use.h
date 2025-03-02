@@ -6,11 +6,11 @@
 //   OFTS+id -> identificador int
 // 2*OFST+id -> identificador float
 // 3*OFST+id -> identificador comp
-// 5*OFST+id -> identificador de const comp
+// 5*OFST+id -> identificador const comp
 #define OFST 1000000
 
 // variaveis de estado
-extern int acc_ok;       // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
+extern int acc_ok;                            // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
 
 // funcoes auxiliares para reducao exp
 int       num2exp(int id, int dtype);         // reduz de um numero para exp

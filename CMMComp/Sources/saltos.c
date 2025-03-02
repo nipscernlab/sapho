@@ -5,6 +5,7 @@
 #include "..\Headers\labels.h"
 #include "..\Headers\oper.h"
 #include "..\Headers\t2t.h"
+#include "..\Headers\global.h"
 
 // variaveis de estado para switch case
 int switching = 0;

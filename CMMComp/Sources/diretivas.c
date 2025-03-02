@@ -1,24 +1,29 @@
 #include "..\Headers\diretivas.h"
 #include "..\Headers\variaveis.h"
-#include "..\Headers\t2t.h"
-#include "..\Headers\funcoes.h"
+#include "..\Headers\global.h"
 
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
-#include <stdarg.h>
 
-// redeclaracao de variaveis globais
-FILE *f_lin;       // arquivo de linhas
+// ----------------------------------------------------------------------------
+// redeclaracao de variaveis globais ------------------------------------------
+// ----------------------------------------------------------------------------
+
+char pr_name[128]; // nome do processador
+int  nbmant  = 0;  // numero de bits de mantissa
+int  nbexpo  = 0;  // numero de bits de expoente
+
+FILE *f_lin;       // arquivo de linhas do programa em cmm
 int  itr_ok  = 0;  // se ja usou ou nao interrupcao
 int  num_ins = 0;  // numero de instrucoes do parse
 int  mainok  = 0;  // status da funcao main: 0 -> nao usada, 1 -> declarada, 2 -> chamada no inicio
-int  nbmant  = 0;  // numero de bits de mantissa
-int  nbexpo  = 0;  // numero de bits de expoente
-char pr_name[128]; // nome do processador
+
+// ----------------------------------------------------------------------------
+// Controle de diretivas ------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // escreve as diretivas de compilacao no arquivo asm
-void exec_diretivas(char *dir, int id, int t)
+void exec_dire(char *dir, int id, int t)
 {
     if (using_macro == 0) fprintf(f_asm, "%s %s\n", dir, v_name[id]);
 
@@ -42,7 +47,7 @@ void exec_diretivas(char *dir, int id, int t)
 void use_macro(char *f_name, int global)
 {
     if (using_macro == 1)
-        fprintf(stderr, "Erro na linha %d: TÁ chamando uma macro dentro da outra. você é uma pessoa confusa!\n", line_num+1);
+        fprintf(stderr, "Erro na linha %d: tá chamando uma macro dentro da outra. você é uma pessoa confusa!\n", line_num+1);
 
     // se for global, tem q ver se tem que chamar a funcao main ainda
     if ((mainok == 0) && (global == 1))
@@ -76,18 +81,6 @@ void end_macro()
 {
     if (using_macro == 0) fprintf(stderr, "Erro na linha %d: Não estou achando o começo da macro\n", line_num+1);
         using_macro  = 0;
-}
-
-// adiciona instrucao no arquivo asm
-void add_instr(char *inst, ...)
-{
-    va_list  args;
-    va_start(args , inst);
-    vfprintf(f_asm, inst, args);
-    va_end  (args);
-
-    num_ins++;
-    if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
 }
 
 // gera diretiva #ITRAD

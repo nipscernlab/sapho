@@ -6,6 +6,7 @@
 #include "..\Headers\data_declar.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\diretivas.h"
+#include "..\Headers\global.h"
 
 #include <string.h>
 

@@ -5,6 +5,7 @@
 #include "..\Headers\data_assign.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\oper.h"
+#include "..\Headers\global.h"
 
 #include <math.h>
 #include <string.h>

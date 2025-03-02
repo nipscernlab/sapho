@@ -6,10 +6,14 @@
 #include "..\Headers\data_assign.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\labels.h"
+#include "..\Headers\global.h"
 
 #include <string.h>
 
-// redeclaracao de variaveis globais
+// ----------------------------------------------------------------------------
+// redeclaracao de variaveis globais ------------------------------------------
+// ----------------------------------------------------------------------------
+
 int fun_id2;         // guarda id da funcao sendo usada
 int p_test;          // identifica parametros na chamada de funcoes (parecido com OFST, mas de valor 10)
 int ret_ok;          // diz se teve um retorno da funcao corretamente
@@ -50,7 +54,7 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
 }
 
 // pega o primeiro parametro
-void declar_firstpar(int id)
+void declar_fst(int id)
 {
     // testes com numeros complexos -------------------------------------------
     if (v_type[id] > 2)

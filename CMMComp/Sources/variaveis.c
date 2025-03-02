@@ -4,6 +4,8 @@
 #include "..\Headers\variaveis.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\diretivas.h"
+#include "..\Headers\global.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -30,7 +32,7 @@ void add_var(char *var)
 {
     if (v_count == NVARMAX)
     {
-        fprintf (stderr, "Erro: Aumente o número de variáveis permitidas. Atual = %d\n", NVARMAX);
+        fprintf (stderr, "Erro: Aumente o nï¿½mero de variï¿½veis permitidas. Atual = %d\n", NVARMAX);
         exit(1);
     }
     else
@@ -52,14 +54,14 @@ void check_var()
         {
             // checa se eh ou nao global
             if (strcmp(v_name[v_fnid[i]], "") == 0)
-                fprintf (stdout, "Atenção: variável global %s não está sendo usada. Economize memória!\n", v_name[i]);
+                fprintf (stdout, "Atenï¿½ï¿½o: variï¿½vel global %s nï¿½o estï¿½ sendo usada. Economize memï¿½ria!\n", v_name[i]);
             else
-                fprintf (stdout, "Atenção: variável %s na função %s não está sendo usada. Economize memória!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
+                fprintf (stdout, "Atenï¿½ï¿½o: variï¿½vel %s na funï¿½ï¿½o %s nï¿½o estï¿½ sendo usada. Economize memï¿½ria!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
         }
 
         // checa se a funcao foi declarada e nao foi usada
         if (((v_type[i] == 5) || (v_type[i] == 6) || (v_type[i] == 7)) && v_used[i] == 0)
-            fprintf (stdout, "Atenção: função %s não está sendo usada. Economize memória!\n", v_name[i]);
+            fprintf (stdout, "Atenï¿½ï¿½o: funï¿½ï¿½o %s nï¿½o estï¿½ sendo usada. Economize memï¿½ria!\n", v_name[i]);
     }
 }
 
@@ -80,7 +82,7 @@ int exec_id(char *text)
 {
     // testes com numeros complexos -------------------------------------------
     if (strcmp(text,"i") == 0)
-        fprintf (stderr, "Erro na linha %d: símbolo i é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: sï¿½mbolo i ï¿½ reservado para indicar a parte imaginï¿½ria de uma constante complexa.\n", line_num+1);
     // fim dos teste ----------------------------------------------------------
 
     char var_name[64];
@@ -107,7 +109,7 @@ int exec_num(char *text)
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((f < s) && (f != 0))
-        fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
+        fprintf (stderr, "Erro na linha %d: o menor nï¿½mero que pode ser representado ï¿½ 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
 
     if (find_var(text) == -1) add_var(text);
 
