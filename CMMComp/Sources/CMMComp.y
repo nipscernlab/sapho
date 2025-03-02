@@ -312,12 +312,12 @@ exp:       terminal                           {$$ = $1;}
          // operadores true/false
          | exp  LAND   exp                    {$$ = oper_lanor($1,$3,0);}
          | exp  LOR    exp                    {$$ = oper_lanor($1,$3,1);}
-         | exp   '<'   exp                    {$$ = oper_cmp($1,$3, 0);}
-         | exp   '>'   exp                    {$$ = oper_cmp($1,$3, 1);}
-         | exp  EQU    exp                    {$$ = oper_cmp($1,$3, 2);}
-         | exp  GREQU  exp                    {$$ = oper_cmp($1,$3, 2);}
-         | exp  LESEQ  exp                    {$$ = oper_cmp($1,$3, 3);}
-         | exp  DIF    exp                    {$$ = oper_cmp($1,$3, 5);}
+         | exp   '<'   exp                    {$$ = oper_cmp  ($1,$3,0);}
+         | exp   '>'   exp                    {$$ = oper_cmp  ($1,$3,1);}
+         | exp  EQU    exp                    {$$ = oper_cmp  ($1,$3,2);}
+         | exp  GREQU  exp                    {$$ = oper_greq ($1,$3  );}
+         | exp  LESEQ  exp                    {$$ = oper_leeq ($1,$3  );}
+         | exp  DIF    exp                    {$$ = oper_dife ($1,$3  );}
 
 // terminais usados em reducao pra expressoes ---------------------------------
 

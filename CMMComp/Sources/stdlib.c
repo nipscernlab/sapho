@@ -42,9 +42,9 @@ int mod_sqr(int et)
     if (type == 5)
     {
         split_cmp_const(et ,&etr,&eti); // pega o et de cada constante float
-        etr  = oper_ari(etr,etr ,   0); // parte real ao quadrado
-        eti  = oper_ari(eti,eti ,   0); // parte imag ao quadrado
-        etr  = oper_ari(etr,eti ,   2); // soma os quadrados
+        etr  = oper_mult(etr,etr);      // parte real ao quadrado
+        eti  = oper_mult(eti,eti);      // parte imag ao quadrado
+        etr  = oper_soma(etr,eti);      // soma os quadrados
     }
 
     // se estiver na memoria --------------------------------------------------
@@ -52,9 +52,9 @@ int mod_sqr(int et)
     if ((type == 3) && (et % OFST != 0))
     {
         get_cmp_ets    (et ,&etr,&eti); // pega o et de cada constante float
-        etr  = oper_ari(etr,etr ,   0); // parte real ao quadrado
-        eti  = oper_ari(eti,eti ,   0); // parte imag ao quadrado
-        etr  = oper_ari(etr,eti ,   2); // soma os quadrados
+        etr  = oper_mult(etr,etr);      // parte real ao quadrado
+        eti  = oper_mult(eti,eti);      // parte imag ao quadrado
+        etr  = oper_soma(etr,eti);      // soma os quadrados
     }
 
     // se estiver no acumulador -----------------------------------------------
@@ -62,14 +62,14 @@ int mod_sqr(int et)
     if ((type == 3) && (et % OFST == 0))
     {
         fprintf (f_asm, "PUSH\n");          // parte imag fica no acc e pilha
-        oper_ari(2*OFST,2*OFST,0);          // multiplica acc com pilha
+        oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
         fprintf (f_asm, "SETP  aux_cmp\n"); // salva temp e pega parte real
 
         fprintf (f_asm, "PUSH\n");          // parte real fica no acc e pilha
-        oper_ari(2*OFST,2*OFST,0);          // multiplica acc com pilha
+        oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
         fprintf (f_asm, "PLD  aux_cmp\n");  // xuxa o quadr do real pra pilha e pega o quadr do imag
 
-        oper_ari(2*OFST,2*OFST,2);          // soma os quadrados
+        oper_soma(2*OFST,2*OFST);           // soma os quadrados
 
         etr = 2*OFST;                       // saida tem q ser et estendido pra float no acc
     }
@@ -875,14 +875,14 @@ int exec_fase(int et)
     if (get_type(et) == 5)
     {
         split_cmp_const(et,&et_i,&et_r);
-        oper_ari(et_r,et_i,1);
+        oper_divi(et_r,et_i);
     }
 
     // comp na memoria
     if ((get_type(et) == 3) && (id != 0))
     {
         get_cmp_ets(et,&et_i,&et_r);
-        oper_ari(et_r,et_i,1);
+        oper_divi(et_r,et_i);
     }
 
     // comp no acc
@@ -893,7 +893,7 @@ int exec_fase(int et)
 
         add_instr("SETP %s\n", v_name[id]);
 
-        oper_ari(et_i,2*OFST,1);
+        oper_divi(et_i,2*OFST);
     }
 
     exec_atan(2*OFST);

@@ -3566,7 +3566,7 @@ int exp_pplus(int id)
     // depois o parser
     int et1 = num2exp(lval,type);
     // depois faz operacao de soma
-    int ret = oper_ari(et,et1,2);
+    int ret = oper_soma(et,et1);
     // por ultimo, atribui de volta pra id
     var_set(id, ret);
 
@@ -3592,7 +3592,7 @@ int array_pplus(int id, int ete)
     // depois o parser
     int et1 = num2exp(lval,type);
     // depois faz operacao de soma
-    int ret = oper_ari(et,et1,2);
+    int ret = oper_soma(et,et1);
     // faz o load no indice do array novamente
     get_1d_index(id, ete);
     // por ultimo, atribui de volta pra id
@@ -3620,7 +3620,7 @@ int array_2plus(int id, int et1, int et2)
     // depois o parser
     int etx = num2exp(lval,type);
     // depois faz operacao de soma
-    int ret = oper_ari(et,etx,2);
+    int ret = oper_soma(et,etx);
     // faz o load no indice do array novamente
     get_2d_index(id, et1, et2);
     // por ultimo, atribui de volta pra id
