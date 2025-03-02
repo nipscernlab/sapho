@@ -2,6 +2,7 @@
 #include "..\Headers\variaveis.h"
 #include "..\Headers\diretivas.h"
 #include "..\Headers\data_assign.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -28,28 +29,21 @@ void declar_var(int id)
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
     char func[256];
-    if (strcmp(fname,"")==0)
-        strcpy(func, "global");
-    else
-        strcpy(func, fname);
+    if (strcmp(fname,"")==0) strcpy(func, "global"); else strcpy(func, fname);
 
     fprintf(f_log, "%s %s %d\n"  , func, rem_fname(v_name[id], fname), type_tmp);
     if (type_tmp == 3)
     fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
 
-    // testes com numeros complexos -------------------------------------------
-    if (type_tmp > 2) declar_img(id);
-    // fim do teste -----------------------------------------------------------
-}
-
-// declara parte imaginaria da veriavel complexa
-void declar_img(int id)
-{
-    int idi     = get_img_id(id);
-    v_type[idi] = 4; // usar tipo 4 pra parte imaginaria
-    v_used[idi] = 0;
-    v_asgn[idi] = 0;
-    v_fnid[idi] = find_var(fname);
+    // declara parte imaginaria da veriavel complexa
+    if (type_tmp > 2)
+    {
+        int idi     = get_img_id(id);
+        v_type[idi] = 4; // usar tipo 4 pra parte imaginaria
+        v_used[idi] = 0;
+        v_asgn[idi] = 0;
+        v_fnid[idi] = find_var(fname);
+    }
 }
 
 // declara array 1D

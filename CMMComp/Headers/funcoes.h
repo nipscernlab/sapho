@@ -25,7 +25,3 @@ int   fcall          (int id ); // CALL de funcao void
 
 int   get_npar       (int par); // calcula  numero de parametros
 void  par_check      (int et ); // checa se numero de parametros na declaracao eh igual na chamada
-
-// testes com numeros complexos -----------------------------------------------
-void declar_ret_cmp  (int et );
-// fim do teste ---------------------------------------------------------------

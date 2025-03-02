@@ -9,73 +9,7 @@
 #include <stdlib.h>
 
 // redeclaracao de variaveis globais
-int exec_fft_use = 0; // diz se o ultimo LOAD de um array foi ou nao com bit invertido
 int v_isco[NVARMAX];  // se variavel eh uma constante
-
-// funcao interna para ajudar a gerar a string que vai depois do LOAD
-// usada no load_check
-void prepar_oper(char *num, int id, int et, int neg)
-{
-    char nf[64] = "";               // comeca vazio
-    if (neg == 1) strcat(nf, "-");  // xuxa o sinal - se for pra negar uma constante
-    strcat(nf,v_name[id]);          // xuxa o nome da variavel/constante
-
-    // se for uma constante do tipo float e o proc eh ponto fixo
-    if ((v_isco[id] == 1) && (et >= 2*OFST) && (prtype == 0))
-    {
-        // tem que printar o numero inteiro coorrespondente
-        sprintf(num, "%d", f2mf(nf));
-        // acrescenta um comentario pra saber qual eh o numero em ponto flutuante
-        strcat(num, " // ");
-        strcat(num,     nf);
-    }
-    // se nao, eh soh printar o numero mesmo
-    else strcpy(num, nf);
-}
-
-// carrega uma variavel no acc caso ela ja nao esteja
-// et eh um indice que diz se a variavel eh
-// nao declarada (menor que OFST), int (de OFST a 2*OFTS) ou float (acima de 2*OFST)
-// se et for OFST ou 2*OFST, eh um int ou um float ja carregado no acc respectivamente
-// ai nao precisa gerar a intrucao LOAD
-// neg (0,1) -> (normal,negacao)
-void load_check(int et, int neg)
-{
-    int id = et % OFST;  // o id eh recuperado pegando o resto da divisao
-
-    if (id == 0) return; // se for uma reducao exp, nao carrega nada, ja ta no acc
-                         // nao tem id = 0 na tabela? isso pode dar M
-                         // R: criei uma variavel NULL (com LOAD NULL) para ocupar a primeira posicao
-
-    // prepara o tipo de acesso, caso seja array
-    char srf[10];
-    if ((v_isar[id] > 0) && (exec_fft_use == 1))
-         strcpy(srf,"ILDI");
-    else strcpy(srf,"LDI" );
-
-    // se eh array, no acc ja tem o indice
-    // entao coloca o indice na pilha e da LOAD
-    if (v_isar[id] > 0)
-    {
-        add_instr("%s %s\n", srf, v_name[id]);
-    }
-    else // se nao eh array, carrega a variavel
-    {
-        char num[64]; prepar_oper(num, id, et, neg);
-
-        // se o acc nao tem nenhum resultado, carrega normalmente
-        if (acc_ok == 0)
-        {
-            add_instr("LOAD %s\n" , num);
-        }
-        else // se acc carregado, empurra o valor pra pilha e carrega o novo
-        {
-            add_instr("PLD %s\n"  , num);
-        }
-    }
-
-    acc_ok = 1;  // diz que o acc agora tem um valor carregado
-}
 
 // reducao de constantes para exp
 // nao da load, soh atualiza estados das variaveis

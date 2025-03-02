@@ -13,10 +13,6 @@
 
 // variaeis de estado
 extern int acc_ok;       // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
-extern int exec_fft_use; // diz se o ultimo uso de um array foi ou nao com bit invertido
-extern int exec_fft_set; // diz se o ultimo SET de um array foi ou nao com bit invertido
-
-void      load_check(int et, int sinal);
 
 // funcoes auxiliares para reducao exp
 int       num2exp(int id, int dtype);

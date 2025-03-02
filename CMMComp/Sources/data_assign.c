@@ -4,6 +4,7 @@
 #include "..\Headers\diretivas.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\stdlib.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
@@ -14,7 +15,6 @@ int  a_cnt        = 0;     // contador de variaveis complexas
 int  acc_ok       = 0;     // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
 int  i2f = 0, f2i = 0;     // se vai precisar de macros de ponto flutuante
 int  prtype       = 0;     // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
-int  exec_fft_set = 0;     // diz se o ultimo SET de um array foi ou nao com bit invertido
 int  line_num     = 0;     // numero da linha sendo parseada
 char fname [512];          // nome da funcao atual sendo parseada
 int  v_asgn[NVARMAX];      // se variavel ja recebeu algum valor
@@ -2450,14 +2450,6 @@ void split_cmp_const(int et, int *et_r, int *et_i)
 
     sprintf(txt,"%f",img);
     *et_i = 2*OFST + exec_num(txt);
-}
-
-// pega id para a parte real e imaginaria
-// de um num complexo na memoria
-void get_cmp_ids(int id, int *id_r, int *id_i)
-{
-    *id_r = id;
-    *id_i = get_img_id(id);
 }
 
 // gera ID estendido float pra parte real e imaginaria

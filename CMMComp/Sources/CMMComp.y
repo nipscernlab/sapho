@@ -200,7 +200,7 @@ exp_list :                                                          // pode ser 
 
 // Standard library -----------------------------------------------------------
 
-std_out  : OUT  '(' exp ','                {     exec_out1($3   );} // saida de dados
+std_out  : OUT  '(' INUM ','               {     exec_out1($3   );} // saida de dados
                     exp ')'     ';'        {     exec_out2($6   );}
 std_in   : IN   '(' INUM ')'               {$$ = exec_in  ($3   );} // entrada de dados
 std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao pset(x)   -> zera se negativo
@@ -355,8 +355,6 @@ int main(int argc, char *argv[])
   // iniciaiza variaveis de estado --------------------------------------------
 
   using_macro  = 0;
-  exec_fft_use = 0;
-  exec_fft_set = 0;
   prtype       = 0;
   acc_ok       = 0;
   ret_ok       = 0;

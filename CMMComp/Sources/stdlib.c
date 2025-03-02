@@ -236,42 +236,82 @@ int exec_pst(int et)
 
 // primeiro parametro da funcao out(a,b)
 // o endereco da porta
-void exec_out1(int et)
+void exec_out1(int id)
 {
-    // testes com numeros complexos -------------------------------------------
-    if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: Ah não, endereço de porta com número complexo já é demais!\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
-
-    // checa se precisa carregar o parametro
-    load_check(et,0);
-
-    // se a porta eh um float, reclama e converte pra inteiro
-    if ((prtype == 0) && (get_type(et) == 2))
-    {
-        fprintf(stdout, "Atenção na linha %d: endereço de entrada tem que ser int. SÓ me dando trabalho a toa!\n", line_num+1);
-
-        add_instr("CALL float2int\n"); f2i = 1; // seta variavel global dizendo que a macro float2int foi executada
-    }
+    add_instr("LOAD %s\n", v_name[id]);
+    acc_ok = 1;
 }
 
-// segundo parametro da funcao out(a,b)
-// o valor de saida
 void exec_out2(int et)
 {
-    // testes com numeros complexos -------------------------------------------
     if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer ver!\n", line_num+1);
-    // fim do teste -----------------------------------------------------------
+        fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1);
 
-    load_check(et,0);
-
-    if ((prtype == 0) && (get_type(et) > 1))
+    if (prtype == 0)
     {
-        fprintf(stdout, "Atenção na linha %d: o processador é ponto fixo e você quer mandar um ponto flutuante pra fora? Vai gerar muito código!\n", line_num+1);
+        // int var
+        if ((get_type(et) == 1) && (et%OFST!=0))
+        {
+            add_instr("PLD %s\n", v_name[et%OFST]);
+        }
 
-        add_instr("CALL float2int\n");
-        f2i = 1;
+        // int acc
+        if ((get_type(et) == 1) && (et%OFST==0))
+        {
+            // nao faz nada
+        }
+
+        // float var
+        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+
+            add_instr("PLD %s\n", v_name[et%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+
+        // float const
+        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+
+            add_instr("PLD %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+
+        // float acc
+        if ((get_type(et) == 2) && (et%OFST==0))
+        {
+            fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+
+            add_instr("CALL float2int\n"); f2i = 1;
+        }
+    }
+    else
+    {
+        // int var
+        if ((get_type(et) == 1) && (et%OFST!=0))
+        {
+            add_instr("PLD %s\n", v_name[et%OFST]);
+        }
+
+        // int acc
+        if ((get_type(et) == 1) && (et%OFST==0))
+        {
+            // nao faz nada
+        }
+
+        // float var
+        if ((get_type(et) == 2) && (et%OFST!=0))
+        {
+            add_instr("PLD %s\n", v_name[et%OFST]);
+        }
+
+        // float acc
+        if ((get_type(et) == 2) && (et%OFST==0))
+        {
+            // nao faz nada
+        }
     }
 
     add_instr("OUT\n");
