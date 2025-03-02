@@ -63,7 +63,7 @@ void if_exp(int et)
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
@@ -121,7 +121,7 @@ void if_exp(int et)
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }
@@ -243,7 +243,7 @@ void while_expexp(int et)
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
@@ -301,7 +301,7 @@ void while_expexp(int et)
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }
@@ -425,7 +425,7 @@ void exec_switch(int et)
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
@@ -483,7 +483,7 @@ void exec_switch(int et)
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }

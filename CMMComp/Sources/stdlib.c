@@ -41,7 +41,7 @@ int mod_sqr(int et)
 
     if (type == 5)
     {
-        split_cmp_const(et ,&etr,&eti); // pega o et de cada constante float
+        get_cmp_cst(et ,&etr,&eti); // pega o et de cada constante float
         etr  = oper_mult(etr,etr);      // parte real ao quadrado
         eti  = oper_mult(eti,eti);      // parte imag ao quadrado
         etr  = oper_soma(etr,eti);      // soma os quadrados
@@ -914,7 +914,7 @@ int exec_fase(int et)
     // comp const
     if (get_type(et) == 5)
     {
-        split_cmp_const(et,&et_i,&et_r);
+        get_cmp_cst(et,&et_i,&et_r);
         oper_divi(et_r,et_i);
     }
 
@@ -956,7 +956,7 @@ int exec_real(int et)
     if (get_type(et) == 5)
     {
         int et_r, et_i;
-        split_cmp_const(et,&et_r,&et_i);
+        get_cmp_cst(et,&et_r,&et_i);
 
         if (prtype==1)
             add_instr("%s %s\n", ld, v_name[et_r%OFST]);
@@ -996,7 +996,7 @@ int exec_imag(int et)
     if (get_type(et) == 5)
     {
         int et_r, et_i;
-        split_cmp_const(et,&et_r,&et_i);
+        get_cmp_cst(et,&et_r,&et_i);
 
         if (prtype==1)
             add_instr("%s %s\n", ld, v_name[et_i%OFST]);

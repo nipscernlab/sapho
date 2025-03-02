@@ -156,7 +156,7 @@ void declar_ret(int et, int ret)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
             
             add_instr("LOAD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
@@ -222,7 +222,7 @@ void declar_ret(int et, int ret)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
             
             add_instr("LOAD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
         }
@@ -293,7 +293,7 @@ void declar_ret(int et, int ret)
         // comp com comp const
         if ((left_type == 9) && (get_type(et) == 5))
         {
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
             
             add_instr("LOAD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
             add_instr("PLD  %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
@@ -540,7 +540,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
@@ -612,7 +612,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }
@@ -689,7 +689,7 @@ void par_check(int et)
 
         if ((t_fun == 3) && (t_cal == 5))
         {
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %d // %s\n" , ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("PLD %d // %s\n",     f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
@@ -750,7 +750,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %s\n", ld, v_name[etr%OFST]);
         }
@@ -809,7 +809,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %s\n", ld, v_name[etr%OFST]);
         }
@@ -874,7 +874,7 @@ void par_check(int et)
 
         if ((t_fun == 3) && (t_cal == 5))
         {
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[etr%OFST]);
             add_instr("PLD %s\n",     v_name[eti%OFST]);

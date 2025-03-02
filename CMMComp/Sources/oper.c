@@ -69,7 +69,7 @@ int negacao(int et)
         // se for um comp constante na memoria
         if (get_type(et) == 5)
         {
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             // the real constant is never negative
             sprintf  (num, "-%s",       v_name[etr % OFST]);
@@ -156,7 +156,7 @@ int negacao(int et)
         // se for um comp constante na memoria
         if (get_type(et) == 5)
         {
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             // the real constant is never negative
             add_instr("%s -%s\n", ld, v_name[etr % OFST]);
@@ -509,7 +509,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL float2int\n"); f2i = 1;
@@ -573,7 +573,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
-            split_cmp_const(et,&etr,&eti);
+            get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %s\n", ld, v_name[etr%OFST]);
             add_instr("LINV\n");
@@ -697,7 +697,7 @@ int oper_soma(int et1, int et2)
         // int var com comp const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("PLD %s\n", v_name[et1%OFST]);
@@ -774,7 +774,7 @@ int oper_soma(int et1, int et2)
         // int acc com comp const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -855,7 +855,7 @@ int oper_soma(int et1, int et2)
         // float var com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %s\n", ld, v_name[et1%OFST]);
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -934,7 +934,7 @@ int oper_soma(int et1, int et2)
         // float const com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -1008,7 +1008,7 @@ int oper_soma(int et1, int et2)
         // float acc com comp const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL denorm\n");
@@ -1039,7 +1039,7 @@ int oper_soma(int et1, int et2)
         // comp const com int var
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n", ld, v_name[et2%OFST]);
             add_instr("CALL int2float\n"); i2f = 1;
@@ -1052,7 +1052,7 @@ int oper_soma(int et1, int et2)
         // comp const com int acc
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -1064,7 +1064,7 @@ int oper_soma(int et1, int et2)
         // comp const com float var
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n", ld, v_name[et2%OFST]);
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -1076,7 +1076,7 @@ int oper_soma(int et1, int et2)
         // comp const com float const
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
@@ -1088,7 +1088,7 @@ int oper_soma(int et1, int et2)
         // comp const com float acc
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("CALL denorm\n");
@@ -1102,8 +1102,8 @@ int oper_soma(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et1,&et1r,&et1i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et1r%OFST]), v_name[et1r%OFST]);
             add_instr("PLD %d // %s\n",    f2mf(v_name[et2r%OFST]), v_name[et2r%OFST]);
@@ -1122,7 +1122,7 @@ int oper_soma(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_cst(et1,&et1r,&et1i);
             get_cmp_ets    (et2,&et2r,&et2i);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et1r%OFST]), v_name[et1r%OFST]);
@@ -1139,7 +1139,7 @@ int oper_soma(int et1, int et2)
         // comp const com comp acc
         if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SETP aux_soma\n");
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -1219,7 +1219,7 @@ int oper_soma(int et1, int et2)
             int et1i,et2i;
 
             get_cmp_ets    (et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             add_instr("%s %s\n", ld, v_name[et1r%OFST]);
             add_instr("PLD %d // %s\n", f2mf(v_name[et2r%OFST]), v_name[et2r%OFST]);
@@ -1325,7 +1325,7 @@ int oper_soma(int et1, int et2)
         // comp acc com comp const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SETP aux_soma\n");
             add_instr("PLD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
@@ -1401,7 +1401,7 @@ int oper_soma(int et1, int et2)
         // int var com comp const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[etr%OFST]);
             add_instr("ADD %s\n",     v_name[et1%OFST]);
@@ -1453,7 +1453,7 @@ int oper_soma(int et1, int et2)
         // int acc com comp const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("ADD %s\n", v_name[etr%OFST]);
             add_instr("PLD %s\n", v_name[eti%OFST]);
@@ -1505,7 +1505,7 @@ int oper_soma(int et1, int et2)
         // float var com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et1%OFST]);
             add_instr("ADD %s\n",     v_name[etr%OFST]);
@@ -1557,7 +1557,7 @@ int oper_soma(int et1, int et2)
         // float acc com comp const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("ADD %s\n", v_name[etr%OFST]);
             add_instr("PLD %s\n", v_name[eti%OFST]);
@@ -1583,7 +1583,7 @@ int oper_soma(int et1, int et2)
         // comp const com int var
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("ADD %s\n",     v_name[etr%OFST]);
@@ -1593,7 +1593,7 @@ int oper_soma(int et1, int et2)
         // comp const com int acc
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("ADD %s\n",     v_name[etr%OFST]);
             add_instr("PLD %s\n",     v_name[eti%OFST]);
@@ -1602,7 +1602,7 @@ int oper_soma(int et1, int et2)
         // comp const com float var
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("ADD %s\n",     v_name[etr%OFST]);
@@ -1612,7 +1612,7 @@ int oper_soma(int et1, int et2)
         // comp const com float acc
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("ADD %s\n", v_name[etr%OFST]);
             add_instr("PLD %s\n", v_name[eti%OFST]);
@@ -1624,8 +1624,8 @@ int oper_soma(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et1,&et1r,&et1i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
             add_instr("ADD %s\n",     v_name[et2r%OFST]);
@@ -1639,7 +1639,7 @@ int oper_soma(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_cst(et1,&et1r,&et1i);
             get_cmp_ets    (et2,&et2r,&et2i);
 
             add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
@@ -1651,7 +1651,7 @@ int oper_soma(int et1, int et2)
         // comp const com comp acc
         if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SETP aux_soma\n");
             add_instr("ADD %s\n", v_name[etr%OFST]);
@@ -1704,7 +1704,7 @@ int oper_soma(int et1, int et2)
             int et1i,et2i;
 
             get_cmp_ets    (et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
             add_instr("ADD %s\n",     v_name[et2r%OFST]);
@@ -1775,7 +1775,7 @@ int oper_soma(int et1, int et2)
         // comp acc com comp const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("ADD %s\n", v_name[eti%OFST]);
             add_instr("SETP aux_imag\n");
@@ -1875,7 +1875,7 @@ int oper_mult(int et1, int et2)
         // int var com comp const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(et1,etr);
             oper_mult(et1,eti);
@@ -1939,7 +1939,7 @@ int oper_mult(int et1, int et2)
         // int acc com comp const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             oper_mult(et1,etr);
@@ -2015,7 +2015,7 @@ int oper_mult(int et1, int et2)
         // float var com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(et1,etr);
             oper_mult(et1,eti);
@@ -2082,7 +2082,7 @@ int oper_mult(int et1, int et2)
         // float const com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(et1,etr);
             oper_mult(et1,eti);
@@ -2144,7 +2144,7 @@ int oper_mult(int et1, int et2)
         // float acc com comp const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             oper_mult(et1,etr);
@@ -2179,7 +2179,7 @@ int oper_mult(int et1, int et2)
         // comp const com int var
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             oper_mult(etr,et2);
             oper_mult(eti,et2);
@@ -2188,7 +2188,7 @@ int oper_mult(int et1, int et2)
         // comp const com int acc
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("SET aux_mult\n");
@@ -2200,7 +2200,7 @@ int oper_mult(int et1, int et2)
         // comp const com float var
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             oper_mult(etr,et2);
             oper_mult(eti,et2);
@@ -2209,7 +2209,7 @@ int oper_mult(int et1, int et2)
         // comp const com float const
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             oper_mult(etr,et2);
             oper_mult(eti,et2);
@@ -2218,7 +2218,7 @@ int oper_mult(int et1, int et2)
         // comp const com float acc
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             oper_mult(etr,2*OFST);
@@ -2232,8 +2232,8 @@ int oper_mult(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et1,&et1r,&et1i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             oper_mult(et1r,et2r);
             oper_mult(et1i,et2i);
@@ -2250,7 +2250,7 @@ int oper_mult(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_cst(et1,&et1r,&et1i);
             get_cmp_ets    (et2,&et2r,&et2i);
 
             oper_mult(et1r,et2r);
@@ -2265,7 +2265,7 @@ int oper_mult(int et1, int et2)
         // comp const com comp acc
         if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET aux_real\n");
@@ -2338,7 +2338,7 @@ int oper_mult(int et1, int et2)
             int et1i,et2i;
 
             get_cmp_ets    (et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             oper_mult(et1r,et2r);
             oper_mult(et1i,et2i);
@@ -2449,7 +2449,7 @@ int oper_mult(int et1, int et2)
         // comp acc com comp const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET aux_real\n");
@@ -2538,7 +2538,7 @@ int oper_mult(int et1, int et2)
         // int var com comp const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[etr%OFST]);
             add_instr("MLT %s\n",     v_name[et1%OFST]);
@@ -2593,7 +2593,7 @@ int oper_mult(int et1, int et2)
         // int acc com comp const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             add_instr("MLT %s\n", v_name[etr%OFST]);
@@ -2652,7 +2652,7 @@ int oper_mult(int et1, int et2)
         // float var com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et1%OFST]);
             add_instr("MLT %s\n",     v_name[etr%OFST]);
@@ -2707,7 +2707,7 @@ int oper_mult(int et1, int et2)
         // float acc com comp const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             add_instr("MLT %s\n", v_name[etr%OFST]);
@@ -2740,7 +2740,7 @@ int oper_mult(int et1, int et2)
         // comp const com int var
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("MLT %s\n",     v_name[etr%OFST]);
@@ -2751,7 +2751,7 @@ int oper_mult(int et1, int et2)
         // comp const com int acc
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             add_instr("MLT %s\n",     v_name[etr%OFST]);
@@ -2762,7 +2762,7 @@ int oper_mult(int et1, int et2)
         // comp const com float var
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("MLT %s\n",     v_name[etr%OFST]);
@@ -2773,7 +2773,7 @@ int oper_mult(int et1, int et2)
         // comp const com float acc
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             add_instr("MLT %s\n", v_name[etr%OFST]);
@@ -2787,8 +2787,8 @@ int oper_mult(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et1,&et1r,&et1i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
             add_instr("MLT %s\n",     v_name[et2r%OFST]);
@@ -2810,7 +2810,7 @@ int oper_mult(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_cst(et1,&et1r,&et1i);
             get_cmp_ets    (et2,&et2r,&et2i);
 
             add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
@@ -2830,7 +2830,7 @@ int oper_mult(int et1, int et2)
         // comp const com comp acc
         if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
@@ -2898,7 +2898,7 @@ int oper_mult(int et1, int et2)
             int et1i,et2i;
 
             get_cmp_ets    (et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             add_instr("%s %s\n" , ld, v_name[et1r%OFST]);
             add_instr("MLT %s\n",     v_name[et2r%OFST]);
@@ -2998,7 +2998,7 @@ int oper_mult(int et1, int et2)
         // comp acc com comp const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET aux_real\n");
@@ -3122,7 +3122,7 @@ int oper_divi(int et1, int et2)
         // int var com comp const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(etr,etr);         // parte real ao quadrado
             oper_mult(eti,eti);         // parte imag ao quadrado
@@ -3234,7 +3234,7 @@ int oper_divi(int et1, int et2)
         // int acc com comp const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("SET aux_float\n");
@@ -3364,7 +3364,7 @@ int oper_divi(int et1, int et2)
         // float var com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(etr,etr);         // parte real ao quadrado
             oper_mult(eti,eti);         // parte imag ao quadrado
@@ -3480,7 +3480,7 @@ int oper_divi(int et1, int et2)
         // float const com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(etr,etr);         // parte real ao quadrado
             oper_mult(eti,eti);         // parte imag ao quadrado
@@ -3587,7 +3587,7 @@ int oper_divi(int et1, int et2)
         // float acc com comp const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_float\n");
             acc_ok = 0;
@@ -3670,7 +3670,7 @@ int oper_divi(int et1, int et2)
         // comp const com int var
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             oper_divi(etr,et2);
             oper_divi(eti,et2);
@@ -3679,7 +3679,7 @@ int oper_divi(int et1, int et2)
         // comp const com int acc
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("SET aux_div\n");
@@ -3691,7 +3691,7 @@ int oper_divi(int et1, int et2)
         // comp const com float var
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             oper_divi(etr,et2);
             oper_divi(eti,et2);
@@ -3700,7 +3700,7 @@ int oper_divi(int et1, int et2)
         // comp const com float const
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             oper_divi(etr,et2);
             oper_divi(eti,et2);
@@ -3709,7 +3709,7 @@ int oper_divi(int et1, int et2)
         // comp const com float acc
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             oper_divi(etr,2*OFST);
@@ -3723,8 +3723,8 @@ int oper_divi(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et1,&et1r,&et1i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             oper_mult(et2r,et2r);
             oper_mult(et2i,et2i);
@@ -3751,7 +3751,7 @@ int oper_divi(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_cst(et1,&et1r,&et1i);
             get_cmp_ets    (et2,&et2r,&et2i);
 
             oper_mult(et2r,et2r);
@@ -3776,7 +3776,7 @@ int oper_divi(int et1, int et2)
         // comp const com comp acc
         if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
@@ -3862,7 +3862,7 @@ int oper_divi(int et1, int et2)
             int et1i,et2i;
 
             get_cmp_ets    (et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             oper_mult(et2r,et2r);
             oper_mult(et2i,et2i);
@@ -4006,7 +4006,7 @@ int oper_divi(int et1, int et2)
         // comp acc com comp const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
@@ -4140,7 +4140,7 @@ int oper_divi(int et1, int et2)
         // int var com comp const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(etr,etr );        // parte real ao quadrado
             oper_mult(eti,eti );        // parte imag ao quadrado
@@ -4232,7 +4232,7 @@ int oper_divi(int et1, int et2)
         // int acc com comp const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_float\n"); // salva num
             acc_ok = 0;
@@ -4336,7 +4336,7 @@ int oper_divi(int et1, int et2)
         // float var com comp const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             oper_mult(etr,etr );        // parte real ao quadrado
             oper_mult(eti,eti );        // parte imag ao quadrado
@@ -4428,7 +4428,7 @@ int oper_divi(int et1, int et2)
         // float acc com comp const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SET aux_float\n"); // salva num
             acc_ok = 0;
@@ -4506,7 +4506,7 @@ int oper_divi(int et1, int et2)
         // comp const com int var
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("DIV %s\n",     v_name[etr%OFST]);
@@ -4517,7 +4517,7 @@ int oper_divi(int et1, int et2)
         // comp const com int acc
         if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             add_instr("DIV %s\n",     v_name[etr%OFST]);
@@ -4529,7 +4529,7 @@ int oper_divi(int et1, int et2)
         // comp const com float var
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("DIV %s\n",     v_name[etr%OFST]);
@@ -4540,7 +4540,7 @@ int oper_divi(int et1, int et2)
         // comp const com float acc
         if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SET aux_mult\n");
             add_instr("DIV %s\n",     v_name[etr%OFST]);
@@ -4554,8 +4554,8 @@ int oper_divi(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et1,&et1r,&et1i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             oper_mult(et2r,et2r);
             oper_mult(et2i,et2i);
@@ -4582,7 +4582,7 @@ int oper_divi(int et1, int et2)
             int et1r,et2r;
             int et1i,et2i;
 
-            split_cmp_const(et1,&et1r,&et1i);
+            get_cmp_cst(et1,&et1r,&et1i);
             get_cmp_ets    (et2,&et2r,&et2i);
 
             oper_mult(et2r,et2r);
@@ -4607,7 +4607,7 @@ int oper_divi(int et1, int et2)
         // comp const com comp acc
         if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            split_cmp_const(et1,&etr,&eti);
+            get_cmp_cst(et1,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
@@ -4685,7 +4685,7 @@ int oper_divi(int et1, int et2)
             int et1i,et2i;
 
             get_cmp_ets    (et1,&et1r,&et1i);
-            split_cmp_const(et2,&et2r,&et2i);
+            get_cmp_cst(et2,&et2r,&et2i);
 
             oper_mult(et2r,et2r);
             oper_mult(et2i,et2i);
@@ -4809,7 +4809,7 @@ int oper_divi(int et1, int et2)
         // comp acc com comp const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
         {
-            split_cmp_const(et2,&etr,&eti);
+            get_cmp_cst(et2,&etr,&eti);
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
