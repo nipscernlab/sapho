@@ -3,16 +3,23 @@
 #include "..\Headers\diretivas.h"
 #include "..\Headers\data_assign.h"
 
-#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-// redeclaracao de variaveis globais
-FILE *f_log;         // arquivo de log
+// ----------------------------------------------------------------------------
+// redeclaracao de variaveis globais ------------------------------------------
+// ----------------------------------------------------------------------------
+
+FILE *f_log;         // arquivo de log, guarda informacoes do projeto (nome, nbmant etc)
+int type_tmp;        // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l)
 int using_macro = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
+
 int v_fnid[NVARMAX]; // ID da funcao a qual a variavel pertence
 int v_used[NVARMAX]; // se ID ja foi usado
-int type_tmp;        // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l)
+
+// ----------------------------------------------------------------------------
+// declaracoes ----------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // declara variavel (sem ser array)
 void declar_var(int id)

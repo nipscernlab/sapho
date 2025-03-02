@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "oper.h": "c",
+        "data_use.h": "c",
+        "string.h": "c",
+        "t2t.h": "c"
+    }
+}

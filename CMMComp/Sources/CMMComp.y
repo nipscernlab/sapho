@@ -37,6 +37,7 @@
 #include "..\Headers\data_declar.h" // declaracao de dados
 #include "..\Headers\data_use.h"    // utilizacao de dados
 #include "..\Headers\data_assign.h" // atribuicao de dados
+#include "..\Headers\array_index.h"
 
 #include <string.h>
 

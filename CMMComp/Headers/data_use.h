@@ -1,26 +1,20 @@
-#ifndef DATA_USE_H_INCLUDED
-#define DATA_USE_H_INCLUDED
 
-// retorno pra exp (ver regra pra exp)
+// retorno pra exp (ver regra pra exp no .y)
 //   OFST    -> inteiro reduzido
 // 2*OFST    -> float   reduzido
+// 3*OFST    -> comp    reduzido
 //   OFTS+id -> identificador int
 // 2*OFST+id -> identificador float
-// essa separacao de um valor de OFST entre tipos de dados funcionou
-// pra determinar a ordem corretas das operacoes (ver funcao "operacoes")
-// embora nao seja uma coisa muito convencional, acho que deu muito certo
+// 3*OFST+id -> identificador comp
+// 5*OFST+id -> identificador de const comp
 #define OFST 1000000
 
-// variaeis de estado
+// variaveis de estado
 extern int acc_ok;       // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
 
 // funcoes auxiliares para reducao exp
-int       num2exp(int id, int dtype);
-int        id2exp(int id);
-int   array1d2exp(int id, int et , int fft);
-int   array2d2exp(int id, int et1, int et2);
-int     exp_pplus(int et);
-int   array_pplus(int id, int et);
-int   array_2plus(int id, int et1, int et2);
-
-#endif // DATA_USE_H_INCLUDED
+int       num2exp(int id, int dtype);         // reduz de um numero para exp
+int        id2exp(int id);                    // reduz de um identificador para exp
+int     exp_pplus(int et);                    // reduz de um i++ para exp
+int   array_pplus(int id, int et);            // reduz de um x[i]++ para exp
+int   array_2plus(int id, int et1, int et2);  // reduz de um x[i][j]++ para exp

@@ -78,14 +78,6 @@ void end_macro()
         using_macro  = 0;
 }
 
-int is_macro()
-{
-    num_ins++;
-    if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
-
-    return using_macro;
-}
-
 // adiciona instrucao no arquivo asm
 void add_instr(char *inst, ...)
 {
