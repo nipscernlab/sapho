@@ -10,8 +10,8 @@
 // ----------------------------------------------------------------------------
 
 char pr_name[128]; // nome do processador
-int  nbmant  = 0;  // numero de bits de mantissa
-int  nbexpo  = 0;  // numero de bits de expoente
+int  nbmant  = 16; // numero de bits de mantissa
+int  nbexpo  =  6; // numero de bits de expoente
 
 FILE *f_lin;       // arquivo de linhas do programa em cmm
 int  itr_ok  = 0;  // se ja usou ou nao interrupcao

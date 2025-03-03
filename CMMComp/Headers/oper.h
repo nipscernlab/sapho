@@ -13,27 +13,27 @@ int oper_mod  (int et1, int et2); // x%y
 // operacoes de comparacao ----------------------------------------------------
 // ----------------------------------------------------------------------------
 
-int oper_cmp  (int et1, int et2, int type); // > < ==
-int oper_greq (int et1, int et2);           // >=
-int oper_leeq (int et1, int et2);           // <=
-int oper_dife (int et1, int et2);           // !=
+int oper_cmp  (int et1, int et2, int type); // x>y, x<y, x==y
+int oper_greq (int et1, int et2);           // x>=y
+int oper_leeq (int et1, int et2);           // x<=y
+int oper_dife (int et1, int et2);           // x!=y
 
 // ----------------------------------------------------------------------------
 // operacoes logicas (if else while) ------------------------------------------
 // ----------------------------------------------------------------------------
 
 int oper_linv (int et);                     // !x
-int oper_lanor(int et1, int et2, int type); // && ||
+int oper_lanor(int et1, int et2, int type); // x&&y, x||y
 
 // ----------------------------------------------------------------------------
 // opercao com portas logicas bitwise (~ & |) ---------------------------------
 // ----------------------------------------------------------------------------
 
 int oper_inv  (int et);                     // ~x
-int oper_bitw (int et1, int et2, int type); // & | ^
+int oper_bitw (int et1, int et2, int type); // x&y, x|y, x^y
 
 // ----------------------------------------------------------------------------
 // operacoes de deslocamento de bits ------------------------------------------
 // ----------------------------------------------------------------------------
 
-int oper_shift(int et1, int et2, int type); // >> << >>>
+int oper_shift(int et1, int et2, int type); // x>>y, x<<y, x>>>y

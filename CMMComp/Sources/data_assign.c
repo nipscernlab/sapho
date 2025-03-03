@@ -25,61 +25,6 @@ int  v_type[NVARMAX];      // 0 -> nao identificada, 1 -> int, 2 -> float
 char v_name[NVARMAX][512]; // nome da variavel ou funcao
 
 // ----------------------------------------------------------------------------
-// Funcoes auxiliares ---------------------------------------------------------
-// ----------------------------------------------------------------------------
-
-// pega o tipo da variavel
-int get_type(int et)
-{
-    int t;
-
-         if (et <   OFST) t = 0; // indefinido
-    else if (et < 2*OFST) t = 1; // int
-    else if (et < 3*OFST) t = 2; // float
-    else if (et < 4*OFST) t = 3; // comp real
-    else if (et < 5*OFST) t = 4; // comp img
-    else if (et < 6*OFST) t = 5; // comp const (ex: 3+7.5i)
-    else                  t =-1;
-
-    return t;
-}
-
-// pega o id da parte imag de uma var complexa
-// a parte real esta no param id
-int get_img_id(int id)
-{
-       char name[1024];
-    sprintf(name, "%s_i", v_name[id]);
-
-       if (find_var(name) == -1) add_var(name);
-    return find_var(name);
-}
-
-// separa a parte real e imaginaria de uma constante complexa
-// gerando duas entradas na tabela pra ponto flutuante
-void get_cmp_cst(int et, int *et_r, int *et_i)
-{
-    char  txt[64];
-    float real, img;
-
-    sscanf(v_name[et % OFST],"%f %f",&real,&img);
-
-    sprintf(txt,"%f",real);
-    *et_r = 2*OFST + exec_num(txt);
-
-    sprintf(txt,"%f",img);
-    *et_i = 2*OFST + exec_num(txt);
-}
-
-// gera ID estendido float pra parte real e imaginaria
-// de um num complexo na memoria
-void get_cmp_ets(int et, int *et_r, int *et_i)
-{
-    *et_r = 2*OFST + (et % OFST);
-    *et_i = 2*OFST + get_img_id(et % OFST);
-}
-
-// ----------------------------------------------------------------------------
 // funcoes de assign ----------------------------------------------------------
 // ----------------------------------------------------------------------------
 
@@ -1232,20 +1177,20 @@ void array_set(int id, int et, int fft)
 // assign com operador ++
 void pplus_assign(int id)
 {
-    exp_pplus(id);
+    pplus2exp(id);
     acc_ok = 0; // liberou o acc;
 }
 
 // assign com operador ++ em array 1D
 void aplus_assign(int id, int et)
 {
-    array_pplus(id,et);
+    pplus1d2exp(id,et);
     acc_ok = 0; // liberou o acc;
 }
 
 // assign com operador ++ em array 2D
 void aplu2_assign(int id, int et1, int et2)
 {
-    array_2plus(id,et1,et2);
+    pplus2d2exp(id,et1,et2);
     acc_ok = 0; // liberou o acc;
 }

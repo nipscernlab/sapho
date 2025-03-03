@@ -42,10 +42,7 @@
 
 #include <string.h>
 
-// redeclaracao de variaveis globais
-int fgen = 0; // flag de geracao de macros de ponto flutuante
-
-// variaveis obrigatorias do flex/bison
+// variaveis obrigatorias do flex/bison ---------------------------------------
 
 extern FILE *yyin;
 int   yylex  (void);
@@ -294,9 +291,9 @@ exp:       terminal                           {$$ = $1;}
          |    '-' exp                         {$$ =     oper_neg($2      );}
          |    '!' exp                         {$$ =   oper_linv($2      );}
          |    '~' exp                         {$$ =    oper_inv($2      );}
-         | ID                         PPLUS   {$$ =   exp_pplus($1      );}
-         | ID '[' exp ']'             PPLUS   {$$ = array_pplus($1,$3   );}
-         | ID '[' exp ']' '[' exp ']' PPLUS   {$$ = array_2plus($1,$3,$6);}
+         | ID                         PPLUS   {$$ =   pplus2exp($1      );}
+         | ID '[' exp ']'             PPLUS   {$$ = pplus1d2exp($1,$3   );}
+         | ID '[' exp ']' '[' exp ']' PPLUS   {$$ = pplus2d2exp($1,$3,$6);}
          // operadores de deslocamento
          | exp  SHIFTL exp                    {$$ = oper_shift($1,$3, 0);}
          | exp  SHIFTR exp                    {$$ = oper_shift($1,$3, 1);}
@@ -354,32 +351,20 @@ int main(int argc, char *argv[])
   fprintf(f_asm, "LOAD NULL\n");
   fprintf(f_lin, "%s\n", itob(-1,20));
 
-  // iniciaiza variaveis de estado --------------------------------------------
-
-  using_macro  = 0;
-  prtype       = 0;
-  acc_ok       = 0;
-  ret_ok       = 0;
-  mainok       = 0;
-  itr_ok       = 0;
-
-  float_init(); // inicializa variaveis de estado pra float (t2t.c)
-
   // executa o parse no arquivo .cmm ------------------------------------------
 
-	yyparse   (); // aqui a magica acontece!!
+	yyparse(); // aqui a magica acontece!!
 
   // terminou o parse, entao libera arquivos pra pos-processamento ------------
 
-	fclose(yyin );
+	fclose( yyin);
 	fclose(f_asm);
   fclose(f_lin);
 
   // checa se precisa adicionar macros no arquivo .asm ------------------------
 
-	if (fgen && prtype == 0) float_geni(argv[2]); // carrega macros de ponto flutuante pra proc de ponto fixo
-	if (mgen && prtype == 1) float_genf(argv[2]);
-	if (mgen           == 1)  math_gen (argv[2]);
+	if (prtype == 0) mac_geni(argv[2]); // carrega macros para ponto fixo
+	if (prtype == 1) mac_genf(argv[2]); // carrega macros para ponto flut
 
 	// checa consistencia de todas as variaveis e funcoes -----------------------
   

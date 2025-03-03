@@ -2,8 +2,10 @@
 // Reune funcoes e variaveis de estado acionadas por diretivas ----------------
 // ----------------------------------------------------------------------------
 
-extern char pr_name[128 ];                    // nome do processador
+extern char pr_name[128];                     // nome do processador
 extern int  prtype;                           // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
+extern int  nbmant;                           // numero de bits de mantissa
+extern int  nbexpo;                           // numero de bits de expoente
 
 extern int  using_macro;                      // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
 extern int  itr_ok;                           // se ja usou ou nao interrupcao

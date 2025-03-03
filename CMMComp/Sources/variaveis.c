@@ -1,10 +1,12 @@
-// implementacao da tabela de indentificadores
-// e suas rotinas auxiliares
+// ----------------------------------------------------------------------------
+// implementacao da tabela de indentificadores --------------------------------
+// ----------------------------------------------------------------------------
 
 #include "..\Headers\variaveis.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\diretivas.h"
 #include "..\Headers\global.h"
+#include "..\Headers\funcoes.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +15,7 @@
 
 int v_count = 0; // guarda o tamanho da tabela
 
+// procura variavel na tabela (-1 se nao achar)
 int find_var(char *val)
 {
 	int i, ind = -1;
@@ -28,11 +31,12 @@ int find_var(char *val)
 	return ind;
 }
 
+// adiciona variavel na tabela
 void add_var(char *var)
 {
     if (v_count == NVARMAX)
     {
-        fprintf (stderr, "Erro: Aumente o n�mero de vari�veis permitidas. Atual = %d\n", NVARMAX);
+        fprintf (stderr, "Erro: Aumente o número de variáveis permitidas. Atual = %d\n", NVARMAX);
         exit(1);
     }
     else
@@ -54,14 +58,14 @@ void check_var()
         {
             // checa se eh ou nao global
             if (strcmp(v_name[v_fnid[i]], "") == 0)
-                fprintf (stdout, "Aten��o: vari�vel global %s n�o est� sendo usada. Economize mem�ria!\n", v_name[i]);
+                fprintf (stdout, "Atenção: variável global %s não está sendo usada. Economize memória!\n", v_name[i]);
             else
-                fprintf (stdout, "Aten��o: vari�vel %s na fun��o %s n�o est� sendo usada. Economize mem�ria!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
+                fprintf (stdout, "Atenção: variável %s na função %s não está sendo usada. Economize memória!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
         }
 
         // checa se a funcao foi declarada e nao foi usada
         if (((v_type[i] == 5) || (v_type[i] == 6) || (v_type[i] == 7)) && v_used[i] == 0)
-            fprintf (stdout, "Aten��o: fun��o %s n�o est� sendo usada. Economize mem�ria!\n", v_name[i]);
+            fprintf (stdout, "Atenção: função %s não está sendo usada. Economize memória!\n", v_name[i]);
     }
 }
 
@@ -80,10 +84,8 @@ char* rem_fname(char *var, char *fname)
 // usado quando o lexer acha um ID
 int exec_id(char *text)
 {
-    // testes com numeros complexos -------------------------------------------
     if (strcmp(text,"i") == 0)
-        fprintf (stderr, "Erro na linha %d: s�mbolo i � reservado para indicar a parte imagin�ria de uma constante complexa.\n", line_num+1);
-    // fim dos teste ----------------------------------------------------------
+        fprintf (stderr, "Erro na linha %d: símbolo i é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1);
 
     char var_name[64];
 
@@ -109,7 +111,7 @@ int exec_num(char *text)
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((f < s) && (f != 0))
-        fprintf (stderr, "Erro na linha %d: o menor n�mero que pode ser representado � 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
+        fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
 
     if (find_var(text) == -1) add_var(text);
 

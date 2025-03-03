@@ -5,6 +5,8 @@
 #include "..\Headers\oper.h"
 #include "..\Headers\array_index.h"
 #include "..\Headers\global.h"
+#include "..\Headers\t2t.h"
+#include "..\Headers\funcoes.h"
 
 // redeclaracao de variaveis globais
 int v_isco[NVARMAX];  // se variavel eh uma constante
@@ -43,7 +45,7 @@ int id2exp(int id)
 }
 
 // reducao de ++ pra exp
-int exp_pplus(int id)
+int pplus2exp(int id)
 {
     if (v_type[id] > 2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
@@ -70,7 +72,7 @@ int exp_pplus(int id)
 }
 
 // reducao de ++ pra exp em array 1D
-int array_pplus(int id, int ete)
+int pplus1d2exp(int id, int ete)
 {
     if (v_type[id] > 2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
@@ -98,7 +100,7 @@ int array_pplus(int id, int ete)
 }
 
 // reducao de ++ pra exp em array 2D
-int array_2plus(int id, int et1, int et2)
+int pplus2d2exp(int id, int et1, int et2)
 {
     if (v_type[id] > 2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);

@@ -5,6 +5,7 @@
 #include "..\Headers\t2t.h"
 #include "..\Headers\data_assign.h"
 #include "..\Headers\global.h"
+#include "..\Headers\funcoes.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -1630,7 +1631,7 @@ int array1d2exp(int id, int et, int fft)
     return v_type[id]*OFST;
 }
 
-// array 2D em expressoes
+// transforma array 2D em exp
 int array2d2exp(int id, int et1, int et2)
 {
     // testes de consistencia -------------------------------------------------

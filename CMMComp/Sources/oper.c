@@ -4595,7 +4595,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -4605,7 +4605,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -4621,7 +4621,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -4677,7 +4677,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -4689,7 +4689,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -4706,7 +4706,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -4770,7 +4770,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4780,7 +4780,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4796,7 +4796,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4860,7 +4860,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4870,7 +4870,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4886,7 +4886,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4943,7 +4943,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4955,7 +4955,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4972,7 +4972,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -4981,7 +4981,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,OFST,type);
         }
@@ -4993,7 +4993,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5005,7 +5005,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5015,7 +5015,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5027,7 +5027,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5039,8 +5039,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5049,8 +5049,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5062,10 +5062,10 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_real\n");
             add_instr("PLD aux_imag\n");
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5074,7 +5074,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,OFST,type);
         }
@@ -5086,7 +5086,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5098,7 +5098,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5108,7 +5108,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5120,7 +5120,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5132,8 +5132,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5142,8 +5142,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5155,10 +5155,10 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_real\n");
             add_instr("PLD aux_imag\n");
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5167,7 +5167,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,OFST,type);
         }
@@ -5178,7 +5178,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
             add_instr("SETP aux_cmp\n");
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5190,7 +5190,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5200,7 +5200,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5211,7 +5211,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
             add_instr("SETP aux_cmp2\n");
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp2\n");
             add_instr("PLD aux_cmp2\n");
             oper_mult(et2,et2);
@@ -5223,8 +5223,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5233,8 +5233,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5245,10 +5245,10 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SETP aux_imag\n");
             add_instr("SETP aux_real\n");
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_real\n");
             add_instr("PLD aux_imag\n");
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
     }
@@ -5286,7 +5286,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5296,7 +5296,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5312,7 +5312,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5350,7 +5350,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5362,7 +5362,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5379,7 +5379,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5415,7 +5415,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (OFST,2*OFST,type);
         }
 
@@ -5425,7 +5425,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5441,7 +5441,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5479,7 +5479,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5491,7 +5491,7 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SET aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et1,et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5508,7 +5508,7 @@ int oper_cmp(int et1, int et2, int type)
             oper_mult(et1,et1);
             add_instr("PLD aux_cmpr\n");
             add_instr("PLD aux_cmpi\n");
-            mod_sqr  (3*OFST);
+            exec_sqr2  (3*OFST);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5517,7 +5517,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,OFST,type);
         }
@@ -5529,7 +5529,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5542,7 +5542,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5554,7 +5554,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5566,8 +5566,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5576,8 +5576,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5589,10 +5589,10 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_real\n");
             add_instr("PLD aux_imag\n");
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5601,7 +5601,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,OFST,type);
         }
@@ -5613,7 +5613,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5625,7 +5625,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5637,7 +5637,7 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SET aux_cmp\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5649,8 +5649,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5659,8 +5659,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5672,10 +5672,10 @@ int oper_cmp(int et1, int et2, int type)
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
             acc_ok = 0;
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_real\n");
             add_instr("PLD aux_imag\n");
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5684,7 +5684,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,OFST,type);
         }
@@ -5695,7 +5695,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
             add_instr("SETP aux_cmp\n");
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5707,7 +5707,7 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             oper_mult(et2,et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
@@ -5718,7 +5718,7 @@ int oper_cmp(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
             add_instr("SETP aux_cmp\n");
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_cmp\n");
             add_instr("PLD aux_cmp\n");
             oper_mult(et2,et2);
@@ -5730,8 +5730,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5740,8 +5740,8 @@ int oper_cmp(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-            mod_sqr  (et1);
-            mod_sqr  (et2);
+            exec_sqr2  (et1);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
 
@@ -5752,10 +5752,10 @@ int oper_cmp(int et1, int et2, int type)
 
             add_instr("SETP aux_imag\n");
             add_instr("SETP  aux_real\n");
-            mod_sqr  (et1);
+            exec_sqr2  (et1);
             add_instr("PLD aux_real\n");
             add_instr("PLD aux_imag\n");
-            mod_sqr  (et2);
+            exec_sqr2  (et2);
             oper_cmp (2*OFST,2*OFST,type);
         }
     }

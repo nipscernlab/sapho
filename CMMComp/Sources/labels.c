@@ -1,4 +1,6 @@
-// implementa a pilha para labels em instrucoes de salto
+// ----------------------------------------------------------------------------
+// implementa a pilha para labels em instrucoes de salto ----------------------
+// ----------------------------------------------------------------------------
 
 #include "..\Headers\labels.h"
 #include <stdio.h>

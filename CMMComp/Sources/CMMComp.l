@@ -78,10 +78,10 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 
 "++"                          return PPLUS;
 
-"comp"   {fgen = 1; type_tmp = 3; yylval.ival = 3; return TYPE;}
-"float"  {fgen = 1; type_tmp = 2; yylval.ival = 2; return TYPE;}
-"int"    {          type_tmp = 1; yylval.ival = 1; return TYPE;}
-"void"   {                        yylval.ival = 0; return TYPE;}
+"comp"   {type_tmp = 3; yylval.ival = 3; return TYPE;}
+"float"  {type_tmp = 2; yylval.ival = 2; return TYPE;}
+"int"    {type_tmp = 1; yylval.ival = 1; return TYPE;}
+"void"   {              yylval.ival = 0; return TYPE;}
 
 {VARIA}           {
                      yylval.ival = exec_id(yytext);
@@ -95,13 +95,11 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 
 {FLNUM}           {  //[0-9]*\.?[0-9]+
                      yylval.ival = exec_num(yytext);
-                     fgen = 1;
                      return FNUM;
                   }
 
 {CONUM}           {
                      yylval.ival = exec_cnum(yytext);
-                     fgen = 1;
                      return CNUM;
                   }
 

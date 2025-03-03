@@ -50,7 +50,7 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     strcpy(fname, v_name[id2]); // seta a variavel de estado fname para o nome da funcao a ser analisada
     v_type[id2] = id1+6       ; // v_type vai ser funcao (void, int, float, comp) (6, 7, 8, 9)
     fun_id1     = id2         ; // seta a variavel de estado fun_id1 para o id do nome da funcao
-    ret_ok      =     0       ; // seta a variavel de estado ret_ok para zero (vai comecar o parser da funcao)
+    ret_ok      = 0           ; // seta a variavel de estado ret_ok para zero (vai comecar o parser da funcao)
 }
 
 // pega o primeiro parametro

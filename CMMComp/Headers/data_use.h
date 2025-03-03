@@ -1,3 +1,6 @@
+// ----------------------------------------------------------------------------
+// rotinas para reducao exp ---------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // retorno pra exp (ver regra pra exp no .y)
 //   OFST    -> inteiro reduzido
@@ -9,12 +12,8 @@
 // 5*OFST+id -> identificador const comp
 #define OFST 1000000
 
-// variaveis de estado
-extern int acc_ok;                            // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
-
-// funcoes auxiliares para reducao exp
-int       num2exp(int id, int dtype);         // reduz de um numero para exp
+int       num2exp(int id, int dtype);         // reduz de um numero        para exp
 int        id2exp(int id);                    // reduz de um identificador para exp
-int     exp_pplus(int et);                    // reduz de um i++ para exp
-int   array_pplus(int id, int et);            // reduz de um x[i]++ para exp
-int   array_2plus(int id, int et1, int et2);  // reduz de um x[i][j]++ para exp
+int     pplus2exp(int et);                    // reduz de um i++           para exp
+int   pplus1d2exp(int id, int et);            // reduz de um x[i]++        para exp
+int   pplus2d2exp(int id, int et1, int et2);  // reduz de um x[i][j]++     para exp

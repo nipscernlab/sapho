@@ -10,13 +10,20 @@
 #include <math.h>
 #include <string.h>
 
-// redeclaracao de variaveis globais
-int fatan  = 0; // se vai precisar de macros de ponto flutuante
-int fatani = 0; // se vai precisar de macros de ponto flutuante
-int fsqrt  = 0; // se vai precisar de macros de ponto flutuante
-int fsqrti = 0; // se vai precisar de macros de ponto flutuante
-int mgen   = 0; // se gera ou nao macros de ponto flutuante
+// ----------------------------------------------------------------------------
+// redeclaracao de variaveis globais ------------------------------------------
+// ----------------------------------------------------------------------------
 
+int fatan  = 0; // se vai precisar de macro pra arco tangente (ponto flut)
+int fatani = 0; // se vai precisar de macro pra arco tangente (ponto fixo)
+int fsqrt  = 0; // se vai precisar de macro pra raiz quadrada (ponto flut)
+int fsqrti = 0; // se vai precisar de macro pra raiz quadrada (ponto fixo)
+
+// ----------------------------------------------------------------------------
+// entrada e saida ------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+// input
 int exec_in(int id)
 {
     if (acc_ok == 0) add_instr("LOAD %s\n", v_name[id]); else add_instr("PLD %s\n", v_name[id]);
@@ -31,210 +38,6 @@ int exec_in(int id)
     return (prtype == 0) ? OFST : 2*OFST;
 }
 
-// modulo ao quadrado de um num complexo
-int mod_sqr(int et)
-{
-    int type = get_type(et);
-
-    int etr, eti;
-
-    // se for uma constante ---------------------------------------------------
-
-    if (type == 5)
-    {
-        get_cmp_cst(et ,&etr,&eti); // pega o et de cada constante float
-        etr  = oper_mult(etr,etr);      // parte real ao quadrado
-        eti  = oper_mult(eti,eti);      // parte imag ao quadrado
-        etr  = oper_soma(etr,eti);      // soma os quadrados
-    }
-
-    // se estiver na memoria --------------------------------------------------
-
-    if ((type == 3) && (et % OFST != 0))
-    {
-        get_cmp_ets    (et ,&etr,&eti); // pega o et de cada constante float
-        etr  = oper_mult(etr,etr);      // parte real ao quadrado
-        eti  = oper_mult(eti,eti);      // parte imag ao quadrado
-        etr  = oper_soma(etr,eti);      // soma os quadrados
-    }
-
-    // se estiver no acumulador -----------------------------------------------
-
-    if ((type == 3) && (et % OFST == 0))
-    {
-        fprintf (f_asm, "PUSH\n");          // parte imag fica no acc e pilha
-        oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
-        fprintf (f_asm, "SETP  aux_cmp\n"); // salva temp e pega parte real
-
-        fprintf (f_asm, "PUSH\n");          // parte real fica no acc e pilha
-        oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
-        fprintf (f_asm, "PLD  aux_cmp\n");  // xuxa o quadr do real pra pilha e pega o quadr do imag
-
-        oper_soma(2*OFST,2*OFST);           // soma os quadrados
-
-        etr = 2*OFST;                       // saida tem q ser et estendido pra float no acc
-    }
-
-    return etr;
-}
-
-// valor absoluto de um num complexo
-int abs_comp(int et)
-{
-    return exec_sqrt(mod_sqr(et));          // computa a raiz quadrada do modulo ao quadrdo
-}
-
-int exec_abs(int et)
-{
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    if (prtype == 0)
-    {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("ABS\n");
-        }
-
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("ABS\n");
-        }
-
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
-        }
-
-        // float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            add_instr("AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            et = abs_comp(et);
-        }
-    }
-    else
-    {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("ABS\n");
-        }
-
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("ABS\n");
-        }
-
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("ABS\n");
-        }
-
-        // float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            add_instr("ABS\n");
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            et = abs_comp(et);
-        }
-    }
-
-    acc_ok = 1;
-
-    return get_type(et)*OFST;
-}
-
-int exec_pst(int et)
-{
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    if (prtype == 0)
-    {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-        }
-
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            // nao faz nada
-        }
-
-        // float na memoria e no acc
-        if (get_type(et) == 2)
-        {
-            fprintf (stderr, "Erro na linha %d: Pra usar float no argumento de pset() tem que habilitar ponto-flutuante em hardware!\n", line_num+1);
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
-        }
-    }
-    else
-    {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-        }
-
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
-        }
-
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-        }
-
-        // float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            // nao faz nada
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
-        }   
-    }
-
-    add_instr("PSET\n");
-
-    acc_ok = 1;
-
-    return (prtype == 0) ? OFST : 2*OFST;
-}
-
 // primeiro parametro da funcao out(a,b)
 // o endereco da porta
 void exec_out1(int id)
@@ -243,6 +46,8 @@ void exec_out1(int id)
     acc_ok = 1;
 }
 
+// segundo parametro da funcao out(a,b)
+// valor de saida
 void exec_out2(int et)
 {
     if (get_type(et) > 2)
@@ -320,6 +125,11 @@ void exec_out2(int et)
     acc_ok = 0; // libera acc
 }
 
+// ----------------------------------------------------------------------------
+// funcoes especiais que evitam codigo ----------------------------------------
+// ----------------------------------------------------------------------------
+
+// pega o sinal do primeiro argumento e coloca no segundo
 int exec_sign(int et1, int et2)
 {
     char ld[10];
@@ -652,7 +462,160 @@ int exec_sign(int et1, int et2)
     return get_type(et2)*OFST;
 }
 
-// executa instrucao NORM
+// valor absoluto (int, float e comp)
+int exec_abs(int et)
+{
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    if (prtype == 0)
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("ABS\n");
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("ABS\n");
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            et = exec_absc(et);
+        }
+    }
+    else
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("ABS\n");
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            add_instr("ABS\n");
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("ABS\n");
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            add_instr("ABS\n");
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            et = exec_absc(et);
+        }
+    }
+
+    acc_ok = 1;
+
+    return get_type(et)*OFST;
+}
+
+// zera se for negativo
+int exec_pst(int et)
+{
+    char ld[10];
+    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+
+    if (prtype == 0)
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+
+        // float na memoria e no acc
+        if (get_type(et) == 2)
+        {
+            fprintf (stderr, "Erro na linha %d: Pra usar float no argumento de pset() tem que habilitar ponto-flutuante em hardware!\n", line_num+1);
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
+        }
+    }
+    else
+    {
+        // int na memoria
+        if ((get_type(et) == 1) && (et % OFST != 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // int no acc
+        if ((get_type(et) == 1) && (et % OFST == 0))
+        {
+            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
+        }
+
+        // float na memoria
+        if ((get_type(et) == 2) && (et % OFST != 0))
+        {
+            add_instr("%s %s\n", ld, v_name[et%OFST]);
+        }
+
+        // float no acc
+        if ((get_type(et) == 2) && (et % OFST == 0))
+        {
+            // nao faz nada
+        }
+
+        // comp const, na memoria e no acc
+        if ((get_type(et) == 3) || (get_type(et) == 5))
+        {
+            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
+        }   
+    }
+
+    add_instr("PSET\n");
+
+    acc_ok = 1;
+
+    return (prtype == 0) ? OFST : 2*OFST;
+}
+
+// divisao por constante
 int exec_norm(int et)
 {
     if ((get_type(et) != 1) || (prtype == 1))
@@ -678,6 +641,10 @@ int exec_norm(int et)
 
     return OFST;
 }
+
+// ----------------------------------------------------------------------------
+// funcoes aritmeticas --------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // codigo em C+- para calcular raiz quadrada para float
 // deixar aqui pra lembrar de onde vieram as macros
@@ -716,7 +683,7 @@ int exec_sqrt(int et)
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("CALL float_sqrti\n");
 
-            fgen=1; fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
         }
 
         // int no acc
@@ -725,7 +692,7 @@ int exec_sqrt(int et)
             add_instr("CALL int2float\n"); i2f = 1;
             add_instr("CALL float_sqrti\n");
 
-            fgen=1; fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
         }
 
         // float var na memoria
@@ -734,7 +701,7 @@ int exec_sqrt(int et)
             add_instr("%s %s\n", ld, v_name[et%OFST]);
             add_instr("CALL float_sqrti\n");
 
-            fgen=1; fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
         }
         
         // float const na memoria
@@ -743,7 +710,7 @@ int exec_sqrt(int et)
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
             add_instr("CALL float_sqrti\n");
 
-            fgen=1; fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
         }
 
         // float no acc
@@ -751,7 +718,7 @@ int exec_sqrt(int et)
         {
             add_instr("CALL float_sqrti\n");
 
-            fgen=1; fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
         }
     }
     else
@@ -783,7 +750,6 @@ int exec_sqrt(int et)
         }
     }
 
-    mgen   = 1; // gera macros para funcoes aritmeticas
     acc_ok = 1;
 
     return 2*OFST;
@@ -831,7 +797,7 @@ int exec_atan(int et)
             add_instr("CALL int2float\n");
             add_instr("CALL float_atani\n");
 
-            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+            fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
         }
 
         // int no acc
@@ -840,7 +806,7 @@ int exec_atan(int et)
             add_instr("CALL int2float\n");
             add_instr("CALL float_atani\n");
 
-            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+            fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
         }
 
         // float var na memoria
@@ -849,7 +815,7 @@ int exec_atan(int et)
             add_instr("%s %s\n", ld, v_name[et%OFST]);
             add_instr("CALL float_atani\n");
 
-            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+            fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
         }
         
         // float const na memoria
@@ -858,7 +824,7 @@ int exec_atan(int et)
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
             add_instr("CALL float_atani\n");
 
-            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+            fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
         }
 
         // float no acc
@@ -866,7 +832,7 @@ int exec_atan(int et)
         {
             add_instr("CALL float_atani\n");
 
-            fgen=1; fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
+            fatani=1; fadd=1; fmlt=1; fdiv=1; i2f = 1;
         }
     }
     else
@@ -898,50 +864,14 @@ int exec_atan(int et)
         }
     }
 
-    mgen   = 1; // gera macros para funcoes aritmeticas
     acc_ok = 1;
 
     return 2*OFST;
 }
 
-// calcula a fase (em radianos) de um num complexo
-int exec_fase(int et)
-{
-    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função fase(.) tem que ser complexo!\n", line_num+1);
-
-    int id = et % OFST;
-    int et_r, et_i;
-
-    // comp const
-    if (get_type(et) == 5)
-    {
-        get_cmp_cst(et,&et_i,&et_r);
-        oper_divi(et_r,et_i);
-    }
-
-    // comp na memoria
-    if ((get_type(et) == 3) && (id != 0))
-    {
-        get_cmp_ets(et,&et_i,&et_r);
-        oper_divi(et_r,et_i);
-    }
-
-    // comp no acc
-    if ((get_type(et) == 3) && (id == 0))
-    {
-        id   = exec_id("aux_cmp_i");
-        et_i = 2*OFST + id;
-
-        add_instr("SETP %s\n", v_name[id]);
-
-        oper_divi(et_i,2*OFST);
-    }
-
-    exec_atan(2*OFST);
-
-    acc_ok = 1;
-    return 2*OFST;
-}
+// ----------------------------------------------------------------------------
+// funcoes especiais para numeros complexos -----------------------------------
+// ----------------------------------------------------------------------------
 
 // retorna a parte real de um comp
 int exec_real(int et)
@@ -1021,5 +951,97 @@ int exec_imag(int et)
 
     acc_ok = 1;
 
+    return 2*OFST;
+}
+
+// modulo ao quadrado de um num complexo
+int exec_sqr2(int et)
+{
+    int type = get_type(et);
+
+    int etr, eti;
+
+    // se for uma constante ---------------------------------------------------
+
+    if (type == 5)
+    {
+        get_cmp_cst(et ,&etr,&eti); // pega o et de cada constante float
+        etr  = oper_mult(etr,etr);      // parte real ao quadrado
+        eti  = oper_mult(eti,eti);      // parte imag ao quadrado
+        etr  = oper_soma(etr,eti);      // soma os quadrados
+    }
+
+    // se estiver na memoria --------------------------------------------------
+
+    if ((type == 3) && (et % OFST != 0))
+    {
+        get_cmp_ets    (et ,&etr,&eti); // pega o et de cada constante float
+        etr  = oper_mult(etr,etr);      // parte real ao quadrado
+        eti  = oper_mult(eti,eti);      // parte imag ao quadrado
+        etr  = oper_soma(etr,eti);      // soma os quadrados
+    }
+
+    // se estiver no acumulador -----------------------------------------------
+
+    if ((type == 3) && (et % OFST == 0))
+    {
+        fprintf (f_asm, "PUSH\n");          // parte imag fica no acc e pilha
+        oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
+        fprintf (f_asm, "SETP  aux_cmp\n"); // salva temp e pega parte real
+
+        fprintf (f_asm, "PUSH\n");          // parte real fica no acc e pilha
+        oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
+        fprintf (f_asm, "PLD  aux_cmp\n");  // xuxa o quadr do real pra pilha e pega o quadr do imag
+
+        oper_soma(2*OFST,2*OFST);           // soma os quadrados
+
+        etr = 2*OFST;                       // saida tem q ser et estendido pra float no acc
+    }
+
+    return etr;
+}
+
+// valor absoluto de um num complexo
+int exec_absc(int et)
+{
+    return exec_sqrt(exec_sqr2(et));        // computa a raiz quadrada do modulo ao quadrdo
+}
+
+// calcula a fase (em radianos) de um num complexo
+int exec_fase(int et)
+{
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função fase(.) tem que ser complexo!\n", line_num+1);
+
+    int id = et % OFST;
+    int et_r, et_i;
+
+    // comp const
+    if (get_type(et) == 5)
+    {
+        get_cmp_cst(et,&et_i,&et_r);
+        oper_divi(et_r,et_i);
+    }
+
+    // comp na memoria
+    if ((get_type(et) == 3) && (id != 0))
+    {
+        get_cmp_ets(et,&et_i,&et_r);
+        oper_divi(et_r,et_i);
+    }
+
+    // comp no acc
+    if ((get_type(et) == 3) && (id == 0))
+    {
+        id   = exec_id("aux_cmp_i");
+        et_i = 2*OFST + id;
+
+        add_instr("SETP %s\n", v_name[id]);
+
+        oper_divi(et_i,2*OFST);
+    }
+
+    exec_atan(2*OFST);
+
+    acc_ok = 1;
     return 2*OFST;
 }

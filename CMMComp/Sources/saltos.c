@@ -366,7 +366,7 @@ void switch_break()
 void exec_switch(int et)
 {
     if (switching == 1)
-    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Voc� � uma pessoa confusa!\n",  line_num+1);
+    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Você é uma pessoa confusa!\n",  line_num+1);
 
     // acha a variavel switch_exp (lexer) -------------------------------------
 
