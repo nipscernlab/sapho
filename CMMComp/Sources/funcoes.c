@@ -34,18 +34,13 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
     //if (mainok == 0)
     {
-        fprintf(f_asm, "CALL main\n");
-        num_ins++;
-        fprintf(f_lin, "%s\n", itob(-2,20));
-
-        fprintf(f_asm, "@fim JMP fim\n");
-        num_ins++;
-        fprintf(f_lin, "%s\n", itob(-3,20));
+        add_sinst(-2, "CALL main\n   ");
+        add_sinst(-3, "@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio
     }
 
-    if (using_macro == 0) fprintf(f_asm, "@%s ", v_name[id2]);
+    add_sinst(0, "@%s ", v_name[id2]);
 
     strcpy(fname, v_name[id2]); // seta a variavel de estado fname para o nome da funcao a ser analisada
     v_type[id2] = id1+6       ; // v_type vai ser funcao (void, int, float, comp) (6, 7, 8, 9)
@@ -341,11 +336,7 @@ void func_ret(int id) // id -> id da funcao atual
     if (strcmp(v_name[id], "main") == 0) // se eh funcao main ...
     {
         if (mainok == 0) // soh tem a funcao main
-        {
-             fprintf(f_asm, "@fim JMP fim\n");
-             num_ins++;
-        fprintf(f_lin, "%s\n", itob(-3,20));
-        }
+             add_sinst(-3, "@fim JMP fim\n");
         else add_instr("RETURN\n"); // tem subrotinas
 
         v_used[id] = 1; // funcao main foi usada

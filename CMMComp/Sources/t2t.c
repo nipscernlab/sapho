@@ -14,6 +14,7 @@
 
 char dir_macro[1024]; // diretorio Macros
 char dir_tmp  [1024]; // diretorio Temp
+char dir_soft [1024]; // diretorio Software
 
 FILE *f_float;
 
@@ -205,106 +206,90 @@ void fcat2begin(char *n_orig, char *n_app)
 // deve ser incluido no comeco do arquivo asm (para proc ponto fixo)
 void header_int(char *fasm, char *pc_sim_mem)
 {
-    char a;
-    FILE *f_asm = fopen(fasm, "w");
+    f_asm = fopen(fasm      , "w");
+    f_lin = fopen(pc_sim_mem, "w");
 
-    // inicializacao de dados parametrizados ----------------------------------
+    add_sinst(0, "// Inicializacao da emulacao do ponto flutuante em software -------------------\n\n");
 
-    fprintf(f_asm, "// Inicializacao da emulacao do ponto flutuante em software -------------------\n\n");
-
-    // LOAD NULL deve ser a porimeira instrucao sempre, pra evitar problemas de reset
-    fprintf(f_asm, "LOAD NULL              // evita problema da primeira instrucao com o reset ascincrono\n");
+    // LOAD NULL deve ser a primeira instrucao sempre, pra evitar problemas de reset
+    add_sinst(-1, "LOAD NULL              // evita problema da primeira instrucao com o reset ascincrono\n\n");
 
     // numero de bits da mantissa
-    fprintf(f_asm, "\nLOAD %d\nSET  nbmant            // guarda num de bits da mantissa\n"  , nbmant);
+    add_sinst(-1, "LOAD %d\n", nbmant);
+    add_sinst(-1, "SET  nbmant            // guarda num de bits da mantissa\n\n");
+    
     // numero de bits do expoente
-    fprintf(f_asm, "\nLOAD %d\nSET  nbexp             // guarda num de bits do expoente\n\n", nbexpo);
+    add_sinst(-1, "LOAD %d\n", nbexpo);
+    add_sinst(-1, "SET  nbexp             // guarda num de bits do expoente\n\n");
 
     // numero zero
-    fprintf(f_asm, "LOAD %d           // 0.0\nSET  float_zero", 1 << (nbmant+nbexpo-1));
-    fprintf(f_asm, "        // guarda o num zero\n");
+    add_sinst(-1, "LOAD %d           // 0.0\n", 1 << (nbmant+nbexpo-1));
+    add_sinst(-1, "SET  float_zero        // guarda o num zero\n\n");
 
     // epsilon para convergencia de funcoes iterativas
     char numi[64], numf[64];
     epsilon_taylor(numi,numf);
-    fprintf(f_asm, "\nLOAD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
-    fprintf(f_asm, "SET  epsilon_taylor\n");
+    add_sinst(-1, "LOAD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
+    add_sinst(-1, "SET  epsilon_taylor\n\n");
 
     // pi sobre 2
-    fprintf(f_asm, "\nLOAD %d           // pi/2 usado em funcoes trigonimetricas\n", f2mf("1.57079632679489661923"));
-    fprintf(f_asm, "SET  pi_div_2\n\n");
+    add_sinst(-1, "LOAD %d           // pi/2 usado em funcoes trigonimetricas\n",f2mf("1.57079632679489661923"));
+    add_sinst(-1, "SET  pi_div_2\n\n");
 
     // 1/2
-    fprintf(f_asm, "LOAD %d           // 1/2\n", f2mf("0.5"));
-    fprintf(f_asm, "SET  um_div_2\n\n");
+    add_sinst(-1, "LOAD %d           // 1/2\n", f2mf("0.5"));
+    add_sinst(-1, "SET  um_div_2\n\n");
 
     // tudo 1 menos bit de sinal
-    fprintf(f_asm, "LOAD %d           // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
-    fprintf(f_asm, "SET  tudo_um\n\n");
+    add_sinst(-1, "LOAD %d           // zera o bit de sinal (abs pra float em software)\n", (int)pow(2,nbmant+nbexpo)-1);
+    add_sinst(-1, "SET  tudo_um\n\n");
 
     // numero 1.0
-    fprintf(f_asm, "LOAD %d           // numero 1.0 em float\n", f2mf("1.0"));
-    fprintf(f_asm, "SET  num_um\n\n");
+    add_sinst(-1, "LOAD %d           // numero 1.0 em float\n", f2mf("1.0"));
+    add_sinst(-1, "SET  num_um\n\n");
 
-    // inicializacao de dados genericos ---------------------------------------
+    // numero de bits total
+    add_sinst(-1, "LOAD nbmant            // guarda numero de bits total\n");
+    add_sinst(-1, "ADD  nbexp\n");
+    add_sinst(-1, "SET  float_nbits\n\n");
 
-    char path[1024];
-    sprintf(path, "%s/%s", dir_macro, "float_init.asm");
+    // nbmant+1
+    add_sinst(-1, "LOAD nbmant            // variavel auxiliar\n");
+    add_sinst(-1, "ADD  1\n");
+    add_sinst(-1, "SET  nbmantp1\n\n");
 
-        f_float =     fopen  (path, "r");
-    if (f_float == 0) fprintf(stderr, "Cadê a macro float_init.asm? Tinha que estar na pasta do projeto do SAPHO!\n");
-	do {          a = fgetc  (f_float); if (a != EOF) fputc(a, f_asm);} while (a != EOF);
+    // nbexp+1
+    add_sinst(-1, "LOAD nbexp             // variavel auxiliar\n");
+    add_sinst(-1, "ADD  1\n");
+    add_sinst(-1, "SET  nbexpp1\n\n");
 
-	fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
+    add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");
 
-	fclose (f_float);
-    fclose (f_asm);
-
-    // arquivo de memoria do pc_sim.v -----------------------------------------
-
-    int soma_inst = 26; // tem que mudar se acrescentar mais instrucoes acima
-
-    FILE *f_mem = fopen(pc_sim_mem, "w");
-
-    for (int i=0;i<soma_inst;i++) fprintf(f_mem, "%s\n", itob(-1,20));
-    num_ins += soma_inst;
-
-    fclose(f_mem);
+    fclose(f_asm);
+    fclose(f_lin);
 }
 
 // deve ser incluido no comeco do arquivo asm (para proc float)
 void header_float(char *fasm, char *pc_sim_mem)
 {
-    char a;
-    FILE *f_asm = fopen(fasm, "w");
+    f_asm = fopen(fasm      , "w");
+    f_lin = fopen(pc_sim_mem, "w");
 
-    // inicializacao de dados parametrizados ----------------------------------
-
-    fprintf(f_asm, "// Inicializacao de parametros para operacoes aritmeticas ---------------------\n\n");
+    add_sinst(0, "// Inicializacao de parametros para operacoes aritmeticas ---------------------\n\n");
 
     // LOAD NULL deve ser a porimeira instrucao sempre, pra evitar problemas de reset
-    fprintf(f_asm, "LOAD NULL                // evita problema da primeira instrucao com o reset ascincrono\n");
+    add_sinst(-1, "LOAD NULL                // evita problema da primeira instrucao com o reset ascincrono\n\n");
 
     // epsilon para convergencia de funcoes iterativas
     char numi[64], numf[64];
     epsilon_taylor(numi,numf);
-    fprintf(f_asm, "\nLOAD %s           // epsilon usado em funcoes aritmeticas iterativas\n", numf);
-    fprintf(f_asm, "SET  epsilon_taylor\n");
+    add_sinst(-1, "LOAD %s           // epsilon usado em funcoes aritmeticas iterativas\n", numf);
+    add_sinst(-1, "SET  epsilon_taylor\n\n");
 
-    fprintf(f_asm, "\n// Codigo assembly original ---------------------------------------------------\n\n");
+    add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");
 
-    fclose (f_asm);
-
-    // arquivo de memoria do pc_sim.v -----------------------------------------
-
-    int soma_inst = 3; // tem que mudar se acrescentar mais instrucoes acima
-
-    FILE *f_mem = fopen(pc_sim_mem, "w");
-
-    for (int i=0;i<soma_inst;i++) fprintf(f_mem, "%s\n", itob(-1,20));
-    num_ins += soma_inst;
-
-    fclose(f_mem);
+    fclose(f_asm);
+    fclose(f_lin);
 }
 
 // ----------------------------------------------------------------------------

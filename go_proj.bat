@@ -104,7 +104,7 @@ move comp2gtkw.exe  %BIN_DIR%>%TMP_DIR%\xcopy.txt
 cd  %BIN_DIR%
 
 (for %%i in (%PROC_LIST%) do (
-    CMMComp.exe %PROJ_DIR%\%%i\Software\%%i.cmm %PROJ_DIR%\%%i\Software\%%i.asm %MAC_DIR% %TMP_DIR%\%%i %%i 
+    CMMComp.exe %%i %PROJ_DIR%\%%i %MAC_DIR% %TMP_DIR%\%%i
 ))
 
 :: Executa o compilador Assembler ---------------------------------------------

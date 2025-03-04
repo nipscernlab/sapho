@@ -5,11 +5,11 @@
 // variaveis de estado --------------------------------------------------------
 
 extern char fname[512];             // nome da funcao atual sendo parseada
-extern int  ret_ok;                 // diz se teve um retorno da funcao corretamente
-extern int  mainok;                 // status da funcao main: 0 -> nao usada, 1 -> declarada, 2 -> chamada no inicio
-extern int fun_id1;                 // guarda id da funcao sendo parseada
-extern int fun_id2;                 // guarda id da funcao sendo usada
-extern int  p_test;                 // identifica parametros na chamada de funcoes (parecido com OFST, mas de valor 10)
+extern int  ret_ok ;                // diz se teve um retorno da funcao corretamente
+extern int  mainok ;                // status da funcao main: 0 -> nao usada, 1 -> declarada, 2 -> chamada no inicio
+extern int  fun_id1;                // guarda id da funcao sendo parseada
+extern int  fun_id2;                // guarda id da funcao sendo usada
+extern int  p_test ;                // identifica parametros na chamada de funcoes (parecido com OFST, mas de valor 10)
 
 // funcoes auxiliares ---------------------------------------------------------
 

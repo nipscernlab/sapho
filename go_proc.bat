@@ -102,13 +102,13 @@ move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
 
-set CMM_FILE=%SOFT_DIR%\%PROC%.cmm
-set ASM_FILE=%SOFT_DIR%\%PROC%.asm
-cd  %BIN_DIR%
+cd %BIN_DIR%
 
-CMMComp.exe %CMM_FILE% %ASM_FILE% %MAC_DIR% %TMP_PRO% %PROC%
+CMMComp.exe %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
 
 :: Executa o compilador Assembler ---------------------------------------------
+
+set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
 ASMComp.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 

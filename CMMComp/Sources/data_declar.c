@@ -76,33 +76,33 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // proc ponto fixo, tipo int, sem arquivo
     if ((prtype == 0) && (type == 1) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
 
     // proc ponto fixo, tipo int, com arquivo
     if ((prtype == 0) && (type == 1) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
     }
 
     // proc ponto fixo, tipo float, sem arquivo
     if ((prtype == 0) && (type == 2) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
 
     // proc ponto fixo, tipo float, com arquivo
     if ((prtype == 0) && (type == 2) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
     }
 
     // proc ponto fixo, tipo comp, sem arquivo
     if ((prtype == 0) && (type == 3) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
         id_var = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
 
         v_isar[id_var] = 1; // variavel eh array 1D
         v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -111,9 +111,9 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // proc ponto fixo, tipo comp, com arquivo
     if ((prtype == 0) && (type == 3) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 3 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s 3 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
         id_var = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 4 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s 4 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
 
         v_isar[id_var] = 1; // variavel eh array 1D
         v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -122,33 +122,33 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // proc ponto flut, tipo int, sem arquivo
     if ((prtype == 1) && (type == 1) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
 
     // proc ponto flut, tipo int, com arquivo
     if ((prtype == 1) && (type == 1) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
     }
 
     // proc ponto flut, tipo float, sem arquivo
     if ((prtype == 1) && (type == 2) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
 
     // proc ponto flut, tipo float, com arquivo
     if ((prtype == 1) && (type == 2) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
     }
 
     // proc ponto flut, tipo comp, sem arquivo
     if ((prtype == 1) && (type == 3) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
         id_var = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
 
         v_isar[id_var] = 1; // variavel eh array 1D
         v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -157,9 +157,9 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // proc ponto flut, tipo comp, com arquivo
     if ((prtype == 1) && (type == 3) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 3 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s 3 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
         id_var = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 4 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s 4 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
 
         v_isar[id_var] = 1; // variavel eh array 1D
         v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -191,33 +191,33 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // proc ponto fixo, tipo int, sem arquivo
     if ((prtype == 0) && (type == 1) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
     }
 
     // proc ponto fixo, tipo int, com arquivo
     if ((prtype == 0) && (type == 1) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
     }
 
     // proc ponto fixo, tipo float, sem arquivo
     if ((prtype == 0) && (type == 2) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
     }
 
     // proc ponto fixo, tipo float, com arquivo
     if ((prtype == 0) && (type == 2) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
     }
 
     // proc ponto fixo, tipo comp, sem arquivo
     if ((prtype == 0) && (type == 3) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
         idi = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[idi], size);
+        add_sinst(0, "#array %s %d\n", v_name[idi], size);
 
         v_isar[idi] = 2; // variavel eh array 2D
         v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -226,9 +226,9 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // proc ponto fixo, tipo comp, com arquivo
     if ((prtype == 0) && (type == 3) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 3 %d %s\n", v_name[id_var], size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s 3 %d %s\n", v_name[id_var], size, v_name[id_fname]);
         idi = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 4 %d %s\n", v_name[idi], size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s 4 %d %s\n", v_name[idi], size, v_name[id_fname]);
 
         v_isar[idi] = 2; // variavel eh array 2D
         v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -237,33 +237,33 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // proc ponto flut, tipo int, sem arquivo
     if ((prtype == 1) && (type == 1) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
     }
 
     // proc ponto flut, tipo int, com arquivo
     if ((prtype == 1) && (type == 1) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
     }
 
     // proc ponto flut, tipo float, sem arquivo
     if ((prtype == 1) && (type == 2) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
     }
 
     // proc ponto flut, tipo float, com arquivo
     if ((prtype == 1) && (type == 2) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
     }
 
     // proc ponto flut, tipo comp, sem arquivo
     if ((prtype == 1) && (type == 3) && (id_fname == -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
         idi = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#array %s %d\n", v_name[idi], size);
+        add_sinst(0, "#array %s %d\n", v_name[idi], size);
 
         v_isar[idi] = 2; // variavel eh array 2D
         v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
@@ -272,9 +272,9 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // proc ponto flut, tipo comp, com arquivo
     if ((prtype == 1) && (type == 3) && (id_fname != -1))
     {
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 3 %d %s\n", v_name[id_var], size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s 3 %d %s\n", v_name[id_var], size, v_name[id_fname]);
         idi = get_img_id(id_var);
-        if (using_macro == 0) fprintf(f_asm, "#arrays %s 4 %d %s\n", v_name[idi], size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s 4 %d %s\n", v_name[idi], size, v_name[id_fname]);
 
         v_isar[idi] = 2; // variavel eh array 2D
         v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)

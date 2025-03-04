@@ -985,13 +985,13 @@ int exec_sqr2(int et)
 
     if ((type == 3) && (et % OFST == 0))
     {
-        fprintf (f_asm, "PUSH\n");          // parte imag fica no acc e pilha
+        add_instr("PUSH\n");                // parte imag fica no acc e pilha
         oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
-        fprintf (f_asm, "SETP  aux_cmp\n"); // salva temp e pega parte real
+        add_instr("SETP aux_cmp\n");        // salva temp e pega parte real
 
-        fprintf (f_asm, "PUSH\n");          // parte real fica no acc e pilha
+        add_instr("PUSH\n");                // parte real fica no acc e pilha
         oper_mult(2*OFST,2*OFST );          // multiplica acc com pilha
-        fprintf (f_asm, "PLD  aux_cmp\n");  // xuxa o quadr do real pra pilha e pega o quadr do imag
+        add_instr("PLD  aux_cmp\n");        // xuxa o quadr do real pra pilha e pega o quadr do imag
 
         oper_soma(2*OFST,2*OFST);           // soma os quadrados
 

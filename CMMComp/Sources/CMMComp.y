@@ -41,6 +41,7 @@
 #include "..\Headers\global.h"
 
 #include <string.h>
+#include <stdlib.h>
 
 // variaveis obrigatorias do flex/bison ---------------------------------------
 
@@ -54,17 +55,17 @@ void  yyerror(char const *s);
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
-%token PRNAME DIRNAM DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH // diretivas
-%token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD        // diretivas
-%token IN OUT NRM PST ABS SIGN SQRT REAL IMAG ATAN FASE        // std lib
-%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK     // saltos
-%token SHIFTL SHIFTR SSHIFTR                                   // deslocamento de bits
-%token GREQU LESEQ EQU DIF LAND LOR                            // operadores logicos de dois simbolos
-%token PPLUS                                                   // operador ++. pode ser usado pra reduzir exp e tb pra assignments
+%token PRNAME DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH      // diretivas
+%token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD      // diretivas
+%token IN OUT NRM PST ABS SIGN SQRT REAL IMAG ATAN FASE      // std lib
+%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK   // saltos
+%token SHIFTL SHIFTR SSHIFTR                                 // deslocamento de bits
+%token GREQU LESEQ EQU DIF LAND LOR                          // operadores logicos de dois simbolos
+%token PPLUS                                                 // operador ++. pode ser usado pra reduzir exp e tb pra assignments
 
 // tokens terminais -----------------------------------------------------------
 
-%token <ival> TYPE ID STRING INUM FNUM CNUM                           // vem do lexer com um valor associado
+%token <ival> TYPE ID STRING INUM FNUM CNUM                  // vem do lexer com um valor associado
 
 // elimina conflito if com e sem else
 %nonassoc THEN
@@ -96,19 +97,13 @@ void  yyerror(char const *s);
 
 // Programa e seus elementos --------------------------------------------------
 
-fim  : prog
-prog : prog_elements | prog prog_elements
-
-// tirei decla_full por enquanto
-// ate resolver o bug que nao pode ter instrucao antes do CALL main
-// se nao, a linha C+- no gtkwave mostra errado no comeco
+fim           : prog
+prog          : prog_elements | prog prog_elements
 prog_elements : direct | declar_full | funcao
-//prog_elements : direct | declar | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
 direct : PRNAME  ID    {exec_dire("#PRNAME",$2,6);} // nome do processador
-       | DIRNAM STRING {exec_dire("#DIRNAM",$2,0);} // diretorio
        | DATYPE INUM   {exec_dire("#DATYPE",$2,1);} // tipo: 0 -> ponto fixo, 1 -> ponto flutuante
        | NUBITS INUM   {exec_dire("#NUBITS",$2,0);} // tamanho da palavra da ULA
        | NBMANT INUM   {exec_dire("#NBMANT",$2,2);} // numero de bits da mantissa
@@ -119,14 +114,15 @@ direct : PRNAME  ID    {exec_dire("#PRNAME",$2,6);} // nome do processador
        | NUIOOU INUM   {exec_dire("#NUIOOU",$2,5);} // numero de portas de saida
        | NUGAIN INUM   {exec_dire("#NUGAIN",$2,0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {exec_dire("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
-       | USEMAC STRING {     use_macro(  v_name[$2],1);} // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
-       | ENDMAC        {     end_macro(              );} // ponto de termino do uso da macro
+
+       | USEMAC STRING INUM {use_macro($2,1,$3);}   // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
+       | ENDMAC             {end_macro();}          // ponto de termino do uso da macro
 
 // Diretivas comportamentais --------------------------------------------------
 
-use_macro : USEMAC STRING {use_macro(v_name[$2],0);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
-end_macro : ENDMAC        {end_macro(            );} // ponto final de uso de uma macro
-use_inter : ITRADD        {use_inter(            );} // ponto de inicio da interrupcao (usado com o pino itr)
+use_macro : USEMAC STRING INUM {use_macro($2,0,$3);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
+end_macro : ENDMAC             {end_macro();}        // ponto final de uso de uma macro
+use_inter : ITRADD             {use_inter();}        // ponto de inicio da interrupcao (usado com o pino itr)
 
 // Declaracao de variaveis ----------------------------------------------------
 
@@ -288,7 +284,7 @@ exp:       terminal                           {$$ = $1;}
          |    '(' exp ')'                     {$$ = $2;}
          |    '+' exp                         {$$ = $2;}
          // operadores unarios
-         |    '-' exp                         {$$ =     oper_neg($2      );}
+         |    '-' exp                         {$$ =    oper_neg($2      );}
          |    '!' exp                         {$$ =   oper_linv($2      );}
          |    '~' exp                         {$$ =    oper_inv($2      );}
          | ID                         PPLUS   {$$ =   pplus2exp($1      );}
@@ -333,23 +329,28 @@ int main(int argc, char *argv[])
 {
   // pega os argumentos -------------------------------------------------------
 
-  yyin  = fopen(argv[1], "r"); // arquivo .cmm de entrada
-  f_asm = fopen(argv[2], "w"); // arquivo .asm de saida
+  char cmm_file[1024];
+  char asm_file[1024];
 
-  strcpy(dir_macro, argv[3]);  // pega o diretorio Macro
-  strcpy(dir_tmp  , argv[4]);  // pega o diretorio Tmp
+  sprintf(cmm_file, "%s/Software/%s.cmm", argv[2],argv[1]);
+  sprintf(asm_file, "%s/Software/%s.asm", argv[2],argv[1]);
+
+  yyin  = fopen(cmm_file, "r"); // arquivo .cmm de entrada
+  f_asm = fopen(asm_file, "w"); // arquivo .asm de saida
+
+  sprintf(dir_soft , "%s/Software", argv[2]); // pega o diretorio software
+  strcpy (dir_macro, argv[3]);                // pega o diretorio Macro
+  strcpy (dir_tmp  , argv[4]);                // pega o diretorio Tmp
 
   // cria arquivos auxiliares -------------------------------------------------
 
   char path[1024];
   sprintf(path,   "%s/cmm_log.txt", dir_tmp         ); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
-  sprintf(path, "%s/pc_%s_mem.txt", dir_tmp, argv[5]); f_lin = fopen(path,"w"); // memoria no pc.v que passa de asm para cmm
+  sprintf(path, "%s/pc_%s_mem.txt", dir_tmp, argv[1]); f_lin = fopen(path,"w"); // memoria no pc.v que passa de asm para cmm
 
   // gera uma instrucao LOAD NULL no inicio (tentar tirar isso) ---------------
 
-  num_ins = 1;
-  fprintf(f_asm, "LOAD NULL\n");
-  fprintf(f_lin, "%s\n", itob(-1,20));
+  add_sinst(-1,"LOAD NULL\n");
 
   // executa o parse no arquivo .cmm ------------------------------------------
 
@@ -363,8 +364,8 @@ int main(int argc, char *argv[])
 
   // checa se precisa adicionar macros no arquivo .asm ------------------------
 
-	if (prtype == 0) mac_geni(argv[2]); // carrega macros para ponto fixo
-	if (prtype == 1) mac_genf(argv[2]); // carrega macros para ponto flut
+	if (prtype == 0) mac_geni(asm_file); // carrega macros para ponto fixo
+	if (prtype == 1) mac_genf(asm_file); // carrega macros para ponto flut
 
 	// checa consistencia de todas as variaveis e funcoes -----------------------
   
@@ -379,8 +380,8 @@ int main(int argc, char *argv[])
 
   sprintf(path, "%s/%s", dir_tmp, "trad_cmm.txt");
   
-  FILE *output = fopen(path   , "w");
-  FILE *input  = fopen(argv[1], "r");
+  FILE *output = fopen(path    , "w");
+  FILE *input  = fopen(cmm_file, "r");
 
   char linha[1001], texto[1001] = "";
   fputs("-1 INTERNO\n"     , output); // codigo para inicio do arquivo

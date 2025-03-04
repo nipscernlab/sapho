@@ -153,7 +153,7 @@ void if_exp(int et)
 void if_stmt()
 {
     int n = pop_lab();
-    if (using_macro == 0) fprintf(f_asm, "@L%delse ", n);
+    add_sinst(0, "@L%delse ", n);
 }
 
 // antes dos statments do else
@@ -166,7 +166,7 @@ void else_stmt()
 void if_fim()
 {
     int n = pop_lab();
-    if (using_macro == 0) fprintf(f_asm, "@L%dend ", n);
+    add_sinst(0, "@L%dend ", n);
 }
 
 // ----------------------------------------------------------------------------
@@ -192,7 +192,7 @@ void exec_break()
 void while_expp()
 {
     int n = push_lab(1);
-    if (using_macro == 0) fprintf(f_asm, "@L%d ", n);
+    add_sinst(0, "@L%d ", n);
 }
 
 // executa o exp e cria um JZ pra ver se entra ou nao
@@ -336,7 +336,7 @@ void while_expexp(int et)
 void case_test(int id, int type)
 {
     case_cnt++;
-    if (using_macro == 0) fprintf(f_asm, "@sw_case_%d_%d ", swit_cnt, case_cnt);
+    add_sinst(0, "@sw_case_%d_%d ", swit_cnt, case_cnt);
 
     // gera o exp do valor do case
     int et1 = num2exp(id,type);
@@ -353,7 +353,7 @@ void case_test(int id, int type)
 void defaut_test()
 {
     case_cnt++;
-    if (using_macro == 0) fprintf(f_asm, "@sw_case_%d_%d ", swit_cnt, case_cnt);
+    add_sinst(0, "@sw_case_%d_%d ", swit_cnt, case_cnt);
 }
 
 // executa break do switch case
@@ -521,7 +521,7 @@ void exec_switch(int et)
 // fim do switch case
 void end_switch()
 {
-    if (using_macro == 0) fprintf(f_asm, "@sw_case_%d_%d ", swit_cnt, case_cnt+1);
-    if (using_macro == 0) fprintf(f_asm, "@switch_end_%d ", swit_cnt);
+    add_sinst(0, "@sw_case_%d_%d ", swit_cnt, case_cnt+1);
+    add_sinst(0, "@switch_end_%d ", swit_cnt);
     switching = 0;
 }
