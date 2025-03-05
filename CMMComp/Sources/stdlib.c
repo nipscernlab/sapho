@@ -29,7 +29,6 @@ int exec_in(int id)
     if (acc_ok == 0) add_instr("LOAD %s\n", v_name[id]); else add_instr("PLD %s\n", v_name[id]);
 
     // executa instrucao IN
-    add_instr("PUSH\n");
     add_instr("IN\n");
 
     acc_ok = 1;  // diz que o acc agora tem um valor carregado

@@ -90,7 +90,7 @@ void use_macro(int ids, int global, int id_num)
     for (int i = 0; i < n; i++)
     {
         num_ins++;
-        fprintf(f_lin, "%s\n", itob(-1,20));
+        fprintf(f_lin, "%s\n", itob(-4,20));
     }
 
     using_macro = 1;

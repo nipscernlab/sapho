@@ -138,11 +138,11 @@ IID : ID                                  {declar_var   ($1         );}
 
 // Declaracao de funcoes ------------------------------------------------------
 
-funcao : TYPE ID '('                      {declar_fun     ($1,$2);} // inicio da declaracao de uma funcao
+funcao : TYPE ID '('                      {declar_fun($1,$2);} // inicio da declaracao de uma funcao
          par_list ')'                     {declar_fst($5   );} // seta o primeiro parametro na variavel correspondente
-         '{' stmt_list '}'                {func_ret       ($2   );} // checa se foi tudo ok
-       | TYPE ID '('   ')'                {declar_fun     ($1,$2);} // funcao sem parametros
-         '{' stmt_list '}'                {func_ret       ($2   );}
+         '{' stmt_list '}'                {func_ret  ($2   );} // checa se foi tudo ok
+       | TYPE ID '('   ')'                {declar_fun($1,$2);} // funcao sem parametros
+         '{' stmt_list '}'                {func_ret  ($2   );}
 
 // lista de parametros na declaracao
 // ainda nao pode usar array em parametro de funcao
@@ -387,6 +387,7 @@ int main(int argc, char *argv[])
   fputs("-1 INTERNO\n"     , output); // codigo para inicio do arquivo
   fputs("-2 void main();\n", output); // codigo pra CALL main
   fputs("-3 FIM\n"         , output); // codigo para @fim JMP fim
+  fputs("-4 User Macro\n"  , output); // codigo asm do usuario (#USEMAC)
 
   int cnt = 1;
   while(fgets(texto, 1001, input) != NULL)

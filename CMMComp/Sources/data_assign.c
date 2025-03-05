@@ -572,7 +572,7 @@ void array_set(int id, int et, int fft)
     char set_type[16];
     int  etr, eti;
 
-    if (fft == 0) strcpy(set_type, "SRF"); else  strcpy(set_type, "ISRF");
+    if (fft == 0) strcpy(set_type, "SRF"); else strcpy(set_type, "ISRF");
 
     if (prtype == 0)
     {
@@ -1161,12 +1161,12 @@ void array_set(int id, int et, int fft)
 
             add_instr("PLD aux_tmp_r\n");
             add_instr("%s\n", set_type);
-            add_instr("SET %s\n",  v_name[id]);
+            add_instr("SET %s\n", v_name[id]);
 
             add_instr("LOAD aux_index\n");
             add_instr("PLD aux_tmp_i\n");
             add_instr("%s\n", set_type);
-            add_instr("SET %s_i\n",  v_name[id]);
+            add_instr("SET %s_i\n", v_name[id]);
         }
     }
 

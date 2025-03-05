@@ -494,7 +494,7 @@ always @ (*) begin
 			10: begin                     // IN
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
-						dsp_pop  <= 1'b1;
+						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
 						invl     <= 1'b0;
 					end

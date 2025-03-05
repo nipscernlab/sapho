@@ -70,22 +70,22 @@ module core_fx
 	parameter EQU   =   0
 )
 (
-	input                       clk, rst,
+	input                           clk, rst,
 
-	input  [NBINST        -1:0] instr,
-	output [MINSTW        -1:0] instr_addr,
+	input      [NBINST        -1:0] instr,
+	output     [MINSTW        -1:0] instr_addr,
 
-	output                      mem_wr,
-	output [MDATAW        -1:0] mem_addr_w, mem_addr_r,
-	input  [NUBITS        -1:0] mem_data_in,
-	output [NUBITS        -1:0] data_out,
+	output                          mem_wr,
+	output     [MDATAW        -1:0] mem_addr_w, mem_addr_r,
+	input      [NUBITS        -1:0] mem_data_in,
+	output     [NUBITS        -1:0] data_out,
 
-	input  [NUBITS        -1:0] io_in,
-	output [$clog2(NUIOIN)-1:0] addr_in,
-	output [$clog2(NUIOOU)-1:0] addr_out,
-	output                      req_in, out_en,
+	input      [NUBITS        -1:0] io_in,
+	output reg [$clog2(NUIOIN)-1:0] addr_in,
+	output     [$clog2(NUIOOU)-1:0] addr_out,
+	output                          req_in, out_en,
 
-	input                       itr
+	input                           itr
 );
 
 // Program Counter ------------------------------------------------------------
@@ -255,9 +255,9 @@ endgenerate
 generate
 
 	if (NUIOIN > 1)
-		assign addr_in  = mem_data_in[$clog2(NUIOIN)-1:0];
+		always @ (posedge clk) addr_in <= mem_data_in[$clog2(NUIOIN)-1:0];
 	else
-		assign addr_in = 1'bx;
+		always @ (posedge clk) addr_in <= 1'bx;
 
 endgenerate
 
