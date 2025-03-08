@@ -1,0 +1,24 @@
+read_verilog @PROC@.v
+read_verilog addr_dec.v
+read_verilog core_fl.v
+read_verilog core_fx.v
+read_verilog float2index.v
+read_verilog float2int.v
+read_verilog instr_dec.v
+read_verilog int2float.v
+read_verilog mem_data.v
+read_verilog mem_instr.v
+read_verilog pc.v
+read_verilog prefetch.v
+read_verilog proc_fl.v
+read_verilog proc_fx.v
+read_verilog rel_addr.v
+read_verilog stack_pointer.v
+read_verilog stack.v
+read_verilog ula_fl.v
+read_verilog ula_fx.v
+read_verilog ula.v
+
+prep -top @PROC@
+
+write_json rtl.json

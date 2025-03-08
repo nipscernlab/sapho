@@ -14,7 +14,11 @@ module mem_data
 
 reg [NBDATA-1:0] mem [0:NADDRE-1];
 
-initial $readmemb(FNAME, mem);
+`ifdef YOSYS
+  // Yosys vai ignorar isso
+`else
+	initial $readmemb(FNAME, mem);
+`endif
 
 always @ (posedge clk) begin
 	if (wr) mem[addr_w] <= data_in;

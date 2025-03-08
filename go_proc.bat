@@ -6,7 +6,12 @@
 
 cls
 echo off
+
 set ROOT_DIR=%cd%
+
+set YOSYSHQ_ROOT=C:\GNU\oss-cad-suite\
+set PATH=%YOSYSHQ_ROOT%bin;%YOSYSHQ_ROOT%lib;%PATH%
+
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
 
@@ -147,5 +152,19 @@ if exist %SIMU_DIR%\%GTKW% (
 ) else (
     gtkwave --rcvar "hide_sst on" --dark %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl
 )
+
+:: RTL Viewer -----------------------------------------------------------------
+
+cd %HDL_DIR%
+cp %UPROC%.v .
+
+sed "s/@PROC@/%PROC%/" %SCR_DIR%/rtl.ys>%TMP_PRO%/rtl.ys
+yosys -s %TMP_PRO%/rtl.ys
+cmd /c "netlistsvg rtl.json -o rtl.svg"
+
+del %PROC%.v
+del rtl.json
+del %TMP_PRO%/rtl.ys
+move rtl.svg %TMP_PRO%
 
 cd %ROOT_DIR%

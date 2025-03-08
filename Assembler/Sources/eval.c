@@ -206,12 +206,11 @@ void oper_salto(char *va)
     add_instr (c_op, find_label(va));
 }
 
-// funcao auxiliar para ...
-// remover espacos em branco
+// funcao auxiliar para remover espacos em branco
 void rem_space(char *text)
 {
     int i = 0, j = 0;
-    char temp[strlen(text) + 1];
+    char temp[256];
     strcpy(temp, text);
     while (temp[i] != '\0')
     {
