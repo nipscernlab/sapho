@@ -9,9 +9,6 @@ echo off
 
 set ROOT_DIR=%cd%
 
-set YOSYSHQ_ROOT=C:\GNU\oss-cad-suite\
-set PATH=%YOSYSHQ_ROOT%bin;%YOSYSHQ_ROOT%lib;%PATH%
-
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
 
@@ -98,19 +95,18 @@ del ASMComp.c
 cd %SCR_DIR%
 
 flex -osvg_clean.c svg_clean.l
-flex -opar2rtl.c par2rtl.l
 
 gcc -o svg_clean.exe svg_clean.c
-gcc -o par2rtl.exe par2rtl.c
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
+gcc -o ys_build.exe ys_build.c
 
 move svg_clean.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
-move par2rtl.exe    %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move f2i_gtkw.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move ys_build.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
 
@@ -164,31 +160,34 @@ if exist %SIMU_DIR%\%GTKW% (
 
 cd %HDL_DIR%
 cp %UPROC%.v .
-cp %SCR_DIR%\rtl.ys %TMP_PRO%
 
-:: gera os arquivos .json
-%BIN_DIR%\par2rtl.exe %TMP_PRO%/%PROC%_par.txt %TMP_PRO%/par2rtl.bat
-call %TMP_PRO%/par2rtl.bat
-
+:: processador
+%BIN_DIR%\ys_build.exe %PROC% %PROC%
+yosys -s rtl.ys
 cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
 %BIN_DIR%\svg_clean.exe %PROC%.svg %TMP_PRO%/%PROC%.svg
 del %PROC%.json
 del %PROC%.svg
 
+:: addr_dec (output)
+%BIN_DIR%\ys_build.exe %PROC% addr_dec NUIOOU/NPORT
+yosys -s rtl.ys
 cmd /c "netlistsvg addr_dec.json -o addr_dec.svg"
 %BIN_DIR%\svg_clean.exe addr_dec.svg %TMP_PRO%/addr_dec.svg
 del addr_dec.json
 del addr_dec.svg
 
+:: core_fl
+%BIN_DIR%\ys_build.exe %PROC% core_fl CAL/CAL SRF/SRF ADD/ADD MLT/MLT DIV/DIV MOD/MOD ABS/ABS NRM/NRM PST/PST SGN/SGN NEG/NEG OR/OR AND/AND INV/INV XOR/XOR SHR/SHR SHL/SHL SRS/SRS LOR/LOR LAN/LAN LIN/LIN GRE/GRE LES/LES EQU/EQU
+yosys -s rtl.ys
 cmd /c "netlistsvg core_fl.json -o core_fl.svg"
 %BIN_DIR%\svg_clean.exe core_fl.svg %TMP_PRO%/core_fl.svg
 del core_fl.json
 del core_fl.svg
 
 del %PROC%.v
-del %TMP_PRO%\rtl.ys
-del %TMP_PRO%\par2rtl.bat
-del %TMP_PRO%\%PROC%_par.txt
+del %HDL_DIR%\rtl.ys
+del %HDL_DIR%\proc_par.txt
 
 :: Limpa a pasta de arquivos temporarios --------------------------------------
 

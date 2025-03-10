@@ -178,7 +178,7 @@ void build_vv_file()
 
     // arquivo com os parametros do processador
     char tmp[512];
-    sprintf(tmp, "%s/%s_par.txt", temp_dir,name);
+    sprintf(tmp, "%s/proc_par.txt", hdl_dir);
     FILE *f_par = fopen(tmp, "w"); 
 
     fprintf(f_veri, "module %s (\n", name);
