@@ -93,14 +93,21 @@ gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri
 move ASMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del ASMComp.c
 
-:: Gera tradutores de dados pro GtkWave ---------------------------------------
+:: Gera executaveis utilitarios ------------------------------------------------
 
 cd %SCR_DIR%
 
+flex -osvg_clean.c svg_clean.l
+flex -opar2rtl.c par2rtl.l
+
+gcc -o svg_clean.exe svg_clean.c
+gcc -o par2rtl.exe par2rtl.c
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
 
+move svg_clean.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move par2rtl.exe    %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move f2i_gtkw.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
@@ -157,14 +164,45 @@ if exist %SIMU_DIR%\%GTKW% (
 
 cd %HDL_DIR%
 cp %UPROC%.v .
+cp %SCR_DIR%\rtl.ys %TMP_PRO%
 
-sed "s/@PROC@/%PROC%/" %SCR_DIR%/rtl.ys>%TMP_PRO%/rtl.ys
-yosys -s %TMP_PRO%/rtl.ys
-cmd /c "netlistsvg rtl.json -o rtl.svg"
+:: gera os arquivos .json
+%BIN_DIR%\par2rtl.exe %TMP_PRO%/%PROC%_par.txt %TMP_PRO%/par2rtl.bat
+call %TMP_PRO%/par2rtl.bat
+
+cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
+%BIN_DIR%\svg_clean.exe %PROC%.svg %TMP_PRO%/%PROC%.svg
+del %PROC%.json
+del %PROC%.svg
+
+cmd /c "netlistsvg addr_dec.json -o addr_dec.svg"
+%BIN_DIR%\svg_clean.exe addr_dec.svg %TMP_PRO%/addr_dec.svg
+del addr_dec.json
+del addr_dec.svg
+
+cmd /c "netlistsvg core_fl.json -o core_fl.svg"
+%BIN_DIR%\svg_clean.exe core_fl.svg %TMP_PRO%/core_fl.svg
+del core_fl.json
+del core_fl.svg
 
 del %PROC%.v
-del rtl.json
-del %TMP_PRO%/rtl.ys
-move rtl.svg %TMP_PRO%
+del %TMP_PRO%\rtl.ys
+del %TMP_PRO%\par2rtl.bat
+del %TMP_PRO%\%PROC%_par.txt
+
+:: Limpa a pasta de arquivos temporarios --------------------------------------
+
+del %TMP_PRO%\cmm_log.txt
+del %TMP_PRO%\mem_data_%PROC%.v
+del %TMP_PRO%\pc_%PROC%_mem.txt
+del %TMP_PRO%\pc_%PROC%.v
+del %TMP_PRO%\%PROC%_data.mif
+del %TMP_PRO%\%PROC%_inst.mif
+del %TMP_PRO%\%PROC%_tb.v
+del %TMP_PRO%\tcl_infos.txt
+del %TMP_PRO%\%PROC%.vvp
+del %TMP_PRO%\%TB_MOD%.vcd
+del %TMP_PRO%\trad_cmm.txt
+del %TMP_PRO%\trad_opcode.txt
 
 cd %ROOT_DIR%

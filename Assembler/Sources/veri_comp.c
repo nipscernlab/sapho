@@ -173,7 +173,13 @@ void build_proc_sim()
 // gera arquivo verilog com uma instancia do processador
 void build_vv_file()
 {
+    // arquivo .v do processador
     f_veri = fopen(get_vname(), "w");
+
+    // arquivo com os parametros do processador
+    char tmp[512];
+    sprintf(tmp, "%s/%s_par.txt", temp_dir,name);
+    FILE *f_par = fopen(tmp, "w"); 
 
     fprintf(f_veri, "module %s (\n", name);
     fprintf(f_veri, "input clk, rst,\n");
@@ -202,25 +208,29 @@ void build_vv_file()
 
     if (float_point)
     {
-        fprintf(f_veri, "proc_fl\n#(.NBMANT(%d),\n",nbmant);
-        fprintf(f_veri, ".NBEXPO(%d),\n"           ,nbexpo);
+        fprintf(f_veri, "proc_fl\n#(.NBMANT(%d),\n",nbmant); fprintf(f_par, "NBMANT %d\n",nbmant);
+        fprintf(f_veri,            ".NBEXPO(%d),\n",nbexpo); fprintf(f_par, "NBEXPO %d\n",nbexpo);
     }
     else
     {
         fprintf(f_veri, "proc_fx\n#(.NUBITS(%d),\n",nbits );
-        fprintf(f_veri, ".NUGAIN(%d),\n"           ,nugain);
+        fprintf(f_veri,            ".NUGAIN(%d),\n",nugain);
     }
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
     fprintf(f_veri, ".SDEPTH(%d),\n", sdepth);
-    fprintf(f_veri, ".NUIOIN(%d),\n", nmioin);
-    fprintf(f_veri, ".NUIOOU(%d),\n", nuioou);
+    fprintf(f_veri, ".NUIOIN(%d),\n", nmioin); fprintf(f_par, "NUIOIN %d\n", nmioin);
+    fprintf(f_veri, ".NUIOOU(%d),\n", nuioou); fprintf(f_par, "NUIOOU %d\n", nuioou);
     fprintf(f_veri, ".FFTSIZ(%d),\n", fftsiz);
 
     if (itr_addr != 0) fprintf(f_veri, ".ITRADD(%d),\n", itr_addr); // vai ter interrupcao
 
-    for (int i = 0; i < m_count; i++) fprintf(f_veri, ".%s(1),\n", m_name[i]);
+    for (int i = 0; i < m_count; i++)
+    {
+        fprintf(f_veri, ".%s(1),\n", m_name[i]);
+        fprintf(f_par , "%s 1\n"   , m_name[i]);
+    }
 
     fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n", name);
     fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , name);
@@ -243,7 +253,8 @@ void build_vv_file()
 
     fprintf(f_veri, "endmodule");
 
-    fclose (f_veri);
+    fclose(f_veri);
+    fclose(f_par );
 
     // se for multicore, criar arquivos de simulacao para cada tipo de proc
     if (sim_typ==1)
