@@ -55,7 +55,8 @@ always @ (*) begin
 		5'd22 : out <= shr; // SHR
 		5'd23 : out <= srs; // SRS
 
-		5'd24 : out <= fima;// FIA
+		5'd24 : out <= fima;// F2I
+		5'd25 : out <= fima;// F2I
 
 		default: out <= {NUBITS{1'bx}};
 	endcase
@@ -296,7 +297,7 @@ module ula_fx
 	parameter SRS  = 0,
 
 	// Operacoes de conversao entre int e float
-	parameter FIA  = 0
+	parameter F2I  = 0
 )
 (
 	input         [       4:0] op,
@@ -356,7 +357,7 @@ generate if (LIN) my_lin #(NUBITS) my_lin(     in2, lin); else assign lin = {NUB
 generate if (LAN) my_lan #(NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
 generate if (LOR) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
 
-generate if (FIA) f2ima #(NBEXPO,NBMANT) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
+generate if (F2I) f2ima #(NBEXPO,NBMANT) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
 
 ula_fx_mux #(NUBITS)um(op,
                        in1, in2,

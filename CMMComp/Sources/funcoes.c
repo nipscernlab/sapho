@@ -130,8 +130,7 @@ void declar_ret(int et, int ret)
         {
             fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função %s? Dá-lhe código!\n", line_num+1, v_name[fun_id1]);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // int com float const
@@ -139,8 +138,7 @@ void declar_ret(int et, int ret)
         {
             fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função %s? Dá-lhe código!\n", line_num+1, v_name[fun_id1]);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[et%OFST]));
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]));
         }
 
         // int com float acc
@@ -157,8 +155,7 @@ void declar_ret(int et, int ret)
 
             get_cmp_cst(et,&etr,&eti);
             
-            add_instr("LOAD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
         }
 
         // int com comp var
@@ -168,8 +165,7 @@ void declar_ret(int et, int ret)
 
             get_cmp_ets(et,&etr,&eti);
             
-            add_instr("LOAD %s\n", v_name[etr % OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[etr % OFST]);
         }
 
         // int com comp acc
@@ -177,7 +173,7 @@ void declar_ret(int et, int ret)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
-            add_instr("SETP lixo\n");
+            add_instr("SETP aux_cmp\n");
             add_instr("FIA\n");
         }
 

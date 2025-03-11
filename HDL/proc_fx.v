@@ -70,7 +70,7 @@ module proc_fx
 	parameter EQU   =   0,
 
     // Operacoes de conversao entre int e float
-	parameter FIA   =   0,
+	parameter F2I   =   0,
 
 	// -------------------------------------------------------------------------
 	// Parametros internos -----------------------------------------------------
@@ -149,7 +149,7 @@ core_fx #(.NUBITS(NUBITS),
           .SRS   (SRS   ),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
-          .FIA   (FIA   ),
+          .F2I   (F2I   ),
           .PST   (PST   ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
@@ -202,7 +202,7 @@ core_fx #(.NUBITS(NUBITS),
           .SRS   (SRS   ),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
-          .FIA   (FIA   ),
+          .F2I   (F2I   ),
           .PST   (PST   ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,

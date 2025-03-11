@@ -90,12 +90,14 @@ LINHA          \n
 "PSET"   eval_opcode(45,0, yytext, "PST" );
 "SSGN"   eval_opcode(46,0, yytext, "SGN" );
 "NORM"   eval_opcode(47,0, yytext, "NRM" );
-"FIA"    eval_opcode(48,0, yytext, "FIA" );
+"FIA"    eval_opcode(48,0, yytext, "F2I" );
 "ABS"    eval_opcode(49,0, yytext, "ABS" );
 "ILDI"   eval_opcode(50,1, yytext, "FFT" );
 "SIGN"   eval_opcode(51,1, yytext, "SGN" );
 "LDI"    eval_opcode(52,1, yytext, "LDI" );
 "ISRF"   eval_opcode(53,0, yytext, "FFT" );
+"FIM"    eval_opcode(54,1, yytext, "F2I" );
+"PFIM"   eval_opcode(55,1, yytext, "F2I" );
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso

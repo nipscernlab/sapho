@@ -37,8 +37,7 @@ void if_exp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // float const
@@ -46,8 +45,7 @@ void if_exp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
         }
 
         // float acc
@@ -66,8 +64,7 @@ void if_exp(int et)
             int etr,eti;
             get_cmp_cst(et,&etr,&eti);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }
 
         // comp var
@@ -75,8 +72,7 @@ void if_exp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // comp acc
@@ -217,8 +213,7 @@ void while_expexp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // float const
@@ -226,8 +221,7 @@ void while_expexp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
         }
 
         // float acc
@@ -246,8 +240,7 @@ void while_expexp(int et)
             int etr,eti;
             get_cmp_cst(et,&etr,&eti);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }
 
         // comp var
@@ -255,8 +248,7 @@ void while_expexp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // comp acc
@@ -399,8 +391,7 @@ void exec_switch(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // float const
@@ -408,8 +399,7 @@ void exec_switch(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
         }
 
         // float acc
@@ -428,8 +418,7 @@ void exec_switch(int et)
             int etr,eti;
             get_cmp_cst(et,&etr,&eti);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
         }
 
         // comp var
@@ -437,8 +426,7 @@ void exec_switch(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("FIM %s\n", v_name[et%OFST]);
         }
 
         // comp acc

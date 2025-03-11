@@ -5795,6 +5795,9 @@ int oper_linv(int et)
     char ld[10];
     if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
 
+    char f2i[10];
+    if (acc_ok == 0) strcpy(f2i,"FIM"); else strcpy(f2i,"PFIM");
+
     if (prtype == 0)
     {
         // se for um int na memoria
@@ -5815,8 +5818,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("%s %s\n", f2i, v_name[et%OFST]);
             add_instr("LINV\n");
         }
 
@@ -5825,8 +5827,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("%s %d // %s\n", f2i, f2mf(v_name[et%OFST]), v_name[et%OFST]);
             add_instr("LINV\n");
         }
 
@@ -5846,8 +5847,7 @@ int oper_linv(int et)
 
             get_cmp_cst(et,&etr,&eti);
 
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-            add_instr("FIA\n");
+            add_instr("%s %d // %s\n", f2i, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("LINV\n");
         }
 
@@ -5856,8 +5856,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("%s %s\n", f2i, v_name[et%OFST]);
             add_instr("LINV\n");
         }
 

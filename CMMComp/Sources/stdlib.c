@@ -71,8 +71,7 @@ void exec_out2(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
 
-            add_instr("PLD %s\n", v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("PFIM %s\n", v_name[et%OFST]);
         }
 
         // float const
@@ -80,8 +79,7 @@ void exec_out2(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
 
-            add_instr("PLD %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("FIA\n");
+            add_instr("PFIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
         }
 
         // float acc
