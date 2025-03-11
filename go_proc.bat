@@ -90,23 +90,17 @@ gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri
 move ASMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del ASMComp.c
 
-:: Gera executaveis utilitarios ------------------------------------------------
+:: Gera tradutores para o GTKWave ---------------------------------------------
 
 cd %SCR_DIR%
 
-flex -osvg_clean.c svg_clean.l
-
-gcc -o svg_clean.exe svg_clean.c
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
-gcc -o ys_build.exe ys_build.c
 
-move svg_clean.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move f2i_gtkw.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
-move ys_build.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
 
@@ -160,34 +154,17 @@ if exist %SIMU_DIR%\%GTKW% (
 
 cd %HDL_DIR%
 cp %UPROC%.v .
+cp %SCR_DIR%\proc2rtl.ys .
 
-:: processador
-%BIN_DIR%\ys_build.exe %PROC% %PROC%
-yosys -s rtl.ys
-cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
-%BIN_DIR%\svg_clean.exe %PROC%.svg %TMP_PRO%/%PROC%.svg
-del %PROC%.json
-del %PROC%.svg
+sed -i "s/@PROC@/%PROC%/" proc2rtl.ys
+yosys -s proc2rtl.ys
+cmd /c "netlistsvg proc_fft.json -o proc_fft.svg"
 
-:: addr_dec (output)
-%BIN_DIR%\ys_build.exe %PROC% addr_dec NUIOOU/NPORT
-yosys -s rtl.ys
-cmd /c "netlistsvg addr_dec.json -o addr_dec.svg"
-%BIN_DIR%\svg_clean.exe addr_dec.svg %TMP_PRO%/addr_dec.svg
-del addr_dec.json
-del addr_dec.svg
-
-:: core_fl
-%BIN_DIR%\ys_build.exe %PROC% core_fl CAL/CAL SRF/SRF ADD/ADD MLT/MLT DIV/DIV MOD/MOD ABS/ABS NRM/NRM PST/PST SGN/SGN NEG/NEG OR/OR AND/AND INV/INV XOR/XOR SHR/SHR SHL/SHL SRS/SRS LOR/LOR LAN/LAN LIN/LIN GRE/GRE LES/LES EQU/EQU
-yosys -s rtl.ys
-cmd /c "netlistsvg core_fl.json -o core_fl.svg"
-%BIN_DIR%\svg_clean.exe core_fl.svg %TMP_PRO%/core_fl.svg
-del core_fl.json
-del core_fl.svg
-
+cp  proc_fft.svg %TMP_PRO%
+del proc_fft.json
+del proc_fft.svg
+del proc2rtl.ys
 del %PROC%.v
-del %HDL_DIR%\rtl.ys
-del %HDL_DIR%\proc_par.txt
 
 :: Limpa a pasta de arquivos temporarios --------------------------------------
 
