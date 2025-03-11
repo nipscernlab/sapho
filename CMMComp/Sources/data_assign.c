@@ -13,10 +13,10 @@
 
 FILE *f_asm;               // arquivo de saida
 
-int  acc_ok       = 0;     // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
-int  prtype       = 0;     // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
-int  line_num     = 0;     // numero da linha sendo parseada
-int  i2f = 0, f2i = 0;     // se vai precisar das macros int2float e float2int
+int  acc_ok   = 0;         // 0 -> acc vazio (use LOAD)  , 1 -> acc carregado (use PLD)
+int  prtype   = 0;         // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
+int  line_num = 0;         // numero da linha sendo parseada
+int  i2f      = 0;          // se vai precisar da macro int2float
 
 char fname [512];          // nome da funcao atual sendo parseada
 int  v_asgn[NVARMAX];      // se variavel ja recebeu algum valor
@@ -79,7 +79,7 @@ void var_set(int id, int et)
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
             add_instr("%s %s\n", ld, v_name[et % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -90,7 +90,7 @@ void var_set(int id, int et)
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
             add_instr("%s %u // %s\n", ld, f2mf(v_name[et % OFST]), v_name[et % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -100,7 +100,7 @@ void var_set(int id, int et)
         {
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
             
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -113,7 +113,7 @@ void var_set(int id, int et)
             get_cmp_cst(et,&etr,&eti);
             
             add_instr("%s %u // %s\n", ld, f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -126,7 +126,7 @@ void var_set(int id, int et)
             get_cmp_ets(et,&etr,&eti);
             
             add_instr("%s %s\n", ld, v_name[etr % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -137,7 +137,7 @@ void var_set(int id, int et)
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
             add_instr("SETP lixo\n");
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -600,7 +600,7 @@ void array_set(int id, int et, int fft)
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
             add_instr("PLD %s\n", v_name[et % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
@@ -612,7 +612,7 @@ void array_set(int id, int et, int fft)
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
             add_instr("PLD %d // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
@@ -623,7 +623,7 @@ void array_set(int id, int et, int fft)
         {
             fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
             
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
@@ -637,7 +637,7 @@ void array_set(int id, int et, int fft)
             get_cmp_cst(et,&etr,&eti);
             
             add_instr("PLD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
@@ -651,7 +651,7 @@ void array_set(int id, int et, int fft)
             get_cmp_ets(et,&etr,&eti);
             
             add_instr("PLD %s\n", v_name[etr % OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
@@ -663,7 +663,7 @@ void array_set(int id, int et, int fft)
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
             add_instr("SETP lixo\n");
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }

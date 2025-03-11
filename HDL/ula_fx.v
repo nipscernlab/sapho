@@ -17,6 +17,7 @@ module ula_fx_mux
 	 input     [NUBITS-1:0] les, gre, equ,
 	 input     [NUBITS-1:0] lin, lan, lor,
 	 input     [NUBITS-1:0] shl, shr, srs,
+	 input	   [NUBITS-1:0] fima,
 
 	output reg [NUBITS-1:0] out
 );
@@ -53,6 +54,8 @@ always @ (*) begin
 		5'd21 : out <= shl; // SHL
 		5'd22 : out <= shr; // SHR
 		5'd23 : out <= srs; // SRS
+
+		5'd24 : out <= fima;// FIA
 
 		default: out <= {NUBITS{1'bx}};
 	endcase
@@ -254,9 +257,11 @@ module ula_fx
 #(
 	// Geral
 	parameter                     NUBITS = 32,
+	parameter                     NBMANT = 23,
+	parameter                     NBEXPO =  8,
 	parameter signed [NUBITS-1:0] NUGAIN = 64,
 
-	// Operacoes aritmeticas
+	// Operacoes aritmeticas inteiras
 	parameter ADD  = 0,
 	parameter MLT  = 0,
 	parameter DIV  = 0,
@@ -288,7 +293,10 @@ module ula_fx
 	// Operacoes de deslocamento de bits
 	parameter SHR  = 0,
 	parameter SHL  = 0,
-	parameter SRS  = 0
+	parameter SRS  = 0,
+
+	// Operacoes de conversao entre int e float
+	parameter FIA  = 0
 )
 (
 	input         [       4:0] op,
@@ -319,6 +327,7 @@ wire signed [NUBITS-1:0] gre;
 wire signed [NUBITS-1:0] les;
 wire signed [NUBITS-1:0] equ;
 wire signed [NUBITS-1:0] sgn;
+wire signed [NUBITS-1:0] fima;
 
 generate if (NRM) my_nrm #(NUBITS, NUGAIN) my_nrm(in2,      nrm); else assign nrm = {NUBITS{1'bx}}; endgenerate
 generate if (ABS) my_abs #(NUBITS        ) my_abs(in2,      abs); else assign abs = {NUBITS{1'bx}}; endgenerate
@@ -347,6 +356,8 @@ generate if (LIN) my_lin #(NUBITS) my_lin(     in2, lin); else assign lin = {NUB
 generate if (LAN) my_lan #(NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
 generate if (LOR) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
 
+generate if (FIA) f2ima #(NBEXPO,NBMANT) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
+
 ula_fx_mux #(NUBITS)um(op,
                        in1, in2,
                        add, mlt, div, mod, neg,
@@ -355,6 +366,7 @@ ula_fx_mux #(NUBITS)um(op,
                        les, gre, equ,
                        lin, lan, lor,
                        shl, shr, srs,
+					   fima,
                        out);
 
 assign is_zero = (out == {NUBITS{1'b0}});

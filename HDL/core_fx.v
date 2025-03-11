@@ -6,8 +6,10 @@ module core_fx
 
 	// fluxo de dados
 	parameter NUBITS = 32,              // Numero de bits de dados
-	parameter NBOPCO = 6,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
-	parameter NBOPER = 9,               // Numero de bits de operando
+	parameter NBMANT = 23,              // Numero de bits da mantissa
+	parameter NBEXPO =  8,              // Numero de bits do expoente
+	parameter NBOPCO =  6,              // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
+	parameter NBOPER =  9,              // Numero de bits de operando
 
 	// memorias
 	parameter MDATAW = 9,               // Numero de bits de endereco da memoria de dados
@@ -67,7 +69,10 @@ module core_fx
 	parameter LIN   =   0,
 	parameter GRE   =   0,
 	parameter LES   =   0,
-	parameter EQU   =   0
+	parameter EQU   =   0,
+
+	// Operacoes de conversao entre int e float
+	parameter FIA   =   0
 )
 (
 	input                           clk, rst,
@@ -163,6 +168,8 @@ wire signed [NUBITS-1:0] ula_acc;
 wire                     ula_is_zero;
 
 ula_fx #(.NUBITS(NUBITS),
+		 .NBMANT(NBMANT),
+		 .NBEXPO(NBEXPO),
          .NUGAIN(NUGAIN),
          .DIV   (DIV   ),
          .OR    (OR    ),
@@ -184,6 +191,7 @@ ula_fx #(.NUBITS(NUBITS),
          .SRS   (SRS   ),
          .NRM   (NRM   ),
          .ABS   (ABS   ),
+		 .FIA   (FIA   ),
          .SGN   (SGN   ),
          .PST   (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
 

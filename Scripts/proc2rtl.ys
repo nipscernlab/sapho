@@ -18,7 +18,20 @@ read_verilog stack.v
 read_verilog ula_fl.v
 read_verilog ula_fx.v
 read_verilog ula.v
+read_verilog f2ima.v
 prep -top @PROC@
 
 cd @PROC@
 write_json -selected @PROC@.json
+
+cd p_proc_fft
+write_json -selected p_proc_fft.json
+
+cd genblk1.core
+write_json -selected core.json
+
+cd ula
+write_json -selected ula.json
+
+cd genblk23.my_f2ima
+write_json -selected f2ima.json

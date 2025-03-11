@@ -18,7 +18,6 @@ void get_cmp_ets(int et, int *et_r, int *et_i);     // pega ets de uma variavel 
 // uso de macros externas -----------------------------------------------------
 
 extern int i2f ;                                    // vai usar funcao int2float
-extern int f2i ;                                    // vai usar funcao float2int
 extern int fadd;                                    // vai usar funcao float_add
 extern int fmlt;                                    // vai usar funcao float_mlt
 extern int fdiv;                                    // vai usar funcao float_div

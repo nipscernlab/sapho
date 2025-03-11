@@ -19,7 +19,7 @@ set PROJET=FFT
 :: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
 set PROC=proc_fft
 :: tipo de processador (int ou float)
-set PROC_DATA=float
+set PROC_DATA=int
 :: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
 :: se nao achar, usa simulacao padrao
 set TB=errado
@@ -94,6 +94,10 @@ del ASMComp.c
 
 cd %SCR_DIR%
 
+flex -osvg_clean.c svg_clean.l
+gcc -o svg_clean.exe svg_clean.c
+move svg_clean.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
+
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
@@ -126,7 +130,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v f2ima.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -158,11 +162,32 @@ cp %SCR_DIR%\proc2rtl.ys .
 
 sed -i "s/@PROC@/%PROC%/" proc2rtl.ys
 yosys -s proc2rtl.ys
-cmd /c "netlistsvg proc_fft.json -o proc_fft.svg"
 
-cp  proc_fft.svg %TMP_PRO%
-del proc_fft.json
-del proc_fft.svg
+cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
+%BIN_DIR%\svg_clean.exe %PROC%.svg %TMP_PRO%/%PROC%.svg
+del %PROC%.json
+del %PROC%.svg
+
+cmd /c "netlistsvg p_proc_fft.json -o p_proc_fft.svg"
+%BIN_DIR%\svg_clean.exe p_proc_fft.svg %TMP_PRO%/p_proc_fft.svg
+del p_proc_fft.json
+del p_proc_fft.svg
+
+cmd /c "netlistsvg core.json -o core.svg"
+%BIN_DIR%\svg_clean.exe core.svg %TMP_PRO%/core.svg
+del core.json
+del core.svg
+
+cmd /c "netlistsvg ula.json -o ula.svg"
+%BIN_DIR%\svg_clean.exe ula.svg %TMP_PRO%/ula.svg
+del ula.json
+del ula.svg
+
+cmd /c "netlistsvg f2ima.json -o f2ima.svg"
+%BIN_DIR%\svg_clean.exe f2ima.svg %TMP_PRO%/f2ima.svg
+del f2ima.json
+del f2ima.svg
+
 del proc2rtl.ys
 del %PROC%.v
 
@@ -180,5 +205,8 @@ del %TMP_PRO%\%PROC%.vvp
 del %TMP_PRO%\%TB_MOD%.vcd
 del %TMP_PRO%\trad_cmm.txt
 del %TMP_PRO%\trad_opcode.txt
+del %TMP_PRO%\swap.txt
+del %TMP_PRO%\tasm.txt
+del %TMP_PRO%\tmem.txt
 
 cd %ROOT_DIR%

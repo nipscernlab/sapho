@@ -90,6 +90,7 @@ LINHA          \n
 "PSET"   eval_opcode(45,0, yytext, "PST" );
 "SSGN"   eval_opcode(46,0, yytext, "SGN" );
 "NORM"   eval_opcode(47,0, yytext, "NRM" );
+"FIA"    eval_opcode(48,0, yytext, "FIA" );
 "ABS"    eval_opcode(49,0, yytext, "ABS" );
 "ILDI"   eval_opcode(50,1, yytext, "FFT" );
 "SIGN"   eval_opcode(51,1, yytext, "SGN" );
@@ -104,7 +105,7 @@ LINHA          \n
 {COMEN}
 {EMPTY}
 {LINHA}
-.         fprintf(stderr, "Erro de sintaxe: %s\n", yytext);
+.    {}//fprintf(stderr, "Erro de sintaxe: %s\n", yytext);
 %%
 
 int main(int argc, char *argv[])

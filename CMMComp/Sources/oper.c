@@ -5816,7 +5816,7 @@ int oper_linv(int et)
             fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
             add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("LINV\n");
         }
 
@@ -5826,7 +5826,7 @@ int oper_linv(int et)
             fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("LINV\n");
         }
 
@@ -5835,7 +5835,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("LINV\n");
         }
 
@@ -5847,7 +5847,7 @@ int oper_linv(int et)
             get_cmp_cst(et,&etr,&eti);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("LINV\n");
         }
 
@@ -5857,7 +5857,7 @@ int oper_linv(int et)
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
             add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("LINV\n");
         }
 
@@ -5867,7 +5867,7 @@ int oper_linv(int et)
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
             add_instr("SETP aux_lixo\n");
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("LINV\n");
         }
     }
@@ -6108,7 +6108,7 @@ int oper_shift(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
             add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s %s\n", op, v_name[et1%OFST]);
         }
 
@@ -6118,14 +6118,14 @@ int oper_shift(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s %s\n", op, v_name[et1%OFST]);
         }
 
         // int var com float acc
         if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
         {
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("%s %s\n", op, v_name[et1%OFST]);
         }
 
@@ -6148,7 +6148,7 @@ int oper_shift(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
             add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("S%s\n", op);
         }
 
@@ -6158,7 +6158,7 @@ int oper_shift(int et1, int et2, int type)
             fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
             add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("S%s\n", op);
         }
 
@@ -6167,7 +6167,7 @@ int oper_shift(int et1, int et2, int type)
         {
             fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
             
-            add_instr("CALL float2int\n"); f2i = 1;
+            add_instr("FIA\n");
             add_instr("S%s\n", op);
         }
     }

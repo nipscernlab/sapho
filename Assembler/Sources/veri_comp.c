@@ -209,6 +209,8 @@ void build_vv_file()
     else
     {
         fprintf(f_veri, "proc_fx\n#(.NUBITS(%d),\n",nbits );
+        fprintf(f_veri,            ".NBMANT(%d),\n",nbmant);
+        fprintf(f_veri,            ".NBEXPO(%d),\n",nbexpo);
         fprintf(f_veri,            ".NUGAIN(%d),\n",nugain);
     }
 

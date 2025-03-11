@@ -374,6 +374,13 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
+			48  : begin
+						ula_op  <= 5'd24;    // FIA    -> float2int com acumulador 
+						 srf    <= 1'b0;	 // fazer o FIA com memoria!
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 			49  : begin
 						ula_op  <= 5'd8;     // ABS   -> retorna o valor absoluto do acc (exemplo: x = abs(y)) 
 						 srf    <= 1'b0;     // fazer o ABS com memoria!
@@ -751,6 +758,13 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			47: begin                     // NORM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			48: begin                     // FIA
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;

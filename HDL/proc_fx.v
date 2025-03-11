@@ -10,6 +10,8 @@ module proc_fx
 
 	// Fluxo de dados
 	parameter NUBITS = 16,              // Tamanho da palavra do processador
+    parameter NBMANT = 23,              // Numero de bits da mantissa
+    parameter NBEXPO =  8,              // Numero de bits do expoente
 	parameter MDATAS = 64,              // Tamanho da memoria de dados
 	parameter MINSTS = 64,              // Tamanho da memoria de intrucoes
 	parameter SDEPTH =  8,              // Tamanho da pilha   de instrucao
@@ -67,6 +69,9 @@ module proc_fx
 	parameter LES   =   0,
 	parameter EQU   =   0,
 
+    // Operacoes de conversao entre int e float
+	parameter FIA   =   0,
+
 	// -------------------------------------------------------------------------
 	// Parametros internos -----------------------------------------------------
 	// -------------------------------------------------------------------------
@@ -107,6 +112,8 @@ if (MDATAW > MINSTW) begin
 wire [NBOPCO+MDATAW-1:0] instr;
 
 core_fx #(.NUBITS(NUBITS),
+          .NBMANT(NBMANT),
+          .NBEXPO(NBEXPO),
           .NBOPCO(NBOPCO),
           .MDATAW(MDATAW),
           .MINSTW(MINSTW),
@@ -142,6 +149,7 @@ core_fx #(.NUBITS(NUBITS),
           .SRS   (SRS   ),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
+          .FIA   (FIA   ),
           .PST   (PST   ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
@@ -157,6 +165,8 @@ end else begin
 wire [NBOPCO+MINSTW-1:0] instr;
 
 core_fx #(.NUBITS(NUBITS),
+          .NBMANT(NBMANT),
+          .NBEXPO(NBEXPO),
           .NBOPCO(NBOPCO),
           .MDATAW(MDATAW),
           .MINSTW(MINSTW),
@@ -192,6 +202,7 @@ core_fx #(.NUBITS(NUBITS),
           .SRS   (SRS   ),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
+          .FIA   (FIA   ),
           .PST   (PST   ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
