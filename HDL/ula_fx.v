@@ -17,7 +17,7 @@ module ula_fx_mux
 	 input     [NUBITS-1:0] les, gre, equ,
 	 input     [NUBITS-1:0] lin, lan, lor,
 	 input     [NUBITS-1:0] shl, shr, srs,
-	 input	   [NUBITS-1:0] fima,
+	 input	   [NUBITS-1:0] fima, ifma,
 
 	output reg [NUBITS-1:0] out
 );
@@ -57,10 +57,34 @@ always @ (*) begin
 
 		5'd24 : out <= fima;// F2I
 		5'd25 : out <= fima;// F2I
+		5'd26 : out <= ifma;// I2F
+		5'd27 : out <= ifma;// I2F
 
 		default: out <= {NUBITS{1'bx}};
 	endcase
 end
+
+endmodule
+
+// circuito de saida ----------------------------------------------------------
+
+module ula_out
+#(
+	parameter NUBITS = 32,
+	parameter NBMANT = 23,
+	parameter NBEXPO =  8
+)
+(
+	 input [       4:0] op,
+	 input [NUBITS-1:0] in,
+	output [NUBITS-1:0] out
+);
+
+wire [NUBITS-1:0] fn_out;
+
+fnorm #(NBMANT,NBEXPO) my_fnorm(in, fn_out);
+
+assign out = ((op == 5'd26) || (op == 5'd27)) ? fn_out : in;
 
 endmodule
 
@@ -297,7 +321,8 @@ module ula_fx
 	parameter SRS  = 0,
 
 	// Operacoes de conversao entre int e float
-	parameter F2I  = 0
+	parameter F2I  = 0,
+	parameter I2F  = 0
 )
 (
 	input         [       4:0] op,
@@ -329,6 +354,7 @@ wire signed [NUBITS-1:0] les;
 wire signed [NUBITS-1:0] equ;
 wire signed [NUBITS-1:0] sgn;
 wire signed [NUBITS-1:0] fima;
+wire signed [NUBITS-1:0] ifma;
 
 generate if (NRM) my_nrm #(NUBITS, NUGAIN) my_nrm(in2,      nrm); else assign nrm = {NUBITS{1'bx}}; endgenerate
 generate if (ABS) my_abs #(NUBITS        ) my_abs(in2,      abs); else assign abs = {NUBITS{1'bx}}; endgenerate
@@ -357,7 +383,10 @@ generate if (LIN) my_lin #(NUBITS) my_lin(     in2, lin); else assign lin = {NUB
 generate if (LAN) my_lan #(NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
 generate if (LOR) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
 
-generate if (F2I) f2ima #(NBEXPO,NBMANT) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
+generate if (F2I) f2ima #(NBMANT,NBEXPO) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
+generate if (I2F) i2fma #(NBMANT,NBEXPO) my_i2fma (op,in1,in2,ifma); else assign ifma = {NUBITS{1'bx}}; endgenerate
+
+wire [NUBITS-1:0] mux_out;
 
 ula_fx_mux #(NUBITS)um(op,
                        in1, in2,
@@ -367,8 +396,10 @@ ula_fx_mux #(NUBITS)um(op,
                        les, gre, equ,
                        lin, lan, lor,
                        shl, shr, srs,
-					   fima,
-                       out);
+					   fima,ifma,
+                       mux_out);
+
+generate if (I2F) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate
 
 assign is_zero = (out == {NUBITS{1'b0}});
 

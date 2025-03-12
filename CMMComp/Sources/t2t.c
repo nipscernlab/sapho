@@ -300,7 +300,7 @@ void header_float(char *fasm, char *pc_sim_mem)
 void mac_geni(char *fasm)
 {
     // se nao tiver nada pra fazer, sai!
-    if (!(i2f || fadd || fmlt || fdiv || fsqrti || fatani)) return;
+    if (!(fadd || fmlt || fdiv || fsqrti || fatani)) return;
 
     char tasm[1024]; // arquivo temporario para o asm
     char tmem[1024]; // arquivo temporario para a tabela de memoria
@@ -323,12 +323,6 @@ void mac_geni(char *fasm)
 
          sprintf(tasm, "%s/%s", dir_macro, "float_gen.asm");
         fcat2end(tasm,fasm);
-
-    if (i2f)
-    {
-         sprintf(tasm, "%s/%s", dir_macro, "float_i2f.asm");
-        fcat2end(tasm,fasm);
-    }
 
     if (fadd)
     {

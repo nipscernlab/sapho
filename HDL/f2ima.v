@@ -1,7 +1,7 @@
 module f2ima
 #(
-	parameter EXP = 8,
-	parameter MAN = 23
+	parameter MAN = 23,
+	parameter EXP = 8
 )
 (
     input         [      4:0] op,

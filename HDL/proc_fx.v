@@ -71,6 +71,7 @@ module proc_fx
 
     // Operacoes de conversao entre int e float
 	parameter F2I   =   0,
+    parameter I2F   =   0,
 
 	// -------------------------------------------------------------------------
 	// Parametros internos -----------------------------------------------------
@@ -150,6 +151,7 @@ core_fx #(.NUBITS(NUBITS),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
           .F2I   (F2I   ),
+          .I2F   (I2F   ),
           .PST   (PST   ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
@@ -203,6 +205,7 @@ core_fx #(.NUBITS(NUBITS),
           .NRM   (NRM   ),
           .ABS   (ABS   ),
           .F2I   (F2I   ),
+          .I2F   (I2F   ),
           .PST   (PST   ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,

@@ -130,7 +130,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v int2float.v proc_fl.v float2int.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v f2ima.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v proc_fl.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v f2ima.v i2fma.v fnorm.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -182,11 +182,6 @@ cmd /c "netlistsvg ula.json -o ula.svg"
 %BIN_DIR%\svg_clean.exe ula.svg %TMP_PRO%/ula.svg
 del ula.json
 del ula.svg
-
-cmd /c "netlistsvg f2ima.json -o f2ima.svg"
-%BIN_DIR%\svg_clean.exe f2ima.svg %TMP_PRO%/f2ima.svg
-del f2ima.json
-del f2ima.svg
 
 del proc2rtl.ys
 del %PROC%.v

@@ -98,6 +98,9 @@ LINHA          \n
 "ISRF"   eval_opcode(53,0, yytext, "FFT" );
 "FIM"    eval_opcode(54,1, yytext, "F2I" );
 "PFIM"   eval_opcode(55,1, yytext, "F2I" );
+"IFA"    eval_opcode(56,0, yytext, "I2F" );
+"IFM"    eval_opcode(57,1, yytext, "I2F" );
+"PIFM"   eval_opcode(58,1, yytext, "I2F" );
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso

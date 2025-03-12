@@ -72,7 +72,8 @@ module core_fx
 	parameter EQU   =   0,
 
 	// Operacoes de conversao entre int e float
-	parameter F2I   =   0
+	parameter F2I   =   0,
+	parameter I2F   =   0
 )
 (
 	input                           clk, rst,
@@ -192,6 +193,7 @@ ula_fx #(.NUBITS(NUBITS),
          .NRM   (NRM   ),
          .ABS   (ABS   ),
 		 .F2I   (F2I   ),
+		 .I2F   (I2F   ),
          .SGN   (SGN   ),
          .PST   (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
 

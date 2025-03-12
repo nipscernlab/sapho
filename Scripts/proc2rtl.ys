@@ -3,9 +3,7 @@ read_verilog addr_dec.v
 read_verilog core_fl.v
 read_verilog core_fx.v
 read_verilog float2index.v
-read_verilog float2int.v
 read_verilog instr_dec.v
-read_verilog int2float.v
 read_verilog mem_data.v
 read_verilog mem_instr.v
 read_verilog pc.v
@@ -19,6 +17,8 @@ read_verilog ula_fl.v
 read_verilog ula_fx.v
 read_verilog ula.v
 read_verilog f2ima.v
+read_verilog i2fma.v
+read_verilog fnorm.v
 prep -top @PROC@
 
 cd @PROC@
@@ -32,6 +32,3 @@ write_json -selected core.json
 
 cd ula
 write_json -selected ula.json
-
-cd genblk23.my_f2ima
-write_json -selected f2ima.json

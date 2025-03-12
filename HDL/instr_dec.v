@@ -424,7 +424,28 @@ always @ (posedge clk or posedge rst) begin
 						out_en  <= 1'b0;
 					end
 			55  : begin
-						ula_op  <= 5'd25;    // PFIM   -> float2int com memopria, dando um push antes
+						ula_op  <= 5'd25;    // PFIM   -> float2int com memoria, dando um push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			56  : begin
+						ula_op  <= 5'd26;    // IFA    -> int2float com acumulador 
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			57  : begin
+						ula_op  <= 5'd27;    // IFM    -> int2float com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			58  : begin
+						ula_op  <= 5'd27;    // PIFM   -> int2float com memoria, dando um push antes
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
@@ -828,6 +849,27 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			55: begin                     // PFIM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			56: begin                     // IFA
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			57: begin                     // IFM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			58: begin                     // PIFM
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
