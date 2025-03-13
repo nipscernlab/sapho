@@ -101,6 +101,11 @@ LINHA          \n
 "IFA"    eval_opcode(56,0, yytext, "I2F" );
 "IFM"    eval_opcode(57,1, yytext, "I2F" );
 "PIFM"   eval_opcode(58,1, yytext, "I2F" );
+"NEGM"   eval_opcode(59,1, yytext, "NEGM");
+"PNEGM"  eval_opcode(60,1, yytext, "NEGM");
+"FNEG"   eval_opcode(61,0, yytext, "FNEG");
+"FNEGM"  eval_opcode(62,1, yytext, "FNEGM");
+"PFNEGM" eval_opcode(63,1, yytext, "FNEGM");
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso

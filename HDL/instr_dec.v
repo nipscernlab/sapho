@@ -451,6 +451,41 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
+			59  : begin
+						ula_op  <= 5'd28;    // NEGM   -> negativo com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			60  : begin
+						ula_op  <= 5'd28;    // PNEGM  -> negativo com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			61  : begin
+						ula_op  <= 5'd29;    // FNEG   -> negativo em ponto flutuante com acc
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			62  : begin
+						ula_op  <= 5'd30;    // FNEGM  -> negativo em ponto flutuante com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			63  : begin
+						ula_op  <= 5'd30;    // PFNEGM -> negativo em ponto flutuante com memoria dando um push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 		default: begin
 						ula_op  <= 5'dx;
 						 srf    <= 1'bx;
@@ -870,6 +905,41 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			58: begin                     // PIFM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			59: begin                     // NEGM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			60: begin                     // PNEGM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			61: begin                     // FNEG
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			62: begin                     // FNEGM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			63: begin                     // PFNEGM
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;

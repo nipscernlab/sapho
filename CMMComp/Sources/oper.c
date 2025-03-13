@@ -25,10 +25,11 @@ int fmlt = 0; // se vai precisar de macro de multipl em ponto flutuante
 int oper_neg(int et)
 {
     int  etr, eti;
-    char ld [10 ];
     char num[128];
 
-    if (acc_ok == 0) strcpy(ld, "LOAD"); else strcpy(ld, "PLD");
+    char   ld[10]; if (acc_ok == 0) strcpy(  ld,  "LOAD"); else strcpy(ld,   "PLD"   );
+    char  neg[10]; if (acc_ok == 0) strcpy( neg,  "NEGM"); else strcpy(neg,  "PNEGM" );
+    char fneg[10]; if (acc_ok == 0) strcpy(fneg, "FNEGM"); else strcpy(fneg, "PFNEGM");
 
     if (prtype == 0)
     {
@@ -41,8 +42,7 @@ int oper_neg(int et)
         // se for um int variavel na memoria
         if ((get_type(et) == 1) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
         {
-            add_instr("%s %s\n", ld, v_name[et % OFST]);
-            add_instr("NEG\n");
+            add_instr("%s %s\n", neg, v_name[et % OFST]);
         }
 
         // se for um int no acc
@@ -61,18 +61,13 @@ int oper_neg(int et)
         // se for um float variavel na memoria
         if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
         {
-            add_instr("%s %s\n", ld, v_name[et % OFST]);
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
+            add_instr("%s %s\n", fneg, v_name[et % OFST]);
         }
 
         // se for um float no acc
         if ((get_type(et) == 2) && (et % OFST == 0))
         {
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
+            add_instr("FNEG\n");
         }
 
         // se for um comp constante na memoria
@@ -86,10 +81,7 @@ int oper_neg(int et)
             
             // the imaginary constant must be negated by code
             sprintf  (num, "%s",    v_name[eti % OFST]);
-            add_instr("PLD %u // %s\n", f2mf(num), num);
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
+            add_instr("PFNEGM %u // %s\n", f2mf(num), num);
         }
 
         // se for um comp variavel na memoria
@@ -97,29 +89,16 @@ int oper_neg(int et)
         {
             get_cmp_ets(et,&etr,&eti);
 
-            add_instr("%s %s\n", ld, v_name[etr % OFST]);
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
-
-            add_instr("PLD %s\n", v_name[eti % OFST]);
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
+            add_instr("%s %s\n", fneg, v_name[etr % OFST]);
+            add_instr("PFNEGM %s\n"  , v_name[eti % OFST]);
         }
 
         // se for um comp no acc
         if ((get_type(et) == 3) && (et % OFST == 0))
         {
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
             add_instr("SETP neg_aux\n");
-
-            add_instr("PLD float_nbits\n");
-            add_instr("SHL 1\n");
-            add_instr("SADD\n");
-            add_instr("PLD neg_aux\n");
+            add_instr("FNEG\n");
+            add_instr("PFNEGM neg_aux\n");
         }
     }
     else

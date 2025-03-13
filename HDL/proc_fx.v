@@ -49,6 +49,9 @@ module proc_fx
 	parameter PST   =   0,              // Zera se for negativo
 	parameter SGN   =   0,              // Copia sinal de uma variavel na outra
 	parameter NEG   =   0,              // complemento a 2
+    parameter NEGM  =   0,              // NEG com memoria
+    parameter FNEG  =   0,              // negativo de um numero em ponto flutuante
+    parameter FNEGM =   0,              // FNEG com memoria
 
 	// ULA - Opeardores logicos bitwise
 	parameter OR    =   0,
@@ -133,6 +136,9 @@ core_fx #(.NUBITS(NUBITS),
           .MOD   (MOD   ),
           .ADD   (ADD   ),
           .NEG   (NEG   ),
+          .NEGM  (NEGM  ),
+          .FNEG  (FNEG  ),
+          .FNEGM (FNEGM ),
           .MLT   (MLT   ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
@@ -187,6 +193,9 @@ core_fx #(.NUBITS(NUBITS),
           .MOD   (MOD   ),
           .ADD   (ADD   ),
           .NEG   (NEG   ),
+          .NEGM  (NEGM  ),
+          .FNEG  (FNEG  ),
+          .FNEGM (FNEGM ),
           .MLT   (MLT   ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),

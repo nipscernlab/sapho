@@ -9,56 +9,61 @@ module ula_fx_mux
 	parameter NUBITS = 32
 )
 (
-	 input     [       4:0] op,
-	 input     [NUBITS-1:0] in1, in2,
-	 input     [NUBITS-1:0] add, mlt, div, mod, neg,
-	 input     [NUBITS-1:0] nrm, abs, pst, sgn,
-	 input     [NUBITS-1:0] orr, ann, inv, cor,
-	 input     [NUBITS-1:0] les, gre, equ,
-	 input     [NUBITS-1:0] lin, lan, lor,
-	 input     [NUBITS-1:0] shl, shr, srs,
+	 input     [       4:0] op  ,
+	 input     [NUBITS-1:0] in1 , in2,
+	 input     [NUBITS-1:0] add , mlt, div, mod, neg,
+	 input     [NUBITS-1:0] nrm , abs, pst, sgn,
+	 input     [NUBITS-1:0] orr , ann, inv, cor,
+	 input     [NUBITS-1:0] les , gre, equ,
+	 input     [NUBITS-1:0] lin , lan, lor,
+	 input     [NUBITS-1:0] shl , shr, srs,
 	 input	   [NUBITS-1:0] fima, ifma,
+	 input	   [NUBITS-1:0] negm, fneg, fnegm,
 
 	output reg [NUBITS-1:0] out
 );
 
 always @ (*) begin
 	case (op)
-		5'd0  : out <= in2; // NOP
-		5'd1  : out <= in1; // LOAD
+		5'd0   : out <= in2;  // NOP
+		5'd1   : out <= in1;  // LOAD
 
-		5'd2  : out <= add; // ADD
-		5'd3  : out <= mlt; // MLT
-		5'd4  : out <= div; // DIV
-		5'd5  : out <= mod; // MOD
-		5'd6  : out <= neg; // NEG
+		5'd2   : out <= add;  // ADD
+		5'd3   : out <= mlt;  // MLT
+		5'd4   : out <= div;  // DIV
+		5'd5   : out <= mod;  // MOD
+		5'd6   : out <= neg;  // NEG
 
-		5'd7  : out <= nrm; // NORM
-		5'd8  : out <= abs; // ABS
-		5'd9  : out <= pst; // PST
-		5'd10 : out <= sgn; // SIGN
+		5'd7   : out <= nrm;  // NORM
+		5'd8   : out <= abs;  // ABS
+		5'd9   : out <= pst;  // PST
+		5'd10  : out <= sgn;  // SIGN
 
-		5'd11 : out <= orr; // OR
-		5'd12 : out <= ann; // AND
-		5'd13 : out <= inv; // INV
-		5'd14 : out <= cor; // XOR
+		5'd11  : out <= orr;  // OR
+		5'd12  : out <= ann;  // AND
+		5'd13  : out <= inv;  // INV
+		5'd14  : out <= cor;  // XOR
 
-		5'd15 : out <= les; // LES
-		5'd16 : out <= gre; // GRE
-		5'd17 : out <= equ; // EQU
+		5'd15  : out <= les;  // LES
+		5'd16  : out <= gre;  // GRE
+		5'd17  : out <= equ;  // EQU
 		
-		5'd18 : out <= lin; // LIN
-		5'd19 : out <= lan; // LAN
-		5'd20 : out <= lor; // LOR
+		5'd18  : out <= lin;  // LIN
+		5'd19  : out <= lan;  // LAN
+		5'd20  : out <= lor;  // LOR
 
-		5'd21 : out <= shl; // SHL
-		5'd22 : out <= shr; // SHR
-		5'd23 : out <= srs; // SRS
+		5'd21  : out <= shl;  // SHL
+		5'd22  : out <= shr;  // SHR
+		5'd23  : out <= srs;  // SRS
 
-		5'd24 : out <= fima;// F2I
-		5'd25 : out <= fima;// F2I
-		5'd26 : out <= ifma;// I2F
-		5'd27 : out <= ifma;// I2F
+		5'd24  : out <= fima; // F2I
+		5'd25  : out <= fima; // F2I
+		5'd26  : out <= ifma; // I2F
+		5'd27  : out <= ifma; // I2F
+
+		5'd28  : out <= negm; // NEGM
+		5'd29  : out <= fneg; // FNEG
+		5'd30  : out <= fnegm;// FNEGM
 
 		default: out <= {NUBITS{1'bx}};
 	endcase
@@ -84,6 +89,7 @@ wire [NUBITS-1:0] fn_out;
 
 fnorm #(NBMANT,NBEXPO) my_fnorm(in, fn_out);
 
+//             I2F              I2F         
 assign out = ((op == 5'd26) || (op == 5'd27)) ? fn_out : in;
 
 endmodule
@@ -274,6 +280,30 @@ assign out = -in;
 
 endmodule
 
+// FNEG -----------------------------------------------------------------------
+
+module my_fneg
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	 input [MAN+EXP:0] in,
+	output [MAN+EXP:0] out
+);
+
+wire                  s_in = in[MAN+EXP      ]; 
+wire signed [EXP-1:0] e_in = in[MAN+EXP-1:MAN];
+wire        [MAN-1:0] m_in = in[MAN    -1:0  ];
+
+wire                  s_out = ~s_in;
+wire signed [EXP-1:0] e_out =  e_in;
+wire        [MAN-1:0] m_out =  m_in;
+
+assign out = {s_out, e_out, m_out};
+
+endmodule
+
 // ****************************************************************************
 // Circuito Principal *********************************************************
 // ****************************************************************************
@@ -292,6 +322,9 @@ module ula_fx
 	parameter DIV  = 0,
 	parameter MOD  = 0,
 	parameter NEG  = 0,
+	parameter NEGM = 0,
+	parameter FNEG = 0,
+	parameter FNEGM= 0,
 
 	// Operacoes criadas
 	parameter NRM  = 0, // divide pela constante NUGAIN
@@ -336,6 +369,9 @@ wire signed [NUBITS-1:0] mlt;
 wire signed [NUBITS-1:0] div;
 wire signed [NUBITS-1:0] mod;
 wire signed [NUBITS-1:0] neg;
+wire signed [NUBITS-1:0] negm;
+wire signed [NUBITS-1:0] fneg;
+wire signed [NUBITS-1:0] fnegm;
 wire signed [NUBITS-1:0] abs;
 wire signed [NUBITS-1:0] nrm;
 wire signed [NUBITS-1:0] pst;
@@ -356,15 +392,18 @@ wire signed [NUBITS-1:0] sgn;
 wire signed [NUBITS-1:0] fima;
 wire signed [NUBITS-1:0] ifma;
 
-generate if (NRM) my_nrm #(NUBITS, NUGAIN) my_nrm(in2,      nrm); else assign nrm = {NUBITS{1'bx}}; endgenerate
-generate if (ABS) my_abs #(NUBITS        ) my_abs(in2,      abs); else assign abs = {NUBITS{1'bx}}; endgenerate
-generate if (PST) my_pst #(NUBITS        ) my_pst(in2,      pst); else assign pst = {NUBITS{1'bx}}; endgenerate
-generate if (OR ) my_or  #(NUBITS        ) my_or (in1, in2, orr); else assign orr = {NUBITS{1'bx}}; endgenerate
-generate if (AND) my_and #(NUBITS        ) my_and(in1, in2, ann); else assign ann = {NUBITS{1'bx}}; endgenerate
-generate if (XOR) my_xor #(NUBITS        ) my_xor(in1, in2, cor); else assign cor = {NUBITS{1'bx}}; endgenerate
-generate if (EQU) my_equ #(NUBITS        ) my_equ(in1, in2, equ); else assign equ = {NUBITS{1'bx}}; endgenerate
-generate if (SGN) my_sgn #(NUBITS        ) my_sgn(in1, in2, sgn); else assign sgn = {NUBITS{1'bx}}; endgenerate
-generate if (NEG) my_neg #(NUBITS        ) my_neg(in2,      neg); else assign neg = {NUBITS{1'bx}}; endgenerate
+generate if (NRM  ) my_nrm  #(NUBITS, NUGAIN) my_nrm  (in2,      nrm  ); else assign nrm   = {NUBITS{1'bx}}; endgenerate
+generate if (ABS  ) my_abs  #(NUBITS        ) my_abs  (in2,      abs  ); else assign abs   = {NUBITS{1'bx}}; endgenerate
+generate if (PST  ) my_pst  #(NUBITS        ) my_pst  (in2,      pst  ); else assign pst   = {NUBITS{1'bx}}; endgenerate
+generate if (OR   ) my_or   #(NUBITS        ) my_or   (in1, in2, orr  ); else assign orr   = {NUBITS{1'bx}}; endgenerate
+generate if (AND  ) my_and  #(NUBITS        ) my_and  (in1, in2, ann  ); else assign ann   = {NUBITS{1'bx}}; endgenerate
+generate if (XOR  ) my_xor  #(NUBITS        ) my_xor  (in1, in2, cor  ); else assign cor   = {NUBITS{1'bx}}; endgenerate
+generate if (EQU  ) my_equ  #(NUBITS        ) my_equ  (in1, in2, equ  ); else assign equ   = {NUBITS{1'bx}}; endgenerate
+generate if (SGN  ) my_sgn  #(NUBITS        ) my_sgn  (in1, in2, sgn  ); else assign sgn   = {NUBITS{1'bx}}; endgenerate
+generate if (NEG  ) my_neg  #(NUBITS        ) my_neg  (in2,      neg  ); else assign neg   = {NUBITS{1'bx}}; endgenerate
+generate if (NEGM ) my_neg  #(NUBITS        ) my_negm (in1,      negm ); else assign negm  = {NUBITS{1'bx}}; endgenerate
+generate if (FNEG ) my_fneg #(NBMANT, NBEXPO) my_fneg (in2,      fneg ); else assign fneg  = {NUBITS{1'bx}}; endgenerate
+generate if (FNEGM) my_fneg #(NBMANT, NBEXPO) my_fnegm(in1,      fnegm); else assign fnegm = {NUBITS{1'bx}}; endgenerate
 
 generate if (ADD) assign add = in1 + in2 ; else assign add = {NUBITS{1'bx}}; endgenerate
 generate if (MLT) assign mlt = in1 * in2 ; else assign mlt = {NUBITS{1'bx}}; endgenerate
@@ -397,6 +436,7 @@ ula_fx_mux #(NUBITS)um(op,
                        lin, lan, lor,
                        shl, shr, srs,
 					   fima,ifma,
+					   negm, fneg, fnegm,
                        mux_out);
 
 generate if (I2F) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate

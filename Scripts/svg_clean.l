@@ -8,10 +8,9 @@ FILE *svgo;
 
 %%
 
-\$paramod.*ula_fx.*<      { fprintf(svgo, "ula_fx<"     , yytext); }
-\$paramod.*f2ima.*<       { fprintf(svgo, "f2ima<"      , yytext); }
-\$paramod.*i2fma.*<       { fprintf(svgo, "i2fma<"      , yytext); }
 \$paramod.*ula_out.*<     { fprintf(svgo, "ula_out<"    , yytext); }
+\$paramod.*neg.*<         { fprintf(svgo, "neg<"        , yytext); }
+\$paramod.*ula_fx_mux.*<  { fprintf(svgo, "ula_fx_mux<" , yytext); }
 
 .|\n  { fprintf(svgo, "%s", yytext); }
 

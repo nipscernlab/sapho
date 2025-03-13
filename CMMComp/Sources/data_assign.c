@@ -136,6 +136,7 @@ void var_set(int id, int et)
             add_instr("SET %s\n",  v_name[id]);
         }
 
+        // se fizer const int na memoria, nao precisa usar i2f (economiza hadware)
         // left float e right int na memoria ----------------------------------
 
         if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST != 0))
