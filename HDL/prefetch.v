@@ -2,7 +2,7 @@ module prefetch
 #
 (
 	parameter  MINSTW = 8,
-	parameter  NBOPCO = 6,
+	parameter  NBOPCO = 7,
 	parameter  NBOPER = 9,
 
 	parameter [MINSTW-1:0] ITRADD = 0

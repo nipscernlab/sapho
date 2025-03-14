@@ -1,7 +1,7 @@
 module instr_dec
 #(
 	parameter NBDATA = 32, // Numero de bits dos dados
-	parameter NBOPCO = 6,  // Numero de bits de  opcode
+	parameter NBOPCO = 7,  // Numero de bits de  opcode
 	parameter NBOPER = 9,  // Numero de bits de  operando
 	parameter MDATAW = 8   // Numero de bits de  endereco da memoria de dados
 )
@@ -486,6 +486,27 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
+			64  : begin
+						ula_op  <= 5'd1;     // POP
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			65  : begin
+						ula_op  <= 5'd31;    // FADD  -> adicao em ponto flutuante com a memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			66  : begin
+						ula_op  <= 5'd31;    // SFADD -> adicao em ponto flutuante com a memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 		default: begin
 						ula_op  <= 5'dx;
 						 srf    <= 1'bx;
@@ -943,6 +964,27 @@ always @ (*) begin
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			64: begin                     // POP
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			65: begin                     // FADD
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			66: begin                     // FSADD
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
 						ldi      <= 1'b0;
 						invl     <= 1'b0;
 					end

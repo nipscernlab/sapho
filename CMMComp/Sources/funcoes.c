@@ -173,7 +173,7 @@ void declar_ret(int et, int ret)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
-            add_instr("SETP aux_cmp\n");
+            add_instr("POP\n");
             add_instr("FIA\n");
         }
 
@@ -469,11 +469,8 @@ void par_check(int et)
     for (i = 1; i < id_cal; i++) t_fun = t_fun/10;
     t_fun = t_fun % 10;
 
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    char i2f[10];
-    if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld ,"PLD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
 
     // ------------------------------------------------------------------------
     // checando todas as possibilidades ---------------------------------------
@@ -554,7 +551,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            add_instr("SETP lixo_aux\n");
+            add_instr("POP\n");
             add_instr("FIA\n");
         }
 
@@ -623,7 +620,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            add_instr("SETP lixo_aux\n");
+            add_instr("POP\n");
         }
 
         // original eh comp e chamada eh int var ------------------------------

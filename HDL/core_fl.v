@@ -7,7 +7,7 @@ module core_fl
 	// fluxo de dados
 	parameter NBMANT = 16,              // Numero de bits da Mantissa
 	parameter NBEXPO = 6,               // Numero de bits do Expoente
-	parameter NBOPCO = 6,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
+	parameter NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
 	parameter NBOPER = 9,               // Numero de bits de operando
 
 	// memorias

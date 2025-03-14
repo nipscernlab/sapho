@@ -281,6 +281,6 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     }
 
     // cria uma variavel auxiliar pra guardar o tamanho da dimensao x
-    add_instr("LOAD %s\n", v_name[id_x]);
+    add_instr("LOAD %s\n",         v_name[id_x  ]);
     add_instr("SET %s_arr_size\n", v_name[id_var]);
 }

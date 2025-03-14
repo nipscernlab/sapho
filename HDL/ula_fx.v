@@ -19,6 +19,7 @@ module ula_fx_mux
 	 input     [NUBITS-1:0] shl , shr, srs,
 	 input	   [NUBITS-1:0] fima, ifma,
 	 input	   [NUBITS-1:0] negm, fneg, fnegm,
+	 input     [NUBITS-1:0] fadd,
 
 	output reg [NUBITS-1:0] out
 );
@@ -65,6 +66,8 @@ always @ (*) begin
 		5'd29  : out <= fneg; // FNEG
 		5'd30  : out <= fnegm;// FNEGM
 
+		5'd31  : out <= fadd; // FADD
+
 		default: out <= {NUBITS{1'bx}};
 	endcase
 end
@@ -89,8 +92,8 @@ wire [NUBITS-1:0] fn_out;
 
 fnorm #(NBMANT,NBEXPO) my_fnorm(in, fn_out);
 
-//             I2F              I2F         
-assign out = ((op == 5'd26) || (op == 5'd27)) ? fn_out : in;
+//             I2F              I2F              FADD  
+assign out = ((op == 5'd26) || (op == 5'd27) || (op == 5'd31)) ? fn_out : in;
 
 endmodule
 
@@ -304,6 +307,65 @@ assign out = {s_out, e_out, m_out};
 
 endmodule
 
+// Desnormaliza igualando o expoente de dois numeros --------------------------
+
+module my_denorm
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	 input        [MAN+EXP:0] in1, in2,
+	output signed [EXP-1  :0] e_out,
+	output signed [MAN    :0] sm1_out, sm2_out
+);
+
+wire                  s1_in = in1[MAN+EXP      ]; 
+wire                  s2_in = in2[MAN+EXP      ]; 
+wire signed [EXP-1:0] e1_in = in1[MAN+EXP-1:MAN];
+wire signed [EXP-1:0] e2_in = in2[MAN+EXP-1:MAN];
+wire        [MAN-1:0] m1_in = in1[MAN    -1:0  ];
+wire        [MAN-1:0] m2_in = in2[MAN    -1:0  ];
+
+wire signed [EXP:0] eme    =  e1_in-e2_in;
+wire                ege    =  eme[EXP];
+wire        [EXP:0] shift2 = (ege) ?  {EXP+1{1'b0}} : eme;
+wire        [EXP:0] shift1 = (ege) ? -eme : {EXP+1{1'b0}};
+
+assign e_out = (ege) ? e2_in : e1_in;
+
+wire [MAN-1:0] m1_out = m1_in >> shift1;
+wire [MAN-1:0] m2_out = m2_in >> shift2;
+
+assign sm1_out = (s1_in) ? -m1_out : m1_out;
+assign sm2_out = (s2_in) ? -m2_out : m2_out;
+
+endmodule
+
+// Soma em ponto-flutuante ----------------------------------------------------
+
+module my_fadd
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	input  signed [EXP-1  :0] e_in,
+	input  signed [MAN    :0] sm1_in, sm2_in,
+	output        [MAN+EXP:0] out
+);
+
+wire signed [MAN+1:0] soma = sm1_in + sm2_in;
+wire signed [MAN+1:0] m    = (soma[MAN+1]) ? -soma : soma;
+
+wire                  s_out = soma[MAN+1];
+wire signed [EXP-1:0] e_out = e_in + {{EXP-1{1'b0}}, {1'b1}}; // colocar limite para +inf
+wire        [MAN-1:0] m_out = m   [MAN:1];
+
+assign out = {s_out, e_out, m_out};
+
+endmodule
+
 // ****************************************************************************
 // Circuito Principal *********************************************************
 // ****************************************************************************
@@ -355,7 +417,10 @@ module ula_fx
 
 	// Operacoes de conversao entre int e float
 	parameter F2I  = 0,
-	parameter I2F  = 0
+	parameter I2F  = 0,
+
+	// Operacoes de ponto flutuante
+	parameter FADD = 0
 )
 (
 	input         [       4:0] op,
@@ -365,6 +430,7 @@ module ula_fx
 );
 
 wire signed [NUBITS-1:0] add;
+wire signed [NUBITS-1:0] fadd;
 wire signed [NUBITS-1:0] mlt;
 wire signed [NUBITS-1:0] div;
 wire signed [NUBITS-1:0] mod;
@@ -425,6 +491,13 @@ generate if (LOR) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUB
 generate if (F2I) f2ima #(NBMANT,NBEXPO) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
 generate if (I2F) i2fma #(NBMANT,NBEXPO) my_i2fma (op,in1,in2,ifma); else assign ifma = {NUBITS{1'bx}}; endgenerate
 
+wire signed [NBEXPO-1:0] e_out;
+wire signed [NBMANT  :0] sm1_out, sm2_out;
+
+generate if (FADD) my_denorm #(NBMANT,NBEXPO) denorm(in1,in2,e_out,sm1_out,sm2_out); endgenerate
+
+generate if (FADD) my_fadd #(NBMANT,NBEXPO) my_fadd(e_out,sm1_out,sm2_out,fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
+
 wire [NUBITS-1:0] mux_out;
 
 ula_fx_mux #(NUBITS)um(op,
@@ -436,7 +509,8 @@ ula_fx_mux #(NUBITS)um(op,
                        lin, lan, lor,
                        shl, shr, srs,
 					   fima,ifma,
-					   negm, fneg, fnegm,
+					   negm,fneg,fnegm,
+					   fadd,
                        mux_out);
 
 generate if (I2F) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate

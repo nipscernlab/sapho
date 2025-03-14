@@ -71,7 +71,7 @@ module proc_fl
 	// Parametros internos -----------------------------------------------------
 	// -------------------------------------------------------------------------
 
-	parameter NBOPCO =  6,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
+	parameter NBOPCO =  7,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
 	parameter MDATAW =  $clog2(MDATAS),  // Numero de bits de endereco da memoria de dados
 	parameter MINSTW =  $clog2(MINSTS)   // Numero de bits de endereco da memoria de instrucao
 )

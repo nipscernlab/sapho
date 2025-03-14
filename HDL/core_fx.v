@@ -8,7 +8,7 @@ module core_fx
 	parameter NUBITS = 32,              // Numero de bits de dados
 	parameter NBMANT = 23,              // Numero de bits da mantissa
 	parameter NBEXPO =  8,              // Numero de bits do expoente
-	parameter NBOPCO =  6,              // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
+	parameter NBOPCO =  7,              // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
 	parameter NBOPER =  9,              // Numero de bits de operando
 
 	// memorias
@@ -76,7 +76,10 @@ module core_fx
 
 	// Operacoes de conversao entre int e float
 	parameter F2I   =   0,
-	parameter I2F   =   0
+	parameter I2F   =   0,
+
+	// Operacoes de ponto flutuante
+	parameter FADD = 0
 )
 (
 	input                           clk, rst,
@@ -181,6 +184,7 @@ ula_fx #(.NUBITS(NUBITS),
          .GRE   (GRE   ),
          .MOD   (MOD   ),
          .ADD   (ADD   ),
+		 .FADD  (FADD  ),
          .NEG   (NEG   ),
 		 .NEGM  (NEGM  ),
 		 .FNEG  (FNEG  ),
