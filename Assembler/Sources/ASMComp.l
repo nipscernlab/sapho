@@ -109,6 +109,8 @@ LINHA          \n
 "POP"    eval_opcode(64,0, yytext, ""     );
 "FADD"   eval_opcode(65,1, yytext, "FADD" );
 "SFADD"  eval_opcode(66,0, yytext, "FADD" );
+"FMLT"   eval_opcode(67,1, yytext, "FMLT" );
+"SFMLT"  eval_opcode(68,0, yytext, "FMLT" );
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso

@@ -9,7 +9,7 @@ module ula_fx_mux
 	parameter NUBITS = 32
 )
 (
-	 input     [       4:0] op  ,
+	 input     [       5:0] op  ,
 	 input     [NUBITS-1:0] in1 , in2,
 	 input     [NUBITS-1:0] add , mlt, div, mod, neg,
 	 input     [NUBITS-1:0] nrm , abs, pst, sgn,
@@ -19,54 +19,55 @@ module ula_fx_mux
 	 input     [NUBITS-1:0] shl , shr, srs,
 	 input	   [NUBITS-1:0] fima, ifma,
 	 input	   [NUBITS-1:0] negm, fneg, fnegm,
-	 input     [NUBITS-1:0] fadd,
+	 input     [NUBITS-1:0] fadd, fmlt,
 
 	output reg [NUBITS-1:0] out
 );
 
 always @ (*) begin
 	case (op)
-		5'd0   : out <= in2;  // NOP
-		5'd1   : out <= in1;  // LOAD
+		6'd0   : out <= in2;  // NOP
+		6'd1   : out <= in1;  // LOAD
 
-		5'd2   : out <= add;  // ADD
-		5'd3   : out <= mlt;  // MLT
-		5'd4   : out <= div;  // DIV
-		5'd5   : out <= mod;  // MOD
-		5'd6   : out <= neg;  // NEG
+		6'd2   : out <= add;  // ADD
+		6'd3   : out <= mlt;  // MLT
+		6'd4   : out <= div;  // DIV
+		6'd5   : out <= mod;  // MOD
+		6'd6   : out <= neg;  // NEG
 
-		5'd7   : out <= nrm;  // NORM
-		5'd8   : out <= abs;  // ABS
-		5'd9   : out <= pst;  // PST
-		5'd10  : out <= sgn;  // SIGN
+		6'd7   : out <= nrm;  // NORM
+		6'd8   : out <= abs;  // ABS
+		6'd9   : out <= pst;  // PST
+		6'd10  : out <= sgn;  // SIGN
 
-		5'd11  : out <= orr;  // OR
-		5'd12  : out <= ann;  // AND
-		5'd13  : out <= inv;  // INV
-		5'd14  : out <= cor;  // XOR
+		6'd11  : out <= orr;  // OR
+		6'd12  : out <= ann;  // AND
+		6'd13  : out <= inv;  // INV
+		6'd14  : out <= cor;  // XOR
 
-		5'd15  : out <= les;  // LES
-		5'd16  : out <= gre;  // GRE
-		5'd17  : out <= equ;  // EQU
+		6'd15  : out <= les;  // LES
+		6'd16  : out <= gre;  // GRE
+		6'd17  : out <= equ;  // EQU
 		
-		5'd18  : out <= lin;  // LIN
-		5'd19  : out <= lan;  // LAN
-		5'd20  : out <= lor;  // LOR
+		6'd18  : out <= lin;  // LIN
+		6'd19  : out <= lan;  // LAN
+		6'd20  : out <= lor;  // LOR
 
-		5'd21  : out <= shl;  // SHL
-		5'd22  : out <= shr;  // SHR
-		5'd23  : out <= srs;  // SRS
+		6'd21  : out <= shl;  // SHL
+		6'd22  : out <= shr;  // SHR
+		6'd23  : out <= srs;  // SRS
 
-		5'd24  : out <= fima; // F2I
-		5'd25  : out <= fima; // F2I
-		5'd26  : out <= ifma; // I2F
-		5'd27  : out <= ifma; // I2F
+		6'd24  : out <= fima; // F2I
+		6'd25  : out <= fima; // F2I
+		6'd26  : out <= ifma; // I2F
+		6'd27  : out <= ifma; // I2F
 
-		5'd28  : out <= negm; // NEGM
-		5'd29  : out <= fneg; // FNEG
-		5'd30  : out <= fnegm;// FNEGM
+		6'd28  : out <= negm; // NEGM
+		6'd29  : out <= fneg; // FNEG
+		6'd30  : out <= fnegm;// FNEGM
 
-		5'd31  : out <= fadd; // FADD
+		6'd31  : out <= fadd; // FADD
+		6'd32  : out <= fmlt; // FMLT
 
 		default: out <= {NUBITS{1'bx}};
 	endcase
@@ -83,7 +84,7 @@ module ula_out
 	parameter NBEXPO =  8
 )
 (
-	 input [       4:0] op,
+	 input [       5:0] op,
 	 input [NUBITS-1:0] in,
 	output [NUBITS-1:0] out
 );
@@ -92,8 +93,8 @@ wire [NUBITS-1:0] fn_out;
 
 fnorm #(NBMANT,NBEXPO) my_fnorm(in, fn_out);
 
-//             I2F              I2F              FADD  
-assign out = ((op == 5'd26) || (op == 5'd27) || (op == 5'd31)) ? fn_out : in;
+//             I2F              I2F              FADD             FMLT
+assign out = ((op == 6'd26) || (op == 6'd27) || (op == 6'd31) || (op == 6'd32)) ? fn_out : in;
 
 endmodule
 
@@ -366,6 +367,37 @@ assign out = {s_out, e_out, m_out};
 
 endmodule
 
+// Multiplicacao em ponto-flutuante -------------------------------------------
+
+module my_fmlt
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	 input [MAN+EXP:0] in1, in2,
+	output [MAN+EXP:0] out
+);
+
+wire                  s1 = in1[MAN+EXP      ]; 
+wire                  s2 = in2[MAN+EXP      ]; 
+wire signed [EXP-1:0] e1 = in1[MAN+EXP-1:MAN];
+wire signed [EXP-1:0] e2 = in2[MAN+EXP-1:MAN];
+wire        [MAN-1:0] m1 = in1[MAN    -1:0  ];
+wire        [MAN-1:0] m2 = in2[MAN    -1:0  ];
+
+wire        [2*MAN-1:0] mult = m1 * m2;
+wire signed [  EXP  :0] e    = e1 + e2 + MAN; // colocar limite para +inf
+
+wire                  s_out = (s1 != s2);
+wire                  unf   = (e[EXP:EXP-1] == 2'b10);       // underflow
+wire signed [EXP-1:0] e_out =  e[EXP-1:  0];
+wire        [MAN-1:0] m_out = (unf) ? {{MAN{1'b0}}} : mult[2*MAN-1:MAN];
+
+assign out = {s_out, e_out, m_out};
+
+endmodule
+
 // ****************************************************************************
 // Circuito Principal *********************************************************
 // ****************************************************************************
@@ -420,22 +452,24 @@ module ula_fx
 	parameter I2F  = 0,
 
 	// Operacoes de ponto flutuante
-	parameter FADD = 0
+	parameter FADD = 0,
+	parameter FMLT = 0
 )
 (
-	input         [       4:0] op,
+	input         [       5:0] op,
 	input  signed [NUBITS-1:0] in1, in2,
 	output signed [NUBITS-1:0] out,
 	output                     is_zero
 );
 
-wire signed [NUBITS-1:0] add;
+wire signed [NUBITS-1:0]  add;
 wire signed [NUBITS-1:0] fadd;
-wire signed [NUBITS-1:0] mlt;
+wire signed [NUBITS-1:0]  mlt;
+wire signed [NUBITS-1:0] fmlt;
 wire signed [NUBITS-1:0] div;
 wire signed [NUBITS-1:0] mod;
-wire signed [NUBITS-1:0] neg;
-wire signed [NUBITS-1:0] negm;
+wire signed [NUBITS-1:0]  neg;
+wire signed [NUBITS-1:0]  negm;
 wire signed [NUBITS-1:0] fneg;
 wire signed [NUBITS-1:0] fnegm;
 wire signed [NUBITS-1:0] abs;
@@ -497,6 +531,7 @@ wire signed [NBMANT  :0] sm1_out, sm2_out;
 generate if (FADD) my_denorm #(NBMANT,NBEXPO) denorm(in1,in2,e_out,sm1_out,sm2_out); endgenerate
 
 generate if (FADD) my_fadd #(NBMANT,NBEXPO) my_fadd(e_out,sm1_out,sm2_out,fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
+generate if (FMLT) my_fmlt #(NBMANT,NBEXPO) my_fmlt(in1  ,in2    ,fmlt        ); else assign fmlt = {NUBITS{1'bx}}; endgenerate
 
 wire [NUBITS-1:0] mux_out;
 
@@ -510,7 +545,7 @@ ula_fx_mux #(NUBITS)um(op,
                        shl, shr, srs,
 					   fima,ifma,
 					   negm,fneg,fnegm,
-					   fadd,
+					   fadd, fmlt,
                        mux_out);
 
 generate if (I2F) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate

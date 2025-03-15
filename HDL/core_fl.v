@@ -133,7 +133,7 @@ wire [NBOPER     -1:0] id_operand = pf_operand;
 wire                   id_dsp_push;
 wire                   id_dsp_pop;
 
-wire [            4:0] id_ula_op;
+wire [            5:0] id_ula_op;
 wire [NBMANT+NBEXPO:0] id_ula_data;
 
 wire [MDATAW     -1:0] id_mem_addr;

@@ -78,6 +78,7 @@ module proc_fx
 
     // Operacoes de ponto flutuante
 	parameter FADD  =   0,
+    parameter FMLT  =   0,
 
 	// -------------------------------------------------------------------------
 	// Parametros internos -----------------------------------------------------
@@ -144,6 +145,7 @@ core_fx #(.NUBITS(NUBITS),
           .FNEG  (FNEG  ),
           .FNEGM (FNEGM ),
           .MLT   (MLT   ),
+          .FMLT  (FMLT  ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
           .LDI   (LDI   ),
@@ -202,6 +204,7 @@ core_fx #(.NUBITS(NUBITS),
           .FNEG  (FNEG  ),
           .FNEGM (FNEGM ),
           .MLT   (MLT   ),
+          .FMLT  (FMLT  ),
           .CAL   (CAL   ),
           .SRF   (SRF   ),
           .LDI   (LDI   ),

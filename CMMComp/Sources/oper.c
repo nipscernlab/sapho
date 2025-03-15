@@ -553,13 +553,23 @@ int oper_soma(int et1, int et2)
         }
 
         // comp const com int var
-        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
             get_cmp_cst(et1,&etr,&eti);
 
             add_instr("%s %s\n", i2f, v_name[et2%OFST]);
             add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
             add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        }
+
+        // comp const com int const
+        if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
+        {
+            get_cmp_cst(et1,&etr,&eti);
+
+            add_instr("%s  %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("FADD %u // %s\n",    f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+            add_instr("PLD  %u // %s\n",    f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
         }
 
         // comp const com int acc
@@ -1277,11 +1287,8 @@ int oper_mult(int et1, int et2)
 {
     int etr, eti;
 
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    char i2f[10];
-    if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOAD"); else strcpy(ld ,"PLD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM" ); else strcpy(i2f,"PIFM");
 
     // 8*8 combinacoes para prtype = 0
     if (prtype == 0)
@@ -1302,24 +1309,22 @@ int oper_mult(int et1, int et2)
         // int var com float var
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
-            add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
-            add_instr("PLD %s\n" , v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("%s %s\n", i2f, v_name[et1%OFST]);
+            add_instr("FMLT %s\n"   , v_name[et2%OFST]);
         }
 
         // int var com float const
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
-            add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
-            add_instr("PLD %d // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("%s %s\n" , i2f,        v_name[et1%OFST]);
+            add_instr("FMLT %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
         }
 
         // int var com float acc
         if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
         {
             add_instr("PIFM %s\n", v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SFMLT\n");
         }
 
         // int var com comp const
@@ -1345,7 +1350,7 @@ int oper_mult(int et1, int et2)
         {
             add_instr("SETP aux_mult\n");
             oper_mult(et1,2*OFST);
-            add_instr("PLD aux_mult\n");
+            add_instr("PLD  aux_mult\n");
             oper_mult(et1,2*OFST);
         }
 
@@ -1365,16 +1370,14 @@ int oper_mult(int et1, int et2)
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
             add_instr("IFA\n");
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n", v_name[et2%OFST]);
         }
 
         // int acc com float const
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
             add_instr("IFA\n");
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
         }
 
         // int acc com float acc
@@ -1382,8 +1385,7 @@ int oper_mult(int et1, int et2)
         {
             add_instr("SETP aux_soma\n");
             add_instr("IFA\n");
-            add_instr("PLD aux_soma\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_soma\n");
         }
 
         // int acc com comp const
@@ -1411,54 +1413,47 @@ int oper_mult(int et1, int et2)
         // int acc com comp acc
         if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            add_instr("SETP aux_imag  \n");
-            add_instr("SETP aux_real  \n");
-            add_instr("IFA \n");
-            add_instr("SET  aux_mult  \n");
-            add_instr("PLD  aux_real  \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
-            add_instr("PLD  aux_imag  \n");
-            add_instr("PLD  aux_mult  \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SETP aux_imag\n");
+            add_instr("SETP aux_real\n");
+            add_instr("IFA\n");
+            add_instr("SET  aux_mult\n");
+            add_instr("FMLT aux_real\n");
+            add_instr("PLD  aux_imag\n");
+            add_instr("FMLT aux_mult\n");
         }
 
         // float var com int var
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
         {
             add_instr("%s %s\n" ,i2f, v_name[et2%OFST]);
-            add_instr("PLD %s\n",     v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n",    v_name[et1%OFST]);
         }
 
         // float var com int acc
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
         {
             add_instr("IFA\n");
-            add_instr("PLD %s\n",     v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n", v_name[et1%OFST]);
         }
 
         // float var com float var
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
-            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
-            add_instr("PLD %s\n",     v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("%s %s\n", ld, v_name[et1%OFST]);
+            add_instr("FMLT %s\n",   v_name[et2%OFST]);
         }
 
         // float var com float const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
-            add_instr("%s %s\n", ld, v_name[et1%OFST]);
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("%s %s\n", ld,          v_name[et1%OFST]);
+            add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
         }
 
         // float var com float acc
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            add_instr("PLD %s\n", v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n", v_name[et1%OFST]);
         }
 
         // float var com comp const
@@ -1491,40 +1486,35 @@ int oper_mult(int et1, int et2)
         // float const com int var
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
         {
-            add_instr("%s %s\n" , i2f, v_name[et2%OFST]);
-            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("%s %s\n", i2f,         v_name[et2%OFST]);
+            add_instr("FMLT %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
         }
 
         // float const com int acc
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
         {
             add_instr("IFA\n");
-            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
         }
 
         // float const com float var
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n"        ,      v_name[et2%OFST]);
         }
 
         // float const com float const
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %d // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
         }
 
         // float const com float acc
         if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
         }
 
         // float const com comp const
@@ -1558,34 +1548,32 @@ int oper_mult(int et1, int et2)
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
         {
             add_instr("PIFM %s\n", v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SFMLT\n");
         }
 
         // float acc com int acc
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
         {
             add_instr("IFA\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SFMLT\n");
         }
 
         // float acc com float var
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n", v_name[et2%OFST]);
         }
 
         // float acc com float const
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
         }
 
         // float acc com float acc
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
         {
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SFMLT\n");
         }
 
         // float acc com comp const
@@ -1613,14 +1601,12 @@ int oper_mult(int et1, int et2)
         // float acc com comp acc
         if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
         {
-            add_instr("SETP aux_imag  \n");
-            add_instr("SETP aux_real  \n");
-            add_instr("SET  aux_mult  \n");
-            add_instr("PLD  aux_real  \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
-            add_instr("PLD  aux_imag  \n");
-            add_instr("PLD  aux_mult  \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SETP aux_imag\n");
+            add_instr("SETP aux_real\n");
+            add_instr("SET  aux_mult\n");
+            add_instr("FMLT aux_real\n");
+            add_instr("PLD  aux_imag\n");
+            add_instr("FMLT aux_mult\n");
         }
 
         // comp const com int var
@@ -1838,11 +1824,10 @@ int oper_mult(int et1, int et2)
         {
             add_instr("SETP aux_imag\n");
             add_instr("PIFM %s\n", v_name[et2%OFST]);
-            add_instr("SET aux_float\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
-            add_instr("PLD aux_imag\n");
-            add_instr("PLD aux_float\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SET  aux_float\n");
+            add_instr("SFMLT\n");
+            add_instr("PLD  aux_imag\n");
+            add_instr("FMLT aux_float\n");
         }
 
         // comp acc com int acc
@@ -1851,45 +1836,37 @@ int oper_mult(int et1, int et2)
             add_instr("IFA\n");
             add_instr("SETP aux_float\n");
             add_instr("SETP aux_imag\n");
-            add_instr("PLD aux_float\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_float\n");
             add_instr("PLD aux_imag\n");
-            add_instr("PLD aux_float\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_float\n");
         }
 
         // comp acc com float var
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
         {
             add_instr("SETP aux_imag\n");
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n", v_name[et2%OFST]);
             add_instr("PLD aux_imag\n");
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %s\n", v_name[et2%OFST]);
         }
 
         // comp acc com float const
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
         {
             add_instr("SETP aux_imag\n");
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
             add_instr("PLD aux_imag\n");
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
         }
 
         // comp acc com float acc
         if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
         {
             add_instr("SETP aux_float\n");
-            add_instr("SETP aux_imag\n");
-            add_instr("PLD aux_float\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
-            add_instr("PLD aux_imag\n");
-            add_instr("PLD aux_float\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("SETP aux_imag \n");
+            add_instr("FMLT aux_float\n");
+            add_instr("PLD  aux_imag \n");
+            add_instr("FMLT aux_float\n");
         }
 
         // comp acc com comp const
@@ -2613,24 +2590,20 @@ int oper_divi(int et1, int et2)
         {
             add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
             add_instr("SET  aux_real  \n");           // salva a parte real
-            add_instr("PLD  aux_real  \n");           // coloca a parte real na pilha
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte real ao quadrado
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-            add_instr("PLD  aux_imag  \n");           // pega ela de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte imag ao quadrado
+            add_instr("FMLT aux_imag  \n");
             add_instr("SFADD          \n");
             add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
             add_instr("IFM %s\n", v_name[et1%OFST]); 
             add_instr("SET aux_float  \n");           // salva o float
-            add_instr("PLD aux_real   \n");           // pega a parte real
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte real
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
 
             add_instr("PLD aux_float  \n");           // pega o float
-            add_instr("PLD aux_imag   \n");           // pega a parte imag
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
+            add_instr("FMLT aux_imag  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
             add_instr("PLD float_nbits\n");           // faz a oper_neg
@@ -2737,24 +2710,20 @@ int oper_divi(int et1, int et2)
             add_instr("SET  aux_float \n");           // salva o float
 
             add_instr("LOAD aux_real  \n");           // coloca a parte real na pilha
-            add_instr("PLD  aux_real  \n");           // coloca de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte real ao quadrado
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-            add_instr("PLD  aux_imag  \n");           // pega ela de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte imag ao quadrado
+            add_instr("FMLT aux_imag  \n");
             add_instr("SFADD          \n");
             add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
             add_instr("LOAD  aux_float\n");           // carrega o float
-            add_instr("PLD aux_real   \n");           // pega a parte real
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte real
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
 
-            add_instr("PLD aux_float  \n");           // pega o float
-            add_instr("PLD aux_imag   \n");           // pega a parte imag
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
-            add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
+            add_instr("PLD  aux_float \n");           // pega o float
+            add_instr("FMLT aux_imag  \n");
+            add_instr("PLD  aux_cmp   \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
             add_instr("PLD float_nbits\n");           // faz a oper_neg
             add_instr("SHL 1\n");
@@ -2851,23 +2820,19 @@ int oper_divi(int et1, int et2)
         {
             add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
             add_instr("SET  aux_real  \n");           // salva a parte real
-            add_instr("PLD  aux_real  \n");           // coloca a parte real na pilha
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte real ao quadrado
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-            add_instr("PLD  aux_imag  \n");           // pega ela de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte imag ao quadrado
+            add_instr("FMLT aux_imag  \n");
             add_instr("SFADD          \n");
             add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
             add_instr("LOAD %s\n", v_name[et1%OFST]); // carrega o float
-            add_instr("PLD aux_real   \n");           // pega a parte real
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte real
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
 
             add_instr("PLD %s\n", v_name[et1%OFST]);  // carrega o float
-            add_instr("PLD aux_imag   \n");           // pega a parte imag
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
+            add_instr("FMLT aux_imag  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
             add_instr("PLD float_nbits\n");           // faz a oper_neg
@@ -2965,23 +2930,19 @@ int oper_divi(int et1, int et2)
         {
             add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
             add_instr("SET  aux_real  \n");           // salva a parte real
-            add_instr("PLD  aux_real  \n");           // coloca a parte real na pilha
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte real ao quadrado
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-            add_instr("PLD  aux_imag  \n");           // pega ela de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte imag ao quadrado
+            add_instr("FMLT aux_imag  \n");
             add_instr("SFADD          \n");
             add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
             add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
-            add_instr("PLD aux_real   \n");           // pega a parte real
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte real
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
 
             add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
-            add_instr("PLD aux_imag   \n");           // pega a parte imag
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
+            add_instr("FMLT aux_imag  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
             add_instr("PLD float_nbits\n");           // faz a oper_neg
@@ -3081,23 +3042,19 @@ int oper_divi(int et1, int et2)
             add_instr("SET  aux_float \n");           // salva o float
 
             add_instr("LOAD aux_real  \n");           // coloca a parte real na pilha
-            add_instr("PLD  aux_real  \n");           // coloca de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte real ao quadrado
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-            add_instr("PLD  aux_imag  \n");           // pega ela de novo
-            add_instr("CALL float_mult\n"); fmlt = 1; // parte imag ao quadrado
+            add_instr("FMLT aux_imag  \n");
             add_instr("SFADD          \n");
             add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
             add_instr("LOAD  aux_float\n");           // carrega o float
-            add_instr("PLD aux_real   \n");           // pega a parte real
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte real
+            add_instr("FMLT aux_real  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
 
             add_instr("PLD aux_float  \n");           // pega o float
-            add_instr("PLD aux_imag   \n");           // pega a parte imag
-            add_instr("CALL float_mult\n"); fmlt = 1; // mult float com parte imaginaria
+            add_instr("FMLT aux_imag  \n");
             add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
             add_instr("CALL float_div \n"); fdiv = 1; // faz a divisao
             add_instr("PLD float_nbits\n");           // faz a oper_neg
@@ -3218,11 +3175,9 @@ int oper_divi(int et1, int et2)
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
-            add_instr("PLD  aux_real\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_real\n");
             add_instr("PLD  aux_imag\n");
-            add_instr("PLD  aux_imag\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_imag\n");
             oper_soma(2*OFST,2*OFST);
             add_instr("SET aux_mod\n");
 
@@ -3356,11 +3311,9 @@ int oper_divi(int et1, int et2)
 
             add_instr("SETP aux_imag\n");
             add_instr("SET  aux_real\n");
-            add_instr("PLD  aux_real\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_real\n");
             add_instr("PLD  aux_imag\n");
-            add_instr("PLD  aux_imag\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_imag\n");
             oper_soma(2*OFST,2*OFST);
             add_instr("SET aux_mod\n");
 
@@ -3511,30 +3464,24 @@ int oper_divi(int et1, int et2)
             add_instr("SET  aux_real1 \n");
 
             add_instr("LOAD aux_real2 \n");
-            add_instr("PLD  aux_real2 \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_real2 \n");
             add_instr("PLD  aux_imag2\n");
-            add_instr("PLD  aux_imag2\n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_imag2\n");
             add_instr("SFADD          \n");
             add_instr("SET aux_mod    \n");
 
             add_instr("LOAD aux_real1 \n");
-            add_instr("PLD  aux_real2 \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_real2 \n");
             add_instr("PLD  aux_imag1 \n");
-            add_instr("PLD  aux_imag2 \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_imag2 \n");
             add_instr("SFADD          \n");
             add_instr("PLD  aux_mod   \n");
             add_instr("CALL float_div \n"); fdiv = 1;
 
             add_instr("PLD  aux_real1 \n");
-            add_instr("PLD  aux_imag2 \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_imag2 \n");
             add_instr("PLD  aux_imag1 \n");
-            add_instr("PLD  aux_real2 \n");
-            add_instr("CALL float_mult\n"); fmlt = 1;
+            add_instr("FMLT aux_real2 \n");
             add_instr("PLD float_nbits\n");
             add_instr("SHL 1          \n");
             add_instr("SADD           \n");

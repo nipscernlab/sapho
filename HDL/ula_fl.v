@@ -98,7 +98,7 @@ module outmux
 	parameter NBITS = 32
 )
 (
-	input     [      4:0] op,
+	input     [      5:0] op,
 	input     [NBITS-1:0] in1,in2,
 	input     [NBITS-1:0] sum,mul,div,/*mod,*/neg,
 	input     [NBITS-1:0] /*nrm,*/abs,pst,sgn,
@@ -112,36 +112,36 @@ module outmux
 
 always @ (*) begin
 	case (op)
-		5'd0   : out <= in2; // NOP
-		5'd1   : out <= in1; // LOAD
+		6'd0   : out <= in2; // NOP
+		6'd1   : out <= in1; // LOAD
   
-		5'd2   : out <= sum; // ADD
-		5'd3   : out <= mul; // MLT
-		5'd4   : out <= div; // DIV
-	  //5'd5   : out <= mod; // MOD    soh na ula_fx
-		5'd6   : out <= neg; // NEG
+		6'd2   : out <= sum; // ADD
+		6'd3   : out <= mul; // MLT
+		6'd4   : out <= div; // DIV
+	  //6'd5   : out <= mod; // MOD    soh na ula_fx
+		6'd6   : out <= neg; // NEG
   
-	  //5'd7   : out <= nrm; // NORM   soh na ula_fx
-		5'd8   : out <= abs; // ABS
-		5'd9   : out <= pst; // PST
-		5'd10  : out <= sgn; // SIGN
+	  //6'd7   : out <= nrm; // NORM   soh na ula_fx
+		6'd8   : out <= abs; // ABS
+		6'd9   : out <= pst; // PST
+		6'd10  : out <= sgn; // SIGN
   
-	  //5'd11  : out <= orr; // OR
-	  //5'd12  : out <= ann; // AND
-	  //5'd13  : out <= inv; // INV
-	  //5'd14  : out <= cor; // XOR
+	  //6'd11  : out <= orr; // OR
+	  //6'd12  : out <= ann; // AND
+	  //6'd13  : out <= inv; // INV
+	  //6'd14  : out <= cor; // XOR
   
-		5'd15  : out <= les; // LES
-		5'd16  : out <= gre; // GRE
-		5'd17  : out <= equ; // EQU
+		6'd15  : out <= les; // LES
+		6'd16  : out <= gre; // GRE
+		6'd17  : out <= equ; // EQU
   
-		5'd18  : out <= lin; // LIN
-		5'd19  : out <= lan; // LAN
-		5'd20  : out <= lor; // LOR
+		6'd18  : out <= lin; // LIN
+		6'd19  : out <= lan; // LAN
+		6'd20  : out <= lor; // LOR
   
-	  //5'd21  : out <= shl; // SHL    soh na ula_fx
-	  //5'd22  : out <= shr; // SHR
-	  //5'd23  : out <= srs; // SRS
+	  //6'd21  : out <= shl; // SHL    soh na ula_fx
+	  //6'd22  : out <= shr; // SHR
+	  //6'd23  : out <= srs; // SRS
 
 		default: out <= {NBITS{1'bx}};
 	endcase
@@ -492,7 +492,7 @@ module ula_fl
   //parameter SRS  = 0
 )
 (
-	input         [      4:0] op,
+	input         [      6:0] op,
 	input         [MAN+EXP:0] in1, in2,
 	output        [MAN+EXP:0] out,
 	output                    is_zero

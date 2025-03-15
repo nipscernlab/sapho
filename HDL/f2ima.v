@@ -4,7 +4,7 @@ module f2ima
 	parameter EXP = 8
 )
 (
-    input         [      4:0] op,
+    input         [      5:0] op,
 	input         [MAN+EXP:0] inm, ina,
 	output signed [MAN+EXP:0] out
 );

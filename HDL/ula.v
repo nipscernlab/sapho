@@ -10,7 +10,7 @@ module opr_mux
 	parameter MAN = 23
 )
 (
-	input      [      4:0] op,
+	input      [      5:0] op,
 
 	input      [MAN+EXP:0] out_ufl,
 	input      [MAN+EXP:0] out_ufx,
@@ -26,36 +26,36 @@ module opr_mux
 
 always @ (*) begin
 	case (op)
-		5'd0   : out <= out_ufl; // NOP
-		5'd1   : out <= out_ufl; // LOAD
+		6'd0   : out <= out_ufl; // NOP
+		6'd1   : out <= out_ufl; // LOAD
   
-		5'd2   : out <= out_ufl; // ADD
-		5'd3   : out <= out_ufl; // MLT
-		5'd4   : out <= out_ufl; // DIV
-		5'd5   : out <= out_ufx; // MOD
-		5'd6   : out <= out_ufl; // NEG
+		6'd2   : out <= out_ufl; // ADD
+		6'd3   : out <= out_ufl; // MLT
+		6'd4   : out <= out_ufl; // DIV
+		6'd5   : out <= out_ufx; // MOD
+		6'd6   : out <= out_ufl; // NEG
   
-		5'd7   : out <= out_ufx; // NORM
-		5'd8   : out <= out_ufl; // ABS
-		5'd9   : out <= out_ufl; // PST
-		5'd10  : out <= out_ufl; // SIGN
+		6'd7   : out <= out_ufx; // NORM
+		6'd8   : out <= out_ufl; // ABS
+		6'd9   : out <= out_ufl; // PST
+		6'd10  : out <= out_ufl; // SIGN
   
-		5'd11  : out <= out_ufx; // OR
-		5'd12  : out <= out_ufx; // AND
-		5'd13  : out <= out_ufx; // INV
-		5'd14  : out <= out_ufx; // XOR
+		6'd11  : out <= out_ufx; // OR
+		6'd12  : out <= out_ufx; // AND
+		6'd13  : out <= out_ufx; // INV
+		6'd14  : out <= out_ufx; // XOR
   
-		5'd15  : out <= out_ufl; // LES
-		5'd16  : out <= out_ufl; // GRE
-		5'd17  : out <= out_ufl; // EQU
+		6'd15  : out <= out_ufl; // LES
+		6'd16  : out <= out_ufl; // GRE
+		6'd17  : out <= out_ufl; // EQU
 
-		5'd18  : out <= out_ufl; // LIN
-		5'd19  : out <= out_ufl; // LAN
-		5'd20  : out <= out_ufl; // LOR
+		6'd18  : out <= out_ufl; // LIN
+		6'd19  : out <= out_ufl; // LAN
+		6'd20  : out <= out_ufl; // LOR
   
-		5'd21  : out <= out_ufx; // SHL
-		5'd22  : out <= out_ufx; // SHR
-		5'd23  : out <= out_ufx; // SRS
+		6'd21  : out <= out_ufx; // SHL
+		6'd22  : out <= out_ufx; // SHR
+		6'd23  : out <= out_ufx; // SRS
 
 		default: out <= {MAN+EXP+1{1'bx}};
 	endcase
@@ -65,36 +65,36 @@ end
 
 always @ (*) begin
 	case (op)
-		5'd0   : is_zero <= iz_ufl; // NOP
-		5'd1   : is_zero <= iz_ufl; // LOAD
+		6'd0   : is_zero <= iz_ufl; // NOP
+		6'd1   : is_zero <= iz_ufl; // LOAD
 
-		5'd2   : is_zero <= iz_ufl; // ADD
-		5'd3   : is_zero <= iz_ufl; // MLT
-		5'd4   : is_zero <= iz_ufl; // DIV
-		5'd5   : is_zero <= iz_ufx; // MOD
-		5'd6   : is_zero <= iz_ufl; // NEG
+		6'd2   : is_zero <= iz_ufl; // ADD
+		6'd3   : is_zero <= iz_ufl; // MLT
+		6'd4   : is_zero <= iz_ufl; // DIV
+		6'd5   : is_zero <= iz_ufx; // MOD
+		6'd6   : is_zero <= iz_ufl; // NEG
 
-		5'd7   : is_zero <= iz_ufx; // NORM
-		5'd8   : is_zero <= iz_ufl; // ABS
-		5'd9   : is_zero <= iz_ufl; // PST
-		5'd10  : is_zero <= iz_ufl; // SIGN
+		6'd7   : is_zero <= iz_ufx; // NORM
+		6'd8   : is_zero <= iz_ufl; // ABS
+		6'd9   : is_zero <= iz_ufl; // PST
+		6'd10  : is_zero <= iz_ufl; // SIGN
 
-		5'd11  : is_zero <= iz_ufx; // OR
-		5'd12  : is_zero <= iz_ufx; // AND
-		5'd13  : is_zero <= iz_ufx; // INV
-		5'd14  : is_zero <= iz_ufx; // XOR
+		6'd11  : is_zero <= iz_ufx; // OR
+		6'd12  : is_zero <= iz_ufx; // AND
+		6'd13  : is_zero <= iz_ufx; // INV
+		6'd14  : is_zero <= iz_ufx; // XOR
 
-		5'd15  : is_zero <= iz_ufl; // LES
-		5'd16  : is_zero <= iz_ufl; // GRE
-		5'd17  : is_zero <= iz_ufl; // EQU
+		6'd15  : is_zero <= iz_ufl; // LES
+		6'd16  : is_zero <= iz_ufl; // GRE
+		6'd17  : is_zero <= iz_ufl; // EQU
 
-		5'd18  : is_zero <= iz_ufl; // LIN
-		5'd19  : is_zero <= iz_ufl; // LAN
-		5'd20  : is_zero <= iz_ufl; // LOR
+		6'd18  : is_zero <= iz_ufl; // LIN
+		6'd19  : is_zero <= iz_ufl; // LAN
+		6'd20  : is_zero <= iz_ufl; // LOR
 
-		5'd21  : is_zero <= iz_ufx; // SHL
-		5'd22  : is_zero <= iz_ufx; // SHR
-		5'd23  : is_zero <= iz_ufx; // SRS
+		6'd21  : is_zero <= iz_ufx; // SHL
+		6'd22  : is_zero <= iz_ufx; // SHR
+		6'd23  : is_zero <= iz_ufx; // SRS
 
 		default: is_zero <= 1'bx;
 	endcase
@@ -145,7 +145,7 @@ module ula_ifx
 	parameter SRS  = 0
 )
 (
-	input         [      4:0] op,
+	input         [      5:0] op,
 	input         [MAN+EXP:0] in1, in2,
 	output        [MAN+EXP:0] out,
 	output                    is_zero
@@ -240,7 +240,7 @@ module ula
 	parameter SRS  = 0
 )
 (
-	input         [      4:0] op,
+	input         [      5:0] op,
 	input         [MAN+EXP:0] in1, in2,
 	output        [MAN+EXP:0] out,
 	output                    is_zero

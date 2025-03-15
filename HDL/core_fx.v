@@ -79,7 +79,8 @@ module core_fx
 	parameter I2F   =   0,
 
 	// Operacoes de ponto flutuante
-	parameter FADD = 0
+	parameter FADD  =   0,
+	parameter FMLT  =   0
 )
 (
 	input                           clk, rst,
@@ -145,7 +146,7 @@ wire [NBOPER-1:0] id_operand = pf_operand;
 wire              id_dsp_push;
 wire              id_dsp_pop;
 
-wire [       4:0] id_ula_op;
+wire [       5:0] id_ula_op;
 wire [NUBITS-1:0] id_ula_data;
 
 wire [MDATAW-1:0] id_mem_addr;
@@ -190,6 +191,7 @@ ula_fx #(.NUBITS(NUBITS),
 		 .FNEG  (FNEG  ),
 		 .FNEGM (FNEGM ),
          .MLT   (MLT   ),
+		 .FMLT  (FMLT  ),
          .LES   (LES   ),
          .EQU   (EQU   ),
          .AND   (AND   ),
