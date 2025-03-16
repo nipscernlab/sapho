@@ -521,6 +521,48 @@ always @ (posedge clk or posedge rst) begin
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
+			69  : begin
+						ula_op  <= 6'd33;    // FDIV  -> divisao em ponto flutuante com a memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			70  : begin
+						ula_op  <= 6'd33;    // SFDIV -> divisao em ponto flutuante com pilha
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			71  : begin
+						ula_op  <= 6'd34;    // FGRE  -> maior que em ponto flutuante com a memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			72  : begin
+						ula_op  <= 6'd34;    // SFGRE -> maior que em ponto flutuante com pilha
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			73  : begin
+						ula_op  <= 6'd35;    // FLES  -> menor que em ponto flutuante com a memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			74  : begin
+						ula_op  <= 6'd35;    // SFLES -> menor que em ponto flutuante com pilha
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
 		default: begin
 						ula_op  <= 6'dx;
 						 srf    <= 1'bx;
@@ -1010,6 +1052,48 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			68: begin                     // SFMLT
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			69: begin                     // FDIV
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			70: begin                     // SFDIV
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			71: begin                     // FGRE
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			72: begin                     // SFGRE
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			73: begin                     // FLES
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			74: begin                     // SFLES
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;

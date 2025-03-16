@@ -80,7 +80,10 @@ module core_fx
 
 	// Operacoes de ponto flutuante
 	parameter FADD  =   0,
-	parameter FMLT  =   0
+	parameter FMLT  =   0,
+	parameter FDIV  =   0,
+	parameter FGRE  =   0,
+	parameter FLES  =   0
 )
 (
 	input                           clk, rst,
@@ -180,9 +183,11 @@ ula_fx #(.NUBITS(NUBITS),
 		 .NBEXPO(NBEXPO),
          .NUGAIN(NUGAIN),
          .DIV   (DIV   ),
+		 .FDIV  (FDIV  ),
          .OR    (OR    ),
          .LOR   (LOR   ),
          .GRE   (GRE   ),
+		 .FGRE  (FGRE  ),
          .MOD   (MOD   ),
          .ADD   (ADD   ),
 		 .FADD  (FADD  ),
@@ -193,6 +198,7 @@ ula_fx #(.NUBITS(NUBITS),
          .MLT   (MLT   ),
 		 .FMLT  (FMLT  ),
          .LES   (LES   ),
+		 .FLES  (FLES  ),
          .EQU   (EQU   ),
          .AND   (AND   ),
          .LAN   (LAN   ),

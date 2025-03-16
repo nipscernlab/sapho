@@ -111,6 +111,12 @@ LINHA          \n
 "SFADD"  eval_opcode(66,0, yytext, "FADD" );
 "FMLT"   eval_opcode(67,1, yytext, "FMLT" );
 "SFMLT"  eval_opcode(68,0, yytext, "FMLT" );
+"FDIV"   eval_opcode(69,1, yytext, "FDIV" );
+"SFDIV"  eval_opcode(70,0, yytext, "FDIV" );
+"FGRE"   eval_opcode(71,1, yytext, "FGRE" );
+"SFGRE"  eval_opcode(72,0, yytext, "FGRE" );
+"FLES"   eval_opcode(73,1, yytext, "FLES" );
+"SFLES"  eval_opcode(74,0, yytext, "FLES" );
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso
