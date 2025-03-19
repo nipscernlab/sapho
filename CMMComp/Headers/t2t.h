@@ -17,14 +17,7 @@ void get_cmp_ets(int et, int *et_r, int *et_i);     // pega ets de uma variavel 
 
 // uso de macros externas -----------------------------------------------------
 
-extern int fadd;                                    // vai usar funcao float_add
-extern int fmlt;                                    // vai usar funcao float_mlt
-extern int fdiv;                                    // vai usar funcao float_div
-
-extern int fsqrti;                                  // vai usar macro de raiz quadrada em ponto fixo
-extern int fatani;                                  // vai usar macro de arco tangente em ponto fixo
-extern int fsqrt ;                                  // vai usar macro de raiz quadrada em ponto flut
-extern int fatan ;                                  // vai usar macro de arco tangente em ponto flut
+extern int fsqrti;                                  // vai usar macro de raiz quadrada
+extern int fatani;                                  // vai usar macro de arco tangente
 
 void mac_geni(char *fasm);                          // adiciona todo o codigo necessario no .asm (pra ponto fixo)
-void mac_genf(char *fasm);                          // adiciona todo o codigo necessario no .asm (pra ponto flut)

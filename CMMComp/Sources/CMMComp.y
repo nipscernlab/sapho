@@ -365,7 +365,6 @@ int main(int argc, char *argv[])
   // checa se precisa adicionar macros no arquivo .asm ------------------------
 
 	if (prtype == 0) mac_geni(asm_file); // carrega macros para ponto fixo
-	if (prtype == 1) mac_genf(asm_file); // carrega macros para ponto flut
 
 	// checa consistencia de todas as variaveis e funcoes -----------------------
   

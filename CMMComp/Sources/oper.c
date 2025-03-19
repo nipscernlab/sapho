@@ -10,14 +10,6 @@
 #include <string.h>
 
 // ----------------------------------------------------------------------------
-// redeclaracao de variaveis globais ------------------------------------------
-// ----------------------------------------------------------------------------
-
-int fadd = 0; // se vai precisar de macro de soma    em ponto flutuante
-int fdiv = 0; // se vai precisar de macro de divisao em ponto flutuante
-int fmlt = 0; // se vai precisar de macro de multipl em ponto flutuante
-
-// ----------------------------------------------------------------------------
 // operacoes aritmeticas ------------------------------------------------------
 // ----------------------------------------------------------------------------
 

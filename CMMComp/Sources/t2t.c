@@ -23,6 +23,7 @@ FILE *f_float;
 // ----------------------------------------------------------------------------
 
 // converte um numero float (escrito em uma string) em meu float
+// soh funciona ate 32 bits. TODO: generalizar
 unsigned int f2mf(char *va)
 {
     float f = atof(va);
@@ -209,18 +210,10 @@ void header_int(char *fasm, char *pc_sim_mem)
     f_asm = fopen(fasm      , "w");
     f_lin = fopen(pc_sim_mem, "w");
 
-    add_sinst(0, "// Inicializacao da emulacao do ponto flutuante em software -------------------\n\n");
+    add_sinst(0, "// Gera variaveis auxiliares --------------------------------------------------\n\n");
 
     // LOAD NULL deve ser a primeira instrucao sempre, pra evitar problemas de reset
     add_sinst(-1, "LOAD NULL              // evita problema da primeira instrucao com o reset ascincrono\n\n");
-
-    // numero de bits da mantissa
-    add_sinst(-1, "LOAD %d\n", nbmant);
-    add_sinst(-1, "SET  nbmant            // guarda num de bits da mantissa\n\n");
-    
-    // numero de bits do expoente
-    add_sinst(-1, "LOAD %d\n", nbexpo);
-    add_sinst(-1, "SET  nbexp             // guarda num de bits do expoente\n\n");
 
     // numero zero
     add_sinst(-1, "LOAD %d           // 0.0\n", 1 << (nbmant+nbexpo-1));
@@ -240,51 +233,9 @@ void header_int(char *fasm, char *pc_sim_mem)
     add_sinst(-1, "LOAD %d           // 1/2\n", f2mf("0.5"));
     add_sinst(-1, "SET  um_div_2\n\n");
 
-    // tudo 1 menos bit de sinal
-    add_sinst(-1, "LOAD %d           // zera o bit de sinal (abs pra float em software)\n", (int)pow(2,nbmant+nbexpo)-1);
-    add_sinst(-1, "SET  tudo_um\n\n");
-
     // numero 1.0
     add_sinst(-1, "LOAD %d           // numero 1.0 em float\n", f2mf("1.0"));
     add_sinst(-1, "SET  num_um\n\n");
-
-    // numero de bits total
-    add_sinst(-1, "LOAD nbmant            // guarda numero de bits total\n");
-    add_sinst(-1, "ADD  nbexp\n");
-    add_sinst(-1, "SET  float_nbits\n\n");
-
-    // nbmant+1
-    add_sinst(-1, "LOAD nbmant            // variavel auxiliar\n");
-    add_sinst(-1, "ADD  1\n");
-    add_sinst(-1, "SET  nbmantp1\n\n");
-
-    // nbexp+1
-    add_sinst(-1, "LOAD nbexp             // variavel auxiliar\n");
-    add_sinst(-1, "ADD  1\n");
-    add_sinst(-1, "SET  nbexpp1\n\n");
-
-    add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");
-
-    fclose(f_asm);
-    fclose(f_lin);
-}
-
-// deve ser incluido no comeco do arquivo asm (para proc float)
-void header_float(char *fasm, char *pc_sim_mem)
-{
-    f_asm = fopen(fasm      , "w");
-    f_lin = fopen(pc_sim_mem, "w");
-
-    add_sinst(0, "// Inicializacao de parametros para operacoes aritmeticas ---------------------\n\n");
-
-    // LOAD NULL deve ser a porimeira instrucao sempre, pra evitar problemas de reset
-    add_sinst(-1, "LOAD NULL                // evita problema da primeira instrucao com o reset ascincrono\n\n");
-
-    // epsilon para convergencia de funcoes iterativas
-    char numi[64], numf[64];
-    epsilon_taylor(numi,numf);
-    add_sinst(-1, "LOAD %s           // epsilon usado em funcoes aritmeticas iterativas\n", numf);
-    add_sinst(-1, "SET  epsilon_taylor\n\n");
 
     add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");
 
@@ -300,7 +251,7 @@ void header_float(char *fasm, char *pc_sim_mem)
 void mac_geni(char *fasm)
 {
     // se nao tiver nada pra fazer, sai!
-    if (!(fadd || fmlt || fdiv || fsqrti || fatani)) return;
+    if (!(fsqrti || fatani)) return;
 
     char tasm[1024]; // arquivo temporario para o asm
     char tmem[1024]; // arquivo temporario para a tabela de memoria
@@ -321,27 +272,6 @@ void mac_geni(char *fasm)
 
     // coloca o resto que precisa no final do asm -----------------------------
 
-         sprintf(tasm, "%s/%s", dir_macro, "float_gen.asm");
-        fcat2end(tasm,fasm);
-
-    if (fadd)
-    {
-         sprintf(tasm, "%s/%s", dir_macro, "float_soma.asm");
-        fcat2end(tasm,fasm);
-    }
-
-    if (fmlt)
-    {
-         sprintf(tasm, "%s/%s", dir_macro, "float_mult.asm");
-        fcat2end(tasm,fasm);
-    }
-
-    if (fdiv)
-    {
-         sprintf(tasm, "%s/%s", dir_macro, "float_div.asm");
-        fcat2end(tasm,fasm);
-    }
-
     if (fsqrti)
     {
          sprintf(tasm, "%s/%s", dir_macro, "float_sqrt_i.asm");
@@ -351,44 +281,6 @@ void mac_geni(char *fasm)
     if (fatani)
     {
          sprintf(tasm, "%s/%s", dir_macro, "float_atan_i.asm");
-        fcat2end(tasm,fasm);
-    }
-}
-
-// gera macros pra ponto flutuante
-void mac_genf(char *fasm)
-{
-    // se nao tem nada pra fazer, sai!
-    if (!(fsqrt || fatan)) return;
-
-    char tasm[1024]; // arquivo temporario para o asm
-    char tmem[1024]; // arquivo temporario para a tabela de memoria
-    char fmem[1024]; // arquivo final para a tabela de memoria
-
-    sprintf  (tasm, "%s/%s", dir_tmp, "tasm.txt");
-    sprintf  (tmem, "%s/%s", dir_tmp, "tmem.txt");
-    sprintf  (fmem, "%s/pc_%s_mem.txt", dir_tmp, pr_name);
-
-    // cria os cabecalhos -----------------------------------------------------
-
-    header_float(tasm,tmem);
-
-    // coloca os cabecalhos no inicio dos arquivos ----------------------------
-
-    fcat2begin(fasm,tasm);
-    fcat2begin(fmem,tmem);
-
-    // coloca o resto que precisa no final do asm -----------------------------
-
-    if (fsqrt)
-    {
-         sprintf(tasm, "%s/%s", dir_macro, "float_sqrt.asm");
-        fcat2end(tasm,fasm);
-    }
-
-    if (fatan)
-    {
-         sprintf(tasm, "%s/%s", dir_macro, "float_atan.asm");
         fcat2end(tasm,fasm);
     }
 }
