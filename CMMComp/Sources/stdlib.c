@@ -639,44 +639,34 @@ int exec_sqrt(int et)
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
             add_instr("%s %s\n", i2f, v_name[et%OFST]);
-            add_instr("CALL float_sqrti\n");
-
-            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_sqrti\n"); fsqrti=1;
         }
 
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
             add_instr("IFA\n");
-            add_instr("CALL float_sqrti\n");
-
-            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_sqrti\n"); fsqrti=1;
         }
 
         // float var na memoria
         if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
         {
             add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("CALL float_sqrti\n");
-
-            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_sqrti\n"); fsqrti=1;
         }
         
         // float const na memoria
         if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
         {
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("CALL float_sqrti\n");
-
-            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_sqrti\n"); fsqrti=1;
         }
 
         // float no acc
         if ((get_type(et) == 2) && (et % OFST == 0))
         {
-            add_instr("CALL float_sqrti\n");
-
-            fsqrti=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_sqrti\n"); fsqrti=1;
         }
     }
     else
@@ -741,13 +731,10 @@ int exec_sqrt(int et)
 
 int exec_atan(int et)
 {
-    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei arco-tangente de número complexo ainda. Se vira!\n", line_num+1);
 
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    char i2f[10];
-    if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOAD"); else strcpy(ld , "PLD");
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM" ); else strcpy(i2f,"PIFM");
 
     if (prtype == 0)
     {
@@ -755,44 +742,34 @@ int exec_atan(int et)
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
             add_instr("%s %s\n", i2f, v_name[et%OFST]);
-            add_instr("CALL float_atani\n");
-
-            fatani=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_atani\n"); fatani=1;
         }
 
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
             add_instr("IFA\n");
-            add_instr("CALL float_atani\n");
-
-            fatani=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_atani\n"); fatani=1;
         }
 
         // float var na memoria
         if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
         {
             add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("CALL float_atani\n");
-
-            fatani=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_atani\n"); fatani=1;
         }
         
         // float const na memoria
         if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
         {
             add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-            add_instr("CALL float_atani\n");
-
-            fatani=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_atani\n"); fatani=1;
         }
 
         // float no acc
         if ((get_type(et) == 2) && (et % OFST == 0))
         {
-            add_instr("CALL float_atani\n");
-
-            fatani=1; fadd=1; fmlt=1; fdiv=1;
+            add_instr("CALL float_atani\n"); fatani=1;
         }
     }
     else
@@ -864,7 +841,7 @@ int exec_real(int et)
     // comp no acc
     if ((get_type(et) == 3) && (id == 0))
     {
-        add_instr("SETP aux_cmp\n");
+        add_instr("POP\n");
     }
 
     acc_ok = 1;
@@ -958,7 +935,7 @@ int exec_sqr2(int et)
         etr = 2*OFST;                       // saida tem q ser et estendido pra float no acc
     }
 
-    return etr;
+    return etr; // 2*OFST?
 }
 
 // valor absoluto de um num complexo
