@@ -130,8 +130,12 @@ void exec_out2(int et)
 // pega o sinal do primeiro argumento e coloca no segundo
 int exec_sign(int et1, int et2)
 {
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if ((get_type(et1) > 2) || (get_type(et2) > 2))
+    {
+        fprintf (stderr, "Erro na linha %d: não faz sentido o uso de sign(.,.) com números complexos!\n", line_num+1);
+    }
+
+    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
 
     if (prtype == 0)
     {
@@ -151,30 +155,21 @@ int exec_sign(int et1, int et2)
         // int na memoria e float var na memoria
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
-            add_instr("%s %s\n", ld,     v_name[et1%OFST] );
-            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
-            add_instr("PLD %s\n",        v_name[et2%OFST] );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
         }
 
         // int na memoria e float const na memoria
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
         {
-            add_instr("%s %s\n", ld,     v_name[et1%OFST] );
-            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("FSGN %s\n"    ,          v_name[et1%OFST]);
         }
 
         // int na memoria e float no acc
         if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("PLD %s\n",       v_name[et1%OFST]  );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("SADD\n");
+            add_instr("FSGN %s\n", v_name[et1%OFST]);
         }
 
         // int no acc e int na memoria
@@ -193,29 +188,21 @@ int exec_sign(int et1, int et2)
         // int no acc e float var na memoria
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("PLD %s\n",       v_name[et2%OFST]  );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("PLD %s\n", v_name[et2%OFST]  );
+            add_instr("SFSGN\n");
         }
 
         // int no acc e float const na memoria
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("PLD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("SFSGN\n");
         }
 
         // int no acc e float no acc
         if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
         {
-            add_instr("SETP aux_sign\n");
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("PLD aux_sign\n");
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("SFSGN\n");
         }
 
         // float var na memoria e int na memoria
@@ -234,30 +221,21 @@ int exec_sign(int et1, int et2)
         // float var na memoria e float var na memoria
         if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
-            add_instr("%s %s\n", ld,     v_name[et1%OFST] );
-            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
-            add_instr("PLD %s\n",        v_name[et2%OFST] );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
         }
 
         // float var na memoria e float const na memoria
         if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld,     v_name[et1%OFST] );
-            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+        {   
+            add_instr("%s %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
         }
 
         // float var na memoria e float no acc
         if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("PLD %s\n",       v_name[et1%OFST]  );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("SADD\n");
+            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
         }
 
         // float const na memoria e int na memoria
@@ -276,30 +254,21 @@ int exec_sign(int et1, int et2)
         // float const na memoria e float var na memoria
         if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
-            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
-            add_instr("PLD %s\n",        v_name[et2%OFST] );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("%s %s\n", ld, v_name[et2%OFST]);
+            add_instr("FSGN %d // %s\n", f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
         }
 
         // float const na memoria e float const na memoria
         if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
         {
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
-            add_instr("AND %u\n",  1 << (nbmant+nbexpo)   );
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST] ), v_name[et2%OFST]);
+            add_instr("FSGN %d // %s\n"  , f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
         }
 
         // float const na memoria e float no acc
         if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("SADD\n");
+            add_instr("FSGN %d // %s\n"  , f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
         }
 
         // float no acc e int na memoria
@@ -318,29 +287,21 @@ int exec_sign(int et1, int et2)
         // float no acc e float var na memoria
         if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("PLD %s\n",       v_name[et2%OFST]  );
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("PLD %s\n", v_name[et2%OFST]);
+            add_instr("SFSGN\n");
         }
 
         // float no acc e float const na memoria
         if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
         {
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
             add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("SFSGN\n");
         }
 
         // float no acc e float no acc
         if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
         {
-            add_instr("SETP aux_sign\n");
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))  );
-            add_instr("PLD aux_sign\n");
-            add_instr("AND %u\n", (1 << (nbmant+nbexpo))-1);
-            add_instr("SADD\n");
+            add_instr("SFSGN\n");
         }
     }
     else
@@ -450,11 +411,6 @@ int exec_sign(int et1, int et2)
         }
     }
 
-    if ((get_type(et1) > 2) || (get_type(et2) > 2))
-    {
-        fprintf (stderr, "Erro na linha %d: não faz sentido o uso de sign(.,.) com números complexos!\n", line_num+1);
-    }
-
     acc_ok = 1;
 
     return get_type(et2)*OFST;
@@ -463,16 +419,16 @@ int exec_sign(int et1, int et2)
 // valor absoluto (int, float e comp)
 int exec_abs(int et)
 {
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char  ld [10]; if (acc_ok == 0) strcpy(ld  , "LOAD"); else strcpy(ld  , "PLD"  );
+    char  abs[10]; if (acc_ok == 0) strcpy( abs, "ABSM"); else strcpy( abs, "PABSM");
+    char fabs[10]; if (acc_ok == 0) strcpy(fabs,"FABSM"); else strcpy(fabs,"PFABSM");
 
     if (prtype == 0)
     {
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("ABS\n");
+            add_instr("%s %s\n", abs, v_name[et%OFST]);
         }
 
         // int no acc
@@ -484,14 +440,13 @@ int exec_abs(int et)
         // float na memoria
         if ((get_type(et) == 2) && (et % OFST != 0))
         {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+            add_instr("%s %s\n", fabs, v_name[et%OFST]);
         }
 
         // float no acc
         if ((get_type(et) == 2) && (et % OFST == 0))
         {
-            add_instr("AND %d // zera o bit de sinal (abs pra float em software)\n",(int)pow(2,nbmant+nbexpo)-1);
+            add_instr("FABS\n");
         }
 
         // comp const, na memoria e no acc
@@ -543,31 +498,38 @@ int exec_abs(int et)
 // zera se for negativo
 int exec_pst(int et)
 {
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char  ld [10]; if (acc_ok == 0) strcpy( ld , "LOAD"); else strcpy( ld , "PLD"  );
+    char  pst[10]; if (acc_ok == 0) strcpy( pst, "PSTM"); else strcpy( pst, "PPSTM");
+    char fpst[10]; if (acc_ok == 0) strcpy(fpst,"FPSTM"); else strcpy(fpst,"PFPSTM");
 
     if (prtype == 0)
     {
         // int na memoria
         if ((get_type(et) == 1) && (et % OFST != 0))
         {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("%s %s\n", pst, v_name[et%OFST]);
         }
 
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
-            // nao faz nada
+            add_instr("PST\n");
         }
 
-        // float na memoria e no acc
-        if (get_type(et) == 2)
+        // float na memoria
+        if ((get_type(et) == 2)  && (et % OFST != 0))
         {
-            fprintf (stderr, "Erro na linha %d: Pra usar float no argumento de pset() tem que habilitar ponto-flutuante em hardware!\n", line_num+1);
+            add_instr("%s %s\n", fpst, v_name[et%OFST]);
         }
 
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
+        // float no acc
+        if ((get_type(et) == 2)  && (et % OFST == 0))
+        {
+            add_instr("FPST\n");
+        }
+
+        // comp
+        if (get_type(et) > 2)
         {
             fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
         }
@@ -579,24 +541,27 @@ int exec_pst(int et)
         {
             fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
             add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("PST\n");
         }
 
         // int no acc
         if ((get_type(et) == 1) && (et % OFST == 0))
         {
             fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
+            add_instr("PST\n");
         }
 
         // float na memoria
         if ((get_type(et) == 2) && (et % OFST != 0))
         {
             add_instr("%s %s\n", ld, v_name[et%OFST]);
+            add_instr("PST\n");
         }
 
         // float no acc
         if ((get_type(et) == 2) && (et % OFST == 0))
         {
-            // nao faz nada
+            add_instr("PST\n");
         }
 
         // comp const, na memoria e no acc
@@ -606,33 +571,29 @@ int exec_pst(int et)
         }   
     }
 
-    add_instr("PSET\n");
-
     acc_ok = 1;
 
-    return (prtype == 0) ? OFST : 2*OFST;
+    return get_type(et)*OFST;
 }
 
 // divisao por constante
 int exec_norm(int et)
 {
-    if ((get_type(et) != 1) || (prtype == 1))
-        fprintf (stderr, "Erro na linha %d: nada a ver! norm() é só pra inteiro e quando não tem ponto-flutuante em hardware!\n", line_num+1);
+    if (get_type(et) != 1)
+        fprintf (stderr, "Erro na linha %d: nada a ver! norm(.) é só pra inteiro!\n", line_num+1);
 
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char nrm[10]; if (acc_ok == 0) strcpy(nrm,"NRMM"); else strcpy(nrm,"PNRMM");
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
-        add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("NORM\n");
+        add_instr("%s %s\n", nrm, v_name[et%OFST]);
     }
 
     // int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
-        add_instr("NORM\n");
+        add_instr("NRM\n");
     }
 
     acc_ok = 1;
@@ -669,11 +630,8 @@ int exec_sqrt(int et)
         fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
     }
 
-    char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
-
-    char i2f[10];
-    if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOAD"); else strcpy(ld ,"PLD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f, "IFM"); else strcpy(i2f,"PIFM");
 
     if (prtype == 0)
     {

@@ -368,8 +368,8 @@ always @ (posedge clk or posedge rst) begin
 						out_en  <= 1'b0;
 					end
 			47  : begin
-						ula_op  <= 6'd7;     // NORM   -> Divisao do acc por uma constante (exemplo: />300)
-						 srf    <= 1'b0;     // fazer o NORM com memoria!
+						ula_op  <= 6'd7;     // NRM   -> Divisao do acc por uma constante (exemplo: />300)
+						 srf    <= 1'b0;     // fazer o NRM com memoria!
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
@@ -383,7 +383,7 @@ always @ (posedge clk or posedge rst) begin
 					end
 			49  : begin
 						ula_op  <= 6'd8;     // ABS   -> retorna o valor absoluto do acc (exemplo: x = abs(y)) 
-						 srf    <= 1'b0;     // fazer o ABS com memoria!
+						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
@@ -558,6 +558,104 @@ always @ (posedge clk or posedge rst) begin
 					end
 			74  : begin
 						ula_op  <= 6'd35;    // SFLES -> menor que em ponto flutuante com pilha
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			75  : begin
+						ula_op  <= 6'd36;    // FSGN  -> SIGN em ponto flutuante com a memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			76  : begin
+						ula_op  <= 6'd36;    // SFSGN -> SIGFN em ponto flutuante com pilha
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			77  : begin
+						ula_op  <= 6'd37;    // ABSM   -> ABS com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			78  : begin
+						ula_op  <= 6'd37;    // PABSM  -> ABS com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			79  : begin
+						ula_op  <= 6'd38;    // FABS   -> ABS em ponto flutuante
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			80  : begin
+						ula_op  <= 6'd39;    // FABSM  -> ABS em ponto flutuante com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			81  : begin
+						ula_op  <= 6'd39;    // PFABSM -> ABS em ponto flutuante com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			82  : begin
+						ula_op  <= 6'd40;    // PSTM   -> PST com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			83  : begin
+						ula_op  <= 6'd40;    // PPSTM  -> PST com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			84  : begin
+						ula_op  <= 6'd41;    // FPST   -> PST em ponto flutuante
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			85  : begin
+						ula_op  <= 6'd42;    // FPSTM  -> PST em ponto flutuante com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			86  : begin
+						ula_op  <= 6'd42;    // PFPSTM -> PST em ponto flutuante com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			87  : begin
+						ula_op  <= 6'd43;    // NRMM  -> NRM com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			88  : begin
+						ula_op  <= 6'd43;    // PNRMM -> NRM com memoria dando push antes
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
@@ -904,7 +1002,7 @@ always @ (*) begin
 						ldi      <= 1'b0;
 						invl     <= 1'b0;
 					end
-			47: begin                     // NORM
+			47: begin                     // NRM
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -1097,6 +1195,104 @@ always @ (*) begin
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b1;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			75: begin                     // FSGN
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			76: begin                     // SFSGN
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b1;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			77: begin                     // ABSM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			78: begin                     // PABSM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			79: begin                     // FABS
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			80: begin                     // FABSM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			81: begin                     // PFABSM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			82: begin                     // PSTM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			83: begin                     // PPSTM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			84: begin                     // FPST
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			85: begin                     // FPSTM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			86: begin                     // PFPSTM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			87: begin                     // NRMM
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			88: begin                     // PNRMM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
 						invl     <= 1'b0;
 					end

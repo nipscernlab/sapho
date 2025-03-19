@@ -80,7 +80,7 @@ void if_exp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
             add_instr("FIA\n");
         }
     }
@@ -136,7 +136,7 @@ void if_exp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
         }
     }
 
@@ -256,7 +256,7 @@ void while_expexp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
             add_instr("FIA\n");
         }
     }
@@ -312,7 +312,7 @@ void while_expexp(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
         }
     }
 
@@ -389,7 +389,7 @@ void exec_switch(int et)
         // float var
         if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
         {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
             add_instr("FIM %s\n", v_name[et%OFST]);
         }
@@ -397,7 +397,7 @@ void exec_switch(int et)
         // float const
         if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
         {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
             add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
         }
@@ -405,7 +405,7 @@ void exec_switch(int et)
         // float acc
         if ((get_type(et) == 2) && (et%OFST==0))
         {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
             
             add_instr("FIA\n");
         }
@@ -413,7 +413,7 @@ void exec_switch(int et)
         // comp const
         if (get_type(et) == 5)
         {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             int etr,eti;
             get_cmp_cst(et,&etr,&eti);
@@ -424,7 +424,7 @@ void exec_switch(int et)
         // comp var
         if ((get_type(et) == 3) && (et % OFST != 0))
         {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
             add_instr("FIM %s\n", v_name[et%OFST]);
         }
@@ -432,9 +432,9 @@ void exec_switch(int et)
         // comp acc
         if ((get_type(et) == 3) && (et % OFST == 0))
         {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+            fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
             add_instr("FIA\n");
         }
     }
@@ -490,7 +490,7 @@ void exec_switch(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
         }
     }
 

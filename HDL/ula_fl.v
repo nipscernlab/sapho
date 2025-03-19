@@ -121,7 +121,7 @@ always @ (*) begin
 	  //6'd5   : out <= mod; // MOD    soh na ula_fx
 		6'd6   : out <= neg; // NEG
   
-	  //6'd7   : out <= nrm; // NORM   soh na ula_fx
+	  //6'd7   : out <= nrm; // NRM   soh na ula_fx
 		6'd8   : out <= abs; // ABS
 		6'd9   : out <= pst; // PST
 		6'd10  : out <= sgn; // SIGN

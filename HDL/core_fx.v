@@ -48,6 +48,7 @@ module core_fx
 	parameter MOD   =   0,              // Resto da divisao
 	parameter ABS   =   0,              // Valor absoluto do acumulador
 	parameter NRM   =   0,              // Divide pela constante NUGAIN (ex: x = /> y;);
+	parameter NRMM  =   0,
 	parameter PST   =   0,              // Zera se for negativo
 	parameter SGN   =   0,              // Copia sinal de uma variavel na outra
 	parameter NEG   =   0,              // Complemento a 2
@@ -83,8 +84,16 @@ module core_fx
 	parameter FMLT  =   0,
 	parameter FDIV  =   0,
 	parameter FGRE  =   0,
-	parameter FLES  =   0
-)
+	parameter FLES  =   0,
+
+	parameter FSGN  =   0,
+	parameter ABSM  =   0,
+	parameter FABS  =   0,
+	parameter FABSM =   0,
+	
+	parameter PSTM  =   0,
+	parameter FPST  =   0,
+	parameter FPSTM =   0)
 (
 	input                           clk, rst,
 
@@ -209,10 +218,18 @@ ula_fx #(.NUBITS(NUBITS),
          .SHL   (SHL   ),
          .SRS   (SRS   ),
          .NRM   (NRM   ),
+		 .NRMM  (NRMM  ),
          .ABS   (ABS   ),
+		 .ABSM  (ABSM  ),
+		 .FABS  (FABS  ),
+		 .FABSM (FABSM ),
 		 .F2I   (F2I   ),
 		 .I2F   (I2F   ),
          .SGN   (SGN   ),
+		 .FSGN  (FSGN  ),
+		 .PSTM  (PSTM  ),
+		 .FPST  (FPST  ),
+		 .FPSTM (FPSTM ),
          .PST   (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
 
 // Acumulador -----------------------------------------------------------------

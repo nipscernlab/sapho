@@ -236,7 +236,7 @@ void declar_ret(int et, int ret)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
     
-            add_instr("SETP lixo\n");
+            add_instr("POP\n");
         }
 
         // comp com int var
@@ -757,7 +757,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            add_instr("SETP lixo_aux\n");
+            add_instr("POP\n");
         }
 
         // original eh float e chamada eh int var -----------------------------
@@ -816,7 +816,7 @@ void par_check(int et)
         {
             fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-            add_instr("SETP lixo_aux\n");
+            add_instr("POP\n");
         }
 
         // original eh comp e chamada eh int var ------------------------------

@@ -21,6 +21,10 @@ module ula_fx_mux
 	 input	   [NUBITS-1:0] negm, fneg, fnegm,
 	 input     [NUBITS-1:0] fadd, fmlt, fdiv,
 	 input     [NUBITS-1:0] fgre, fles,
+	 input     [NUBITS-1:0] fsgn,
+	 input     [NUBITS-1:0] absm, fabs, fabsm,
+	 input     [NUBITS-1:0] pstm, fpst, fpstm,
+	 input     [NUBITS-1:0] nrmm,
 
 	output reg [NUBITS-1:0] out
 );
@@ -36,7 +40,7 @@ always @ (*) begin
 		6'd5   : out <= mod;  // MOD
 		6'd6   : out <= neg;  // NEG
 
-		6'd7   : out <= nrm;  // NORM
+		6'd7   : out <= nrm;  // NRM
 		6'd8   : out <= abs;  // ABS
 		6'd9   : out <= pst;  // PST
 		6'd10  : out <= sgn;  // SIGN
@@ -72,6 +76,17 @@ always @ (*) begin
 		6'd33  : out <= fdiv; // FDIV
 		6'd34  : out <= fgre; // FGRE
 		6'd35  : out <= fles; // FLES
+
+		6'd36  : out <= fsgn; // FSGN
+		6'd37  : out <= absm; // ABSM
+		6'd38  : out <= fabs; // FABS
+		6'd39  : out <= fabsm;// FABSM
+
+		6'd40  : out <= pstm; // PSTM
+		6'd41  : out <= fpst; // FPST
+		6'd42  : out <= fpstm;// FPSTM
+
+		6'd43  : out <= nrmm; // NRMM
 
 		default: out <= {NUBITS{1'bx}};
 	endcase
@@ -162,7 +177,7 @@ assign out = (in1 ^ in2);
 
 endmodule
 
-// NORM -----------------------------------------------------------------------
+// NRM ------------------------------------------------------------------------
 
 module my_nrm
 #(
@@ -193,7 +208,7 @@ assign out = (in[NUBITS-1]) ? -in : in;
 
 endmodule
 
-// PSET -----------------------------------------------------------------------
+// PST ------------------------------------------------------------------------
 
 module my_pst
 #(
@@ -427,6 +442,62 @@ assign out = {s_out, e_out, m_out};
 
 endmodule
 
+// FSIGN ----------------------------------------------------------------------
+
+module my_fsgn
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	 input [MAN+EXP:0] in1, in2,
+	output [MAN+EXP:0] out 
+);
+
+wire                  s_out = in1[EXP+MAN];
+wire signed [EXP-1:0] e_out = in2[EXP+MAN-1:MAN];
+wire        [MAN-1:0] m_out = in2[MAN    -1:  0];
+
+assign out = {s_out, e_out, m_out};
+
+endmodule
+
+// FABS -----------------------------------------------------------------------
+
+module my_fabs
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	 input [MAN+EXP:0] in,
+	output [MAN+EXP:0] out
+);
+
+wire                  s_out = 0;
+wire signed [EXP-1:0] e_out = in[EXP+MAN-1:MAN];
+wire        [MAN-1:0] m_out = in[MAN    -1:  0];
+
+assign out = {s_out, e_out, m_out};
+
+endmodule
+
+// FPST -----------------------------------------------------------------------
+
+module my_fpst
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	 input [MAN+EXP:0] in,
+	output [MAN+EXP:0] out
+);
+
+assign out = (in[MAN+EXP]) ? {1'b0, 1'b1, {MAN+EXP-1{1'b0}}} : in;
+
+endmodule
+
 // ****************************************************************************
 // Circuito Principal *********************************************************
 // ****************************************************************************
@@ -451,6 +522,7 @@ module ula_fx
 
 	// Operacoes criadas
 	parameter NRM  = 0, // divide pela constante NUGAIN
+	parameter NRMM = 0,
 	parameter ABS  = 0, // valor absoluto
 	parameter PST  = 0, // zera se form negativo
 	parameter SGN  = 0, // pega o sinal de in1 e coloca em in2
@@ -485,8 +557,16 @@ module ula_fx
 	parameter FMLT = 0,
 	parameter FDIV = 0,
 	parameter FGRE = 0,
-	parameter FLES = 0
-)
+	parameter FLES = 0,
+
+	parameter FSGN = 0,
+	parameter ABSM = 0,
+	parameter FABS = 0,
+	parameter FABSM= 0,
+	
+	parameter PSTM = 0,
+	parameter FPST = 0,
+	parameter FPSTM= 0)
 (
 	input         [       5:0] op,
 	input  signed [NUBITS-1:0] in1, in2,
@@ -505,9 +585,16 @@ wire signed [NUBITS-1:0]  neg;
 wire signed [NUBITS-1:0]  negm;
 wire signed [NUBITS-1:0] fneg;
 wire signed [NUBITS-1:0] fnegm;
-wire signed [NUBITS-1:0] abs;
+wire signed [NUBITS-1:0]  abs;
+wire signed [NUBITS-1:0]  absm;
+wire signed [NUBITS-1:0] fabs;
+wire signed [NUBITS-1:0] fabsm;
 wire signed [NUBITS-1:0] nrm;
-wire signed [NUBITS-1:0] pst;
+wire signed [NUBITS-1:0] nrmm;
+wire signed [NUBITS-1:0]  pst;
+wire signed [NUBITS-1:0]  pstm;
+wire signed [NUBITS-1:0] fpst;
+wire signed [NUBITS-1:0] fpstm;
 wire signed [NUBITS-1:0] orr;
 wire signed [NUBITS-1:0] ann;
 wire signed [NUBITS-1:0] inv;
@@ -524,10 +611,12 @@ wire signed [NUBITS-1:0] les;
 wire signed [NUBITS-1:0] fles;
 wire signed [NUBITS-1:0] equ;
 wire signed [NUBITS-1:0] sgn;
+wire signed [NUBITS-1:0] fsgn;
 wire signed [NUBITS-1:0] fima;
 wire signed [NUBITS-1:0] ifma;
 
 generate if (NRM  ) my_nrm  #(NUBITS, NUGAIN) my_nrm  (in2,      nrm  ); else assign nrm   = {NUBITS{1'bx}}; endgenerate
+generate if (NRMM ) my_nrm  #(NUBITS, NUGAIN) my_nrmm (in1,      nrmm ); else assign nrmm  = {NUBITS{1'bx}}; endgenerate
 generate if (ABS  ) my_abs  #(NUBITS        ) my_abs  (in2,      abs  ); else assign abs   = {NUBITS{1'bx}}; endgenerate
 generate if (PST  ) my_pst  #(NUBITS        ) my_pst  (in2,      pst  ); else assign pst   = {NUBITS{1'bx}}; endgenerate
 generate if (OR   ) my_or   #(NUBITS        ) my_or   (in1, in2, orr  ); else assign orr   = {NUBITS{1'bx}}; endgenerate
@@ -568,9 +657,18 @@ generate if (FADD || FGRE || FLES) my_denorm #(NBMANT,NBEXPO) denorm(in1,in2,e_o
 generate if (FADD) my_fadd #(NBMANT,NBEXPO) my_fadd(e_out,sm1_out,sm2_out,fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
 generate if (FMLT) my_fmlt #(NBMANT,NBEXPO) my_fmlt(in1  ,in2    ,fmlt        ); else assign fmlt = {NUBITS{1'bx}}; endgenerate
 generate if (FDIV) my_fdiv #(NBMANT,NBEXPO) my_fdiv(in1  ,in2    ,fdiv        ); else assign fdiv = {NUBITS{1'bx}}; endgenerate
+generate if (FSGN) my_fsgn #(NBMANT,NBEXPO) my_fsgn(in1  ,in2    ,fsgn        ); else assign fsgn = {NUBITS{1'bx}}; endgenerate
 
 generate if (FGRE) assign fgre = sm1_out > sm2_out ; else assign fgre = {NUBITS{1'bx}}; endgenerate
 generate if (FLES) assign fles = sm1_out < sm2_out ; else assign fles = {NUBITS{1'bx}}; endgenerate
+
+generate if (ABSM ) my_abs  #(NUBITS        ) my_absm (in1, absm ); else assign absm  = {NUBITS{1'bx}}; endgenerate
+generate if (FABS ) my_fabs #(NBMANT, NBEXPO) my_fabs (in2, fabs ); else assign fabs  = {NUBITS{1'bx}}; endgenerate
+generate if (FABSM) my_fabs #(NBMANT, NBEXPO) my_fabsm(in1, fabsm); else assign fabsm = {NUBITS{1'bx}}; endgenerate
+
+generate if (PSTM ) my_pst  #(NUBITS        ) my_pstm (in1, pstm ); else assign pstm  = {NUBITS{1'bx}}; endgenerate
+generate if (FPST ) my_fpst #(NBMANT, NBEXPO) my_fpst (in2, fpst ); else assign fpst  = {NUBITS{1'bx}}; endgenerate
+generate if (FPSTM) my_fpst #(NBMANT, NBEXPO) my_fpstm(in1, fpstm); else assign fpstm = {NUBITS{1'bx}}; endgenerate
 
 wire [NUBITS-1:0] mux_out;
 
@@ -586,6 +684,10 @@ ula_fx_mux #(NUBITS)um(op,
 					   negm,fneg,fnegm,
 					   fadd,fmlt,fdiv,
 					   fgre,fles,
+					   fsgn,
+					   absm, fabs, fabsm,
+					   pstm, fpst, fpstm,
+					   nrmm,
                        mux_out);
 
 generate if (I2F || FADD || FMLT || FDIV) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate

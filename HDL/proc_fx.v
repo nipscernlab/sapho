@@ -46,6 +46,7 @@ module proc_fx
 	parameter MOD   =   0,              // Resto da divisao
 	parameter ABS   =   0,              // Valor absoluto do acumulador
 	parameter NRM   =   0,              // Divide pela constante NUGAIN (ex: x = /> y + z;);
+    parameter NRMM  =   0,
 	parameter PST   =   0,              // Zera se for negativo
 	parameter SGN   =   0,              // Copia sinal de uma variavel na outra
 	parameter NEG   =   0,              // complemento a 2
@@ -82,6 +83,15 @@ module proc_fx
     parameter FDIV  =   0,
     parameter FGRE  =   0,
     parameter FLES  =   0,
+
+    parameter FSGN  =   0,
+    parameter ABSM  =   0,
+	parameter FABS  =   0,
+	parameter FABSM =   0,
+
+    parameter PSTM  =   0,
+	parameter FPST  =   0,
+	parameter FPSTM =   0,
 
 	// -------------------------------------------------------------------------
 	// Parametros internos -----------------------------------------------------
@@ -167,10 +177,18 @@ core_fx #(.NUBITS(NUBITS),
           .SHL   (SHL   ),
           .SRS   (SRS   ),
           .NRM   (NRM   ),
+          .NRMM  (NRMM  ),
           .ABS   (ABS   ),
+          .ABSM  (ABSM  ),
+		  .FABS  (FABS  ),
+		  .FABSM (FABSM ),
           .F2I   (F2I   ),
           .I2F   (I2F   ),
           .PST   (PST   ),
+          .PSTM  (PSTM  ),
+		  .FPST  (FPST  ),
+		  .FPSTM (FPSTM ),
+          .FSGN  (FSGN  ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
                                 mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
@@ -229,10 +247,18 @@ core_fx #(.NUBITS(NUBITS),
           .SHL   (SHL   ),
           .SRS   (SRS   ),
           .NRM   (NRM   ),
+          .NRMM  (NRMM  ),
           .ABS   (ABS   ),
+          .ABSM  (ABSM  ),
+		  .FABS  (FABS  ),
+		  .FABSM (FABSM ),
           .F2I   (F2I   ),
           .I2F   (I2F   ),
           .PST   (PST   ),
+          .PSTM  (PSTM  ),
+		  .FPST  (FPST  ),
+		  .FPSTM (FPSTM ),
+          .FSGN  (FSGN  ),
           .SGN   (SGN   )) core(clk, rst,
                                 instr, instr_addr,
                                 mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,

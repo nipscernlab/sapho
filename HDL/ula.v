@@ -35,7 +35,7 @@ always @ (*) begin
 		6'd5   : out <= out_ufx; // MOD
 		6'd6   : out <= out_ufl; // NEG
   
-		6'd7   : out <= out_ufx; // NORM
+		6'd7   : out <= out_ufx; // NRM
 		6'd8   : out <= out_ufl; // ABS
 		6'd9   : out <= out_ufl; // PST
 		6'd10  : out <= out_ufl; // SIGN
@@ -74,7 +74,7 @@ always @ (*) begin
 		6'd5   : is_zero <= iz_ufx; // MOD
 		6'd6   : is_zero <= iz_ufl; // NEG
 
-		6'd7   : is_zero <= iz_ufx; // NORM
+		6'd7   : is_zero <= iz_ufx; // NRM
 		6'd8   : is_zero <= iz_ufl; // ABS
 		6'd9   : is_zero <= iz_ufl; // PST
 		6'd10  : is_zero <= iz_ufl; // SIGN

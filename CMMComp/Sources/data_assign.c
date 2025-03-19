@@ -394,7 +394,7 @@ void var_set(int id, int et)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
-            add_instr("SETP lixo\n");
+            add_instr("POP\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -462,7 +462,7 @@ void var_set(int id, int et)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
     
-            add_instr("SETP lixo\n");
+            add_instr("POP\n");
             add_instr("SET %s\n",  v_name[id]);
         }
 
@@ -970,7 +970,7 @@ void array_set(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou arredondar a parte real hein!\n", line_num+1);
     
-            add_instr("SETP lixo\n");
+            add_instr("POP\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }
@@ -1045,7 +1045,7 @@ void array_set(int id, int et, int fft)
         {
             fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
     
-            add_instr("SETP lixo\n");
+            add_instr("POP\n");
             add_instr("%s\n", set_type);
             add_instr("SET %s\n",  v_name[id]);
         }

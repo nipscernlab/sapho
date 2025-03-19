@@ -5607,7 +5607,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
             add_instr("FIA\n");
             add_instr("LINV\n");
         }
@@ -5669,7 +5669,7 @@ int oper_linv(int et)
         {
             fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
-            add_instr("SETP aux_lixo\n");
+            add_instr("POP\n");
             add_instr("LINV\n");
         }
     }

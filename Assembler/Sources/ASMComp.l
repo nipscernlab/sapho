@@ -87,9 +87,9 @@ LINHA          \n
 "SSHL"   eval_opcode(42,0, yytext, "SHL"  );
  "SRS"   eval_opcode(43,1, yytext, "SRS"  );
 "SSRS"   eval_opcode(44,0, yytext, "SRS"  );
-"PSET"   eval_opcode(45,0, yytext, "PST"  );
+"PST"    eval_opcode(45,0, yytext, "PST"  );
 "SSGN"   eval_opcode(46,0, yytext, "SGN"  );
-"NORM"   eval_opcode(47,0, yytext, "NRM"  );
+"NRM"    eval_opcode(47,0, yytext, "NRM"  );
 "FIA"    eval_opcode(48,0, yytext, "F2I"  );
 "ABS"    eval_opcode(49,0, yytext, "ABS"  );
 "ILDI"   eval_opcode(50,1, yytext, "FFT"  );
@@ -117,6 +117,20 @@ LINHA          \n
 "SFGRE"  eval_opcode(72,0, yytext, "FGRE" );
 "FLES"   eval_opcode(73,1, yytext, "FLES" );
 "SFLES"  eval_opcode(74,0, yytext, "FLES" );
+"FSGN"   eval_opcode(75,1, yytext, "FSGN" );
+"SFSGN"  eval_opcode(76,0, yytext, "FSGN" );
+"ABSM"   eval_opcode(77,1, yytext, "ABSM" );
+"PABSM"  eval_opcode(78,1, yytext, "ABSM" );
+"FABS"   eval_opcode(79,0, yytext, "FABS" );
+"FABSM"  eval_opcode(80,1, yytext, "FABSM");
+"PFABSM" eval_opcode(81,1, yytext, "FABSM");
+"PSTM"   eval_opcode(82,1, yytext, "PSTM" );
+"PPSTM"  eval_opcode(83,1, yytext, "PSTM" );
+"FPST"   eval_opcode(84,0, yytext, "FPST" );
+"FPSTM"  eval_opcode(85,1, yytext, "FPSTM");
+"PFPSTM" eval_opcode(86,1, yytext, "FPSTM");
+"NRMM"   eval_opcode(87,1, yytext, "NRMM" );
+"PNRMM"  eval_opcode(88,1, yytext, "NRMM" );
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso
