@@ -9,7 +9,6 @@
 extern FILE *f_asm;              // arquivo .asm a ser gerado pelo compilador
 
 extern char pr_name[128];        // nome do processador
-extern int  prtype;              // 0 -> processador fonto fixo, 1 -> processador ponto flutuante
 extern int  nbmant;              // numero de bits de mantissa
 extern int  nbexpo;              // numero de bits de expoente
 

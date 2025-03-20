@@ -18,126 +18,68 @@ int swit_cnt  = 0;
 
 void if_exp(int et)
 {
-    if (prtype == 0)
+    // int var
+    if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
-
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
-
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-
-            add_instr("FIM %s\n", v_name[et%OFST]);
-        }
-
-        // float const
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-
-            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-        }
-
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-            
-            add_instr("FIA\n");
-        }
-
-        // comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            int etr,eti;
-            get_cmp_cst(et,&etr,&eti);
-
-            add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        }
-
-        // comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            add_instr("FIM %s\n", v_name[et%OFST]);
-        }
-
-        // comp acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            add_instr("POP\n");
-            add_instr("FIA\n");
-        }
+        add_instr("LOAD %s\n", v_name[et%OFST]);
     }
-    else
+
+    // int acc
+    if ((get_type(et) == 1) && (et%OFST==0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+        // nao faz nada
+    }
 
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
+    // float var
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+        add_instr("FIM %s\n", v_name[et%OFST]);
+    }
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+    // float const
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-        }
+        add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+    }
 
-        // comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+    // float acc
+    if ((get_type(et) == 2) && (et%OFST==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+        
+        add_instr("FIA\n");
+    }
 
-            int etr,eti;
-            get_cmp_cst(et,&etr,&eti);
+    // comp const
+    if (get_type(et) == 5)
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        }
+        int etr,eti;
+        get_cmp_cst(et,&etr,&eti);
 
-        // comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+        add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+    }
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+    // comp var
+    if ((get_type(et) == 3) && (et % OFST != 0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-        // comp acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+        add_instr("FIM %s\n", v_name[et%OFST]);
+    }
 
-            add_instr("POP\n");
-        }
+    // comp acc
+    if ((get_type(et) == 3) && (et % OFST == 0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+
+        add_instr("POP\n");
+        add_instr("FIA\n");
     }
 
     int n = push_lab(0);
@@ -194,126 +136,68 @@ void while_expp()
 // executa o exp e cria um JZ pra ver se entra ou nao
 void while_expexp(int et)
 {
-    if (prtype == 0)
+    // int var
+    if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
-
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
-
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-
-            add_instr("FIM %s\n", v_name[et%OFST]);
-        }
-
-        // float const
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-
-            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-        }
-
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-            
-            add_instr("FIA\n");
-        }
-
-        // comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            int etr,eti;
-            get_cmp_cst(et,&etr,&eti);
-
-            add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        }
-
-        // comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            add_instr("FIM %s\n", v_name[et%OFST]);
-        }
-
-        // comp acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            add_instr("POP\n");
-            add_instr("FIA\n");
-        }
+        add_instr("LOAD %s\n", v_name[et%OFST]);
     }
-    else
+
+    // int acc
+    if ((get_type(et) == 1) && (et%OFST==0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+        // nao faz nada
+    }
 
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
+    // float var
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+        add_instr("FIM %s\n", v_name[et%OFST]);
+    }
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+    // float const
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-        }
+        add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+    }
 
-        // comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+    // float acc
+    if ((get_type(et) == 2) && (et%OFST==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+        
+        add_instr("FIA\n");
+    }
 
-            int etr,eti;
-            get_cmp_cst(et,&etr,&eti);
+    // comp const
+    if (get_type(et) == 5)
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        }
+        int etr,eti;
+        get_cmp_cst(et,&etr,&eti);
 
-        // comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+        add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+    }
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+    // comp var
+    if ((get_type(et) == 3) && (et % OFST != 0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-        // comp acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+        add_instr("FIM %s\n", v_name[et%OFST]);
+    }
 
-            add_instr("POP\n");
-        }
+    // comp acc
+    if ((get_type(et) == 3) && (et % OFST == 0))
+    {
+        fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+
+        add_instr("POP\n");
+        add_instr("FIA\n");
     }
 
     add_instr("JZ L%dend\n", get_lab());
@@ -372,126 +256,68 @@ void exec_switch(int et)
 
     // equivalente a var_set --------------------------------------------------
 
-    if (prtype == 0)
+    // int var
+    if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
-
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
-
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
-
-            add_instr("FIM %s\n", v_name[et%OFST]);
-        }
-
-        // float const
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
-
-            add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-        }
-
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
-            
-            add_instr("FIA\n");
-        }
-
-        // comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            int etr,eti;
-            get_cmp_cst(et,&etr,&eti);
-
-            add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        }
-
-        // comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            add_instr("FIM %s\n", v_name[et%OFST]);
-        }
-
-        // comp acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
-
-            add_instr("POP\n");
-            add_instr("FIA\n");
-        }
+        add_instr("LOAD %s\n", v_name[et%OFST]);
     }
-    else
+
+    // int acc
+    if ((get_type(et) == 1) && (et%OFST==0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+        // nao faz nada
+    }
 
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
+    // float var
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
+        add_instr("FIM %s\n", v_name[et%OFST]);
+    }
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+    // float const
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    {
+        fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-        }
+        add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+    }
 
-        // comp const
-        if (get_type(et) == 5)
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+    // float acc
+    if ((get_type(et) == 2) && (et%OFST==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
+        
+        add_instr("FIA\n");
+    }
 
-            int etr,eti;
-            get_cmp_cst(et,&etr,&eti);
+    // comp const
+    if (get_type(et) == 5)
+    {
+        fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-            add_instr("LOAD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        }
+        int etr,eti;
+        get_cmp_cst(et,&etr,&eti);
 
-        // comp var
-        if ((get_type(et) == 3) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+        add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+    }
 
-            add_instr("LOAD %s\n", v_name[et%OFST]);
-        }
+    // comp var
+    if ((get_type(et) == 3) && (et % OFST != 0))
+    {
+        fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-        // comp acc
-        if ((get_type(et) == 3) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
+        add_instr("FIM %s\n", v_name[et%OFST]);
+    }
 
-            add_instr("POP\n");
-        }
+    // comp acc
+    if ((get_type(et) == 3) && (et % OFST == 0))
+    {
+        fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
+
+        add_instr("POP\n");
+        add_instr("FIA\n");
     }
 
     add_instr("SET switch_exp\n");

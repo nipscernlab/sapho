@@ -73,32 +73,32 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
 
     int type = type_tmp;
 
-    // proc ponto fixo, tipo int, sem arquivo
-    if ((prtype == 0) && (type == 1) && (id_fname == -1))
+    // tipo int, sem arquivo
+    if ((type == 1) && (id_fname == -1))
     {
         add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
 
-    // proc ponto fixo, tipo int, com arquivo
-    if ((prtype == 0) && (type == 1) && (id_fname != -1))
+    // tipo int, com arquivo
+    if ((type == 1) && (id_fname != -1))
     {
         add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
     }
 
-    // proc ponto fixo, tipo float, sem arquivo
-    if ((prtype == 0) && (type == 2) && (id_fname == -1))
+    // tipo float, sem arquivo
+    if ((type == 2) && (id_fname == -1))
     {
         add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
     }
 
-    // proc ponto fixo, tipo float, com arquivo
-    if ((prtype == 0) && (type == 2) && (id_fname != -1))
+    // tipo float, com arquivo
+    if ((type == 2) && (id_fname != -1))
     {
         add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
     }
 
-    // proc ponto fixo, tipo comp, sem arquivo
-    if ((prtype == 0) && (type == 3) && (id_fname == -1))
+    // tipo comp, sem arquivo
+    if ((type == 3) && (id_fname == -1))
     {
         add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
         id_var = get_img_id(id_var);
@@ -108,54 +108,8 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
         v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     }
 
-    // proc ponto fixo, tipo comp, com arquivo
-    if ((prtype == 0) && (type == 3) && (id_fname != -1))
-    {
-        add_sinst(0, "#arrays %s 3 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
-        id_var = get_img_id(id_var);
-        add_sinst(0, "#arrays %s 4 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
-
-        v_isar[id_var] = 1; // variavel eh array 1D
-        v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
-    }
-
-    // proc ponto flut, tipo int, sem arquivo
-    if ((prtype == 1) && (type == 1) && (id_fname == -1))
-    {
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
-    }
-
-    // proc ponto flut, tipo int, com arquivo
-    if ((prtype == 1) && (type == 1) && (id_fname != -1))
-    {
-        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
-    }
-
-    // proc ponto flut, tipo float, sem arquivo
-    if ((prtype == 1) && (type == 2) && (id_fname == -1))
-    {
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
-    }
-
-    // proc ponto flut, tipo float, com arquivo
-    if ((prtype == 1) && (type == 2) && (id_fname != -1))
-    {
-        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
-    }
-
-    // proc ponto flut, tipo comp, sem arquivo
-    if ((prtype == 1) && (type == 3) && (id_fname == -1))
-    {
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
-        id_var = get_img_id(id_var);
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
-
-        v_isar[id_var] = 1; // variavel eh array 1D
-        v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
-    }
-
-    // proc ponto flut, tipo comp, com arquivo
-    if ((prtype == 1) && (type == 3) && (id_fname != -1))
+    // tipo comp, com arquivo
+    if ((type == 3) && (id_fname != -1))
     {
         add_sinst(0, "#arrays %s 3 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
         id_var = get_img_id(id_var);
@@ -188,32 +142,32 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
 
     int type = type_tmp;
 
-    // proc ponto fixo, tipo int, sem arquivo
-    if ((prtype == 0) && (type == 1) && (id_fname == -1))
+    // tipo int, sem arquivo
+    if ((type == 1) && (id_fname == -1))
     {
         add_sinst(0, "#array %s %d\n", v_name[id_var], size);
     }
 
-    // proc ponto fixo, tipo int, com arquivo
-    if ((prtype == 0) && (type == 1) && (id_fname != -1))
+    // tipo int, com arquivo
+    if ((type == 1) && (id_fname != -1))
     {
         add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
     }
 
-    // proc ponto fixo, tipo float, sem arquivo
-    if ((prtype == 0) && (type == 2) && (id_fname == -1))
+    // tipo float, sem arquivo
+    if ((type == 2) && (id_fname == -1))
     {
         add_sinst(0, "#array %s %d\n", v_name[id_var], size);
     }
 
-    // proc ponto fixo, tipo float, com arquivo
-    if ((prtype == 0) && (type == 2) && (id_fname != -1))
+    // tipo float, com arquivo
+    if ((type == 2) && (id_fname != -1))
     {
         add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
     }
 
-    // proc ponto fixo, tipo comp, sem arquivo
-    if ((prtype == 0) && (type == 3) && (id_fname == -1))
+    // tipo comp, sem arquivo
+    if ((type == 3) && (id_fname == -1))
     {
         add_sinst(0, "#array %s %d\n", v_name[id_var], size);
         idi = get_img_id(id_var);
@@ -223,54 +177,8 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
         v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     }
 
-    // proc ponto fixo, tipo comp, com arquivo
-    if ((prtype == 0) && (type == 3) && (id_fname != -1))
-    {
-        add_sinst(0, "#arrays %s 3 %d %s\n", v_name[id_var], size, v_name[id_fname]);
-        idi = get_img_id(id_var);
-        add_sinst(0, "#arrays %s 4 %d %s\n", v_name[idi], size, v_name[id_fname]);
-
-        v_isar[idi] = 2; // variavel eh array 2D
-        v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
-    }
-
-    // proc ponto flut, tipo int, sem arquivo
-    if ((prtype == 1) && (type == 1) && (id_fname == -1))
-    {
-        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
-    }
-
-    // proc ponto flut, tipo int, com arquivo
-    if ((prtype == 1) && (type == 1) && (id_fname != -1))
-    {
-        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
-    }
-
-    // proc ponto flut, tipo float, sem arquivo
-    if ((prtype == 1) && (type == 2) && (id_fname == -1))
-    {
-        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
-    }
-
-    // proc ponto flut, tipo float, com arquivo
-    if ((prtype == 1) && (type == 2) && (id_fname != -1))
-    {
-        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
-    }
-
-    // proc ponto flut, tipo comp, sem arquivo
-    if ((prtype == 1) && (type == 3) && (id_fname == -1))
-    {
-        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
-        idi = get_img_id(id_var);
-        add_sinst(0, "#array %s %d\n", v_name[idi], size);
-
-        v_isar[idi] = 2; // variavel eh array 2D
-        v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
-    }
-
-    // proc ponto flut, tipo comp, com arquivo
-    if ((prtype == 1) && (type == 3) && (id_fname != -1))
+    // tipo comp, com arquivo
+    if ((type == 3) && (id_fname != -1))
     {
         add_sinst(0, "#arrays %s 3 %d %s\n", v_name[id_var], size, v_name[id_fname]);
         idi = get_img_id(id_var);
@@ -281,6 +189,6 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     }
 
     // cria uma variavel auxiliar pra guardar o tamanho da dimensao x
-    add_instr("LOAD %s\n",         v_name[id_x  ]);
-    add_instr("SET %s_arr_size\n", v_name[id_var]);
+    add_instr("LOAD %s\n",          v_name[id_x  ]);
+    add_instr("SET  %s_arr_size\n", v_name[id_var]);
 }

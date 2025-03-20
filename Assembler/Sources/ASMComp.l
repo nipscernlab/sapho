@@ -33,7 +33,6 @@ LINHA          \n
 "#SDEPTH" eval_direct(10);
 "#NUIOIN" eval_direct(11);
 "#NUIOOU" eval_direct(12);
-"#DATYPE" eval_direct(13);
 "#NUGAIN" eval_direct(15);
 "#FFTSIZ" eval_direct(20);
 

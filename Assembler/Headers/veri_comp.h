@@ -1,5 +1,4 @@
 extern int  ndstac, nbmant, nbexpo, nbits, fftsiz;
-extern int  float_point;    // diz se o processador eh com ponto flutuante
 
 extern char proc_dir[1024]; // diretorio do processador
 extern char temp_dir[1024]; // diretorio da pasta Tmp
@@ -22,7 +21,6 @@ void set_nuioin(int n);
 void set_nuioou(int n);
 void set_fftsiz(int n);
 void set_nugain(int n);
-void set_float (int n);
 
 void build_vv_file(); // cria arquivo .v com uma instancia do processador
 void build_tb_file(); // cria arquivo de testbench

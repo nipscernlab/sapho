@@ -24,7 +24,6 @@ int  fim_addr;            // endereco do fim do programa
 int  v_tipo[1000];        // tipo da variavel encontrada
 int  v_add [1000];        // endereco da variavel encontrada
 char v_namo[1000][64];    // nome da variavel encontrada
-int  float_point;         // se o processador eh ponto flutuante
 int  nbits;               // numero de bits do processador
 char opcd[64];            // guarda opcode atual
 int  ndstac;              // numero de destinos de acesso direto
@@ -169,11 +168,7 @@ void oper_ula(char *va, int is_const)
                             // dependendo do mnemonico a esquerda
 
     {   // variavel nao existe ainda
-        int val;
-        if (float_point) // trocar esse float_ponit global por um vetor pra idetificar cada variavel
-            val = (is_const) ? f2mf(va) : 0;
-        else
-            val = (is_const) ? atoi(va) : 0;
+        int val = (is_const) ? atoi(va) : 0; // usar f2mf pra escrever em float no assembley
 
         add_var (va, val);
         add_data(    val);
@@ -261,20 +256,20 @@ void fill_mem(char *f_name, int tam)
             // do tipo de proc e do tipo de dado
             fgets(linha, sizeof(linha), filepointer);
 
-            // proc ponto fixo com int
-            if ((float_point == 0) && (fil_typ == 1))
+            // com int
+            if (fil_typ == 1)
             {
                 val = atoi(linha);
             }
 
-            // proc ponto fixo com float
-            if ((float_point == 0) && (fil_typ == 2))
+            // com float
+            if (fil_typ == 2)
             {
                 val = f2mf(linha);
             }
 
-            // proc ponto fixo com real comp
-            if ((float_point == 0) && (fil_typ == 3))
+            // com real comp
+            if (fil_typ == 3)
             {
                 char  num[64];
                 float real,img;
@@ -286,46 +281,8 @@ void fill_mem(char *f_name, int tam)
                 val = f2mf(num);
             }
 
-            // proc ponto fixo com imag comp
-            if ((float_point == 0) && (fil_typ == 4))
-            {
-                char  num[64];
-                float real,img;
-
-                rem_space(linha);
-                   sscanf(linha,"%f %f",&real,&img);
-
-                   sprintf(num,"%f",img);
-                val = f2mf(num);
-            }
-
-            // proc ponto flut com int
-            if ((float_point == 1) && (fil_typ == 1))
-            {
-                val = f2mf(linha);
-            }
-
-            // proc ponto flut com float
-            if ((float_point == 1) && (fil_typ == 2))
-            {
-                val = f2mf(linha);
-            }
-
-            // proc ponto flut com real comp
-            if ((float_point == 1) && (fil_typ == 3))
-            {
-                char  num[64];
-                float real,img;
-
-                rem_space(linha);
-                   sscanf(linha,"%f %f",&real,&img);
-
-                   sprintf(num,"%f",real);
-                val = f2mf(num);
-            }
-
-            // proc ponto flut com imag comp
-            if ((float_point == 1) && (fil_typ == 4))
+            // com imag comp
+            if (fil_typ == 4)
             {
                 char  num[64];
                 float real,img;
@@ -420,8 +377,7 @@ void eval_opernd(char *va, int is_const)
                  state = 0;  break;
         case 12: if (pp) set_nuioou(atoi(va));                   // numero de enderecoes de io - saida
                  state = 0;  break;
-        case 13: if (pp) set_float (atoi(va));                   // 1 para ponto-flutuante e 0 para ponto-fixo
-                 state = 0;  break;
+      //case 13: era usado para setar float ou int
       //case 14: era usado para o nome do diretorio
         case 15: if (pp) set_nugain(atoi(va));                   // valor da normalizacao
                  state = 0;  break;
@@ -465,7 +421,7 @@ void eval_finish()
 
     // completa memoria de dados ----------------------------------------------
 
-    int s = (float_point) ? nbmant + nbexpo + 1 : nbits;
+    int s = nbits;
 
     n_dat = ndstac+n_dat;
 	for (i=0; i<ndstac; i++)
@@ -489,7 +445,7 @@ void eval_finish()
 
     // checa integridade do tamanho do dado -----------------------------------
 
-    if ((float_point == 0) && (nbits != nbmant+nbexpo+1))
+    if (nbits != nbmant+nbexpo+1)
         fprintf(stderr, "Erro: NUBITS (%d) tem que ser NBMANT (%d) + NBEXPO (%d) + 1!\n", nbits, nbmant, nbexpo);
 
     // gera arquivos ----------------------------------------------------------

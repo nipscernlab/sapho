@@ -55,7 +55,7 @@ void  yyerror(char const *s);
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
-%token PRNAME DATYPE NUBITS NBMANT NBEXPO NDSTAC SDEPTH      // diretivas
+%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH             // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD      // diretivas
 %token IN OUT NRM PST ABS SIGN SQRT REAL IMAG ATAN FASE      // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK   // saltos
@@ -104,7 +104,6 @@ prog_elements : direct | declar_full | funcao
 // Diretivas de compilacao ----------------------------------------------------
 
 direct : PRNAME  ID    {exec_dire("#PRNAME",$2,6);} // nome do processador
-       | DATYPE INUM   {exec_dire("#DATYPE",$2,1);} // tipo: 0 -> ponto fixo, 1 -> ponto flutuante
        | NUBITS INUM   {exec_dire("#NUBITS",$2,0);} // tamanho da palavra da ULA
        | NBMANT INUM   {exec_dire("#NBMANT",$2,2);} // numero de bits da mantissa
        | NBEXPO INUM   {exec_dire("#NBEXPO",$2,3);} // numero de bits do expoente
@@ -364,7 +363,7 @@ int main(int argc, char *argv[])
 
   // checa se precisa adicionar macros no arquivo .asm ------------------------
 
-	if (prtype == 0) mac_geni(asm_file); // carrega macros para ponto fixo
+	mac_geni(asm_file);
 
 	// checa consistencia de todas as variaveis e funcoes -----------------------
   

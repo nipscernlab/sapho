@@ -27,7 +27,6 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 %%
 
 "#PRNAME"                     return PRNAME;
-"#DATYPE"                     return DATYPE;
 "#NUBITS"                     return NUBITS;
 "#NBMANT"                     return NBMANT;
 "#NBEXPO"                     return NBEXPO;

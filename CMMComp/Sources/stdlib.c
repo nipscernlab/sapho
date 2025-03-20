@@ -31,8 +31,7 @@ int exec_in(int id)
 
     acc_ok = 1;  // diz que o acc agora tem um valor carregado
 
-    // o retorno de IN depende do processador
-    return (prtype == 0) ? OFST : 2*OFST;
+    return OFST;
 }
 
 // primeiro parametro da funcao out(a,b)
@@ -50,69 +49,40 @@ void exec_out2(int et)
     if (get_type(et) > 2)
         fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1);
 
-    if (prtype == 0)
+    // int var
+    if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("PLD %s\n", v_name[et%OFST]);
-        }
-
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
-
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
-
-            add_instr("PFIM %s\n", v_name[et%OFST]);
-        }
-
-        // float const
-        if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
-        {
-            fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
-
-            add_instr("PFIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
-        }
-
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
-
-            add_instr("FIA\n");
-        }
+        add_instr("PLD %s\n", v_name[et%OFST]);
     }
-    else
+
+    // int acc
+    if ((get_type(et) == 1) && (et%OFST==0))
     {
-        // int var
-        if ((get_type(et) == 1) && (et%OFST!=0))
-        {
-            add_instr("PLD %s\n", v_name[et%OFST]);
-        }
+        // nao faz nada
+    }
 
-        // int acc
-        if ((get_type(et) == 1) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
+    // float var
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
 
-        // float var
-        if ((get_type(et) == 2) && (et%OFST!=0))
-        {
-            add_instr("PLD %s\n", v_name[et%OFST]);
-        }
+        add_instr("PFIM %s\n", v_name[et%OFST]);
+    }
 
-        // float acc
-        if ((get_type(et) == 2) && (et%OFST==0))
-        {
-            // nao faz nada
-        }
+    // float const
+    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    {
+        fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+
+        add_instr("PFIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+    }
+
+    // float acc
+    if ((get_type(et) == 2) && (et%OFST==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+
+        add_instr("FIA\n");
     }
 
     add_instr("OUT\n");
@@ -134,278 +104,169 @@ int exec_sign(int et1, int et2)
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
 
-    if (prtype == 0)
+    // int na memoria e int na memoria
+    if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
     {
-        // int na memoria e int na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // int na memoria e int no acc
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // int na memoria e float var na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // int na memoria e float const na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("FSGN %s\n"    ,          v_name[et1%OFST]);
-        }
-
-        // int na memoria e float no acc
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("FSGN %s\n", v_name[et1%OFST]);
-        }
-
-        // int no acc e int na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SSGN\n");
-        }
-
-        // int no acc e int no acc
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SSGN\n");
-        }
-
-        // int no acc e float var na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
-        {
-            add_instr("PLD %s\n", v_name[et2%OFST]  );
-            add_instr("SFSGN\n");
-        }
-
-        // int no acc e float const na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
-        {
-            add_instr("PLD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("SFSGN\n");
-        }
-
-        // int no acc e float no acc
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("SFSGN\n");
-        }
-
-        // float var na memoria e int na memoria
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // float var na memoria e int no acc
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // float var na memoria e float var na memoria
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // float var na memoria e float const na memoria
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
-        {   
-            add_instr("%s %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // float var na memoria e float no acc
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("FSGN %s\n"  , v_name[et1%OFST]);
-        }
-
-        // float const na memoria e int na memoria
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        }
-
-        // float const na memoria e int no acc
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        }
-
-        // float const na memoria e float var na memoria
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("FSGN %d // %s\n", f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
-        }
-
-        // float const na memoria e float const na memoria
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST] ), v_name[et2%OFST]);
-            add_instr("FSGN %d // %s\n"  , f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
-        }
-
-        // float const na memoria e float no acc
-        if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("FSGN %d // %s\n"  , f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
-        }
-
-        // float no acc e int na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SSGN\n");
-        }
-
-        // float no acc e int no acc
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SSGN\n");
-        }
-
-        // float no acc e float var na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
-        {
-            add_instr("PLD %s\n", v_name[et2%OFST]);
-            add_instr("SFSGN\n");
-        }
-
-        // float no acc e float const na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
-        {
-            add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-            add_instr("SFSGN\n");
-        }
-
-        // float no acc e float no acc
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("SFSGN\n");
-        }
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
     }
-    else
+
+    // int na memoria e int no acc
+    if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
     {
-        // int na memoria e int na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // int na memoria e int no acc
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // int na memoria e float var na memoria
+    if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("FSGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // int na memoria e float na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // int na memoria e float const na memoria
+    if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+    {
+        add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("FSGN %s\n"    ,          v_name[et1%OFST]);
+    }
 
-        // int na memoria e float no acc
-        if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // int na memoria e float no acc
+    if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+    {
+        add_instr("FSGN %s\n", v_name[et1%OFST]);
+    }
 
-        // int no acc e int na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SSGN\n");
-        }
+    // int no acc e int na memoria
+    if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("SSGN\n");
+    }
 
-        // int no acc e int no acc
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SSGN\n");
-        }
+    // int no acc e int no acc
+    if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+    {
+        add_instr("SSGN\n");
+    }
 
-        // int no acc e float na memoria
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SSGN\n");
-        }
+    // int no acc e float var na memoria
+    if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+    {
+        add_instr("PLD %s\n", v_name[et2%OFST]  );
+        add_instr("SFSGN\n");
+    }
 
-        // int no acc e float no acc
-        if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("SSGN\n");
-        }
+    // int no acc e float const na memoria
+    if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+    {
+        add_instr("PLD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SFSGN\n");
+    }
 
-        // float na memoria e int na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // int no acc e float no acc
+    if ((get_type(et1) == 1) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+    {
+        add_instr("SFSGN\n");
+    }
 
-        // float na memoria e int no acc
-        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // float var na memoria e int na memoria
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // float na memoria e float na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // float var na memoria e int no acc
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+    {
+        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // float na memoria e float no acc
-        if ((get_type(et1) == 2) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("SIGN %s\n"  , v_name[et1%OFST]);
-        }
+    // float var na memoria e float var na memoria
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("FSGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // float no acc e int na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SSGN\n");
-        }
+    // float var na memoria e float const na memoria
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+    {   
+        add_instr("%s %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("FSGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // float no acc e int no acc
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
-        {
-            add_instr("SSGN\n");
-        }
+    // float var na memoria e float no acc
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+    {
+        add_instr("FSGN %s\n"  , v_name[et1%OFST]);
+    }
 
-        // float no acc e float na memoria
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("SSGN\n");
-        }
+    // float const na memoria e int na memoria
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("SIGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+    }
 
-        // float no acc e float no acc
-        if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
-        {
-            add_instr("SSGN\n");
-        }
+    // float const na memoria e int no acc
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+    {
+        add_instr("SIGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+    }
+
+    // float const na memoria e float var na memoria
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("FSGN %d // %s\n", f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
+    }
+
+    // float const na memoria e float const na memoria
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+    {
+        add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST] ), v_name[et2%OFST]);
+        add_instr("FSGN %d // %s\n"  , f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
+    }
+
+    // float const na memoria e float no acc
+    if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+    {
+        add_instr("FSGN %d // %s\n"  , f2mf(v_name[et1%OFST] ), v_name[et1%OFST]);
+    }
+
+    // float no acc e int na memoria
+    if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("SSGN\n");
+    }
+
+    // float no acc e int no acc
+    if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
+    {
+        add_instr("SSGN\n");
+    }
+
+    // float no acc e float var na memoria
+    if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==0) && (et2 % OFST != 0))
+    {
+        add_instr("PLD %s\n", v_name[et2%OFST]);
+        add_instr("SFSGN\n");
+    }
+
+    // float no acc e float const na memoria
+    if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (v_isco[et2%OFST]==1) && (et2 % OFST != 0))
+    {
+        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SFSGN\n");
+    }
+
+    // float no acc e float no acc
+    if ((get_type(et1) == 2) && (et1 % OFST == 0) && (get_type(et2) == 2) && (et2 % OFST == 0))
+    {
+        add_instr("SFSGN\n");
     }
 
     acc_ok = 1;
@@ -420,71 +281,34 @@ int exec_abs(int et)
     char  abs[10]; if (acc_ok == 0) strcpy( abs, "ABSM"); else strcpy( abs, "PABSM");
     char fabs[10]; if (acc_ok == 0) strcpy(fabs,"FABSM"); else strcpy(fabs,"PFABSM");
 
-    if (prtype == 0)
+    // int na memoria
+    if ((get_type(et) == 1) && (et % OFST != 0))
     {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", abs, v_name[et%OFST]);
-        }
-
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("ABS\n");
-        }
-
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", fabs, v_name[et%OFST]);
-        }
-
-        // float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            add_instr("FABS\n");
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            et = exec_absc(et);
-        }
+        add_instr("%s %s\n", abs, v_name[et%OFST]);
     }
-    else
+
+    // int no acc
+    if ((get_type(et) == 1) && (et % OFST == 0))
     {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("ABS\n");
-        }
+        add_instr("ABS\n");
+    }
 
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("ABS\n");
-        }
+    // float na memoria
+    if ((get_type(et) == 2) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", fabs, v_name[et%OFST]);
+    }
 
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("ABS\n");
-        }
+    // float no acc
+    if ((get_type(et) == 2) && (et % OFST == 0))
+    {
+        add_instr("FABS\n");
+    }
 
-        // float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            add_instr("ABS\n");
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            et = exec_absc(et);
-        }
+    // comp const, na memoria e no acc
+    if ((get_type(et) == 3) || (get_type(et) == 5))
+    {
+        et = exec_absc(et);
     }
 
     acc_ok = 1;
@@ -499,73 +323,34 @@ int exec_pst(int et)
     char  pst[10]; if (acc_ok == 0) strcpy( pst, "PSTM"); else strcpy( pst, "PPSTM");
     char fpst[10]; if (acc_ok == 0) strcpy(fpst,"FPSTM"); else strcpy(fpst,"PFPSTM");
 
-    if (prtype == 0)
+    // int na memoria
+    if ((get_type(et) == 1) && (et % OFST != 0))
     {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", pst, v_name[et%OFST]);
-        }
-
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            add_instr("PST\n");
-        }
-
-        // float na memoria
-        if ((get_type(et) == 2)  && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", fpst, v_name[et%OFST]);
-        }
-
-        // float no acc
-        if ((get_type(et) == 2)  && (et % OFST == 0))
-        {
-            add_instr("FPST\n");
-        }
-
-        // comp
-        if (get_type(et) > 2)
-        {
-            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
-        }
+        add_instr("%s %s\n", pst, v_name[et%OFST]);
     }
-    else
+
+    // int no acc
+    if ((get_type(et) == 1) && (et % OFST == 0))
     {
-        // int na memoria
-        if ((get_type(et) == 1) && (et % OFST != 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("PST\n");
-        }
+        add_instr("PST\n");
+    }
 
-        // int no acc
-        if ((get_type(et) == 1) && (et % OFST == 0))
-        {
-            fprintf(stdout, "Atenção na linha %d: o argumento do pset() é int, mas o resultado é float quando ponto-flutuante está habilitado!\n", line_num+1);
-            add_instr("PST\n");
-        }
+    // float na memoria
+    if ((get_type(et) == 2)  && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", fpst, v_name[et%OFST]);
+    }
 
-        // float na memoria
-        if ((get_type(et) == 2) && (et % OFST != 0))
-        {
-            add_instr("%s %s\n", ld, v_name[et%OFST]);
-            add_instr("PST\n");
-        }
+    // float no acc
+    if ((get_type(et) == 2)  && (et % OFST == 0))
+    {
+        add_instr("FPST\n");
+    }
 
-        // float no acc
-        if ((get_type(et) == 2) && (et % OFST == 0))
-        {
-            add_instr("PST\n");
-        }
-
-        // comp const, na memoria e no acc
-        if ((get_type(et) == 3) || (get_type(et) == 5))
-        {
-            fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
-        }   
+    // comp
+    if (get_type(et) > 2)
+    {
+        fprintf (stderr, "Erro na linha %d: Não faz nenhum sentido usar a função 'pset(.)' com números complexos!\n", line_num+1);
     }
 
     acc_ok = 1;
@@ -761,10 +546,7 @@ int exec_real(int et)
         int et_r, et_i;
         get_cmp_cst(et,&et_r,&et_i);
 
-        if (prtype==1)
-            add_instr("%s %s\n", ld, v_name[et_r%OFST]);
-        else
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et_r%OFST]), v_name[et_r%OFST]);
+        add_instr("%s %d // %s\n", ld, f2mf(v_name[et_r%OFST]), v_name[et_r%OFST]);
     }
 
     // comp na memoria
@@ -801,10 +583,7 @@ int exec_imag(int et)
         int et_r, et_i;
         get_cmp_cst(et,&et_r,&et_i);
 
-        if (prtype==1)
-            add_instr("%s %s\n", ld, v_name[et_i%OFST]);
-        else
-            add_instr("%s %d // %s\n", ld, f2mf(v_name[et_i%OFST]), v_name[et_i%OFST]);
+        add_instr("%s %d // %s\n", ld, f2mf(v_name[et_i%OFST]), v_name[et_i%OFST]);
     }
 
     // comp na memoria

@@ -17,7 +17,6 @@ int  sdepth, nmioin, nuioou, nugain; // nuioin eh usado internamente pelo flex e
 
 // funcoes auxiliares para setar e pegar variaveis globais
 void set_name (char *va){strcpy(name, va);}
-void set_float(int    n){float_point = n ;}
 
 void set_nbits (int n){nbits  = n;}
 void set_nbmant(int n){nbmant = n;}
@@ -46,8 +45,7 @@ void build_core_flx()
 
     char texto[1001] = "";
 
-    if (float_point) sprintf(path, "%s/core_fl.v", hdl_dir);
-    else             sprintf(path, "%s/core_fx.v", hdl_dir);
+    sprintf(path, "%s/core_fx.v", hdl_dir);
     input = fopen(path, "r");
 
     fgets(texto, 1001, input);
@@ -79,8 +77,7 @@ void build_proc_flx()
 
     char texto[1001] = "";
 
-    if (float_point) sprintf(path, "%s/proc_fl.v", hdl_dir);
-    else             sprintf(path, "%s/proc_fx.v", hdl_dir);
+    sprintf(path, "%s/proc_fx.v", hdl_dir);
     input = fopen(path, "r");
 
     fgets(texto, 1001, input);
@@ -129,8 +126,8 @@ void build_proc_sim()
     }
     fclose(input );
 
-    int s1 = (float_point) ? nbmant-1      : nbits-1;
-    int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
+    int s1 = nbits-1;
+    int s2 = nbits-1;
 
     fprintf(output, "// Simulacao ------------------------------------------------------------------\n\n");
 
@@ -179,8 +176,8 @@ void build_vv_file()
     fprintf(f_veri, "module %s (\n", name);
     fprintf(f_veri, "input clk, rst,\n");
 
-    int s1 = (float_point) ? nbmant-1      : nbits-1;
-    int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
+    int s1 = nbits-1;
+    int s2 = nbits-1;
 
     fprintf(f_veri, "input signed [%d:0] io_in,\n"  , s1);
     fprintf(f_veri, "output signed [%d:0] io_out,\n", s2);
@@ -192,27 +189,16 @@ void build_vv_file()
     fprintf(f_veri, "wire signed [%d:0] in_float;\n"   , s2);
     fprintf(f_veri, "wire signed [%d:0] out_float;\n\n", s2);
 
-    if (float_point)
-    fprintf(f_veri, "int2float #(.MAN(%d),.EXP(%d)) i2f (io_in, in_float);\n\n", nbmant, nbexpo);
-    else
     fprintf(f_veri, "assign in_float = io_in;\n\n");
 
     fprintf(f_veri, "wire proc_req_in, proc_out_en;\n");
     fprintf(f_veri, "wire [%d:0] addr_in;\n"   , (int)ceil(log2(nmioin)-1));
     fprintf(f_veri, "wire [%d:0] addr_out;\n\n", (int)ceil(log2(nuioou)-1));
 
-    if (float_point)
-    {
-        fprintf(f_veri, "proc_fl\n#(.NBMANT(%d),\n",nbmant);
-        fprintf(f_veri,            ".NBEXPO(%d),\n",nbexpo);
-    }
-    else
-    {
-        fprintf(f_veri, "proc_fx\n#(.NUBITS(%d),\n",nbits );
-        fprintf(f_veri,            ".NBMANT(%d),\n",nbmant);
-        fprintf(f_veri,            ".NBEXPO(%d),\n",nbexpo);
-        fprintf(f_veri,            ".NUGAIN(%d),\n",nugain);
-    }
+    fprintf(f_veri, "proc_fx\n#(.NUBITS(%d),\n",nbits );
+    fprintf(f_veri,            ".NBMANT(%d),\n",nbmant);
+    fprintf(f_veri,            ".NBEXPO(%d),\n",nbexpo);
+    fprintf(f_veri,            ".NUGAIN(%d),\n",nugain);
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
@@ -229,9 +215,6 @@ void build_vv_file()
     fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , name);
     fprintf(f_veri, ") p_%s (clk, rst, in_float, out_float, addr_in, addr_out, proc_req_in, proc_out_en, itr);\n\n", name);
 
-    if (float_point)
-    fprintf(f_veri, "float2int #(.EXP(%d),.MAN(%d)) f2i (out_float, io_out);\n\n", nbexpo, nbmant);
-    else
     fprintf(f_veri, "assign io_out = out_float;\n\n");
 
     if (nmioin == 1)
@@ -284,8 +267,8 @@ void build_tb_file()
 
     fprintf(f_veri, "always #%f clk = ~clk;\n\n", T/2.0);
 
-    int s1 = (float_point) ? nbmant-1      : nbits-1;
-    int s2 = (float_point) ? nbmant+nbexpo : nbits-1;
+    int s1 = nbits-1;
+    int s2 = nbits-1;
 
     fprintf(f_veri, "reg signed [%d:0] proc_io_in = 0;\n" , s1);
     fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n"   , s2);
@@ -467,7 +450,7 @@ void build_dt_file()
     // cria um registrador para cada variavel encontrada
     for (i = 0; i < v_cont; i++)
     {
-        if ((v_tipo[i] == 2) || ((v_tipo[i] == 1) && float_point))
+        if (v_tipo[i] == 2)
             fprintf(output, "reg [16+NBDATA-1:0] %s=0;\n", v_namo[i]);
         else
             fprintf(output, "reg [NBDATA-1:0] %s=0;\n"   , v_namo[i]);
@@ -479,7 +462,7 @@ void build_dt_file()
     // registra cada variavel, dependendo do endereco de cada uma
     for (i = 0; i < v_cont; i++)
     {
-        if ((v_tipo[i] == 2) || ((v_tipo[i] == 1) && float_point))
+        if (v_tipo[i] == 2)
             fprintf(output, "   if (addr_w == %d && wr) %s <= {8'd%d,8'd%d,data_in};\n", v_add[i], v_namo[i], nbmant, nbexpo);
         else
             fprintf(output, "   if (addr_w == %d && wr) %s <= data_in;\n", v_add[i], v_namo[i]);

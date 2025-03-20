@@ -33,7 +33,6 @@ void exec_dire(char *dir, int id, int t)
     // acao a tomar dependendo da diretiva
     switch(t)
     {
-        case 1: prtype = ival; break;
         case 2: nbmant = ival; fprintf(f_log, "%d\n", nbmant); break;
         case 3: nbexpo = ival; fprintf(f_log, "%d\n", nbexpo); break;
         // rever essa questao do num de i/o
