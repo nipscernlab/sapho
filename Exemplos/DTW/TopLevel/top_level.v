@@ -13,7 +13,7 @@ module top_level(
 					  
 		wire [2:0] req_in_DTW;
 		wire [1:0] out_maq;
-		wire signed [22:0] data_proc = data;
+		wire signed [31:0] data_proc = data;
 		wire signed [31:0] in1_proc_DTW = q;
 		wire flag_zc = |out1;
 		
@@ -66,7 +66,7 @@ ProcZeroCross ProcZeroCross_inst(
 			.clk(clk), 
 			.rst_geral(rst_geral), 
 			.rst_proc(rst_proc),
-			.in0(23'd0),
+			.in0(32'd0),
 			.in1(data_proc),
 			.out0(out0), 
 			.out1(out1), 

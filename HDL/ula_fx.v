@@ -3,29 +3,40 @@
 // ****************************************************************************
 
 // Mux de saida ---------------------------------------------------------------
+// Seleciona qual operacao sai da ULA -----------------------------------------
 
 module ula_fx_mux
 #(
 	parameter NUBITS = 32
 )
 (
+	 // indexador
 	 input     [       5:0] op  ,
+	 // sai uma das entradas (in1 -> le da memoria, in2 -> le do acumulador)
 	 input     [NUBITS-1:0] in1 , in2,
-	 input     [NUBITS-1:0] add , mlt, div, mod, neg,
-	 input     [NUBITS-1:0] nrm , abs, pst, sgn,
-	 input     [NUBITS-1:0] orr , ann, inv, cor,
-	 input     [NUBITS-1:0] les , gre, equ,
-	 input     [NUBITS-1:0] lin , lan, lor,
-	 input     [NUBITS-1:0] shl , shr, srs,
-	 input	   [NUBITS-1:0] fima, ifma,
-	 input	   [NUBITS-1:0] negm, fneg, fnegm,
-	 input     [NUBITS-1:0] fadd, fmlt, fdiv,
-	 input     [NUBITS-1:0] fgre, fles,
-	 input     [NUBITS-1:0] fsgn,
-	 input     [NUBITS-1:0] absm, fabs, fabsm,
-	 input     [NUBITS-1:0] pstm, fpst, fpstm,
-	 input     [NUBITS-1:0] nrmm,
-
+	 // operacoes aritmeticas de dois parametros
+	 input     [NUBITS-1:0] add , fadd,
+	 input     [NUBITS-1:0] mlt , fmlt,
+	 input     [NUBITS-1:0] div , fdiv,
+	 input     [NUBITS-1:0] mod ,                    // soh pra int
+	 input     [NUBITS-1:0] sgn , fsgn,
+	 // operacoes aritmeticas de um parametro
+	 input     [NUBITS-1:0] neg , negm, fneg, fnegm,
+	 input     [NUBITS-1:0] abs , absm, fabs, fabsm,
+	 input     [NUBITS-1:0] pst , pstm, fpst, fpstm,
+	 input     [NUBITS-1:0] nrm , nrmm,              // soh pra int
+	 input     [NUBITS-1:0] i2f , i2fm,
+	 input     [NUBITS-1:0] f2i , f2im,
+	 // operacoes logicas
+	 input     [NUBITS-1:0] ann , orr , cor , inv  , // and, or, xor, not
+	 // operacoes condicionais
+	 input     [NUBITS-1:0] lan , lor , lin ,        // soh pra int
+	 input     [NUBITS-1:0] les , fles,
+	 input     [NUBITS-1:0] gre , fgre,
+	 input     [NUBITS-1:0] equ ,                    // serve pra int e float
+	 // operacoes de deslocamento de bits
+	 input     [NUBITS-1:0] shl , shr , srs ,        // <<, >> e >>>
+	 // saida
 	output reg [NUBITS-1:0] out
 );
 
@@ -62,10 +73,10 @@ always @ (*) begin
 		6'd22  : out <= shr;  // SHR
 		6'd23  : out <= srs;  // SRS
 
-		6'd24  : out <= fima; // F2I
-		6'd25  : out <= fima; // F2I
-		6'd26  : out <= ifma; // I2F
-		6'd27  : out <= ifma; // I2F
+		6'd24  : out <= f2i;  // F2I
+		6'd25  : out <= f2im; // F2IM
+		6'd26  : out <= i2f;  // I2F
+		6'd27  : out <= i2fm; // I2FM
 
 		6'd28  : out <= negm; // NEGM
 		6'd29  : out <= fneg; // FNEG
@@ -112,7 +123,7 @@ wire [NUBITS-1:0] fn_out;
 
 fnorm #(NBMANT,NBEXPO) my_fnorm(in, fn_out);
 
-//             I2F              I2F              FADD             FMLT             FDIV
+//             I2F              I2FM             FADD             FMLT             FDIV
 assign out = ((op == 6'd26) || (op == 6'd27) || (op == 6'd31) || (op == 6'd32) || (op == 6'd33)) ? fn_out : in;
 
 endmodule
@@ -498,6 +509,48 @@ assign out = (in[MAN+EXP]) ? {1'b0, 1'b1, {MAN+EXP-1{1'b0}}} : in;
 
 endmodule
 
+// I2F ------------------------------------------------------------------------
+
+module my_i2f
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	input         [MAN+EXP:0] in,
+	output signed [MAN+EXP:0] out
+);
+
+wire                  i2f_s = in[MAN-1];
+wire signed [EXP-1:0] i2f_e = 0;
+wire        [MAN-1:0] i2f_m = (i2f_s) ? -in : in;
+
+assign out = {i2f_s, i2f_e, i2f_m};
+
+endmodule
+
+// F2I ------------------------------------------------------------------------
+
+module my_f2i
+#(
+	parameter MAN = 23,
+	parameter EXP = 8
+)
+(
+	input         [MAN+EXP:0] in,
+	output signed [MAN+EXP:0] out
+);
+
+wire           s = in[MAN+EXP      ];
+wire [EXP-1:0] e = in[MAN+EXP-1:MAN];
+wire [MAN-1:0] m = in[MAN    -1:  0];
+
+wire signed [MAN  :0] sm    = (s       ) ? -m : m;
+wire        [EXP-1:0] shift = (e[EXP-1]) ? -e : e;
+assign                out   = (e[EXP-1]) ? sm >>> shift : sm << shift;
+
+endmodule
+
 // ****************************************************************************
 // Circuito Principal *********************************************************
 // ****************************************************************************
@@ -550,7 +603,9 @@ module ula_fx
 
 	// Operacoes de conversao entre int e float
 	parameter F2I  = 0,
+	parameter F2IM = 0,
 	parameter I2F  = 0,
+	parameter I2FM = 0,
 
 	// Operacoes de ponto flutuante
 	parameter FADD = 0,
@@ -612,8 +667,10 @@ wire signed [NUBITS-1:0] fles;
 wire signed [NUBITS-1:0] equ;
 wire signed [NUBITS-1:0] sgn;
 wire signed [NUBITS-1:0] fsgn;
-wire signed [NUBITS-1:0] fima;
-wire signed [NUBITS-1:0] ifma;
+wire signed [NUBITS-1:0] f2i;
+wire signed [NUBITS-1:0] f2im;
+wire signed [NUBITS-1:0] i2f;
+wire signed [NUBITS-1:0] i2fm;
 
 generate if (NRM  ) my_nrm  #(NUBITS, NUGAIN) my_nrm  (in2,      nrm  ); else assign nrm   = {NUBITS{1'bx}}; endgenerate
 generate if (NRMM ) my_nrm  #(NUBITS, NUGAIN) my_nrmm (in1,      nrmm ); else assign nrmm  = {NUBITS{1'bx}}; endgenerate
@@ -646,8 +703,10 @@ generate if (LIN) my_lin #(NUBITS) my_lin(     in2, lin); else assign lin = {NUB
 generate if (LAN) my_lan #(NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
 generate if (LOR) my_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
 
-generate if (F2I) f2ima #(NBMANT,NBEXPO) my_f2ima (op,in1,in2,fima); else assign fima = {NUBITS{1'bx}}; endgenerate
-generate if (I2F) i2fma #(NBMANT,NBEXPO) my_i2fma (op,in1,in2,ifma); else assign ifma = {NUBITS{1'bx}}; endgenerate
+generate if (F2I ) my_f2i #(NBMANT,NBEXPO) my_f2i (in2,f2i ); else assign f2i  = {NUBITS{1'bx}}; endgenerate
+generate if (F2IM) my_f2i #(NBMANT,NBEXPO) my_f2im(in1,f2im); else assign f2im = {NUBITS{1'bx}}; endgenerate
+generate if (I2F ) my_i2f #(NBMANT,NBEXPO) my_i2f (in2,i2f ); else assign i2f  = {NUBITS{1'bx}}; endgenerate
+generate if (I2FM) my_i2f #(NBMANT,NBEXPO) my_i2fm(in1,i2fm); else assign i2fm = {NUBITS{1'bx}}; endgenerate
 
 wire signed [NBEXPO-1:0] e_out;
 wire signed [NBMANT  :0] sm1_out, sm2_out;
@@ -672,25 +731,26 @@ generate if (FPSTM) my_fpst #(NBMANT, NBEXPO) my_fpstm(in1, fpstm); else assign 
 
 wire [NUBITS-1:0] mux_out;
 
-ula_fx_mux #(NUBITS)um(op,
-                       in1, in2,
-                       add, mlt, div, mod, neg,
-                       nrm, abs, pst, sgn,
-                       orr, ann, inv, cor,
-                       les, gre, equ,
-                       lin, lan, lor,
-                       shl, shr, srs,
-					   fima,ifma,
-					   negm,fneg,fnegm,
-					   fadd,fmlt,fdiv,
-					   fgre,fles,
-					   fsgn,
-					   absm, fabs, fabsm,
-					   pstm, fpst, fpstm,
-					   nrmm,
-                       mux_out);
+ula_fx_mux #(NUBITS)um(.op(op),
+                       .in1(in1), .in2(in2),
+                       .add(add), .mlt(mlt), .div(div), .mod(mod), .neg(neg),
+                       .nrm(nrm), .abs(abs), .pst(pst), .sgn(sgn),
+                       .orr(orr), .ann(ann), .inv(inv), .cor(cor),
+                       .les(les), .gre(gre), .equ(equ),
+                       .lin(lin), .lan(lan), .lor(lor),
+                       .shl(shl), .shr(shr), .srs(srs),
+					   .i2f(i2f), .i2fm(i2fm), 
+					   .f2i(f2i), .f2im(f2im),
+					   .negm(negm),.fneg(fneg),.fnegm(fnegm),
+					   .fadd(fadd),.fmlt(fmlt),.fdiv(fdiv),
+					   .fgre(fgre),.fles(fles),
+					   .fsgn(fsgn),
+					   .absm(absm), .fabs(fabs), .fabsm(fabsm),
+					   .pstm(pstm), .fpst(fpst), .fpstm(fpstm),
+					   .nrmm(nrmm),
+                       .out(mux_out));
 
-generate if (I2F || FADD || FMLT || FDIV) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate
+generate if (I2F || I2FM || FADD || FMLT || FDIV) ula_out #(NUBITS,NBMANT,NBEXPO)ula_out(op, mux_out, out); else assign out = mux_out; endgenerate
 
 assign is_zero = (out == {NUBITS{1'b0}});
 

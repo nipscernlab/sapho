@@ -1,12 +1,12 @@
 module ProcZeroCross(input clk, rst_geral, rst_proc,
-			input signed [22:0] in0, in1,
+			input signed [31:0] in0, in1,
 			output reg signed [31:0] out0, out1, out2, out3, out4,
 			output wire [1:0] req_in,
 			output wire [4:0] out_en
 		 );
 		 
 //reg signed [31:0] out0 = 32'd0;
-reg signed [22:0] in_proc;
+reg signed [31:0] in_proc;
 
 // Multiplex
 always @(*)

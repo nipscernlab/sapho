@@ -18,8 +18,6 @@ rmdir %TESTE_DIR% /s /q
 set PROJET=FFT
 :: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
 set PROC=proc_fft
-:: tipo de processador (int ou float)
-set PROC_DATA=int
 :: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
 :: se nao achar, usa simulacao padrao
 set TB=errado
@@ -99,11 +97,9 @@ gcc -o svg_clean.exe svg_clean.c
 move svg_clean.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
 
 gcc -o float2gtkw.exe float2gtkw.c
-gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
 
 move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
-move f2i_gtkw.exe   %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
@@ -130,7 +126,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v proc_fl.v addr_dec.v core_fl.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v ula.v float2index.v stack.v rel_addr.v ula_fl.v proc_fx.v core_fx.v ula_fx.v f2ima.v i2fma.v fnorm.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v addr_dec.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v stack.v rel_addr.v proc_fx.v core_fx.v ula_fx.v f2ima.v i2fma.v fnorm.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -144,8 +140,7 @@ vvp %PROC%.vvp -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
-echo %PROC_DATA%>tcl_infos.txt
-echo %TMP_PRO%>>tcl_infos.txt
+echo %TMP_PRO%>tcl_infos.txt
 echo %BIN_DIR%>>tcl_infos.txt
 
 if exist %SIMU_DIR%\%GTKW% (

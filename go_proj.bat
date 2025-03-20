@@ -20,8 +20,6 @@ set PROC_LIST=ProcDTW ZeroCross
 set INST_LIST=ZeroCross_inst DTWv4_inst
 :: lista do tipo de processador para cada instancia (tem que ser do mesmo tamanho de PROC_LIST)
 set PROC_TYPE=ZeroCross ProcDTW
-:: lista o tipo de dado da instancia do processador (int ou float)
-set PROC_DATA=float int
 :: nome do test bench (sem .v) a ser simulado (tem que estar na pasta TopLevel)
 set TB=top_level_tb
 :: nome do arquivo de visualizacao do gtkwave (se nao achar, usa o script padrao)
@@ -92,11 +90,9 @@ del ASMComp.c
 cd %SCR_DIR%
 
 gcc -o float2gtkw.exe float2gtkw.c
-gcc -o f2i_gtkw.exe f2i_gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
 
 move float2gtkw.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
-move f2i_gtkw.exe   %BIN_DIR%>%TMP_DIR%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_DIR%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
@@ -159,7 +155,6 @@ vvp %PROJET%.vvp -fst
 
 echo %INST_LIST%> tcl_infos.txt
 echo %PROC_TYPE%>>tcl_infos.txt
-echo %PROC_DATA%>>tcl_infos.txt
 echo %TMP_DIR%>>  tcl_infos.txt
 echo %BIN_DIR%>>  tcl_infos.txt
 

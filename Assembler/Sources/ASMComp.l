@@ -95,11 +95,11 @@ LINHA          \n
 "SIGN"   eval_opcode(51,1, yytext, "SGN"  );
 "LDI"    eval_opcode(52,1, yytext, "LDI"  );
 "ISRF"   eval_opcode(53,0, yytext, "FFT"  );
-"FIM"    eval_opcode(54,1, yytext, "F2I"  );
-"PFIM"   eval_opcode(55,1, yytext, "F2I"  );
+"FIM"    eval_opcode(54,1, yytext, "F2IM" );
+"PFIM"   eval_opcode(55,1, yytext, "F2IM" );
 "IFA"    eval_opcode(56,0, yytext, "I2F"  );
-"IFM"    eval_opcode(57,1, yytext, "I2F"  );
-"PIFM"   eval_opcode(58,1, yytext, "I2F"  );
+"IFM"    eval_opcode(57,1, yytext, "I2FM" );
+"PIFM"   eval_opcode(58,1, yytext, "I2FM" );
 "NEGM"   eval_opcode(59,1, yytext, "NEGM" );
 "PNEGM"  eval_opcode(60,1, yytext, "NEGM" );
 "FNEG"   eval_opcode(61,0, yytext, "FNEG" );

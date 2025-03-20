@@ -78,6 +78,8 @@ module core_fx
 	// Operacoes de conversao entre int e float
 	parameter F2I   =   0,
 	parameter I2F   =   0,
+	parameter F2IM  =   0,
+	parameter I2FM  =   0,
 
 	// Operacoes de ponto flutuante
 	parameter FADD  =   0,
@@ -225,6 +227,8 @@ ula_fx #(.NUBITS(NUBITS),
 		 .FABSM (FABSM ),
 		 .F2I   (F2I   ),
 		 .I2F   (I2F   ),
+		 .F2IM  (F2IM  ),
+		 .I2FM  (I2FM  ),
          .SGN   (SGN   ),
 		 .FSGN  (FSGN  ),
 		 .PSTM  (PSTM  ),
