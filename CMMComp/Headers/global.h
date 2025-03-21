@@ -17,7 +17,7 @@ extern char dir_soft [1024];     // diretorio Software
 
 // variaveis de estado --------------------------------------------------------
 
-extern int  acc_ok;              // 0 -> acc vazio (use LOAD), 1 -> acc carregado (use PLD)
+extern int  acc_ok;              // 0 -> acc vazio (use LOD), 1 -> acc carregado (use PLD)
 extern int  line_num;            // numero da linha sendo parseada
 extern int  num_ins ;            // numero de instrucoes parseadas
 

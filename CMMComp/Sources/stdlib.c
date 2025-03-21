@@ -24,7 +24,7 @@ int fsqrti = 0; // se vai precisar de macro pra raiz quadrada
 // input
 int exec_in(int id)
 {
-    if (acc_ok == 0) add_instr("LOAD %s\n", v_name[id]); else add_instr("PLD %s\n", v_name[id]);
+    if (acc_ok == 0) add_instr("LOD %s\n", v_name[id]); else add_instr("PLD %s\n", v_name[id]);
 
     // executa instrucao IN
     add_instr("IN\n");
@@ -38,7 +38,7 @@ int exec_in(int id)
 // o endereco da porta
 void exec_out1(int id)
 {
-    add_instr("LOAD %s\n", v_name[id]);
+    add_instr("LOD %s\n", v_name[id]);
     acc_ok = 1;
 }
 
@@ -102,19 +102,19 @@ int exec_sign(int et1, int et2)
         fprintf (stderr, "Erro na linha %d: não faz sentido o uso de sign(.,.) com números complexos!\n", line_num+1);
     }
 
-    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // int na memoria e int na memoria
     if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        add_instr("SGN %s\n"   , v_name[et1%OFST]);
     }
 
     // int na memoria e int no acc
     if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
     {
-        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        add_instr("SGN %s\n", v_name[et1%OFST]);
     }
 
     // int na memoria e float var na memoria
@@ -174,13 +174,13 @@ int exec_sign(int et1, int et2)
     if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        add_instr("SGN %s\n"   , v_name[et1%OFST]);
     }
 
     // float var na memoria e int no acc
     if ((get_type(et1) == 2) && (v_isco[et1%OFST]==0) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
     {
-        add_instr("SIGN %s\n"  , v_name[et1%OFST]);
+        add_instr("SGN %s\n"  , v_name[et1%OFST]);
     }
 
     // float var na memoria e float var na memoria
@@ -207,13 +207,13 @@ int exec_sign(int et1, int et2)
     if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("SIGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("SGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const na memoria e int no acc
     if ((get_type(et1) == 2) && (v_isco[et1%OFST]==1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST == 0))
     {
-        add_instr("SIGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("SGN %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const na memoria e float var na memoria
@@ -277,7 +277,7 @@ int exec_sign(int et1, int et2)
 // valor absoluto (int, float e comp)
 int exec_abs(int et)
 {
-    char  ld [10]; if (acc_ok == 0) strcpy(ld  , "LOAD"); else strcpy(ld  , "PLD"  );
+    char  ld [10]; if (acc_ok == 0) strcpy(ld  , "LOD" ); else strcpy(ld  , "PLD"  );
     char  abs[10]; if (acc_ok == 0) strcpy( abs, "ABSM"); else strcpy( abs, "PABSM");
     char fabs[10]; if (acc_ok == 0) strcpy(fabs,"FABSM"); else strcpy(fabs,"PFABSM");
 
@@ -319,7 +319,7 @@ int exec_abs(int et)
 // zera se for negativo
 int exec_pst(int et)
 {
-    char  ld [10]; if (acc_ok == 0) strcpy( ld , "LOAD"); else strcpy( ld , "PLD"  );
+    char  ld [10]; if (acc_ok == 0) strcpy( ld , "LOD" ); else strcpy( ld , "PLD"  );
     char  pst[10]; if (acc_ok == 0) strcpy( pst, "PSTM"); else strcpy( pst, "PPSTM");
     char fpst[10]; if (acc_ok == 0) strcpy(fpst,"FPSTM"); else strcpy(fpst,"PFPSTM");
 
@@ -412,7 +412,7 @@ int exec_sqrt(int et)
         fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
     }
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOAD"); else strcpy(ld ,"PLD" );
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD" ); else strcpy(ld ,"PLD" );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f, "IFM"); else strcpy(i2f,"PIFM");
 
     // int na memoria
@@ -484,7 +484,7 @@ int exec_atan(int et)
 {
     if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei arco-tangente de número complexo ainda. Se vira!\n", line_num+1);
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOAD"); else strcpy(ld , "PLD");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD" ); else strcpy(ld , "PLD");
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM" ); else strcpy(i2f,"PIFM");
 
     // int na memoria
@@ -538,7 +538,7 @@ int exec_real(int et)
     int id = et % OFST;
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // comp const
     if (get_type(et) == 5)
@@ -575,7 +575,7 @@ int exec_imag(int et)
     int et_r, et_i;
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // comp const
     if (get_type(et) == 5)
@@ -597,7 +597,7 @@ int exec_imag(int et)
     if ((get_type(et) == 3) && (id == 0))
     {
         add_instr("SETP aux_cmp\n");
-        add_instr("LOAD aux_cmp\n");
+        add_instr("LOD aux_cmp\n");
     }
 
     acc_ok = 1;

@@ -21,7 +21,7 @@ void if_exp(int et)
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        add_instr("LOAD %s\n", v_name[et%OFST]);
+        add_instr("LOD %s\n", v_name[et%OFST]);
     }
 
     // int acc
@@ -139,7 +139,7 @@ void while_expexp(int et)
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        add_instr("LOAD %s\n", v_name[et%OFST]);
+        add_instr("LOD %s\n", v_name[et%OFST]);
     }
 
     // int acc
@@ -259,7 +259,7 @@ void exec_switch(int et)
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        add_instr("LOAD %s\n", v_name[et%OFST]);
+        add_instr("LOD %s\n", v_name[et%OFST]);
     }
 
     // int acc

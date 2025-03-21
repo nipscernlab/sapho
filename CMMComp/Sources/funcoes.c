@@ -114,7 +114,7 @@ void declar_ret(int et, int ret)
     // int com int var
     if ((left_type == 7) && (get_type(et) == 1) && (et%OFST!=0))
     {
-        add_instr("LOAD %s\n", v_name[et%OFST]);
+        add_instr("LOD %s\n", v_name[et%OFST]);
     }
 
     // int com int acc
@@ -194,13 +194,13 @@ void declar_ret(int et, int ret)
     // float com float var
     if ((left_type == 8) && (get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
     {
-        add_instr("LOAD %s\n", v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
     }
 
     // float com float const
     if ((left_type == 8) && (get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
     {
-        add_instr("LOAD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
     }
 
     // float com float acc
@@ -216,7 +216,7 @@ void declar_ret(int et, int ret)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("LOAD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
     }
 
     // float com comp var
@@ -226,7 +226,7 @@ void declar_ret(int et, int ret)
 
         get_cmp_ets(et,&etr,&eti);
         
-        add_instr("LOAD %s\n", v_name[etr % OFST]);
+        add_instr("LOD %s\n", v_name[etr % OFST]);
     }
 
     // float com comp acc
@@ -260,7 +260,7 @@ void declar_ret(int et, int ret)
     {
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe float.\n", line_num+1);
 
-        add_instr("LOAD %s\n", v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
         add_instr("PLD %d // %s\n", f2mf("0.0"), "0.0");
     }
 
@@ -269,7 +269,7 @@ void declar_ret(int et, int ret)
     {
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe float.\n", line_num+1);
 
-        add_instr("LOAD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
         add_instr("PLD %d // %s\n", f2mf("0.0"), "0.0");
     }
 
@@ -286,8 +286,8 @@ void declar_ret(int et, int ret)
     {
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("LOAD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
+        add_instr("LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("PLD %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
     }
 
     // comp com comp var
@@ -295,8 +295,8 @@ void declar_ret(int et, int ret)
     {
         get_cmp_ets(et,&etr,&eti);
         
-        add_instr("LOAD %s\n", v_name[etr % OFST]);
-        add_instr("PLD  %s\n", v_name[eti % OFST]);
+        add_instr("LOD %s\n", v_name[etr % OFST]);
+        add_instr("PLD %s\n", v_name[eti % OFST]);
     }
 
     // comp com comp acc
@@ -358,7 +358,7 @@ void void_ret()
 // utilizacao -----------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// da LOAD no primeiro parametro (se houver)
+// da LOD no primeiro parametro (se houver)
 // get_type da o tipo de parametro (0, 1, 2, 3) (void, int, float, comp)
 // p_test consegue guardar a posicao e tipo de todos os parametros na chamada da funcao
 void par_exp(int et)
@@ -369,7 +369,7 @@ void par_exp(int et)
     acc_ok = 1;
 }
 
-// da LOAD nos proximos parametros
+// da LOD nos proximos parametros
 void par_listexp(int et)
 {
     p_test = p_test*10 + get_type(et);
@@ -466,7 +466,7 @@ void par_check(int et)
     for (i = 1; i < id_cal; i++) t_fun = t_fun/10;
     t_fun = t_fun % 10;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld ,"PLD" );
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"PLD" );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
 
     // ------------------------------------------------------------------------

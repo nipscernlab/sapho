@@ -212,29 +212,29 @@ void header_int(char *fasm, char *pc_sim_mem)
 
     add_sinst(0, "// Gera variaveis auxiliares --------------------------------------------------\n\n");
 
-    // LOAD NULL deve ser a primeira instrucao sempre, pra evitar problemas de reset
-    add_sinst(-1, "LOAD NULL              // evita problema da primeira instrucao com o reset ascincrono\n\n");
+    // LOD NULL deve ser a primeira instrucao sempre, pra evitar problemas de reset
+    add_sinst(-1, "LOD NULL              // evita problema da primeira instrucao com o reset ascincrono\n\n");
 
     // numero zero
-    add_sinst(-1, "LOAD %d           // 0.0\n", 1 << (nbmant+nbexpo-1));
+    add_sinst(-1, "LOD %d           // 0.0\n", 1 << (nbmant+nbexpo-1));
     add_sinst(-1, "SET  float_zero        // guarda o num zero\n\n");
 
     // epsilon para convergencia de funcoes iterativas
     char numi[64], numf[64];
     epsilon_taylor(numi,numf);
-    add_sinst(-1, "LOAD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
+    add_sinst(-1, "LOD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
     add_sinst(-1, "SET  epsilon_taylor\n\n");
 
     // pi sobre 2
-    add_sinst(-1, "LOAD %d           // pi/2 usado em funcoes trigonimetricas\n",f2mf("1.57079632679489661923"));
+    add_sinst(-1, "LOD %d           // pi/2 usado em funcoes trigonimetricas\n",f2mf("1.57079632679489661923"));
     add_sinst(-1, "SET  pi_div_2\n\n");
 
     // 1/2
-    add_sinst(-1, "LOAD %d           // 1/2\n", f2mf("0.5"));
+    add_sinst(-1, "LOD %d           // 1/2\n", f2mf("0.5"));
     add_sinst(-1, "SET  um_div_2\n\n");
 
     // numero 1.0
-    add_sinst(-1, "LOAD %d           // numero 1.0 em float\n", f2mf("1.0"));
+    add_sinst(-1, "LOD %d           // numero 1.0 em float\n", f2mf("1.0"));
     add_sinst(-1, "SET  num_um\n\n");
 
     add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");

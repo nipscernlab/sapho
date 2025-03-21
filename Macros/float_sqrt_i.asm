@@ -15,8 +15,8 @@
              FGRE    epsilon_taylor            // checa tolerancia
              JZ      L2else_sqrti
 
-             LOAD    sqrt_raiz                 // se eh, retorna o resultado
+             LOD     sqrt_raiz                 // se eh, retorna o resultado
              RETURN
 
-@L2else_sqrti LOAD   sqrt_raiz                 // se nao eh, volta
+@L2else_sqrti LOD    sqrt_raiz                 // se nao eh, volta
               JMP    L1_sqrti

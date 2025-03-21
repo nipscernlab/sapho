@@ -45,7 +45,7 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "norm"                        return NRM;
 "pset"                        return PST;
 "abs"                         return ABS;
-"sign"                        return SIGN;
+"sign"                        return SGN;
 "sqrt"                        return SQRT;
 "atan"                        return ATAN;
 

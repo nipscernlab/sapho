@@ -41,7 +41,7 @@ LINHA          \n
 
 "#ITRAD" {if (pp) itr_addr = n_ins;}        // eh uma diretiva sem argumento (sem eval_direct())
 
-"LOAD"   eval_opcode( 0,1, yytext, ""     ); // todas as instrucoes
+"LOD"    eval_opcode( 0,1, yytext, ""     ); // todas as instrucoes
 "PLD"    eval_opcode( 1,1, yytext, ""     );
 "SET"    eval_opcode( 2,1, yytext, ""     );
 "SETP"   eval_opcode( 3,1, yytext, ""     );
@@ -92,7 +92,7 @@ LINHA          \n
 "FIA"    eval_opcode(48,0, yytext, "F2I"  );
 "ABS"    eval_opcode(49,0, yytext, "ABS"  );
 "ILDI"   eval_opcode(50,1, yytext, "FFT"  );
-"SIGN"   eval_opcode(51,1, yytext, "SGN"  );
+"SGN"    eval_opcode(51,1, yytext, "SGN"  );
 "LDI"    eval_opcode(52,1, yytext, "LDI"  );
 "ISRF"   eval_opcode(53,0, yytext, "FFT"  );
 "FIM"    eval_opcode(54,1, yytext, "F2IM" );

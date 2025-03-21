@@ -19,7 +19,7 @@ int oper_neg(int et)
     int  etr, eti;
     char num[128];
 
-    char   ld[10]; if (acc_ok == 0) strcpy(  ld,  "LOAD"); else strcpy(ld,   "PLD"   );
+    char   ld[10]; if (acc_ok == 0) strcpy(  ld,  "LOD" ); else strcpy(ld,   "PLD"   );
     char  neg[10]; if (acc_ok == 0) strcpy( neg,  "NEGM"); else strcpy(neg,  "PNEGM" );
     char fneg[10]; if (acc_ok == 0) strcpy(fneg, "FNEGM"); else strcpy(fneg, "PFNEGM");
 
@@ -102,7 +102,7 @@ int oper_soma(int et1, int et2)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld ,"PLD" );
+    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld ,"PLD" );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
 
     // int var com int var
@@ -764,8 +764,8 @@ int oper_mult(int et1, int et2)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOAD"); else strcpy(ld ,"PLD" );
-    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM" ); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"PLD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
 
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
@@ -1422,7 +1422,7 @@ int oper_divi(int et1, int et2)
     int etr, eti;
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     char i2f[10];
     if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
@@ -1583,7 +1583,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);   // soma os quadrados
         add_instr("SET aux_cmp\n"); // salva o resultado
 
-        add_instr("LOAD aux_float\n");
+        add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
         add_instr("PLD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
@@ -1609,7 +1609,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);   // soma os quadrados
         add_instr("SET aux_cmp\n"); // salva o resultado
 
-        add_instr("LOAD aux_float\n");
+        add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
         add_instr("PLD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
@@ -1629,14 +1629,14 @@ int oper_divi(int et1, int et2)
         add_instr("IFA \n");
         add_instr("SET  aux_float \n");           // salva o float
 
-        add_instr("LOAD aux_real  \n");           // coloca a parte real na pilha
+        add_instr("LOD aux_real  \n");           // coloca a parte real na pilha
         add_instr("FMLT aux_real  \n");
         add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
         add_instr("FMLT aux_imag  \n");
         add_instr("SFADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
-        add_instr("LOAD  aux_float\n");           // carrega o float
+        add_instr("LOD  aux_float\n");           // carrega o float
         add_instr("FMLT aux_real  \n");
         add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
         add_instr("SFDIV \n");                    // faz a divisao
@@ -1735,7 +1735,7 @@ int oper_divi(int et1, int et2)
         add_instr("SFADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
-        add_instr("LOAD %s\n", v_name[et1%OFST]); // carrega o float
+        add_instr("LOD %s\n", v_name[et1%OFST]); // carrega o float
         add_instr("FMLT aux_real  \n");
         add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
         add_instr("SFDIV \n");                    // faz a divisao
@@ -1834,7 +1834,7 @@ int oper_divi(int et1, int et2)
         add_instr("SFADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
-        add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
+        add_instr("LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
         add_instr("FMLT aux_real  \n");
         add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
         add_instr("SFDIV \n");                    // faz a divisao
@@ -1893,7 +1893,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);   // soma os quadrados
         add_instr("SET aux_cmp\n"); // salva o resultado
 
-        add_instr("LOAD aux_float\n");
+        add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
         add_instr("PLD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
@@ -1918,7 +1918,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);   // soma os quadrados
         add_instr("SET aux_cmp\n"); // salva o resultado
 
-        add_instr("LOAD aux_float\n");
+        add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
         add_instr("PLD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
@@ -1937,14 +1937,14 @@ int oper_divi(int et1, int et2)
         add_instr("SETP aux_real  \n");           // salva a parte real
         add_instr("SET  aux_float \n");           // salva o float
 
-        add_instr("LOAD aux_real  \n");           // coloca a parte real na pilha
+        add_instr("LOD aux_real  \n");           // coloca a parte real na pilha
         add_instr("FMLT aux_real  \n");
         add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
         add_instr("FMLT aux_imag  \n");
         add_instr("SFADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
-        add_instr("LOAD  aux_float\n");           // carrega o float
+        add_instr("LOD  aux_float\n");           // carrega o float
         add_instr("FMLT aux_real  \n");
         add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
         add_instr("SFDIV \n");                    // faz a divisao
@@ -2075,7 +2075,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);
         add_instr("SET aux_mod\n");
 
-        add_instr("LOAD aux_real\n");
+        add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
         add_instr("PLD  aux_imag\n");
         oper_mult(eti,2*OFST);
@@ -2211,7 +2211,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);
         add_instr("SET aux_mod\n");
 
-        add_instr("LOAD aux_real\n");
+        add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
         add_instr("PLD  aux_imag\n");
         oper_mult(eti,2*OFST);
@@ -2301,7 +2301,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);
         add_instr("SET aux_mod\n");
 
-        add_instr("LOAD aux_real\n");
+        add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
         add_instr("PLD  aux_imag\n");
         oper_mult(eti,2*OFST);
@@ -2332,7 +2332,7 @@ int oper_divi(int et1, int et2)
         oper_soma(2*OFST,2*OFST);
         add_instr("SET aux_mod\n");
 
-        add_instr("LOAD aux_real\n");
+        add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
         add_instr("PLD  aux_imag\n");
         oper_mult(eti,2*OFST);
@@ -2357,14 +2357,14 @@ int oper_divi(int et1, int et2)
         add_instr("SETP aux_imag1 \n");
         add_instr("SET  aux_real1 \n");
 
-        add_instr("LOAD aux_real2 \n");
+        add_instr("LOD aux_real2 \n");
         add_instr("FMLT aux_real2 \n");
         add_instr("PLD  aux_imag2\n");
         add_instr("FMLT aux_imag2\n");
         add_instr("SFADD          \n");
         add_instr("SET aux_mod    \n");
 
-        add_instr("LOAD aux_real1 \n");
+        add_instr("LOD aux_real1 \n");
         add_instr("FMLT aux_real2 \n");
         add_instr("PLD  aux_imag1 \n");
         add_instr("FMLT aux_imag2 \n");
@@ -2400,7 +2400,7 @@ int oper_mod(int et1, int et2)
         fprintf(stderr, "Erro na linha %d: qual o sentido de calcular o resto da divisão sem ser com número inteiro? Vai se tratar!\n", line_num+1);
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
@@ -2442,8 +2442,8 @@ int oper_cmp(int et1, int et2, int type)
 {
     int  etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld, "LOAD"); else strcpy(ld, "PLD" );
-    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM" ); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld, "LOD"); else strcpy(ld, "PLD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
 
     char op[16];
     switch (type)
@@ -2627,7 +2627,7 @@ int oper_cmp(int et1, int et2, int type)
     {
         add_instr("IFA\n");
         add_instr("SET aux_cmp\n");
-        add_instr("LOAD %s\n", v_name[et1%OFST]);
+        add_instr("LOD %s\n", v_name[et1%OFST]);
         add_instr("PLD aux_cmp\n");
         add_instr("S%s\n", fop);
     }
@@ -2652,7 +2652,7 @@ int oper_cmp(int et1, int et2, int type)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
         add_instr("SET aux_float\n");
-        add_instr("LOAD %s\n", v_name[et1%OFST]);
+        add_instr("LOD %s\n", v_name[et1%OFST]);
         add_instr("PLD aux_float\n");
         add_instr("S%s\n", fop);
     }
@@ -2706,7 +2706,7 @@ int oper_cmp(int et1, int et2, int type)
     {
         add_instr("IFA\n");
         add_instr("SET aux_cmp\n");
-        add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
         add_instr("PLD aux_cmp\n");
         add_instr("S%s\n", fop);
     }
@@ -2731,7 +2731,7 @@ int oper_cmp(int et1, int et2, int type)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
     {
         add_instr("SET aux_float\n");
-        add_instr("LOAD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
         add_instr("PLD aux_float\n");
         add_instr("S%s\n", fop);
     }
@@ -3147,7 +3147,7 @@ int oper_dife(int et1, int et2)
 }
 
 // ----------------------------------------------------------------------------
-// operacoes logicas (usadas em if else while) --------------------------------
+// operacoes condicionais (usadas em if else while) ---------------------------
 // ----------------------------------------------------------------------------
 
 // inversao logica (!)
@@ -3155,7 +3155,7 @@ int oper_linv(int et)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld,"PLD");
     char f2i[10]; if (acc_ok == 0) strcpy(f2i,"FIM"); else strcpy(f2i,"PFIM");
 
     // se for um int na memoria
@@ -3242,7 +3242,7 @@ int oper_lanor(int et1, int et2, int type)
     int etr, eti;
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     char op[16];
     switch (type)
@@ -3293,10 +3293,11 @@ int oper_inv(int et)
 
     int etr, eti;
 
-    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // se for um int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0)) add_instr("%s %s\n", ld, v_name[et%OFST]);
+    
     add_instr("INV\n");
 
     acc_ok = 1;
@@ -3319,7 +3320,7 @@ int oper_bitw(int et1, int et2, int type)
     }
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
@@ -3378,7 +3379,7 @@ int oper_shift(int et1, int et2, int type)
 
     int etr, eti;
 
-    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOAD"); else strcpy(ld,"PLD");
+    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
 
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))

@@ -92,10 +92,6 @@ del ASMComp.c
 
 cd %SCR_DIR%
 
-flex -osvg_clean.c svg_clean.l
-gcc -o svg_clean.exe svg_clean.c
-move svg_clean.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
-
 gcc -o float2gtkw.exe float2gtkw.c
 gcc -o comp2gtkw.exe comp2gtkw.c
 
@@ -126,7 +122,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v addr_dec.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v stack.v rel_addr.v proc_fx.v core_fx.v ula_fx.v f2ima.v i2fma.v fnorm.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v addr_dec.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v stack.v rel_addr.v proc_fx.v core_fx.v ula_fx.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -159,22 +155,22 @@ sed -i "s/@PROC@/%PROC%/" proc2rtl.ys
 yosys -s proc2rtl.ys
 
 cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
-%BIN_DIR%\svg_clean.exe %PROC%.svg %TMP_PRO%/%PROC%.svg
+cp %PROC%.svg %TMP_PRO%
 del %PROC%.json
 del %PROC%.svg
 
 cmd /c "netlistsvg p_proc_fft.json -o p_proc_fft.svg"
-%BIN_DIR%\svg_clean.exe p_proc_fft.svg %TMP_PRO%/p_proc_fft.svg
+cp p_proc_fft.svg %TMP_PRO%
 del p_proc_fft.json
 del p_proc_fft.svg
 
 cmd /c "netlistsvg core.json -o core.svg"
-%BIN_DIR%\svg_clean.exe core.svg %TMP_PRO%/core.svg
+cp core.svg %TMP_PRO%
 del core.json
 del core.svg
 
 cmd /c "netlistsvg ula.json -o ula.svg"
-%BIN_DIR%\svg_clean.exe ula.svg %TMP_PRO%/ula.svg
+cp ula.svg %TMP_PRO%
 del ula.json
 del ula.svg
 

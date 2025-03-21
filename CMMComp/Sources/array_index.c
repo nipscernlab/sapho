@@ -39,7 +39,7 @@ void get_1d_index(int id, int et)
 
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
-        add_instr("LOAD %s\n", v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
     }
 
     // se int no acc ------------------------------------------------------
@@ -221,7 +221,7 @@ void get_2d_index(int id, int et1, int et2)
     // int na memoria e int na memoria
     if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
     {
-        add_instr("LOAD %s\n",  v_name[et1 % OFST]);
+        add_instr("LOD %s\n",   v_name[et1 % OFST]);
         add_instr("MLT  %s_arr_size\n", v_name[id]);
         add_instr("ADD  %s\n",  v_name[et2 % OFST]);
     }
@@ -242,7 +242,7 @@ void get_2d_index(int id, int et1, int et2)
     {
         fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-        add_instr("LOAD %s\n",  v_name[et1 % OFST]);
+        add_instr("LOD %s\n",   v_name[et1 % OFST]);
         add_instr("MLT  %s_arr_size\n", v_name[id]);
         add_instr("PFIM %s\n",  v_name[et2 % OFST]);
         add_instr("SADD\n");
@@ -253,7 +253,7 @@ void get_2d_index(int id, int et1, int et2)
     {
         fprintf (stdout, "Atenção na linha %d: tá vendo que o segundo índice do array tá em ponto flutuante né? Vou arredondar!\n", line_num+1);
 
-        add_instr("LOAD %s\n",  v_name[et1 % OFST]);
+        add_instr("LOD %s\n",   v_name[et1 % OFST]);
         add_instr("MLT  %s_arr_size\n", v_name[id]);
         add_instr("PFIM %d // %s\n", f2mf(v_name[et2 % OFST]), v_name[et2 % OFST]);
         add_instr("SADD\n");
@@ -266,7 +266,7 @@ void get_2d_index(int id, int et1, int et2)
 
         get_cmp_cst(et2, &etr, &eti);
 
-        add_instr("LOAD %s\n", v_name[et1 % OFST]);
+        add_instr("LOD %s\n",  v_name[et1 % OFST]);
         add_instr("MLT %s_arr_size\n", v_name[id]);
         add_instr("PFIM %d // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
         add_instr("SADD\n");
@@ -280,7 +280,7 @@ void get_2d_index(int id, int et1, int et2)
         add_instr("SETP aux_index_y\n");
         add_instr("FIA\n");
         add_instr("SET  aux_index_y\n");
-        add_instr("LOAD %s\n",  v_name[et1 % OFST]);
+        add_instr("LOD %s\n",   v_name[et1 % OFST]);
         add_instr("MLT  %s_arr_size\n", v_name[id]);
         add_instr("ADD  aux_index_y\n");
     }
@@ -290,7 +290,7 @@ void get_2d_index(int id, int et1, int et2)
     {
         fprintf(stdout, "Atenção na linha %d: índice de array complexo? Sério?! Vou pegar a parte real.\n", line_num+1);
 
-        add_instr("LOAD %s\n",  v_name[et1 % OFST]);
+        add_instr("LOD %s\n",   v_name[et1 % OFST]);
         add_instr("MLT  %s_arr_size\n", v_name[id]);
         add_instr("PFIM %s\n",  v_name[et2 % OFST]);
         add_instr("SADD\n");
@@ -715,10 +715,10 @@ int array1d2exp(int id, int et, int fft)
     if (v_isar[id] == 2)
         fprintf (stderr, "Erro na linha %d: array %s tem duas dimensões!\n"  , line_num+1, rem_fname(v_name[id], fname));
 
-    // prepara os comandos de LOAD --------------------------------------------
+    // prepara os comandos de LOD --------------------------------------------
 
     char ldv[10]; if (fft    == 1) strcpy(ldv,"ILDI"); else strcpy(ldv,"LDI" );
-    char ldi[10]; if (acc_ok == 1) strcpy(ldi,"PLD" ); else strcpy(ldi,"LOAD");
+    char ldi[10]; if (acc_ok == 1) strcpy(ldi,"PLD" ); else strcpy(ldi,"LOD");
     char f2i[10]; if (acc_ok == 1) strcpy(f2i,"PFIM"); else strcpy(f2i,"FIM" );
 
     // ------------------------------------------------------------------------
@@ -929,10 +929,10 @@ int array2d2exp(int id, int et1, int et2)
     if (v_isar[id] == 1)
         fprintf (stderr, "Erro na linha %d: array %s tem uma dimensão só!\n" , line_num+1, rem_fname(v_name[id], fname));
 
-    // prepara os comandos de LOAD --------------------------------------------
+    // prepara os comandos de LOD --------------------------------------------
 
     char ldv[10];                  strcpy(ldv,"LDI" ); // ainda nao tem fft 2d
-    char ldi[10]; if (acc_ok == 1) strcpy(ldi,"PLD" ); else strcpy(ldi,"LOAD");
+    char ldi[10]; if (acc_ok == 1) strcpy(ldi,"PLD" ); else strcpy(ldi,"LOD");
     char f2i[10]; if (acc_ok == 1) strcpy(f2i,"PFIM"); else strcpy(f2i,"FIM" );
 
     // ------------------------------------------------------------------------
@@ -1111,7 +1111,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("SETP aux_index_y\n");
             add_instr("FIA\n");
             add_instr("SET  aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("LOD %s\n",   v_name[et1 % OFST]);
             add_instr("MLT  %s_arr_size\n", v_name[id]);
             add_instr("ADD  aux_index_y\n");
             add_instr("%s %s\n", ldv, v_name[id]);
@@ -1962,7 +1962,7 @@ int array2d2exp(int id, int et1, int et2)
             add_instr("SETP aux_index_y\n");
             add_instr("FIA\n");
             add_instr("SET  aux_index_y\n");
-            add_instr("LOAD %s\n", v_name[et1 % OFST]);
+            add_instr("LOD %s\n",   v_name[et1 % OFST]);
             add_instr("MLT  %s_arr_size\n", v_name[id]);
             add_instr("ADD  aux_index_y\n");
             add_instr("SET aux_index_y\n");

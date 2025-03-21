@@ -11,9 +11,6 @@ read_verilog rel_addr.v
 read_verilog stack_pointer.v
 read_verilog stack.v
 read_verilog ula_fx.v
-read_verilog f2ima.v
-read_verilog i2fma.v
-read_verilog fnorm.v
 prep -top @PROC@
 
 cd @PROC@

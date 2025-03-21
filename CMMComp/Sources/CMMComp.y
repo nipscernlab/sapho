@@ -57,7 +57,7 @@ void  yyerror(char const *s);
 
 %token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH             // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD      // diretivas
-%token IN OUT NRM PST ABS SIGN SQRT REAL IMAG ATAN FASE      // std lib
+%token IN OUT NRM PST ABS SGN SQRT REAL IMAG ATAN FASE       // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK   // saltos
 %token SHIFTL SHIFTR SSHIFTR                                 // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAND LOR                          // operadores logicos de dois simbolos
@@ -199,7 +199,7 @@ std_out  : OUT  '(' INUM ','               {     exec_out1($3   );} // saida de 
 std_in   : IN   '(' INUM ')'               {$$ = exec_in  ($3   );} // entrada de dados
 std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao pset(x)   -> zera se negativo
 std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
-std_sign : SIGN '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
+std_sign : SGN  '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
 std_nrm  : NRM  '(' exp ')'                {$$ = exec_norm($3   );} // funcao norm(x)   -> divide x pela constante NUGAIN
 std_sqrt : SQRT '(' exp ')'                {$$ = exec_sqrt($3   );} // funcao sqrt(x)   -> raiz quadrada
 std_real : REAL '(' exp ')'                {$$ = exec_real($3   );} // funcao real(x)   -> pega a parte real de um comp
@@ -347,9 +347,9 @@ int main(int argc, char *argv[])
   sprintf(path,   "%s/cmm_log.txt", dir_tmp         ); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
   sprintf(path, "%s/pc_%s_mem.txt", dir_tmp, argv[1]); f_lin = fopen(path,"w"); // memoria no pc.v que passa de asm para cmm
 
-  // gera uma instrucao LOAD NULL no inicio (tentar tirar isso) ---------------
+  // gera uma instrucao LOD NULL no inicio (tentar tirar isso) ---------------
 
-  add_sinst(-1,"LOAD NULL\n");
+  add_sinst(-1,"LOD NULL\n");
 
   // executa o parse no arquivo .cmm ------------------------------------------
 
