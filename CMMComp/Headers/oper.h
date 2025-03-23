@@ -22,7 +22,7 @@ int oper_dife (int et1, int et2);           // x!=y
 // operacoes logicas (if else while) ------------------------------------------
 // ----------------------------------------------------------------------------
 
-int oper_linv (int et);                     // !x
+int oper_lin  (int et);                     // !x
 int oper_lanor(int et1, int et2, int type); // x&&y, x||y
 
 // ----------------------------------------------------------------------------

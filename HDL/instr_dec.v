@@ -263,49 +263,49 @@ always @ (posedge clk or posedge rst) begin
 						out_en  <= 1'b0;
 					end
 			32  : begin
-						ula_op  <= 6'd41;    // LINV   -> Inverte bit logico no acumulador
-						 srf    <= 1'b0;     // fazer o LINV com memoria?
+						ula_op  <= 6'd36;    // LIN    -> Inverte bit condicional
+						 srf    <= 1'b0;
 						invr    <= 1'b0;
-						req_in  <= 1'b0;     // nao tem SLINV pois eh operacao unaria
+						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			33  : begin
-						ula_op  <= 6'd40;    // EQU    -> Igual com memoria
+						ula_op  <= 6'd42;    // EQU    -> Igual com memoria
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			34  : begin
-						ula_op  <= 6'd40;    // SEQU   -> Igual com a pilha
+						ula_op  <= 6'd42;    // SEQU   -> Igual com a pilha
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			35  : begin
-						ula_op  <= 6'd38;    // GRE    -> maior do que com memoria
+						ula_op  <= 6'd40;    // GRE    -> maior do que com memoria
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			36  : begin
-						ula_op  <= 6'd38;    // SGRE   -> maior do que com pilha
+						ula_op  <= 6'd40;    // SGRE   -> maior do que com pilha
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			37: begin
-						ula_op  <= 6'd36;    // LES    -> Menor do que com memoria
+						ula_op  <= 6'd38;    // LES    -> Menor do que com memoria
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			38: begin
-						ula_op  <= 6'd36;    // SLES   -> Menor do que com a pilha
+						ula_op  <= 6'd38;    // SLES   -> Menor do que com a pilha
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
@@ -536,28 +536,28 @@ always @ (posedge clk or posedge rst) begin
 						out_en  <= 1'b0;
 					end
 			71  : begin
-						ula_op  <= 6'd39;    // FGRE  -> maior que em ponto flutuante com a memoria
+						ula_op  <= 6'd41;    // FGRE  -> maior que em ponto flutuante com a memoria
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			72  : begin
-						ula_op  <= 6'd39;    // SFGRE -> maior que em ponto flutuante com pilha
+						ula_op  <= 6'd41;    // SFGRE -> maior que em ponto flutuante com pilha
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			73  : begin
-						ula_op  <= 6'd37;    // FLES  -> menor que em ponto flutuante com a memoria
+						ula_op  <= 6'd39;    // FLES  -> menor que em ponto flutuante com a memoria
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
 						out_en  <= 1'b0;
 					end
 			74  : begin
-						ula_op  <= 6'd37;    // SFLES -> menor que em ponto flutuante com pilha
+						ula_op  <= 6'd39;    // SFLES -> menor que em ponto flutuante com pilha
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
@@ -656,6 +656,34 @@ always @ (posedge clk or posedge rst) begin
 					end
 			88  : begin
 						ula_op  <= 6'd24;    // PNRMM -> NRM com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			89  : begin
+						ula_op  <= 6'd33;    // INV_M  -> INV com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			90  : begin
+						ula_op  <= 6'd33;    // P_INV_M -> INV com memoria dando push antes
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			91  : begin
+						ula_op  <= 6'd37;    // LIN_M  -> LIN com memoria
+						 srf    <= 1'b0;
+						invr    <= 1'b0;
+						req_in  <= 1'b0;
+						out_en  <= 1'b0;
+					end
+			92  : begin
+						ula_op  <= 6'd37;    // P_LIN_M -> LIN com memoria dando push antes
 						 srf    <= 1'b0;
 						invr    <= 1'b0;
 						req_in  <= 1'b0;
@@ -897,7 +925,7 @@ always @ (*) begin
 						ldi      <= 1'b0;
 						invl     <= 1'b0;
 					end
-			32: begin                     // LINV
+			32: begin                     // LIN
 						mem_wr   <= 1'b0;
 						dsp_push <= 1'b0;
 						dsp_pop  <= 1'b0;
@@ -1290,6 +1318,34 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			88: begin                     // PNRMM
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			89: begin                     // INV_M
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			90: begin                     // P_INV_M
+						mem_wr   <= 1'b1;
+						dsp_push <= 1'b1;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			91: begin                     // LIN_M
+						mem_wr   <= 1'b0;
+						dsp_push <= 1'b0;
+						dsp_pop  <= 1'b0;
+						ldi      <= 1'b0;
+						invl     <= 1'b0;
+					end
+			92: begin                     // P_LIN_M
 						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;

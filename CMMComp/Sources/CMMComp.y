@@ -284,7 +284,7 @@ exp:       terminal                           {$$ = $1;}
          |    '+' exp                         {$$ = $2;}
          // operadores unarios
          |    '-' exp                         {$$ =    oper_neg($2      );}
-         |    '!' exp                         {$$ =   oper_linv($2      );}
+         |    '!' exp                         {$$ =   oper_lin ($2      );}
          |    '~' exp                         {$$ =    oper_inv($2      );}
          | ID                         PPLUS   {$$ =   pplus2exp($1      );}
          | ID '[' exp ']'             PPLUS   {$$ = pplus1d2exp($1,$3   );}

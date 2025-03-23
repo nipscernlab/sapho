@@ -73,7 +73,7 @@ LINHA          \n
  "XOR"   eval_opcode(29,1, yytext, "XOR"  );
 "SXOR"   eval_opcode(30,0, yytext, "XOR"  );
  "INV"   eval_opcode(31,0, yytext, "INV"  );
-"LINV"   eval_opcode(32,0, yytext, "LIN"  );
+"LIN"    eval_opcode(32,0, yytext, "LIN"  );
  "EQU"   eval_opcode(33,1, yytext, "EQU"  );
 "SEQU"   eval_opcode(34,0, yytext, "EQU"  );
  "GRE"   eval_opcode(35,1, yytext, "GRE"  );
@@ -130,6 +130,10 @@ LINHA          \n
 "PFPSTM" eval_opcode(86,1, yytext, "FPSTM");
 "NRMM"   eval_opcode(87,1, yytext, "NRMM" );
 "PNRMM"  eval_opcode(88,1, yytext, "NRMM" );
+"INV_M"   eval_opcode(89,1, yytext,"INV_M");
+"P_INV_M" eval_opcode(90,1, yytext,"INV_M");
+"LIN_M"   eval_opcode(91,1, yytext,"LIN_M");
+"P_LIN_M" eval_opcode(92,1, yytext,"LIN_M");
 
 {CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
 {STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso

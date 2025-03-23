@@ -753,7 +753,7 @@ int oper_soma(int et1, int et2)
     return type*OFST;
 }
 
-// subtracao entre dos numeros
+// subtracao entre dois numeros
 int oper_subt(int et1, int et2)
 {
     return oper_soma(et1,oper_neg(et2));
@@ -3131,19 +3131,19 @@ int oper_cmp(int et1, int et2, int type)
 // compara maior e igual (contrario de menor)
 int oper_greq(int et1, int et2)
 {
-    return oper_linv(oper_cmp(et1,et2,0));
+    return oper_lin(oper_cmp(et1,et2,0));
 }
 
 // compara menor e igual (contrasrio de maior)
 int oper_leeq(int et1, int et2)
 {
-    return oper_linv(oper_cmp(et1,et2,1));
+    return oper_lin(oper_cmp(et1,et2,1));
 }
 
 // comparar se eh diferente (contrario de igual)
 int oper_dife(int et1, int et2)
 {
-    return oper_linv(oper_cmp(et1,et2,2));
+    return oper_lin(oper_cmp(et1,et2,2));
 }
 
 // ----------------------------------------------------------------------------
@@ -3151,24 +3151,24 @@ int oper_dife(int et1, int et2)
 // ----------------------------------------------------------------------------
 
 // inversao logica (!)
-int oper_linv(int et)
+int oper_lin(int et)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld,"PLD");
-    char f2i[10]; if (acc_ok == 0) strcpy(f2i,"FIM"); else strcpy(f2i,"PFIM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"PLD"    );
+    char f2i[10]; if (acc_ok == 0) strcpy(f2i,"FIM"  ); else strcpy(f2i,"PFIM"   );
+    char lin[10]; if (acc_ok == 0) strcpy(lin,"LIN_M"); else strcpy(lin,"P_LIN_M");
 
     // se for um int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
-        add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("LINV\n");
+        add_instr("%s %s\n", lin, v_name[et%OFST]);
     }
 
     // se for um int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     // se for um float var na memoria
@@ -3177,7 +3177,7 @@ int oper_linv(int et)
         fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
         add_instr("%s %s\n", f2i, v_name[et%OFST]);
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     // se for um float const na memoria
@@ -3186,7 +3186,7 @@ int oper_linv(int et)
         fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
         add_instr("%s %d // %s\n", f2i, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     // se for um float no acc
@@ -3195,7 +3195,7 @@ int oper_linv(int et)
         fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
         add_instr("FIA\n");
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     // se for um comp const
@@ -3206,7 +3206,7 @@ int oper_linv(int et)
         get_cmp_cst(et,&etr,&eti);
 
         add_instr("%s %d // %s\n", f2i, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     // se for um comp var
@@ -3215,7 +3215,7 @@ int oper_linv(int et)
         fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
         add_instr("%s %s\n", f2i, v_name[et%OFST]);
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     // se for um comp no acc
@@ -3225,7 +3225,7 @@ int oper_linv(int et)
 
         add_instr("POP\n");
         add_instr("FIA\n");
-        add_instr("LINV\n");
+        add_instr("LIN\n");
     }
 
     acc_ok = 1;
@@ -3293,12 +3293,19 @@ int oper_inv(int et)
 
     int etr, eti;
 
-    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
+    char inv[10]; if (acc_ok == 0) strcpy(inv,"INV_M"); else strcpy(inv,"P_INV_M");
 
     // se for um int na memoria
-    if ((get_type(et) == 1) && (et % OFST != 0)) add_instr("%s %s\n", ld, v_name[et%OFST]);
-    
-    add_instr("INV\n");
+    if ((get_type(et) == 1) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", inv, v_name[et%OFST]);
+    }
+
+    // se for um int no acc
+    if ((get_type(et) == 1) && (et % OFST == 0))
+    {
+        add_instr("INV\n");
+    }
 
     acc_ok = 1;
 
