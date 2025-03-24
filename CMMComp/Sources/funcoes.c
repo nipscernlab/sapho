@@ -34,7 +34,7 @@ void declar_fun(int id1, int id2) //id1 -> tipo, id2 -> indice para o nome
     if ((mainok == 0) && (strcmp(v_name[id2], "main") != 0))
     //if (mainok == 0)
     {
-        add_sinst(-2, "CALL main\n   ");
+        add_sinst(-2, "CALL main\n");
         add_sinst(-3, "@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio

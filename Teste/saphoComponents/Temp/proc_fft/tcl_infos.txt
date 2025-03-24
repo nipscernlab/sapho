@@ -1,3 +1,0 @@
-float
-C:\Users\chrysthofer\Documents\GitHub\sapho\Teste\saphoComponents\Temp\proc_fft
-C:\Users\chrysthofer\Documents\GitHub\sapho\Teste\saphoComponents\bin
