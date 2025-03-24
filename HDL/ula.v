@@ -813,7 +813,7 @@ endmodule
 // Circuito Principal *********************************************************
 // ****************************************************************************
 
-module ula_fx
+module ula
 #(
 	// Geral
 	parameter                     NUBITS = 32,
@@ -883,8 +883,7 @@ module ula_fx
 (
 	input         [       5:0] op,
 	input  signed [NUBITS-1:0] in1, in2,
-	output signed [NUBITS-1:0] out,
-	output                     is_zero
+	output signed [NUBITS-1:0] out
 );
 
 // circito de desnormalização de ponto flutuante ------------------------------
@@ -1190,10 +1189,8 @@ ula_mux #(NUBITS) ula_mux (.op (op ),
 						   .srs(srs),
                            .out(mux_out));
 
-// mux de saida ---------------------------------------------------------------
+// mux de saida (se necessario) -----------------------------------------------
 
 generate if (I2F || I2F_M || F_ADD || F_MLT || F_DIV) ula_out #(NUBITS,NBMANT,NBEXPO) ula_out(op, mux_out, out); else assign out = mux_out; endgenerate
-
-assign is_zero = (out == {NUBITS{1'b0}});
 
 endmodule

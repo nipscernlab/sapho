@@ -33,23 +33,23 @@ char *get_iname  (){sprintf(tmp, "%s/Hardware/%s_inst.mif", proc_dir,name); retu
 char *get_vname  (){sprintf(tmp, "%s/Hardware/%s.v"       , proc_dir,name); return tmp;}
 char *get_tb_name(){sprintf(tmp, "%s/%s_tb.v"             , temp_dir,name); return tmp;}
 
-// cria arquivo de simulacao para o core_fx ou core_fl
+// cria arquivo de simulacao para o core.v
 // eh usado com multicore
-void build_core_flx()
+void build_core()
 {
     char path[1024];
-    sprintf(path, "%s/core_flx_%s_sim.v",temp_dir,name);
+    sprintf(path, "%s/core_%s_sim.v",temp_dir,name);
 
     FILE *input;
     FILE *output = fopen(path, "w");
 
     char texto[1001] = "";
 
-    sprintf(path, "%s/core_fx.v", hdl_dir);
+    sprintf(path, "%s/core.v", hdl_dir);
     input = fopen(path, "r");
 
     fgets(texto, 1001, input);
-    fprintf(output, "module core_flx_%s_sim\n", name);
+    fprintf(output, "module core_%s_sim\n", name);
 
     // copia o conteudo do processador
     while(fgets(texto, 1001, input) != NULL)
@@ -65,31 +65,29 @@ void build_core_flx()
     fclose(output);    
 }
 
-// cria arquivo de simulacao para o proc_fx ou proc_fl
+// cria arquivo de simulacao para o proc.v
 // eh usado com multicore
-void build_proc_flx()
+void build_proc()
 {
     char path[1024];
-    sprintf(path, "%s/proc_flx_%s_sim.v",temp_dir,name);
+    sprintf(path, "%s/proc_%s_sim.v",temp_dir,name);
 
     FILE *input;
     FILE *output = fopen(path, "w");
 
     char texto[1001] = "";
 
-    sprintf(path, "%s/proc_fx.v", hdl_dir);
+    sprintf(path, "%s/processor.v", hdl_dir);
     input = fopen(path, "r");
 
     fgets(texto, 1001, input);
-    fprintf(output, "module proc_flx_%s_sim\n", name);
+    fprintf(output, "module proc_%s_sim\n", name);
 
     // copia o conteudo do processador
     while(fgets(texto, 1001, input) != NULL)
     {
-        if ( strstr(texto,          "core_fx #(.NUBITS(NUBITS),") != NULL)
-            fprintf(output, "core_flx_%s_sim #(.NUBITS(NUBITS),\n",  name);
-        else if (strstr(texto,      "core_fl #(.NBMANT(NBMANT),")    != 0)
-            fprintf(output, "core_flx_%s_sim #(.NBMANT(NBMANT),\n",  name);
+        if ( strstr(texto,             "core #(.NUBITS(NUBITS),") != NULL)
+            fprintf(output,     "core_%s_sim #(.NUBITS(NUBITS),\n",  name);
         else if (strstr(texto,    "mem_data # (.NADDRE(MDATAS),")    != 0)
             fprintf(output,    "mem_data_%s # (.NADDRE(MDATAS),\n",  name);
         else
@@ -118,8 +116,8 @@ void build_proc_sim()
     input = fopen(path, "r");
     while(fgets(texto, 1001, input) != NULL)
     {
-        if (((strstr(texto, "proc_fx") != NULL) || (strstr(texto, "proc_fl") != NULL)) && (sim_typ == 1))
-            fprintf(f_veri, "proc_flx_%s_sim\n", name);
+        if (strstr(texto, "processor") != NULL)
+            fprintf(f_veri, "proc_%s_sim\n", name);
         else if(strcmp(texto, "endmodule") != 0)
             fputs(texto, output);
            memset(texto, 0, sizeof(char) * 1001);
@@ -195,10 +193,10 @@ void build_vv_file()
     fprintf(f_veri, "wire [%d:0] addr_in;\n"   , (int)ceil(log2(nmioin)-1));
     fprintf(f_veri, "wire [%d:0] addr_out;\n\n", (int)ceil(log2(nuioou)-1));
 
-    fprintf(f_veri, "proc_fx\n#(.NUBITS(%d),\n",nbits );
-    fprintf(f_veri,            ".NBMANT(%d),\n",nbmant);
-    fprintf(f_veri,            ".NBEXPO(%d),\n",nbexpo);
-    fprintf(f_veri,            ".NUGAIN(%d),\n",nugain);
+    fprintf(f_veri, "processor\n#(.NUBITS(%d),\n",nbits );
+    fprintf(f_veri,              ".NBMANT(%d),\n",nbmant);
+    fprintf(f_veri,              ".NBEXPO(%d),\n",nbexpo);
+    fprintf(f_veri,              ".NUGAIN(%d),\n",nugain);
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
@@ -235,8 +233,8 @@ void build_vv_file()
     if (sim_typ==1)
     {
         build_proc_sim();
-        build_proc_flx();
-        build_core_flx();
+        build_proc();
+        build_core();
     }
 }
 

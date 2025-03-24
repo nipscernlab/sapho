@@ -126,8 +126,8 @@ for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "TOP_V=!TOP_V!%TOPL_DIR%\%
 :: lista arquivos dos processadores encontrados (simulacao)
 for %%a in (%PROC_LIST%) do (
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a_sim.v "
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\proc_flx_%%a_sim.v "
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\core_flx_%%a_sim.v "
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\proc_%%a_sim.v "
+    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\core_%%a_sim.v "
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\pc_%%a.v "
     set "PRO_V=!PRO_V!%TMP_DIR%\%%a\mem_data_%%a.v "
 )     

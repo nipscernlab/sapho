@@ -35,7 +35,7 @@ int  m_count;             // contador de macros
 char m_name[NMNEMAX][64]; // nome das macros
 
 
-#define NBITS_OPC 7     // tem que mudar no verilog de acordo (em proc_fx.v e proc_fl.v)
+#define NBITS_OPC 7     // tem que mudar no verilog de acordo (em proc.v)
 
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 FILE *f_tran;           // arquivo para traducao do opcode

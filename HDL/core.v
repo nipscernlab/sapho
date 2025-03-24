@@ -1,34 +1,44 @@
-module core_fx
+module core
 #(
 	// -------------------------------------------------------------------------
-	// Parametros de configuracao geral ----------------------------------------
+	// Parametros de configuracao internos -------------------------------------
+	// -------------------------------------------------------------------------
+
+	// fluxo de dados
+	parameter NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
+	parameter NBOPER = 9,               // Numero de bits de operando
+
+	// memorias
+	parameter MDATAW = 9,               // Numero de bits de endereco da memoria de dados
+	parameter MINSTW = 9,               // Numero de bits de endereco da memoria de instrucao
+	parameter NBINST = NBOPCO + NBOPER, // Numero de bits da memoria de instrucao
+	parameter MDATAS = 512,             // Numero de enderecos da memoria de dados
+
+	// Constantes internas
+	parameter ITRADD =  0,              // Endereco da interrupcao
+
+	// -------------------------------------------------------------------------
+	// Parametros configurados pelo usuario ------------------------------------
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
 	parameter NUBITS = 32,              // Numero de bits de dados
 	parameter NBMANT = 23,              // Numero de bits da mantissa
 	parameter NBEXPO =  8,              // Numero de bits do expoente
-	parameter NBOPCO =  7,              // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
-	parameter NBOPER =  9,              // Numero de bits de operando
 
 	// memorias
-	parameter MDATAW = 9,               // Numero de bits de endereco da memoria de dados
-	parameter MINSTW = 9,               // Numero de bits de endereco da memoria de instrucao
 	parameter SDEPTH = 5,               // Numero de bits de endereco da pilha de subrotinas
-	parameter NBINST = NBOPCO + NBOPER, // Numero de bits da memoria de instrucao
-	parameter MDATAS = 512,             // Numero de enderecos da memoria de dados
 
 	// Entradas e Saidas
 	parameter NUIOIN = 8,               // Numero de enderecos de IO - entrada
 	parameter NUIOOU = 8,               // Numero de enderecos de IO - saida
 
-	// Constantes internas
+	// Constantes aritmeticas
 	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
 	parameter FFTSIZ =  3,              // Tamanho da FFT na inversao de bits
-	parameter ITRADD =  0,              // Endereco da interrupcao
 
 	// -------------------------------------------------------------------------
-	// Parametros para alocacao dinamica de recursos ---------------------------
+	// Parametros configurados dinamicamente -----------------------------------
 	// -------------------------------------------------------------------------
 
 	// Implementa pilha de subrotinas
@@ -189,56 +199,55 @@ stack_pointer #(.NDATAW(MDATAW),
 
 wire signed [NUBITS-1:0] ula_out;
 wire signed [NUBITS-1:0] ula_acc;
-wire                     ula_is_zero;
 
-ula_fx #(.NUBITS(NUBITS),
-		 .NBMANT(NBMANT),
-		 .NBEXPO(NBEXPO),
-         .NUGAIN(NUGAIN),
-         .DIV   (DIV   ),
+ula #(.NUBITS(NUBITS),
+		 .NBMANT (NBMANT),
+		 .NBEXPO (NBEXPO),
+         .NUGAIN (NUGAIN),
+         .DIV    (DIV   ),
 		 .F_DIV  (FDIV  ),
          .ORR    (OR    ),
-         .LOR   (LOR   ),
-         .GRE   (GRE   ),
+         .LOR    (LOR   ),
+         .GRE    (GRE   ),
 		 .F_GRE  (FGRE  ),
-         .MOD   (MOD   ),
-         .ADD   (ADD   ),
+         .MOD    (MOD   ),
+         .ADD    (ADD   ),
 		 .F_ADD  (FADD  ),
-         .NEG   (NEG   ),
+         .NEG    (NEG   ),
 		 .NEG_M  (NEGM  ),
 		 .F_NEG  (FNEG  ),
-		 .F_NEG_M (FNEGM ),
-         .MLT   (MLT   ),
+		 .F_NEG_M(FNEGM ),
+         .MLT    (MLT   ),
 		 .F_MLT  (FMLT  ),
-         .LES   (LES   ),
+         .LES    (LES   ),
 		 .F_LES  (FLES  ),
-         .EQU   (EQU   ),
-         .AND   (AND   ),
-         .LAN   (LAN   ),
-         .INV   (INV   ),
-		 .INV_M (INV_M ),
-         .LIN   (LIN   ),
-		 .LIN_M (LIN_M ),
-         .SHR   (SHR   ),
-         .XOR   (XOR   ),
-         .SHL   (SHL   ),
-         .SRS   (SRS   ),
-         .NRM   (NRM   ),
+         .EQU    (EQU   ),
+         .AND    (AND   ),
+         .LAN    (LAN   ),
+         .INV    (INV   ),
+		 .INV_M  (INV_M ),
+         .LIN    (LIN   ),
+		 .LIN_M  (LIN_M ),
+         .SHR    (SHR   ),
+         .XOR    (XOR   ),
+         .SHL    (SHL   ),
+         .SRS    (SRS   ),
+         .NRM    (NRM   ),
 		 .NRM_M  (NRMM  ),
-         .ABS   (ABS   ),
+         .ABS    (ABS   ),
 		 .ABS_M  (ABSM  ),
 		 .F_ABS  (FABS  ),
-		 .F_ABS_M (FABSM ),
-		 .F2I   (F2I   ),
-		 .I2F   (I2F   ),
+		 .F_ABS_M(FABSM ),
+		 .F2I    (F2I   ),
+		 .I2F    (I2F   ),
 		 .F2I_M  (F2IM  ),
 		 .I2F_M  (I2FM  ),
-         .SGN   (SGN   ),
+         .SGN    (SGN   ),
 		 .F_SGN  (FSGN  ),
 		 .PST_M  (PSTM  ),
 		 .F_PST  (FPST  ),
-		 .F_PST_M (FPSTM ),
-         .PST   (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out, ula_is_zero);
+		 .F_PST_M(FPSTM ),
+         .PST    (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out);
 
 // Acumulador -----------------------------------------------------------------
 
@@ -252,7 +261,7 @@ always @ (posedge clk or posedge rst) begin
 end
 
 assign ula_acc = racc;
-assign  pf_acc = ula_is_zero;
+assign  pf_acc = ula_out[0];
 
 // Pilha de instrucao ---------------------------------------------------------
 
