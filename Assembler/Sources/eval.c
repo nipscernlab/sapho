@@ -346,7 +346,7 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
 
     // vai usar inversao de bits
     // entao, precisa checar tamanho da memoria no final
-    if (strcmp(nome, "FFT") == 0) isrf = 1;
+    if (strcmp(nome, "ILI") == 0) isrf = 1;
 }
 
 void eval_opernd(char *va, int is_const)

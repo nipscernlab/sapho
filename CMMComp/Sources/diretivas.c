@@ -53,7 +53,7 @@ void use_macro(int ids, int global, int id_num)
 
     if ((mainok == 0) && (global == 1))
     {
-        add_sinst(-2, "CALL main\n");
+        add_sinst(-2, "CAL main\n");
         add_sinst(-3, "@fim JMP fim\n");
 
         mainok = 2; // funcao main foi chamada no inicio

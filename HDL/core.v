@@ -15,7 +15,7 @@ module core
 	parameter MDATAS = 512,             // Numero de enderecos da memoria de dados
 
 	// Constantes internas
-	parameter ITRADD =  0,              // Endereco da interrupcao
+	parameter ITRADD = 0,               // Endereco da interrupcao
 
 	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
@@ -27,87 +27,87 @@ module core
 	parameter NBEXPO =  8,              // Numero de bits do expoente
 
 	// memorias
-	parameter SDEPTH = 5,               // Numero de bits de endereco da pilha de subrotinas
+	parameter SDEPTH =  5,              // Numero de bits de endereco da pilha de subrotinas
 
 	// Entradas e Saidas
-	parameter NUIOIN = 8,               // Numero de enderecos de IO - entrada
-	parameter NUIOOU = 8,               // Numero de enderecos de IO - saida
+	parameter NUIOIN =  8,              // Numero de enderecos de IO - entrada
+	parameter NUIOOU =  8,              // Numero de enderecos de IO - saida
 
 	// Constantes aritmeticas
 	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
-	parameter FFTSIZ =  3,              // Tamanho da FFT na inversao de bits
+	parameter FFTSIZ =  3,              // Tamanho da ILI na inversao de bits
 
 	// -------------------------------------------------------------------------
 	// Parametros configurados dinamicamente -----------------------------------
 	// -------------------------------------------------------------------------
 
 	// Implementa pilha de subrotinas
-	parameter CAL   =   0,
+	parameter   CAL   = 0,
 
 	// Implementa enderecamento indireto
-	parameter SRF   =   0,
-	parameter LDI   =   0,
+	parameter   SRF   = 0,
+	parameter   LDI   = 0,
 
 	// Implementa inversao de bits na indexacao
-	parameter FFT   =   0,
+	parameter   ILI   = 0,
 
 	// ULA - Operadores aritmeticos
-	parameter ADD   =   0,
-	parameter MLT   =   0,
-	parameter DIV   =   0,
-	parameter MOD   =   0,              // Resto da divisao
-	parameter ABS   =   0,              // Valor absoluto do acumulador
-	parameter NRM   =   0,              // Divide pela constante NUGAIN (ex: x = /> y;);
-	parameter NRMM  =   0,
-	parameter PST   =   0,              // Zera se for negativo
-	parameter SGN   =   0,              // Copia sinal de uma variavel na outra
-	parameter NEG   =   0,              // Complemento a 2
-	parameter NEGM  =   0,              // NEG com memoria
-	parameter FNEG  =   0,              // negativo de um numero em ponto flutuante
-	parameter FNEGM =   0,              // FNEG com memoria
+	parameter   ADD   = 0,
+	parameter   MLT   = 0,
+	parameter   DIV   = 0,
+	parameter   MOD   = 0,              // Resto da divisao
+	parameter   ABS   = 0,              // Valor absoluto do acumulador
+	parameter   NRM   = 0,              // Divide pela constante NUGAIN (ex: x = /> y;);
+	parameter   NRM_M = 0,
+	parameter   PST   = 0,              // Zera se for negativo
+	parameter   SGN   = 0,              // Copia sinal de uma variavel na outra
+	parameter   NEG   = 0,              // Complemento a 2
+	parameter   NEG_M = 0,              // NEG com memoria
+	parameter F_NEG   = 0,              // negativo de um numero em ponto flutuante
+	parameter F_NEG_M = 0,              // F_NEG com memoria
 
 	// ULA - Opeardores logicos bitwise
-	parameter OR    =   0,
-	parameter AND   =   0,
-	parameter INV   =   0,
-	parameter INV_M =   0,
-	parameter XOR   =   0,
+	parameter   ORR   = 0,
+	parameter   AND   = 0,
+	parameter   INV   = 0,
+	parameter   INV_M = 0,
+	parameter   XOR   = 0,
 
 	// ULA - Operadores de deslocamento de bit
-	parameter SHR   =   0,
-	parameter SHL   =   0,
-	parameter SRS   =   0,              // Mantem o sinal em complemento a 2
+	parameter   SHR   = 0,
+	parameter   SHL   = 0,
+	parameter   SRS   = 0,              // Mantem o sinal em complemento a 2
 
 	// ULA - Operadores logicos que resultam em 1 bit
-	parameter LOR   =   0,
-	parameter LAN   =   0,
-	parameter LIN   =   0,
-	parameter LIN_M =   0,
-	parameter GRE   =   0,
-	parameter LES   =   0,
-	parameter EQU   =   0,
+	parameter   LOR   = 0,
+	parameter   LAN   = 0,
+	parameter   LIN   = 0,
+	parameter   LIN_M = 0,
+	parameter   GRE   = 0,
+	parameter   LES   = 0,
+	parameter   EQU   = 0,
 
 	// Operacoes de conversao entre int e float
-	parameter F2I   =   0,
-	parameter I2F   =   0,
-	parameter F2IM  =   0,
-	parameter I2FM  =   0,
+	parameter   F2I   = 0,
+	parameter   I2F   = 0,
+	parameter   F2I_M = 0,
+	parameter   I2F_M = 0,
 
 	// Operacoes de ponto flutuante
-	parameter FADD  =   0,
-	parameter FMLT  =   0,
-	parameter FDIV  =   0,
-	parameter FGRE  =   0,
-	parameter FLES  =   0,
+	parameter F_ADD   = 0,
+	parameter F_MLT   = 0,
+	parameter F_DIV   = 0,
+	parameter F_GRE   = 0,
+	parameter F_LES   = 0,
 
-	parameter FSGN  =   0,
-	parameter ABSM  =   0,
-	parameter FABS  =   0,
-	parameter FABSM =   0,
+	parameter F_SGN   = 0,
+	parameter   ABS_M = 0,
+	parameter F_ABS   = 0,
+	parameter F_ABS_M = 0,
 	
-	parameter PSTM  =   0,
-	parameter FPST  =   0,
-	parameter FPSTM =   0)
+	parameter PST_M   = 0,
+	parameter F_PST   = 0,
+	parameter F_PST_M = 0)
 (
 	input                           clk, rst,
 
@@ -201,53 +201,53 @@ wire signed [NUBITS-1:0] ula_out;
 wire signed [NUBITS-1:0] ula_acc;
 
 ula #(.NUBITS(NUBITS),
-		 .NBMANT (NBMANT),
-		 .NBEXPO (NBEXPO),
-         .NUGAIN (NUGAIN),
-         .DIV    (DIV   ),
-		 .F_DIV  (FDIV  ),
-         .ORR    (OR    ),
-         .LOR    (LOR   ),
-         .GRE    (GRE   ),
-		 .F_GRE  (FGRE  ),
-         .MOD    (MOD   ),
-         .ADD    (ADD   ),
-		 .F_ADD  (FADD  ),
-         .NEG    (NEG   ),
-		 .NEG_M  (NEGM  ),
-		 .F_NEG  (FNEG  ),
-		 .F_NEG_M(FNEGM ),
-         .MLT    (MLT   ),
-		 .F_MLT  (FMLT  ),
-         .LES    (LES   ),
-		 .F_LES  (FLES  ),
-         .EQU    (EQU   ),
-         .AND    (AND   ),
-         .LAN    (LAN   ),
-         .INV    (INV   ),
-		 .INV_M  (INV_M ),
-         .LIN    (LIN   ),
-		 .LIN_M  (LIN_M ),
-         .SHR    (SHR   ),
-         .XOR    (XOR   ),
-         .SHL    (SHL   ),
-         .SRS    (SRS   ),
-         .NRM    (NRM   ),
-		 .NRM_M  (NRMM  ),
-         .ABS    (ABS   ),
-		 .ABS_M  (ABSM  ),
-		 .F_ABS  (FABS  ),
-		 .F_ABS_M(FABSM ),
-		 .F2I    (F2I   ),
-		 .I2F    (I2F   ),
-		 .F2I_M  (F2IM  ),
-		 .I2F_M  (I2FM  ),
-         .SGN    (SGN   ),
-		 .F_SGN  (FSGN  ),
-		 .PST_M  (PSTM  ),
-		 .F_PST  (FPST  ),
-		 .F_PST_M(FPSTM ),
-         .PST    (PST   )) ula(id_ula_op, id_ula_data, ula_acc, ula_out);
+		 .NBMANT (NBMANT ),
+		 .NBEXPO (NBEXPO ),
+         .NUGAIN (NUGAIN ),
+           .DIV  (  DIV  ),
+		 .F_DIV  (F_DIV  ),
+           .ORR  (  ORR  ),
+           .LOR  (  LOR  ),
+           .GRE  (  GRE  ),
+		 .F_GRE  (F_GRE  ),
+           .MOD  (  MOD  ),
+           .ADD  (  ADD  ),
+		 .F_ADD  (F_ADD  ),
+           .NEG  (  NEG  ),
+		   .NEG_M(  NEG_M),
+		 .F_NEG  (F_NEG  ),
+		 .F_NEG_M(F_NEG_M),
+           .MLT  (  MLT  ),
+		 .F_MLT  (F_MLT  ),
+           .LES  (  LES  ),
+		 .F_LES  (F_LES  ),
+           .EQU  (  EQU  ),
+           .AND  (  AND  ),
+           .LAN  (  LAN  ),
+           .INV  (  INV  ),
+		   .INV_M(  INV_M),
+           .LIN  (  LIN  ),
+		   .LIN_M(  LIN_M),
+           .SHR  (  SHR  ),
+           .XOR  (  XOR  ),
+           .SHL  (  SHL  ),
+           .SRS  (  SRS  ),
+           .NRM  (  NRM  ),
+		   .NRM_M(  NRM_M),
+           .ABS  (  ABS  ),
+		   .ABS_M(  ABS_M),
+		 .F_ABS  (F_ABS  ),
+		 .F_ABS_M(F_ABS_M),
+		   .F2I  (  F2I  ),
+		   .I2F  (  I2F  ),
+		   .F2I_M(  F2I_M),
+		   .I2F_M(  I2F_M),
+           .SGN  (  SGN  ),
+		 .F_SGN  (F_SGN  ),
+		   .PST_M(  PST_M),
+		 .F_PST  (F_PST  ),
+		 .F_PST_M(F_PST_M),
+           .PST  (  PST  )) ula (id_ula_op, id_ula_data, ula_acc, ula_out);
 
 // Acumulador -----------------------------------------------------------------
 
@@ -291,7 +291,7 @@ generate
 
 		wire [MDATAW-1:0] rf_in = (id_ldi) ? ula_out[MDATAW-1:0] : mem_data_in[MDATAW-1:0];
 
-		rel_addr #(MDATAW, FFTSIZ, FFT) ra(id_srf, id_ldi, id_inv, rf_in, id_mem_addr, rf);
+		rel_addr #(MDATAW, FFTSIZ, ILI) ra(id_srf, id_ldi, id_inv, rf_in, id_mem_addr, rf);
 
 	end else
 

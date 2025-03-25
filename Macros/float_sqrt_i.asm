@@ -4,19 +4,19 @@
 @float_sqrti SET     sqrt_num                  // pega parametro
 @L1_sqrti    SET     sqrt_x                    // atualiza x
 
-             FDIV    sqrt_num                  // iteracao
-             FADD    sqrt_x
-             FMLT    um_div_2 // 0.5
+             F_DIV   sqrt_num                  // iteracao
+             F_ADD   sqrt_x
+             F_MLT   um_div_2 // 0.5
              SET     sqrt_raiz
 
-             FNEG                              // negacao da raiz
-             FADD    sqrt_x                    // x - raiz
+             F_NEG                              // negacao da raiz
+             F_ADD   sqrt_x                    // x - raiz
 
-             FGRE    epsilon_taylor            // checa tolerancia
-             JZ      L2else_sqrti
+             F_GRE   epsilon_taylor            // checa tolerancia
+             JIZ     L2else_sqrti
 
              LOD     sqrt_raiz                 // se eh, retorna o resultado
-             RETURN
+             RET
 
 @L2else_sqrti LOD    sqrt_raiz                 // se nao eh, volta
               JMP    L1_sqrti

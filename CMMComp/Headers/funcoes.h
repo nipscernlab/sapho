@@ -30,5 +30,5 @@ void    void_ret(      );           // fim de uma funcao void
 
 void  par_exp    (int et );         // carrega primeiro parametro (se houver)
 void  par_listexp(int et );         // carrega os proximos parametros (se houver)
-void  vcall      (int id );         // CALL de funcao com retorno
-int   fcall      (int id );         // CALL de funcao void
+void  vcall      (int id );         // CAL de funcao com retorno
+int   fcall      (int id );         // CAL de funcao void

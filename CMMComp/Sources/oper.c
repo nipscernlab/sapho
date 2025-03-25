@@ -19,9 +19,9 @@ int oper_neg(int et)
     int  etr, eti;
     char num[128];
 
-    char   ld[10]; if (acc_ok == 0) strcpy(  ld,  "LOD" ); else strcpy(ld,   "PLD"   );
-    char  neg[10]; if (acc_ok == 0) strcpy( neg,  "NEGM"); else strcpy(neg,  "PNEGM" );
-    char fneg[10]; if (acc_ok == 0) strcpy(fneg, "FNEGM"); else strcpy(fneg, "PFNEGM");
+    char   ld[10]; if (acc_ok == 0) strcpy(  ld,   "LOD"  ); else strcpy(  ld,  "P_LOD"  );
+    char  neg[10]; if (acc_ok == 0) strcpy( neg,   "NEG_M"); else strcpy( neg,  "P_NEG_M");
+    char fneg[10]; if (acc_ok == 0) strcpy(fneg, "F_NEG_M"); else strcpy(fneg, "PF_NEG_M");
 
     // se for um int constante na memoria
     if ((get_type(et) == 1) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
@@ -57,7 +57,7 @@ int oper_neg(int et)
     // se for um float no acc
     if ((get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("FNEG\n");
+        add_instr("F_NEG\n");
     }
 
     // se for um comp constante na memoria
@@ -71,7 +71,7 @@ int oper_neg(int et)
         
         // the imaginary constant must be negated by code
         sprintf  (num, "%s",    v_name[eti % OFST]);
-        add_instr("PFNEGM %u // %s\n", f2mf(num), num);
+        add_instr("PF_NEG_M %u // %s\n", f2mf(num), num);
     }
 
     // se for um comp variavel na memoria
@@ -80,15 +80,15 @@ int oper_neg(int et)
         get_cmp_ets(et,&etr,&eti);
 
         add_instr("%s %s\n", fneg, v_name[etr % OFST]);
-        add_instr("PFNEGM %s\n"  , v_name[eti % OFST]);
+        add_instr("PF_NEG_M %s\n"  , v_name[eti % OFST]);
     }
 
     // se for um comp no acc
     if ((get_type(et) == 3) && (et % OFST == 0))
     {
-        add_instr("SETP neg_aux\n");
-        add_instr("FNEG\n");
-        add_instr("PFNEGM neg_aux\n");
+        add_instr("SET_P neg_aux\n");
+        add_instr("F_NEG\n");
+        add_instr("PF_NEG_M neg_aux\n");
     }
 
     acc_ok = 1;
@@ -102,8 +102,8 @@ int oper_soma(int et1, int et2)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld ,"PLD" );
-    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld ,"P_LOD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
 
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
@@ -122,42 +122,42 @@ int oper_soma(int et1, int et2)
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-        add_instr("FADD %s\n"   , v_name[et2%OFST]);
+        add_instr("F_ADD %s\n"   , v_name[et2%OFST]);
     }
 
     // int const com float var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %s\n"    ,          v_name[et2%OFST]);
+        add_instr("F_ADD %s\n"    ,          v_name[et2%OFST]);
     }
 
     // int var com float const
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n" , i2f,        v_name[et1%OFST]);
-        add_instr("FADD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_ADD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // int const com float const
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %d // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_ADD %d // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // int var com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("PIFM %s\n", v_name[et1%OFST]);
-        add_instr("SFADD\n");
+        add_instr("P_I2F_M %s\n", v_name[et1%OFST]);
+        add_instr("SF_ADD\n");
     }
 
     // int const com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
     {
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("SFADD\n");
+        add_instr("SF_ADD\n");
     }
 
     // int var com comp const
@@ -166,8 +166,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et2,&etr,&eti);
 
         add_instr("%s %s\n" , i2f,        v_name[et1%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %d // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %d // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // int const com comp const
@@ -176,8 +176,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et2,&etr,&eti);
 
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %u // %s\n"  , f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %d // %s\n"  , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n"  , f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %d // %s\n"  , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // int var com comp var
@@ -186,8 +186,8 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et2,&etr,&eti);
 
         add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-        add_instr("FADD %s\n"   , v_name[etr%OFST]);
-        add_instr("PLD  %s\n"   , v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"   , v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n"   , v_name[eti%OFST]);
     }
 
     // int const com comp var
@@ -196,26 +196,26 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et2,&etr,&eti);
 
         add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-        add_instr("FADD %s\n"   , v_name[etr%OFST]);
-        add_instr("PLD  %s\n"   , v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"   , v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n"   , v_name[eti%OFST]);
     }
 
     // int var com comp acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("PIFM %s\n", v_name[et1%OFST]);
-        add_instr("SFADD\n");
-        add_instr("PLD aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("P_I2F_M %s\n", v_name[et1%OFST]);
+        add_instr("SF_ADD\n");
+        add_instr("P_LOD aux_soma\n");
     }
 
     // int const com comp acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("PLD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("SFADD\n");
-        add_instr("PLD aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("P_LOD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("SF_ADD\n");
+        add_instr("P_LOD aux_soma\n");
     }
 
     // int acc com int var
@@ -227,30 +227,30 @@ int oper_soma(int et1, int et2)
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("SADD\n");
+        add_instr("S_ADD\n");
     }
 
     // int acc com float var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("IFA\n");
-        add_instr("FADD %s\n", v_name[et2%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %s\n", v_name[et2%OFST]);
     }
 
     // int acc com float const
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("IFA\n");
-        add_instr("FADD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // int acc com float acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("IFA\n");
-        add_instr("PLD aux_soma\n");
-        add_instr("SFADD\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD aux_soma\n");
+        add_instr("SF_ADD\n");
     }
 
     // int acc com comp const
@@ -258,9 +258,9 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_cst(et2,&etr,&eti);
 
-        add_instr("IFA\n");
-        add_instr("FADD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %d // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %d // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // int acc com comp var
@@ -268,53 +268,53 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_ets(et2,&etr,&eti);
 
-        add_instr("IFA\n");
-        add_instr("FADD %s\n", v_name[etr%OFST]);
-        add_instr("PLD %s\n", v_name[eti%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
     }
 
     // int acc com comp acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("SETP aux_real\n");
-        add_instr("IFA\n");
-        add_instr("FADD aux_real\n");
-        add_instr("PLD  aux_imag\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("SET_P aux_real\n");
+        add_instr("I2F\n");
+        add_instr("F_ADD aux_real\n");
+        add_instr("P_LOD  aux_imag\n");
     }
 
     // float var com int var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n",i2f, v_name[et2%OFST]);
-        add_instr("FADD %s\n",   v_name[et1%OFST]);
+        add_instr("F_ADD %s\n",   v_name[et1%OFST]);
     }
 
     // float var com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("FADD %s\n", v_name[et1%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %s\n", v_name[et1%OFST]);
     }
 
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n", ld, v_name[et1%OFST]);
-        add_instr("FADD %s\n"  , v_name[et2%OFST]);
+        add_instr("F_ADD %s\n"  , v_name[et2%OFST]);
     }
 
     // float var com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n", ld,          v_name[et1%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // float var com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("FADD %s\n", v_name[et1%OFST]);
+        add_instr("F_ADD %s\n", v_name[et1%OFST]);
     }
 
     // float var com comp const
@@ -323,8 +323,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et2,&etr,&eti);
 
         add_instr("%s %s\n", ld, v_name[et1%OFST]);
-        add_instr("FADD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD %d // %s\n" , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD %d // %s\n" , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // float var com comp var
@@ -333,50 +333,50 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et2,&etr,&eti);
 
         add_instr("%s %s\n", ld, v_name[et1%OFST]);
-        add_instr("FADD %s\n"  , v_name[etr%OFST]);
-        add_instr("PLD %s\n"   , v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"  , v_name[etr%OFST]);
+        add_instr("P_LOD %s\n"   , v_name[eti%OFST]);
     }
 
     // float var com comp acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %s\n", v_name[et1%OFST]);
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // float const com int var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", i2f,         v_name[et2%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %s\n"    ,          v_name[et2%OFST]);
+        add_instr("F_ADD %s\n"    ,          v_name[et2%OFST]);
     }
 
     // float const com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %u // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_ADD %u // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // float const com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("FADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com comp const
@@ -385,8 +385,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et2,&etr,&eti);
 
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %u // %s\n"  , f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD %d // %s\n"   , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n"  , f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD %d // %s\n"   , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // float const com comp var
@@ -395,48 +395,48 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et2,&etr,&eti);
 
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FADD %s\n"    ,          v_name[etr%OFST]);
-        add_instr("PLD  %s\n"    ,          v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"    ,          v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n"    ,          v_name[eti%OFST]);
     }
 
     // float const com comp acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // float acc com int var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
-        add_instr("SFADD\n");
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_ADD\n");
     }
 
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("SFADD\n");
+        add_instr("I2F\n");
+        add_instr("SF_ADD\n");
     }
 
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("FADD %s\n", v_name[et2%OFST]);
+        add_instr("F_ADD %s\n", v_name[et2%OFST]);
     }
 
     // float acc com float const
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("FADD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SFADD\n");
+        add_instr("SF_ADD\n");
     }
 
     // float acc com comp const
@@ -444,8 +444,8 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_cst(et2,&etr,&eti);
 
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // float acc com comp var
@@ -453,16 +453,16 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_ets(et2,&etr,&eti);
 
-        add_instr("FADD %s\n", v_name[etr%OFST]);
-        add_instr("PLD  %s\n", v_name[eti%OFST]);
+        add_instr("F_ADD %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n", v_name[eti%OFST]);
     }
 
     // float acc com comp acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("SFADD\n");
-        add_instr("PLD  aux_imag\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("SF_ADD\n");
+        add_instr("P_LOD  aux_imag\n");
     }
 
     // comp const com int var
@@ -471,8 +471,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et1,&etr,&eti);
 
         add_instr("%s %s\n", i2f, v_name[et2%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp const com int const
@@ -481,8 +481,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et1,&etr,&eti);
 
         add_instr("%s  %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("FADD %u // %s\n",    f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %u // %s\n",    f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n",    f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %u // %s\n",    f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp const com int acc
@@ -490,9 +490,9 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("IFA\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp const com float var
@@ -501,8 +501,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et1,&etr,&eti);
 
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp const com float const
@@ -511,8 +511,8 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et1,&etr,&eti);
 
         add_instr("%s  %u // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("FADD %u // %s\n"   , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("PLD  %u // %s\n"   , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n"   , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("P_LOD  %u // %s\n"   , f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp const com float acc
@@ -520,8 +520,8 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("P_LOD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp const com comp const
@@ -534,10 +534,10 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et2,&et2r,&et2i);
 
         add_instr("%s  %u // %s\n" ,ld, f2mf(v_name[et1r%OFST]), v_name[et1r%OFST]);
-        add_instr("FADD %u // %s\n",    f2mf(v_name[et2r%OFST]), v_name[et2r%OFST]);
+        add_instr("F_ADD %u // %s\n",    f2mf(v_name[et2r%OFST]), v_name[et2r%OFST]);
 
-        add_instr("PLD  %u // %s\n",    f2mf(v_name[et1i%OFST]), v_name[et1i%OFST]);
-        add_instr("FADD %u // %s\n",    f2mf(v_name[et2i%OFST]), v_name[et2i%OFST]);
+        add_instr("P_LOD  %u // %s\n",    f2mf(v_name[et1i%OFST]), v_name[et1i%OFST]);
+        add_instr("F_ADD %u // %s\n",    f2mf(v_name[et2i%OFST]), v_name[et2i%OFST]);
     }
 
     // comp const com comp var
@@ -550,10 +550,10 @@ int oper_soma(int et1, int et2)
         get_cmp_ets    (et2,&et2r,&et2i);
 
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et1r%OFST]), v_name[et1r%OFST]);
-        add_instr("FADD %s\n"        ,      v_name[et2r%OFST]);
+        add_instr("F_ADD %s\n"        ,      v_name[et2r%OFST]);
 
-        add_instr("PLD %u // %s\n"   , f2mf(v_name[et1i%OFST]), v_name[et1i%OFST]);
-        add_instr("FADD %s\n"        ,      v_name[et2i%OFST]);
+        add_instr("P_LOD %u // %s\n"   , f2mf(v_name[et1i%OFST]), v_name[et1i%OFST]);
+        add_instr("F_ADD %s\n"        ,      v_name[et2i%OFST]);
     }
 
     // comp const com comp acc
@@ -561,11 +561,11 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
 
-        add_instr("PLD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
-        add_instr("FADD aux_soma\n");
+        add_instr("P_LOD  %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("F_ADD aux_soma\n");
     }
 
     // comp var com int var
@@ -574,8 +574,8 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et1,&etr,&eti);
 
         add_instr("%s  %s\n", i2f, v_name[et2%OFST]);
-        add_instr("FADD %s\n"    , v_name[etr%OFST]);
-        add_instr("PLD  %s\n"    , v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"    , v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n"    , v_name[eti%OFST]);
     }
 
     // comp var com int acc
@@ -583,9 +583,9 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("IFA\n");
-        add_instr("FADD %s\n", v_name[etr%OFST]);
-        add_instr("PLD  %s\n", v_name[eti%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_ADD %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n", v_name[eti%OFST]);
     }
 
     // comp var com float var
@@ -594,8 +594,8 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et1,&etr,&eti);
 
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("FADD %s\n"  , v_name[etr%OFST]);
-        add_instr("PLD  %s\n"  , v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"  , v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n"  , v_name[eti%OFST]);
     }
 
     // comp var com float const
@@ -604,8 +604,8 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et1,&etr,&eti);
 
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("FADD %s\n"    ,          v_name[etr%OFST]);
-        add_instr("PLD  %s\n"    ,          v_name[eti%OFST]);
+        add_instr("F_ADD %s\n"    ,          v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n"    ,          v_name[eti%OFST]);
     }
 
     // comp var com float acc
@@ -613,8 +613,8 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("FADD %s\n", v_name[etr%OFST]);
-        add_instr("PLD  %s\n", v_name[eti%OFST]);
+        add_instr("F_ADD %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n", v_name[eti%OFST]);
     }
 
     // comp var com comp const
@@ -627,10 +627,10 @@ int oper_soma(int et1, int et2)
         get_cmp_cst(et2,&et2r,&et2i);
 
         add_instr("%s %s\n", ld,          v_name[et1r%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[et2r%OFST]), v_name[et2r%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et2r%OFST]), v_name[et2r%OFST]);
 
-        add_instr("PLD %s\n",             v_name[et1i%OFST]);
-        add_instr("FADD %u // %s\n", f2mf(v_name[et2i%OFST]), v_name[et2i%OFST]);
+        add_instr("P_LOD %s\n",             v_name[et1i%OFST]);
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et2i%OFST]), v_name[et2i%OFST]);
     }
 
     // comp var com comp var
@@ -643,10 +643,10 @@ int oper_soma(int et1, int et2)
         get_cmp_ets(et2,&et2r,&et2i);
 
         add_instr("%s  %s\n", ld, v_name[et1r%OFST]);
-        add_instr("FADD %s\n",    v_name[et2r%OFST]);
+        add_instr("F_ADD %s\n",    v_name[et2r%OFST]);
 
-        add_instr("PLD  %s\n",    v_name[et1i%OFST]);
-        add_instr("FADD %s\n",    v_name[et2i%OFST]);
+        add_instr("P_LOD  %s\n",    v_name[et1i%OFST]);
+        add_instr("F_ADD %s\n",    v_name[et2i%OFST]);
     }
 
     // comp var com comp acc
@@ -654,55 +654,55 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %s\n", v_name[etr%OFST]);
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %s\n", v_name[etr%OFST]);
 
-        add_instr("PLD  %s\n", v_name[eti%OFST]);
-        add_instr("FADD aux_soma\n");
+        add_instr("P_LOD  %s\n", v_name[eti%OFST]);
+        add_instr("F_ADD aux_soma\n");
     }
 
     // comp acc com int var
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
-        add_instr("SFADD\n");
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_ADD\n");
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // comp acc com int acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("SETP aux_int\n" );
-        add_instr("SETP aux_soma\n");
-        add_instr("PIFM aux_int\n" );
-        add_instr("SFADD\n");
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_int\n" );
+        add_instr("SET_P aux_soma\n");
+        add_instr("P_I2F_M aux_int\n" );
+        add_instr("SF_ADD\n");
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // comp acc com float var
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %s\n", v_name[et2%OFST]);
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %s\n", v_name[et2%OFST]);
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // comp acc com float const
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // comp acc com float acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_int\n" );
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD aux_int\n" );
-        add_instr("PLD  aux_soma\n");
+        add_instr("SET_P aux_int\n" );
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD aux_int\n" );
+        add_instr("P_LOD  aux_soma\n");
     }
 
     // comp acc com comp const
@@ -710,11 +710,11 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_cst(et2,&etr,&eti);
 
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
 
-        add_instr("PLD  aux_soma\n");
-        add_instr("FADD %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("P_LOD  aux_soma\n");
+        add_instr("F_ADD %u // %s\n", f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
     }
 
     // comp acc com comp var
@@ -722,23 +722,23 @@ int oper_soma(int et1, int et2)
     {
         get_cmp_ets(et2,&etr,&eti);
 
-        add_instr("SETP aux_soma\n");
-        add_instr("FADD %s\n", v_name[etr%OFST]);
+        add_instr("SET_P aux_soma\n");
+        add_instr("F_ADD %s\n", v_name[etr%OFST]);
 
-        add_instr("PLD aux_soma\n");
-        add_instr("FADD %s\n", v_name[eti%OFST]);
+        add_instr("P_LOD aux_soma\n");
+        add_instr("F_ADD %s\n", v_name[eti%OFST]);
     }
 
     // comp acc com comp acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag2\n");
-        add_instr("SETP aux_real2\n");
-        add_instr("SETP aux_imag1\n");
-        add_instr("FADD aux_real2\n");
+        add_instr("SET_P aux_imag2\n");
+        add_instr("SET_P aux_real2\n");
+        add_instr("SET_P aux_imag1\n");
+        add_instr("F_ADD aux_real2\n");
 
-        add_instr("PLD  aux_imag1\n");
-        add_instr("FADD aux_imag2\n");
+        add_instr("P_LOD  aux_imag1\n");
+        add_instr("F_ADD aux_imag2\n");
     }
 
     acc_ok = 1;
@@ -764,8 +764,8 @@ int oper_mult(int et1, int et2)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"PLD" );
-    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"P_LOD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
 
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
@@ -784,21 +784,21 @@ int oper_mult(int et1, int et2)
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-        add_instr("FMLT %s\n"   , v_name[et2%OFST]);
+        add_instr("F_MLT %s\n"   , v_name[et2%OFST]);
     }
 
     // int var com float const
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n" , i2f,        v_name[et1%OFST]);
-        add_instr("FMLT %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_MLT %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // int var com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("PIFM %s\n", v_name[et1%OFST]);
-        add_instr("SFMLT\n");
+        add_instr("P_I2F_M %s\n", v_name[et1%OFST]);
+        add_instr("SF_MLT\n");
     }
 
     // int var com comp const
@@ -822,9 +822,9 @@ int oper_mult(int et1, int et2)
     // int var com comp acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_mult\n");
+        add_instr("SET_P aux_mult\n");
         oper_mult(et1,2*OFST);
-        add_instr("PLD  aux_mult\n");
+        add_instr("P_LOD  aux_mult\n");
         oper_mult(et1,2*OFST);
     }
 
@@ -837,29 +837,29 @@ int oper_mult(int et1, int et2)
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("SMLT\n");
+        add_instr("S_MLT\n");
     }
 
     // int acc com float var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("IFA\n");
-        add_instr("FMLT %s\n", v_name[et2%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_MLT %s\n", v_name[et2%OFST]);
     }
 
     // int acc com float const
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("IFA\n");
-        add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_MLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // int acc com float acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("IFA\n");
-        add_instr("FMLT aux_soma\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("I2F\n");
+        add_instr("F_MLT aux_soma\n");
     }
 
     // int acc com comp const
@@ -869,7 +869,7 @@ int oper_mult(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_mult(et1,etr);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(et1,eti);
     }
 
@@ -880,54 +880,54 @@ int oper_mult(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_mult(et1,etr);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(et1,eti);
     }
 
     // int acc com comp acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("SETP aux_real\n");
-        add_instr("IFA\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("SET_P aux_real\n");
+        add_instr("I2F\n");
         add_instr("SET  aux_mult\n");
-        add_instr("FMLT aux_real\n");
-        add_instr("PLD  aux_imag\n");
-        add_instr("FMLT aux_mult\n");
+        add_instr("F_MLT aux_real\n");
+        add_instr("P_LOD  aux_imag\n");
+        add_instr("F_MLT aux_mult\n");
     }
 
     // float var com int var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n" ,i2f, v_name[et2%OFST]);
-        add_instr("FMLT %s\n",    v_name[et1%OFST]);
+        add_instr("F_MLT %s\n",    v_name[et1%OFST]);
     }
 
     // float var com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("FMLT %s\n", v_name[et1%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_MLT %s\n", v_name[et1%OFST]);
     }
 
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n", ld, v_name[et1%OFST]);
-        add_instr("FMLT %s\n",   v_name[et2%OFST]);
+        add_instr("F_MLT %s\n",   v_name[et2%OFST]);
     }
 
     // float var com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n", ld,          v_name[et1%OFST]);
-        add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_MLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // float var com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("FMLT %s\n", v_name[et1%OFST]);
+        add_instr("F_MLT %s\n", v_name[et1%OFST]);
     }
 
     // float var com comp const
@@ -951,9 +951,9 @@ int oper_mult(int et1, int et2)
     // float var com comp acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_mult\n");
+        add_instr("SET_P aux_mult\n");
         oper_mult(et1,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(et1,2*OFST);
     }
 
@@ -961,34 +961,34 @@ int oper_mult(int et1, int et2)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", i2f,         v_name[et2%OFST]);
-        add_instr("FMLT %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_MLT %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("FMLT %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_MLT %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FMLT %s\n"        ,      v_name[et2%OFST]);
+        add_instr("F_MLT %s\n"        ,      v_name[et2%OFST]);
     }
 
     // float const com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("FMLT %d // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_MLT %d // %s\n"  , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // float const com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("FMLT %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_MLT %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com comp const
@@ -1012,42 +1012,42 @@ int oper_mult(int et1, int et2)
     // float const com comp acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_mult\n");
+        add_instr("SET_P aux_mult\n");
         oper_mult(et1,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(et1,2*OFST);
     }
 
     // float acc com int var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
-        add_instr("SFMLT\n");
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_MLT\n");
     }
 
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("SFMLT\n");
+        add_instr("I2F\n");
+        add_instr("SF_MLT\n");
     }
 
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("FMLT %s\n", v_name[et2%OFST]);
+        add_instr("F_MLT %s\n", v_name[et2%OFST]);
     }
 
     // float acc com float const
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F_MLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SFMLT\n");
+        add_instr("SF_MLT\n");
     }
 
     // float acc com comp const
@@ -1057,7 +1057,7 @@ int oper_mult(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_mult(et1,etr);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(et1,eti);
     }
 
@@ -1068,19 +1068,19 @@ int oper_mult(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_mult(et1,etr);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(et1,eti);
     }
 
     // float acc com comp acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("SETP aux_real\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("SET_P aux_real\n");
         add_instr("SET  aux_mult\n");
-        add_instr("FMLT aux_real\n");
-        add_instr("PLD  aux_imag\n");
-        add_instr("FMLT aux_mult\n");
+        add_instr("F_MLT aux_real\n");
+        add_instr("P_LOD  aux_imag\n");
+        add_instr("F_MLT aux_mult\n");
     }
 
     // comp const com int var
@@ -1097,10 +1097,10 @@ int oper_mult(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_mult\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(eti,2*OFST);
     }
 
@@ -1129,7 +1129,7 @@ int oper_mult(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(eti,2*OFST);
     }
 
@@ -1174,16 +1174,16 @@ int oper_mult(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET aux_real\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(eti,2*OFST);
         oper_subt(2*OFST,2*OFST);
 
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(eti,2*OFST);
         oper_soma(2*OFST,2*OFST);
     }
@@ -1202,10 +1202,10 @@ int oper_mult(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_mult\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(eti,2*OFST);
     }
 
@@ -1234,7 +1234,7 @@ int oper_mult(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_mult(eti,2*OFST);
     }
 
@@ -1279,16 +1279,16 @@ int oper_mult(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET aux_real\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(eti,2*OFST);
         oper_subt(2*OFST,2*OFST);
 
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(eti,2*OFST);
         oper_soma(2*OFST,2*OFST);
     }
@@ -1296,51 +1296,51 @@ int oper_mult(int et1, int et2)
     // comp acc com int var
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
+        add_instr("SET_P aux_imag\n");
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
         add_instr("SET  aux_float\n");
-        add_instr("SFMLT\n");
-        add_instr("PLD  aux_imag\n");
-        add_instr("FMLT aux_float\n");
+        add_instr("SF_MLT\n");
+        add_instr("P_LOD  aux_imag\n");
+        add_instr("F_MLT aux_float\n");
     }
 
     // comp acc com int acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("SETP aux_float\n");
-        add_instr("SETP aux_imag\n");
-        add_instr("FMLT aux_float\n");
-        add_instr("PLD aux_imag\n");
-        add_instr("FMLT aux_float\n");
+        add_instr("I2F\n");
+        add_instr("SET_P aux_float\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("F_MLT aux_float\n");
+        add_instr("P_LOD aux_imag\n");
+        add_instr("F_MLT aux_float\n");
     }
 
     // comp acc com float var
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("FMLT %s\n", v_name[et2%OFST]);
-        add_instr("PLD aux_imag\n");
-        add_instr("FMLT %s\n", v_name[et2%OFST]);
+        add_instr("SET_P aux_imag\n");
+        add_instr("F_MLT %s\n", v_name[et2%OFST]);
+        add_instr("P_LOD aux_imag\n");
+        add_instr("F_MLT %s\n", v_name[et2%OFST]);
     }
 
     // comp acc com float const
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("PLD aux_imag\n");
-        add_instr("FMLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SET_P aux_imag\n");
+        add_instr("F_MLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("P_LOD aux_imag\n");
+        add_instr("F_MLT %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
     }
 
     // comp acc com float acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_float\n");
-        add_instr("SETP aux_imag \n");
-        add_instr("FMLT aux_float\n");
-        add_instr("PLD  aux_imag \n");
-        add_instr("FMLT aux_float\n");
+        add_instr("SET_P aux_float\n");
+        add_instr("SET_P aux_imag \n");
+        add_instr("F_MLT aux_float\n");
+        add_instr("P_LOD  aux_imag \n");
+        add_instr("F_MLT aux_float\n");
     }
 
     // comp acc com comp const
@@ -1348,16 +1348,16 @@ int oper_mult(int et1, int et2)
     {
         get_cmp_cst(et2,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET aux_real\n");
         oper_mult(2*OFST,etr);
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(2*OFST,eti);
         oper_subt(2*OFST,2*OFST);
 
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(2*OFST,etr);
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(2*OFST,eti);
         oper_soma(2*OFST,2*OFST);
     }
@@ -1367,16 +1367,16 @@ int oper_mult(int et1, int et2)
     {
         get_cmp_ets(et2,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET aux_real\n");
         oper_mult(2*OFST,etr);
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(2*OFST,eti);
         oper_subt(2*OFST,2*OFST);
 
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_imag\n");
         oper_mult(2*OFST,etr);
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(2*OFST,eti);
         oper_soma(2*OFST,2*OFST);
     }
@@ -1384,22 +1384,22 @@ int oper_mult(int et1, int et2)
     // comp acc com comp acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag2\n");
-        add_instr("SETP aux_real2\n");
-        add_instr("SETP aux_imag1\n");
+        add_instr("SET_P aux_imag2\n");
+        add_instr("SET_P aux_real2\n");
+        add_instr("SET_P aux_imag1\n");
         add_instr("SET  aux_real1\n");
-        add_instr("PLD  aux_real2\n");
+        add_instr("P_LOD  aux_real2\n");
         oper_mult(2*OFST,2*OFST);
-        add_instr("PLD  aux_imag1\n");
-        add_instr("PLD  aux_imag2\n");
+        add_instr("P_LOD  aux_imag1\n");
+        add_instr("P_LOD  aux_imag2\n");
         oper_mult(2*OFST,2*OFST);
         oper_subt(2*OFST,2*OFST);
 
-        add_instr("PLD  aux_imag1\n");
-        add_instr("PLD  aux_real2\n");
+        add_instr("P_LOD  aux_imag1\n");
+        add_instr("P_LOD  aux_real2\n");
         oper_mult(2*OFST,2*OFST);
-        add_instr("PLD  aux_real1\n");
-        add_instr("PLD  aux_imag2\n");
+        add_instr("P_LOD  aux_real1\n");
+        add_instr("P_LOD  aux_imag2\n");
         oper_mult(2*OFST,2*OFST);
         oper_soma(2*OFST,2*OFST);
     }
@@ -1422,10 +1422,10 @@ int oper_divi(int et1, int et2)
     int etr, eti;
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
     char i2f[10];
-    if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
 
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
@@ -1444,25 +1444,25 @@ int oper_divi(int et1, int et2)
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
-        add_instr("PLD %s\n" , v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // int var com float const
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
-        add_instr("PLD %u // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("P_LOD %u // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // int var com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
         add_instr("SET aux_div\n");
-        add_instr("IFM %s\n", v_name[et1%OFST]);
-        add_instr("PLD aux_div\n");
-        add_instr("SFDIV\n");
+        add_instr("I2F_M %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_div\n");
+        add_instr("SF_DIV\n");
     }
 
     // int var com comp const
@@ -1477,11 +1477,11 @@ int oper_divi(int et1, int et2)
         acc_ok = 0;
 
         oper_mult(et1,etr);         // mult int com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
         oper_mult(et1,eti);         // mult int com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1498,11 +1498,11 @@ int oper_divi(int et1, int et2)
         acc_ok = 0;
 
         oper_mult(et1,etr);         // mult int com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
         oper_mult(et1,eti);         // mult int com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1510,24 +1510,24 @@ int oper_divi(int et1, int et2)
     // int var com comp acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
+        add_instr("SET_P aux_imag  \n");           // salva a parte imaginaria
         add_instr("SET  aux_real  \n");           // salva a parte real
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-        add_instr("FMLT aux_imag  \n");
-        add_instr("SFADD          \n");
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD  aux_imag  \n");           // pega a parte imaginaria
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("SF_ADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
-        add_instr("IFM  %s\n", v_name[et1%OFST]); 
+        add_instr("I2F_M  %s\n", v_name[et1%OFST]); 
         add_instr("SET  aux_float \n");           // salva o float
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD  aux_cmp   \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD  aux_cmp   \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
 
-        add_instr("PLD aux_float  \n");           // pega o float
-        add_instr("FMLT aux_imag  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("P_LOD aux_float  \n");           // pega o float
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
         oper_neg (2*OFST);
     }
 
@@ -1535,38 +1535,38 @@ int oper_divi(int et1, int et2)
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("SDIV\n");
+        add_instr("S_DIV\n");
     }
 
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("SDIV\n");
+        add_instr("S_DIV\n");
     }
 
     // int acc com float var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("IFA\n");
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // int acc com float const
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("IFA\n");
-        add_instr("PLD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD %u // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // int acc com float acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_soma\n");
-        add_instr("IFA\n");
-        add_instr("PLD aux_soma\n");
-        add_instr("SFDIV\n");
+        add_instr("SET_P aux_soma\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD aux_soma\n");
+        add_instr("SF_DIV\n");
     }
 
     // int acc com comp const
@@ -1574,7 +1574,7 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_cst(et2,&etr,&eti);
 
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_float\n");
         acc_ok = 0;
 
@@ -1585,12 +1585,12 @@ int oper_divi(int et1, int et2)
 
         add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
-        add_instr("PLD  aux_float\n");
+        add_instr("P_LOD  aux_float\n");
         oper_mult(2*OFST,eti);      // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1600,7 +1600,7 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_ets(et2,&etr,&eti);
 
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_float\n");
         acc_ok = 0;
 
@@ -1611,12 +1611,12 @@ int oper_divi(int et1, int et2)
 
         add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
-        add_instr("PLD  aux_float\n");
+        add_instr("P_LOD  aux_float\n");
         oper_mult(2*OFST,eti);      // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1624,27 +1624,27 @@ int oper_divi(int et1, int et2)
     // int acc com comp acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
-        add_instr("SETP aux_real  \n");           // salva a parte real
-        add_instr("IFA \n");
+        add_instr("SET_P aux_imag  \n");           // salva a parte imaginaria
+        add_instr("SET_P aux_real  \n");           // salva a parte real
+        add_instr("I2F \n");
         add_instr("SET  aux_float \n");           // salva o float
 
         add_instr("LOD aux_real  \n");           // coloca a parte real na pilha
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-        add_instr("FMLT aux_imag  \n");
-        add_instr("SFADD          \n");
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD  aux_imag  \n");           // pega a parte imaginaria
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("SF_ADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
         add_instr("LOD  aux_float\n");           // carrega o float
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
 
-        add_instr("PLD  aux_float \n");           // pega o float
-        add_instr("FMLT aux_imag  \n");
-        add_instr("PLD  aux_cmp   \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("P_LOD  aux_float \n");           // pega o float
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("P_LOD  aux_cmp   \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
         oper_neg (2*OFST);
     }
 
@@ -1652,34 +1652,34 @@ int oper_divi(int et1, int et2)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", i2f, v_name[et2%OFST]);
-        add_instr("FDIV %s\n"   , v_name[et1%OFST]);
+        add_instr("F_DIV %s\n"   , v_name[et1%OFST]);
     }
 
     // float var com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("FDIV %s\n", v_name[et1%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_DIV %s\n", v_name[et1%OFST]);
     }
 
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-        add_instr("FDIV %s\n"   , v_name[et1%OFST]);
+        add_instr("F_DIV %s\n"   , v_name[et1%OFST]);
     }
 
     // float var com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("FDIV %s\n"    ,          v_name[et1%OFST]);
+        add_instr("F_DIV %s\n"    ,          v_name[et1%OFST]);
     }
 
     // float var com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("FDIV %s\n", v_name[et1%OFST]);
+        add_instr("F_DIV %s\n", v_name[et1%OFST]);
     }
 
     // float var com comp const
@@ -1694,11 +1694,11 @@ int oper_divi(int et1, int et2)
         acc_ok = 0;
 
         oper_mult(et1,etr);         // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
         oper_mult(et1,eti);         // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1715,11 +1715,11 @@ int oper_divi(int et1, int et2)
         acc_ok = 0;
 
         oper_mult(et1,etr);         // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
         oper_mult(et1,eti);         // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1727,23 +1727,23 @@ int oper_divi(int et1, int et2)
     // float var com comp acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
+        add_instr("SET_P aux_imag  \n");           // salva a parte imaginaria
         add_instr("SET  aux_real  \n");           // salva a parte real
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-        add_instr("FMLT aux_imag  \n");
-        add_instr("SFADD          \n");
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD  aux_imag  \n");           // pega a parte imaginaria
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("SF_ADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
         add_instr("LOD %s\n", v_name[et1%OFST]); // carrega o float
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
 
-        add_instr("PLD %s\n", v_name[et1%OFST]);  // carrega o float
-        add_instr("FMLT aux_imag  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("P_LOD %s\n", v_name[et1%OFST]);  // carrega o float
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
         oper_neg (2*OFST);
     }
 
@@ -1751,34 +1751,34 @@ int oper_divi(int et1, int et2)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", i2f   ,      v_name[et2%OFST]);
-        add_instr("FDIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_DIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("FDIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("I2F\n");
+        add_instr("F_DIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n", ld    ,      v_name[et2%OFST]);
-        add_instr("FDIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_DIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %u // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("FDIV %u // %s\n"  , f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_DIV %u // %s\n"  , f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("FDIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
+        add_instr("F_DIV %u // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
     }
 
     // float const com comp const
@@ -1793,11 +1793,11 @@ int oper_divi(int et1, int et2)
         acc_ok = 0;
 
         oper_mult(et1,etr);         // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
         oper_mult(et1,eti);         // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1814,11 +1814,11 @@ int oper_divi(int et1, int et2)
         acc_ok = 0;
 
         oper_mult(et1,etr);         // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
         oper_mult(et1,eti);         // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1826,58 +1826,58 @@ int oper_divi(int et1, int et2)
     // float const com comp acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
+        add_instr("SET_P aux_imag  \n");           // salva a parte imaginaria
         add_instr("SET  aux_real  \n");           // salva a parte real
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-        add_instr("FMLT aux_imag  \n");
-        add_instr("SFADD          \n");
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD  aux_imag  \n");           // pega a parte imaginaria
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("SF_ADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
         add_instr("LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
 
-        add_instr("PLD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
-        add_instr("FMLT aux_imag  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]); // carrega o float
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
         oper_neg (2*OFST);
     }
 
     // float acc com int var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("SFDIV\n");
+        add_instr("I2F\n");
+        add_instr("SF_DIV\n");
     }
 
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // float acc com float const
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SFDIV\n");
+        add_instr("SF_DIV\n");
     }
 
     // float acc com comp const
@@ -1895,12 +1895,12 @@ int oper_divi(int et1, int et2)
 
         add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
-        add_instr("PLD  aux_float\n");
+        add_instr("P_LOD  aux_float\n");
         oper_mult(2*OFST,eti);      // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1920,12 +1920,12 @@ int oper_divi(int et1, int et2)
 
         add_instr("LOD aux_float\n");
         oper_mult(2*OFST,etr);      // mult float com parte real
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
 
-        add_instr("PLD  aux_float\n");
+        add_instr("P_LOD  aux_float\n");
         oper_mult(2*OFST,eti);      // mult float com parte imag
-        add_instr("PLD aux_cmp\n"); // pega o denominador
+        add_instr("P_LOD aux_cmp\n"); // pega o denominador
         oper_divi(2*OFST,2*OFST);   // faz a divisao
         oper_neg (2*OFST);
     }
@@ -1933,26 +1933,26 @@ int oper_divi(int et1, int et2)
     // float acc com comp acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag  \n");           // salva a parte imaginaria
-        add_instr("SETP aux_real  \n");           // salva a parte real
+        add_instr("SET_P aux_imag  \n");           // salva a parte imaginaria
+        add_instr("SET_P aux_real  \n");           // salva a parte real
         add_instr("SET  aux_float \n");           // salva o float
 
         add_instr("LOD aux_real  \n");           // coloca a parte real na pilha
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD  aux_imag  \n");           // pega a parte imaginaria
-        add_instr("FMLT aux_imag  \n");
-        add_instr("SFADD          \n");
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD  aux_imag  \n");           // pega a parte imaginaria
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("SF_ADD          \n");
         add_instr("SET  aux_cmp   \n");           // salva o modulo ao quadrado
 
         add_instr("LOD  aux_float\n");           // carrega o float
-        add_instr("FMLT aux_real  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("F_MLT aux_real  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
 
-        add_instr("PLD aux_float  \n");           // pega o float
-        add_instr("FMLT aux_imag  \n");
-        add_instr("PLD aux_cmp    \n");           // pega o modulo ao quadrado
-        add_instr("SFDIV \n");                    // faz a divisao
+        add_instr("P_LOD aux_float  \n");           // pega o float
+        add_instr("F_MLT aux_imag  \n");
+        add_instr("P_LOD aux_cmp    \n");           // pega o modulo ao quadrado
+        add_instr("SF_DIV \n");                    // faz a divisao
         oper_neg (2*OFST);
     }
 
@@ -1970,10 +1970,10 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_div\n");
         oper_divi(etr,2*OFST);
-        add_instr("PLD aux_div\n");
+        add_instr("P_LOD aux_div\n");
         oper_divi(eti,2*OFST);
     }
 
@@ -2002,7 +2002,7 @@ int oper_divi(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_divi(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_divi(eti,2*OFST);
     }
 
@@ -2024,13 +2024,13 @@ int oper_divi(int et1, int et2)
         oper_mult(et1r,et2r);
         oper_mult(et1i,et2i);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
         oper_mult(et1i,et2r);
         oper_mult(et1r,et2i);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
@@ -2052,13 +2052,13 @@ int oper_divi(int et1, int et2)
         oper_mult(et1r,et2r);
         oper_mult(et1i,et2i);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
         oper_mult(et1i,et2r);
         oper_mult(et1r,et2i);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
@@ -2067,28 +2067,28 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_cst(et1,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET  aux_real\n");
-        add_instr("FMLT aux_real\n");
-        add_instr("PLD  aux_imag\n");
-        add_instr("FMLT aux_imag\n");
+        add_instr("F_MLT aux_real\n");
+        add_instr("P_LOD  aux_imag\n");
+        add_instr("F_MLT aux_imag\n");
         oper_soma(2*OFST,2*OFST);
         add_instr("SET aux_mod\n");
 
         add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(eti,2*OFST);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(eti,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(etr,2*OFST);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
@@ -2106,10 +2106,10 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_mult\n");
         oper_divi(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_divi(eti,2*OFST);
     }
 
@@ -2138,7 +2138,7 @@ int oper_divi(int et1, int et2)
 
         add_instr("SET aux_mult\n");
         oper_divi(etr,2*OFST);
-        add_instr("PLD aux_mult\n");
+        add_instr("P_LOD aux_mult\n");
         oper_divi(eti,2*OFST);
     }
 
@@ -2160,13 +2160,13 @@ int oper_divi(int et1, int et2)
         oper_mult(et1r,et2r);
         oper_mult(et1i,et2i);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
         oper_mult(et1i,et2r);
         oper_mult(et1r,et2i);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
@@ -2188,13 +2188,13 @@ int oper_divi(int et1, int et2)
         oper_mult(et1r,et2r);
         oper_mult(et1i,et2i);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
         oper_mult(et1i,et2r);
         oper_mult(et1r,et2i);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
@@ -2203,88 +2203,88 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_ets(et1,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET  aux_real\n");
-        add_instr("FMLT aux_real\n");
-        add_instr("PLD  aux_imag\n");
-        add_instr("FMLT aux_imag\n");
+        add_instr("F_MLT aux_real\n");
+        add_instr("P_LOD  aux_imag\n");
+        add_instr("F_MLT aux_imag\n");
         oper_soma(2*OFST,2*OFST);
         add_instr("SET aux_mod\n");
 
         add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(eti,2*OFST);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(eti,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(etr,2*OFST);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
     // comp acc com int var
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
+        add_instr("SET_P aux_imag\n");
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
         add_instr("SET aux_float\n");
-        add_instr("SFDIV\n");
-        add_instr("PLD aux_imag\n");
-        add_instr("PLD aux_float\n");
-        add_instr("SFDIV\n");
+        add_instr("SF_DIV\n");
+        add_instr("P_LOD aux_imag\n");
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_DIV\n");
     }
 
     // comp acc com int acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("SETP aux_float\n");
-        add_instr("SETP aux_imag\n");
-        add_instr("PLD aux_float\n");
-        add_instr("SFDIV\n");
-        add_instr("PLD aux_imag\n");
-        add_instr("PLD aux_float\n");
-        add_instr("SFDIV\n");
+        add_instr("I2F\n");
+        add_instr("SET_P aux_float\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_DIV\n");
+        add_instr("P_LOD aux_imag\n");
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_DIV\n");
     }
 
     // comp acc com float var
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("SFDIV\n");
-        add_instr("PLD aux_imag\n");
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
+        add_instr("P_LOD aux_imag\n");
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // comp acc com float const
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("SETP aux_imag\n");
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("SFDIV\n");
-        add_instr("PLD aux_imag\n");
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("SFDIV\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
+        add_instr("P_LOD aux_imag\n");
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // comp acc com float acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_float\n");
-        add_instr("SETP aux_imag\n");
-        add_instr("PLD aux_float\n");
-        add_instr("SFDIV\n");
-        add_instr("PLD aux_imag\n");
-        add_instr("PLD aux_float\n");
-        add_instr("SFDIV\n");
+        add_instr("SET_P aux_float\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_DIV\n");
+        add_instr("P_LOD aux_imag\n");
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_DIV\n");
     }
 
     // comp acc com comp const
@@ -2292,7 +2292,7 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_cst(et2,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET  aux_real\n");
         acc_ok = 0;
 
@@ -2303,18 +2303,18 @@ int oper_divi(int et1, int et2)
 
         add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(eti,2*OFST);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(eti,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(etr,2*OFST);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
@@ -2323,7 +2323,7 @@ int oper_divi(int et1, int et2)
     {
         get_cmp_ets(et2,&etr,&eti);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET  aux_real\n");
         acc_ok = 0;
 
@@ -2334,51 +2334,51 @@ int oper_divi(int et1, int et2)
 
         add_instr("LOD aux_real\n");
         oper_mult(etr,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(eti,2*OFST);
         oper_soma(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
 
-        add_instr("PLD aux_real\n");
+        add_instr("P_LOD aux_real\n");
         oper_mult(eti,2*OFST);
-        add_instr("PLD  aux_imag\n");
+        add_instr("P_LOD  aux_imag\n");
         oper_mult(etr,2*OFST);
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD aux_mod\n");
+        add_instr("P_LOD aux_mod\n");
         oper_divi(2*OFST,2*OFST);
     }
 
     // comp acc com comp acc
     if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SETP aux_imag2 \n");
-        add_instr("SETP aux_real2 \n");
-        add_instr("SETP aux_imag1 \n");
+        add_instr("SET_P aux_imag2 \n");
+        add_instr("SET_P aux_real2 \n");
+        add_instr("SET_P aux_imag1 \n");
         add_instr("SET  aux_real1 \n");
 
         add_instr("LOD aux_real2 \n");
-        add_instr("FMLT aux_real2 \n");
-        add_instr("PLD  aux_imag2\n");
-        add_instr("FMLT aux_imag2\n");
-        add_instr("SFADD          \n");
+        add_instr("F_MLT aux_real2 \n");
+        add_instr("P_LOD  aux_imag2\n");
+        add_instr("F_MLT aux_imag2\n");
+        add_instr("SF_ADD          \n");
         add_instr("SET aux_mod    \n");
 
         add_instr("LOD aux_real1 \n");
-        add_instr("FMLT aux_real2 \n");
-        add_instr("PLD  aux_imag1 \n");
-        add_instr("FMLT aux_imag2 \n");
-        add_instr("SFADD          \n");
-        add_instr("PLD  aux_mod   \n");
-        add_instr("SFDIV\n");
+        add_instr("F_MLT aux_real2 \n");
+        add_instr("P_LOD  aux_imag1 \n");
+        add_instr("F_MLT aux_imag2 \n");
+        add_instr("SF_ADD          \n");
+        add_instr("P_LOD  aux_mod   \n");
+        add_instr("SF_DIV\n");
 
-        add_instr("PLD  aux_real1 \n");
-        add_instr("FMLT aux_imag2 \n");
-        add_instr("PLD  aux_imag1 \n");
-        add_instr("FMLT aux_real2 \n");
+        add_instr("P_LOD  aux_real1 \n");
+        add_instr("F_MLT aux_imag2 \n");
+        add_instr("P_LOD  aux_imag1 \n");
+        add_instr("F_MLT aux_real2 \n");
         oper_subt(2*OFST,2*OFST);
-        add_instr("PLD  aux_mod   \n");
-        add_instr("SFDIV\n");
+        add_instr("P_LOD  aux_mod   \n");
+        add_instr("SF_DIV\n");
     }
 
     acc_ok = 1;
@@ -2400,7 +2400,7 @@ int oper_mod(int et1, int et2)
         fprintf(stderr, "Erro na linha %d: qual o sentido de calcular o resto da divisão sem ser com número inteiro? Vai se tratar!\n", line_num+1);
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
@@ -2418,7 +2418,7 @@ int oper_mod(int et1, int et2)
     // int acc com int var
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
         add_instr("SMOD\n");
     }
 
@@ -2442,8 +2442,8 @@ int oper_cmp(int et1, int et2, int type)
 {
     int  etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld, "LOD"); else strcpy(ld, "PLD" );
-    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"IFM"); else strcpy(i2f,"PIFM");
+    char ld [10]; if (acc_ok == 0) strcpy(ld, "LOD"); else strcpy(ld, "P_LOD" );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
 
     char op[16];
     switch (type)
@@ -2451,14 +2451,6 @@ int oper_cmp(int et1, int et2, int type)
         case 0: strcpy(op, "LES"); break;
         case 1: strcpy(op, "GRE"); break;
         case 2: strcpy(op, "EQU"); break;
-    }
-
-    char fop[16];
-    switch (type)
-    {
-        case 0: strcpy(fop, "FLES"); break;
-        case 1: strcpy(fop, "FGRE"); break;
-        case 2: strcpy(fop, "EQU" ); break;
     }
 
     // int var com int var
@@ -2478,25 +2470,25 @@ int oper_cmp(int et1, int et2, int type)
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-        add_instr("PLD %s\n"    , v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %s\n"    , v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // int var com float const
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n", i2f   ,      v_name[et1%OFST]);
-        add_instr("PLD %u // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %u // %s\n" , f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // int var com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
         add_instr("SET aux_cmp\n");
-        add_instr("IFM %s\n", v_name[et1%OFST]);
-        add_instr("PLD aux_cmp\n");
-        add_instr("S%s\n", fop);
+        add_instr("I2F_M %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("SF_%s\n", op);
     }
 
     // int var com comp const
@@ -2524,13 +2516,13 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmpi\n");
+        add_instr("SET_P aux_cmpi\n");
         add_instr("SET  aux_cmpr\n");
         acc_ok = 0;
 
         oper_mult(et1,et1);
-        add_instr("PLD aux_cmpr\n");
-        add_instr("PLD aux_cmpi\n");
+        add_instr("P_LOD aux_cmpr\n");
+        add_instr("P_LOD aux_cmpi\n");
         exec_sqr2(3*OFST);
         oper_cmp (OFST,2*OFST,type);
     }
@@ -2539,38 +2531,38 @@ int oper_cmp(int et1, int et2, int type)
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("S%s\n", op);
+        add_instr("S_%s\n", op);
     }
 
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("S%s\n", op);
+        add_instr("S_%s\n", op);
     }
 
     // int acc com float var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("IFA\n");
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("I2F\n");
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // int acc com float const
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("IFA\n");
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("I2F\n");
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // int acc com float acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SETP aux_cmp\n");
-        add_instr("IFA\n");
-        add_instr("PLD aux_cmp\n");
-        add_instr("S%s\n", fop);
+        add_instr("SET_P aux_cmp\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("SF_%s\n", op);
     }
 
     // int acc com comp const
@@ -2579,7 +2571,7 @@ int oper_cmp(int et1, int et2, int type)
         fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
         add_instr("SET aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et1,et1);
         exec_sqr2(et2);
         oper_cmp (OFST,2*OFST,type);
@@ -2591,7 +2583,7 @@ int oper_cmp(int et1, int et2, int type)
         fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
         add_instr("SET aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et1,et1);
         exec_sqr2(et2);
         oper_cmp (OFST,2*OFST,type);
@@ -2602,14 +2594,14 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmpi\n");
-        add_instr("SETP aux_cmpr\n");
+        add_instr("SET_P aux_cmpi\n");
+        add_instr("SET_P aux_cmpr\n");
         add_instr("SET  aux_cmp \n");
 
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et1,et1);
-        add_instr("PLD aux_cmpr\n");
-        add_instr("PLD aux_cmpi\n");
+        add_instr("P_LOD aux_cmpr\n");
+        add_instr("P_LOD aux_cmpi\n");
         exec_sqr2(3*OFST);
         oper_cmp (OFST,2*OFST,type);
     }
@@ -2618,34 +2610,34 @@ int oper_cmp(int et1, int et2, int type)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n",  ld, v_name[et1%OFST]);
-        add_instr("PIFM %s\n"   , v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_I2F_M %s\n"   , v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float var com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_cmp\n");
         add_instr("LOD %s\n", v_name[et1%OFST]);
-        add_instr("PLD aux_cmp\n");
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("SF_%s\n", op);
     }
 
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %s\n" , ld, v_name[et1%OFST]);
-        add_instr("PLD %s\n",     v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %s\n",     v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float var com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s %s\n" , ld, v_name[et1%OFST]);
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float var com float acc
@@ -2653,8 +2645,8 @@ int oper_cmp(int et1, int et2, int type)
     {
         add_instr("SET aux_float\n");
         add_instr("LOD %s\n", v_name[et1%OFST]);
-        add_instr("PLD aux_float\n");
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_%s\n", op);
     }
 
     // float var com comp const
@@ -2682,13 +2674,13 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmpi\n");
+        add_instr("SET_P aux_cmpi\n");
         add_instr("SET  aux_cmpr\n");
         acc_ok = 0;
 
         oper_mult(et1,et1);
-        add_instr("PLD aux_cmpr\n");
-        add_instr("PLD aux_cmpi\n");
+        add_instr("P_LOD aux_cmpr\n");
+        add_instr("P_LOD aux_cmpi\n");
         exec_sqr2(3*OFST);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -2697,34 +2689,34 @@ int oper_cmp(int et1, int et2, int type)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %d // %s\n" , ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float const com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
+        add_instr("I2F\n");
         add_instr("SET aux_cmp\n");
         add_instr("LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("PLD aux_cmp\n");
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("SF_%s\n", op);
     }
 
     // float const com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
         add_instr("%s %d // %s\n" , ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("PLD %s\n",     v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %s\n",     v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float const com float const
     if ((get_type(et1)==2) && (et1%OFST!=0) && (v_isco[et1%OFST]==1) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
         add_instr("%s  %d // %s\n", ld, f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("PLD %d // %s\n",     f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %d // %s\n",     f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float const com float acc
@@ -2732,8 +2724,8 @@ int oper_cmp(int et1, int et2, int type)
     {
         add_instr("SET aux_float\n");
         add_instr("LOD %d // %s\n", f2mf(v_name[et1%OFST]), v_name[et1%OFST]);
-        add_instr("PLD aux_float\n");
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD aux_float\n");
+        add_instr("SF_%s\n", op);
     }
 
     // float const com comp const
@@ -2761,13 +2753,13 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparando int com comp? Vou pegar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmpi\n");
+        add_instr("SET_P aux_cmpi\n");
         add_instr("SET  aux_cmpr\n");
         acc_ok = 0;
 
         oper_mult(et1,et1);
-        add_instr("PLD aux_cmpr\n");
-        add_instr("PLD aux_cmpi\n");
+        add_instr("P_LOD aux_cmpr\n");
+        add_instr("P_LOD aux_cmpi\n");
         exec_sqr2(3*OFST);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -2775,35 +2767,35 @@ int oper_cmp(int et1, int et2, int type)
     // float acc com int var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("PIFM %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("IFA\n");
-        add_instr("S%s\n", fop);
+        add_instr("I2F\n");
+        add_instr("SF_%s\n", op);
     }
 
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
     {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float acc com float const
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
     {
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("S%s\n", fop);
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("SF_%s\n", op);
     }
 
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("S%s\n", fop);
+        add_instr("SF_%s\n", op);
     }
 
     // float acc com comp const
@@ -2812,7 +2804,7 @@ int oper_cmp(int et1, int et2, int type)
         fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
         add_instr("SET aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et1,et1);
         exec_sqr2(et2);
         oper_cmp (2*OFST,2*OFST,type);
@@ -2824,7 +2816,7 @@ int oper_cmp(int et1, int et2, int type)
         fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
         add_instr("SET aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et1,et1);
         exec_sqr2(et2);
         oper_cmp (2*OFST,2*OFST,type);
@@ -2835,14 +2827,14 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparando float com comp? Vou pegar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmpi\n");
-        add_instr("SETP aux_cmpr\n");
+        add_instr("SET_P aux_cmpi\n");
+        add_instr("SET_P aux_cmpr\n");
         add_instr("SET  aux_cmp \n");
 
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et1,et1);
-        add_instr("PLD aux_cmpr\n");
-        add_instr("PLD aux_cmpi\n");
+        add_instr("P_LOD aux_cmpr\n");
+        add_instr("P_LOD aux_cmpi\n");
         exec_sqr2(3*OFST);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -2865,8 +2857,8 @@ int oper_cmp(int et1, int et2, int type)
         add_instr("SET aux_cmp\n");
         acc_ok = 0;
         exec_sqr2  (et1);
-        add_instr("PLD aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et2,et2);
         oper_cmp (2*OFST,OFST,type);
     }
@@ -2899,8 +2891,8 @@ int oper_cmp(int et1, int et2, int type)
         add_instr("SET aux_cmp\n");
         acc_ok = 0;
         exec_sqr2(et1);
-        add_instr("PLD aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et2,et2);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -2930,12 +2922,12 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET  aux_real\n");
         acc_ok = 0;
         exec_sqr2(et1);
-        add_instr("PLD aux_real\n");
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_real\n");
+        add_instr("P_LOD aux_imag\n");
         exec_sqr2(et2);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -2958,8 +2950,8 @@ int oper_cmp(int et1, int et2, int type)
         add_instr("SET aux_cmp\n");
         acc_ok = 0;
         exec_sqr2(et1);
-        add_instr("PLD aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et2,et2);
         oper_cmp (2*OFST,OFST,type);
     }
@@ -2992,8 +2984,8 @@ int oper_cmp(int et1, int et2, int type)
         add_instr("SET aux_cmp\n");
         acc_ok = 0;
         exec_sqr2(et1);
-        add_instr("PLD aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et2,et2);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -3023,12 +3015,12 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_imag\n");
+        add_instr("SET_P aux_imag\n");
         add_instr("SET  aux_real\n");
         acc_ok = 0;
         exec_sqr2(et1);
-        add_instr("PLD aux_real\n");
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_real\n");
+        add_instr("P_LOD aux_imag\n");
         exec_sqr2(et2);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -3048,10 +3040,10 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmp\n");
+        add_instr("SET_P aux_cmp\n");
         exec_sqr2(et1);
-        add_instr("PLD aux_cmp\n");
-        add_instr("PLD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
+        add_instr("P_LOD aux_cmp\n");
         oper_mult(et2,et2);
         oper_cmp (2*OFST,OFST,type);
     }
@@ -3081,10 +3073,10 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_cmp2\n");
+        add_instr("SET_P aux_cmp2\n");
         exec_sqr2(et1);
-        add_instr("PLD aux_cmp2\n");
-        add_instr("PLD aux_cmp2\n");
+        add_instr("P_LOD aux_cmp2\n");
+        add_instr("P_LOD aux_cmp2\n");
         oper_mult(et2,et2);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -3114,11 +3106,11 @@ int oper_cmp(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: comparação com número complexo? Vou usar o módulo.\n", line_num+1);
 
-        add_instr("SETP aux_imag\n");
-        add_instr("SETP aux_real\n");
+        add_instr("SET_P aux_imag\n");
+        add_instr("SET_P aux_real\n");
         exec_sqr2(et1);
-        add_instr("PLD aux_real\n");
-        add_instr("PLD aux_imag\n");
+        add_instr("P_LOD aux_real\n");
+        add_instr("P_LOD aux_imag\n");
         exec_sqr2(et2);
         oper_cmp (2*OFST,2*OFST,type);
     }
@@ -3155,8 +3147,8 @@ int oper_lin(int et)
 {
     int etr, eti;
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"PLD"    );
-    char f2i[10]; if (acc_ok == 0) strcpy(f2i,"FIM"  ); else strcpy(f2i,"PFIM"   );
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"    );
+    char f2i[10]; if (acc_ok == 0) strcpy(f2i,"F2I_M"  ); else strcpy(f2i,"P_F2I_M"   );
     char lin[10]; if (acc_ok == 0) strcpy(lin,"LIN_M"); else strcpy(lin,"P_LIN_M");
 
     // se for um int na memoria
@@ -3194,7 +3186,7 @@ int oper_lin(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão lógica com float? Você é uma pessoa confusa!\n", line_num+1);
 
-        add_instr("FIA\n");
+        add_instr("F2I\n");
         add_instr("LIN\n");
     }
 
@@ -3224,7 +3216,7 @@ int oper_lin(int et)
         fprintf(stdout, "Atenção na linha %d: expressão lógica com comp? Sério? Vou arredondar a parte real!\n", line_num+1);
 
         add_instr("POP\n");
-        add_instr("FIA\n");
+        add_instr("F2I\n");
         add_instr("LIN\n");
     }
 
@@ -3242,12 +3234,12 @@ int oper_lanor(int et1, int et2, int type)
     int etr, eti;
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
     char op[16];
     switch (type)
     {
-        case 0: strcpy(op, "LAND"); break;
+        case 0: strcpy(op, "LAN"); break;
         case 1: strcpy(op, "LOR" ); break;
     }
 
@@ -3273,7 +3265,7 @@ int oper_lanor(int et1, int et2, int type)
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("S%s\n", op);
+        add_instr("S_%s\n", op);
     }
 
     acc_ok = 1;
@@ -3322,12 +3314,12 @@ int oper_bitw(int et1, int et2, int type)
     switch (type)
     {
         case  0: strcpy(op, "AND"); break;
-        case  1: strcpy(op, "OR" ); break;
+        case  1: strcpy(op, "ORR" ); break;
         case  2: strcpy(op, "XOR"); break;
     }
 
     char ld[10];
-    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
+    if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
@@ -3345,14 +3337,14 @@ int oper_bitw(int et1, int et2, int type)
     // int acc com int var
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", op);
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("S_%s\n", op);
     }
 
     // int acc com int acc
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        add_instr("S%s\n", op);
+        add_instr("S_%s\n", op);
     }
 
     acc_ok = 1;
@@ -3386,7 +3378,7 @@ int oper_shift(int et1, int et2, int type)
 
     int etr, eti;
 
-    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"PLD");
+    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
@@ -3407,7 +3399,7 @@ int oper_shift(int et1, int et2, int type)
         fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("FIA\n");
+        add_instr("F2I\n");
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
@@ -3417,28 +3409,28 @@ int oper_shift(int et1, int et2, int type)
         fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
         add_instr("%s %d // %s\n", ld, f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("FIA\n");
+        add_instr("F2I\n");
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
     // int var com float acc
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
     {
-        add_instr("FIA\n");
+        add_instr("F2I\n");
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
     // int acc com int var
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("S%s\n", op);
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("S_%s\n", op);
     }
 
     // int acc com int acc
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        add_instr("S%s\n", op);
+        add_instr("S_%s\n", op);
     }
 
     // int acc com float var
@@ -3446,9 +3438,9 @@ int oper_shift(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
-        add_instr("PLD %s\n", v_name[et2%OFST]);
-        add_instr("FIA\n");
-        add_instr("S%s\n", op);
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("F2I\n");
+        add_instr("S_%s\n", op);
     }
 
     // int acc com float const
@@ -3456,9 +3448,9 @@ int oper_shift(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
 
-        add_instr("PLD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
-        add_instr("FIA\n");
-        add_instr("S%s\n", op);
+        add_instr("P_LOD %d // %s\n", f2mf(v_name[et2%OFST]), v_name[et2%OFST]);
+        add_instr("F2I\n");
+        add_instr("S_%s\n", op);
     }
 
     // int acc com float acc
@@ -3466,8 +3458,8 @@ int oper_shift(int et1, int et2, int type)
     {
         fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
         
-        add_instr("FIA\n");
-        add_instr("S%s\n", op);
+        add_instr("F2I\n");
+        add_instr("S_%s\n", op);
     }
 
     acc_ok = 1;

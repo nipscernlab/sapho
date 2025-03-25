@@ -40,7 +40,7 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "#FFTSIZ"                     return FFTSIZ;
 "#INTERPOINT"                 return ITRADD;
 
-"in"                          return IN;
+"in"                          return INN;
 "out"                         return OUT;
 "norm"                        return NRM;
 "pset"                        return PST;
@@ -60,7 +60,7 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "switch"                      return SWITCH;
 "case"                        return CASE;
 "default"                     return DEFAULT;
-"return"                      return RETURN;
+"return"                      return RET;
 
 "<<"                          return  SHIFTL;
 ">>"                          return  SHIFTR;
@@ -71,7 +71,7 @@ CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 "=="                          return EQU;
 "!="                          return DIF;
 
-"&&"                          return LAND;
+"&&"                          return LAN;
 "||"                          return LOR;
 
 "++"                          return PPLUS;

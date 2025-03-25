@@ -55,17 +55,17 @@ void  yyerror(char const *s);
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
-%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH             // diretivas
-%token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD      // diretivas
-%token IN OUT NRM PST ABS SGN SQRT REAL IMAG ATAN FASE       // std lib
-%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RETURN BREAK   // saltos
-%token SHIFTL SHIFTR SSHIFTR                                 // deslocamento de bits
-%token GREQU LESEQ EQU DIF LAND LOR                          // operadores logicos de dois simbolos
-%token PPLUS                                                 // operador ++. pode ser usado pra reduzir exp e tb pra assignments
+%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH          // diretivas
+%token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD   // diretivas
+%token INN OUT NRM PST ABS SGN SQRT REAL IMAG ATAN FASE   // std lib
+%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK   // saltos
+%token SHIFTL SHIFTR SSHIFTR                              // deslocamento de bits
+%token GREQU LESEQ EQU DIF LAN LOR                        // operadores logicos de dois simbolos
+%token PPLUS                                              // operador ++. pode ser usado pra reduzir exp e tb pra assignments
 
 // tokens terminais -----------------------------------------------------------
 
-%token <ival> TYPE ID STRING INUM FNUM CNUM                  // vem do lexer com um valor associado
+%token <ival> TYPE ID STRING INUM FNUM CNUM               // vem do lexer com um valor associado
 
 // elimina conflito if com e sem else
 %nonassoc THEN
@@ -77,7 +77,7 @@ void  yyerror(char const *s);
 
 // mais embaixo -> mais prioritario (usa padrao C)
 %left LOR
-%left LAND
+%left LAN
 %left '|'
 %left '^'
 %left '&'
@@ -150,8 +150,8 @@ par_list : TYPE ID                        {$$ = declar_par($1,$2);}
          | par_list ',' par_list          {        set_par($3   );} // vai pegando da pilha
 
 // retornos de funcao e void
-return_call : RETURN exp ';'              {declar_ret($2,1);}
-            | RETURN     ';'              {  void_ret(    );}
+return_call : RET exp ';'                 {declar_ret($2,1);}
+            | RET     ';'                 {  void_ret(    );}
 
 // lista de statments em C ----------------------------------------------------
 
@@ -196,7 +196,7 @@ exp_list :                                                          // pode ser 
 
 std_out  : OUT  '(' INUM ','               {     exec_out1($3   );} // saida de dados
                     exp ')'     ';'        {     exec_out2($6   );}
-std_in   : IN   '(' INUM ')'               {$$ = exec_in  ($3   );} // entrada de dados
+std_in   : INN  '(' INUM ')'               {$$ = exec_in  ($3   );} // entrada de dados
 std_pst  : PST  '(' exp ')'                {$$ = exec_pst ($3   );} // funcao pset(x)   -> zera se negativo
 std_abs  : ABS  '(' exp ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)   -> valor absoluto de x
 std_sign : SGN  '(' exp ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y) -> pega o sinal de x e coloca em y
@@ -212,7 +212,7 @@ std_fase : FASE '(' exp ')'                {$$ = exec_fase($3   );} // funcao fa
 if_else_stmt : if_exp stmt_full ELSE             {else_stmt(  );} // if/else completo
                stmt_full                         {if_fim   (  );}
              | if_exp stmt_full     %prec THEN   {if_stmt  (  );} // if sem else
-if_exp       : IF '(' exp ')'                    {if_exp   ($3);} // inicio (JZ)
+if_exp       : IF '(' exp ')'                    {if_exp   ($3);} // inicio (JIZ)
 
 // switch/case ----------------------------------------------------------------
 
@@ -304,7 +304,7 @@ exp:       terminal                           {$$ = $1;}
          | exp   '*'   exp                    {$$ = oper_mult($1,$3);}
          | exp   '/'   exp                    {$$ = oper_divi($1,$3);}
          // operadores true/false
-         | exp  LAND   exp                    {$$ = oper_lanor($1,$3,0);}
+         | exp  LAN    exp                    {$$ = oper_lanor($1,$3,0);}
          | exp  LOR    exp                    {$$ = oper_lanor($1,$3,1);}
          | exp   '<'   exp                    {$$ = oper_cmp  ($1,$3,0);}
          | exp   '>'   exp                    {$$ = oper_cmp  ($1,$3,1);}
@@ -383,7 +383,7 @@ int main(int argc, char *argv[])
 
   char linha[1001], texto[1001] = "";
   fputs("-1 INTERNO\n"     , output); // codigo para inicio do arquivo
-  fputs("-2 void main();\n", output); // codigo pra CALL main
+  fputs("-2 void main();\n", output); // codigo pra CAL main
   fputs("-3 FIM\n"         , output); // codigo para @fim JMP fim
   fputs("-4 User Macro\n"  , output); // codigo asm do usuario (#USEMAC)
 

@@ -35,7 +35,7 @@ void if_exp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("FIM %s\n", v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float const
@@ -43,7 +43,7 @@ void if_exp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
     }
 
     // float acc
@@ -51,7 +51,7 @@ void if_exp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
         
-        add_instr("FIA\n");
+        add_instr("F2I\n");
     }
 
     // comp const
@@ -62,7 +62,7 @@ void if_exp(int et)
         int etr,eti;
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("F2I_M %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
     }
 
     // comp var
@@ -70,7 +70,7 @@ void if_exp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-        add_instr("FIM %s\n", v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // comp acc
@@ -79,11 +79,11 @@ void if_exp(int et)
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
         add_instr("POP\n");
-        add_instr("FIA\n");
+        add_instr("F2I\n");
     }
 
     int n = push_lab(0);
-    add_instr("JZ L%delse\n", n); // 0 -> if
+    add_instr("JIZ L%delse\n", n); // 0 -> if
     acc_ok = 0;
 }
 
@@ -133,7 +133,7 @@ void while_expp()
     add_sinst(0, "@L%d ", n);
 }
 
-// executa o exp e cria um JZ pra ver se entra ou nao
+// executa o exp e cria um JIZ pra ver se entra ou nao
 void while_expexp(int et)
 {
     // int var
@@ -153,7 +153,7 @@ void while_expexp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("FIM %s\n", v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float const
@@ -161,7 +161,7 @@ void while_expexp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
     }
 
     // float acc
@@ -169,7 +169,7 @@ void while_expexp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
         
-        add_instr("FIA\n");
+        add_instr("F2I\n");
     }
 
     // comp const
@@ -180,7 +180,7 @@ void while_expexp(int et)
         int etr,eti;
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("F2I_M %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
     }
 
     // comp var
@@ -188,7 +188,7 @@ void while_expexp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-        add_instr("FIM %s\n", v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // comp acc
@@ -197,10 +197,10 @@ void while_expexp(int et)
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando comp! Vou arredondar a parte real.\n", line_num+1);
 
         add_instr("POP\n");
-        add_instr("FIA\n");
+        add_instr("F2I\n");
     }
 
-    add_instr("JZ L%dend\n", get_lab());
+    add_instr("JIZ L%dend\n", get_lab());
     acc_ok = 0;
 }
 
@@ -221,7 +221,7 @@ void case_test(int id, int type)
     // faz operacao de comparacao
     oper_cmp(et1,et2,4);
 
-    add_instr("JZ sw_case_%d_%d\n", swit_cnt, case_cnt+1);
+    add_instr("JIZ sw_case_%d_%d\n", swit_cnt, case_cnt+1);
     acc_ok = 0;
 }
 
@@ -273,7 +273,7 @@ void exec_switch(int et)
     {
         fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("FIM %s\n", v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float const
@@ -281,7 +281,7 @@ void exec_switch(int et)
     {
         fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("FIM %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
     }
 
     // float acc
@@ -289,7 +289,7 @@ void exec_switch(int et)
     {
         fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
         
-        add_instr("FIA\n");
+        add_instr("F2I\n");
     }
 
     // comp const
@@ -300,7 +300,7 @@ void exec_switch(int et)
         int etr,eti;
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("FIM %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("F2I_M %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
     }
 
     // comp var
@@ -308,7 +308,7 @@ void exec_switch(int et)
     {
         fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
-        add_instr("FIM %s\n", v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // comp acc
@@ -317,7 +317,7 @@ void exec_switch(int et)
         fprintf(stdout, "Atenção na linha %d: índice do case dando comp! Vou arredondar a parte real.\n", line_num+1);
 
         add_instr("POP\n");
-        add_instr("FIA\n");
+        add_instr("F2I\n");
     }
 
     add_instr("SET switch_exp\n");

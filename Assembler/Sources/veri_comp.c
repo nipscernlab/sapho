@@ -252,26 +252,26 @@ void build_tb_file()
     fprintf(f_veri, "$dumpfile(\"%s_tb.vcd\");\n", name);
     fprintf(f_veri,     "$dumpvars(0,%s_tb);\n\n", name);
 
-    fprintf(f_veri,   "clk = 0;\n"     );
-    fprintf(f_veri,   "rst = 1;\n"     );
-    fprintf(f_veri,       "#%f;\n",   T);
-    fprintf(f_veri, "rst = 0;\n\n"     );
+    fprintf(f_veri,   "clk = 0;\n"   );
+    fprintf(f_veri,   "rst = 1;\n"   );
+    fprintf(f_veri,       "#%f;\n", T);
+    fprintf(f_veri, "rst = 0;\n\n"   );
     fprintf(f_veri, "for (i = 10; i <= 100; i = i + 10) begin\n");
     fprintf(f_veri, "#%f;\n", T*clk_num/10);
     fprintf(f_veri, "$display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
-    fprintf(f_veri, "end\n"            );
-    fprintf(f_veri, "$finish;\n\n"     );
-    fprintf(f_veri,      "end\n\n"     );
+    fprintf(f_veri, "end\n"          );
+    fprintf(f_veri, "$finish;\n\n"   );
+    fprintf(f_veri,      "end\n\n"   );
 
     fprintf(f_veri, "always #%f clk = ~clk;\n\n", T/2.0);
 
     int s1 = nbits-1;
     int s2 = nbits-1;
 
-    fprintf(f_veri, "reg signed [%d:0] proc_io_in = 0;\n" , s1);
-    fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n"   , s2);
-    fprintf(f_veri, "wire [%d:0] proc_req_in;\n"    , nmioin-1);
-    fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n"  , nuioou-1);
+    fprintf(f_veri, "reg signed [%d:0] proc_io_in = 0;\n", s1);
+    fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n"  , s2);
+    fprintf(f_veri, "wire [%d:0] proc_req_in;\n"   , nmioin-1);
+    fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n" , nuioou-1);
 
     fprintf(f_veri, "%s proc(clk,rst,proc_io_in,proc_io_out,proc_req_in,proc_out_en,1'b0);\n\n", name);
 

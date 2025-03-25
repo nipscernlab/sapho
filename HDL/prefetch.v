@@ -37,7 +37,7 @@ assign instr_addr = (itr) ? ITRADD: (pc_load & ~rst) ? operand[MINSTW-1:0] : add
 always @ (*) begin
 	case (opcode)
 		5       : begin
-						 pc_load <= ~acc_is_zero;  // JZ
+						 pc_load <= ~acc_is_zero;  // JIZ
 						isp_push <=         1'b0;
 						isp_pop  <=         1'b0;
 					 end
@@ -47,12 +47,12 @@ always @ (*) begin
 						isp_pop  <=         1'b0;
 					 end
 		7       : begin
-						 pc_load <=         1'b1;  // CALL
+						 pc_load <=         1'b1;  // CAL
 						isp_push <=         1'b1;
 						isp_pop  <=         1'b0;
 					 end
 		8       : begin
-						 pc_load <=         1'b1;  // RETURN
+						 pc_load <=         1'b1;  // RET
 						isp_push <=         1'b0;
 						isp_pop  <=         1'b1;
 					 end
