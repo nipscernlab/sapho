@@ -44,77 +44,75 @@ module ula_mux
 	output reg [NUBITS-1:0] out
 );
 
-always @ (*) begin
-	case (op)
-		6'd0   : out <=   in2 ;   //   NOP
-		6'd1   : out <=   in1 ;   //   LOD
+always @ (*) case (op)
+	6'd0   : out <=   in2 ;   //   NOP
+	6'd1   : out <=   in1 ;   //   LOD
 
-		6'd2   : out <=   add ;   //   ADD
-		6'd3   : out <=  fadd ;   // F_ADD
+	6'd2   : out <=   add ;   //   ADD
+	6'd3   : out <=  fadd ;   // F_ADD
 
-		6'd4   : out <=   mlt ;   //   MLT
-		6'd5   : out <=  fmlt ;   // F_MLT
+	6'd4   : out <=   mlt ;   //   MLT
+	6'd5   : out <=  fmlt ;   // F_MLT
 
-		6'd6   : out <=   div ;   //   DIV
-		6'd7   : out <=  fdiv ;   // F_DIV
+	6'd6   : out <=   div ;   //   DIV
+	6'd7   : out <=  fdiv ;   // F_DIV
 
-		6'd8   : out <=   mod ;   //   MOD
+	6'd8   : out <=   mod ;   //   MOD
 
-		6'd9   : out <=   sgn ;   //   SGN
-		6'd10  : out <=  fsgn ;   // F_SGN
+	6'd9   : out <=   sgn ;   //   SGN
+	6'd10  : out <=  fsgn ;   // F_SGN
 
-		6'd11  : out <=   neg ;   //   NEG
-		6'd12  : out <=   negm;   //   NEG_M
-		6'd13  : out <=  fneg ;   // F_NEG
-		6'd14  : out <=  fnegm;   // F_NEG_M
+	6'd11  : out <=   neg ;   //   NEG
+	6'd12  : out <=   negm;   //   NEG_M
+	6'd13  : out <=  fneg ;   // F_NEG
+	6'd14  : out <=  fnegm;   // F_NEG_M
 
-		6'd15  : out <=   abs ;   //   ABS
-		6'd16  : out <=   absm;   //   ABS_M
-		6'd17  : out <=  fabs ;   // F_ABS
-		6'd18  : out <=  fabsm;   // F_ABS_M
+	6'd15  : out <=   abs ;   //   ABS
+	6'd16  : out <=   absm;   //   ABS_M
+	6'd17  : out <=  fabs ;   // F_ABS
+	6'd18  : out <=  fabsm;   // F_ABS_M
 
-		6'd19  : out <=   pst ;   //   PST
-		6'd20  : out <=   pstm;   //   PST_M
-		6'd21  : out <=  fpst ;   // F_PST
-		6'd22  : out <=  fpstm;   // F_PST_M
+	6'd19  : out <=   pst ;   //   PST
+	6'd20  : out <=   pstm;   //   PST_M
+	6'd21  : out <=  fpst ;   // F_PST
+	6'd22  : out <=  fpstm;   // F_PST_M
 
-		6'd23  : out <=   nrm ;   //   NRM
-		6'd24  : out <=   nrmm;   //   NRM_M
+	6'd23  : out <=   nrm ;   //   NRM
+	6'd24  : out <=   nrmm;   //   NRM_M
 
-		6'd25  : out <=   i2f ;   //   I2F
-		6'd26  : out <=   i2fm;   //   I2F_M
+	6'd25  : out <=   i2f ;   //   I2F
+	6'd26  : out <=   i2fm;   //   I2F_M
 
-		6'd27  : out <=   f2i ;   //   F2I
-		6'd28  : out <=   f2im;   //   F2I_M
+	6'd27  : out <=   f2i ;   //   F2I
+	6'd28  : out <=   f2im;   //   F2I_M
 
-		6'd29  : out <=   ann ;   //   AND
-		6'd30  : out <=   orr ;   //   ORR
-		6'd31  : out <=   cor ;   //   XOR
+	6'd29  : out <=   ann ;   //   AND
+	6'd30  : out <=   orr ;   //   ORR
+	6'd31  : out <=   cor ;   //   XOR
 
-		6'd32  : out <=   inv ;   //   INV
-		6'd33  : out <=   invm;   //   INV_M
+	6'd32  : out <=   inv ;   //   INV
+	6'd33  : out <=   invm;   //   INV_M
 
-		6'd34  : out <=   lan ;   //   LAN
-		6'd35  : out <=   lor ;   //   LOR
+	6'd34  : out <=   lan ;   //   LAN
+	6'd35  : out <=   lor ;   //   LOR
 
-		6'd36  : out <=   lin ;   //   LIN
-		6'd37  : out <=   linm;   //   LIN_M
+	6'd36  : out <=   lin ;   //   LIN
+	6'd37  : out <=   linm;   //   LIN_M
 
-		6'd38  : out <=   les ;   //   LES
-		6'd39  : out <=  fles ;   // F_LES
+	6'd38  : out <=   les ;   //   LES
+	6'd39  : out <=  fles ;   // F_LES
 
-		6'd40  : out <=   gre ;   //   GRE
-		6'd41  : out <=  fgre ;   // F_GRE
+	6'd40  : out <=   gre ;   //   GRE
+	6'd41  : out <=  fgre ;   // F_GRE
 
-		6'd42  : out <=   equ ;   //   EQU
+	6'd42  : out <=   equ ;   //   EQU
 
-		6'd43  : out <=   shl ;   //   SHL
-		6'd44  : out <=   shr ;   //   SHR
-		6'd45  : out <=   srs ;   //   SRS
+	6'd43  : out <=   shl ;   //   SHL
+	6'd44  : out <=   shr ;   //   SHR
+	6'd45  : out <=   srs ;   //   SRS
 
-		default: out <= {NUBITS{1'bx}};
-	endcase
-end
+	default: out <= {NUBITS{1'bx}};
+endcase
 
 endmodule
 
