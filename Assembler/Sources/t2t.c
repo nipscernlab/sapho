@@ -32,7 +32,7 @@ char *itob(int x, int w)
 
 // converte float ieee 32 bits para meu float
 // tentar mudar pra converter float de 64 bits
-int f2mf(char *va)
+unsigned int f2mf(char *va)
 {
     float f = atof(va);
 

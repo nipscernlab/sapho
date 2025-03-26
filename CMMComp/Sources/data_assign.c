@@ -80,7 +80,7 @@ void var_set(int id, int et)
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
-        add_instr("F2I_M %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("F2I_M %s\n", v_name[et % OFST]);
         add_instr("SET %s\n",                                v_name[id       ]);
     }
 
@@ -103,7 +103,7 @@ void var_set(int id, int et)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("F2I_M %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("F2I_M %s\n", v_name[etr % OFST]);
         add_instr("SET %s\n",                                 v_name[id        ]);
     }
 
@@ -134,7 +134,7 @@ void var_set(int id, int et)
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
-        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
         add_instr("SET %s\n", v_name[id]);
     }
 
@@ -161,7 +161,7 @@ void var_set(int id, int et)
 
     if ((v_type[id] == 2) && (get_type(et) == 2) && (v_isco[et%OFST] == 1) && (et%OFST != 0))
     {
-        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
         add_instr("SET %s\n",                                 v_name[id       ]);
     }
 
@@ -188,7 +188,7 @@ void var_set(int id, int et)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("LOD %s\n", v_name[etr % OFST]);
         add_instr("SET %s\n",                                  v_name[id        ]);
     }
 
@@ -220,10 +220,10 @@ void var_set(int id, int et)
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
-        add_instr("LOD %d // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
         add_instr("SET %s\n", v_name[id]);
 
-        add_instr("LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD 0.0\n");
         add_instr("SET %s_i\n", v_name[id]);
     }
 
@@ -236,7 +236,7 @@ void var_set(int id, int et)
         add_instr("I2F_M %s\n", v_name[et % OFST]);
         add_instr("SET %s\n", v_name[id]);
 
-        add_instr("LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD 0.0\n");
         add_instr("SET %s_i\n", v_name[id]);
     }
 
@@ -249,7 +249,7 @@ void var_set(int id, int et)
         add_instr("I2F\n");
         add_instr("SET %s\n", v_name[id]);
 
-        add_instr("LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD 0.0\n");
         add_instr("SET %s_i\n", v_name[id]);
     }
 
@@ -262,7 +262,7 @@ void var_set(int id, int et)
         add_instr("LOD %s\n" , v_name[et % OFST]);
         add_instr("SET %s\n" , v_name[id       ]);
 
-        add_instr("LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD 0.0\n");
         add_instr("SET %s_i\n", v_name[id]);
     }
 
@@ -272,10 +272,10 @@ void var_set(int id, int et)
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
-        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
         add_instr("SET %s\n"                                , v_name[id       ]);
 
-        add_instr("LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD 0.0\n");
         add_instr("SET %s_i\n", v_name[id]);
     }
 
@@ -287,7 +287,7 @@ void var_set(int id, int et)
         
         add_instr("SET %s\n", v_name[id]);
 
-        add_instr("LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD 0.0\n");
         add_instr("SET %s_i\n", v_name[id]);
     }
 
@@ -297,10 +297,10 @@ void var_set(int id, int et)
     {
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("LOD %s\n", v_name[etr % OFST]);
         add_instr("SET %s\n"                                 , v_name[id        ]);
 
-        add_instr("LOD %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
+        add_instr("LOD %s\n", v_name[eti % OFST]);
         add_instr("SET %s_i\n"                               , v_name[id        ]);
     }
 
@@ -391,7 +391,7 @@ void array_set(int id, int et, int fft)
     {
         fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
-        add_instr("P_F2I_M %d // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("P_F2I_M %s\n", v_name[et % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s\n", v_name[id]);
     }
@@ -415,7 +415,7 @@ void array_set(int id, int et, int fft)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("P_F2I_M %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("P_F2I_M %s\n", v_name[etr % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s\n", v_name[id]);
     }
@@ -480,7 +480,7 @@ void array_set(int id, int et, int fft)
 
     if ((v_type[id] == 2) && (get_type(et) == 2) && (v_isco[et%OFST] == 1) && (et % OFST != 0))
     {
-        add_instr("P_LOD %d // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("P_LOD %s\n", v_name[et % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s\n", v_name[id]);
     }
@@ -501,7 +501,7 @@ void array_set(int id, int et, int fft)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("P_LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("P_LOD %s\n", v_name[etr % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s\n", v_name[id]);
     }
@@ -542,7 +542,7 @@ void array_set(int id, int et, int fft)
         add_instr("SET %s\n",  v_name[id]);
 
         add_instr("LOD aux_index\n");
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
         add_instr("%s\n", set_type);
         add_instr("SET %s_i\n", v_name[id]);
     }
@@ -561,7 +561,7 @@ void array_set(int id, int et, int fft)
         add_instr("SET  %s\n", v_name[id]);
 
         add_instr("LOD aux_index\n"                  );
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
         add_instr("%s\n", set_type                    );
         add_instr("SET %s_i\n", v_name[id]            );
     }
@@ -578,7 +578,7 @@ void array_set(int id, int et, int fft)
         add_instr("SET %s\n" , v_name[id]);
 
         add_instr("LOD aux_index\n");
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
         add_instr("%s\n", set_type);
         add_instr("SET %s_i\n",  v_name[id]);
     }
@@ -590,12 +590,12 @@ void array_set(int id, int et, int fft)
         fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("SET aux_index\n");
-        add_instr("P_LOD %d // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("P_LOD %s\n", v_name[et % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s\n", v_name[id]);
 
         add_instr("LOD aux_index\n");
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
         add_instr("%s\n", set_type);
         add_instr("SET %s_i\n", v_name[id]);
     }
@@ -613,7 +613,7 @@ void array_set(int id, int et, int fft)
         add_instr("SET %s\n",  v_name[id]);
 
         add_instr("LOD aux_index\n");
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
         add_instr("%s\n", set_type);
         add_instr("SET %s_i\n", v_name[id]);
     }
@@ -625,12 +625,12 @@ void array_set(int id, int et, int fft)
         get_cmp_cst(et,&etr,&eti);
         
         add_instr("SET aux_index\n");
-        add_instr("P_LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("P_LOD %s\n", v_name[etr % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s\n", v_name[id]);
 
         add_instr("LOD aux_index\n");
-        add_instr("P_LOD %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
+        add_instr("P_LOD %s\n", v_name[eti % OFST]);
         add_instr("%s\n", set_type);
         add_instr("SET %s_i\n", v_name[id]);
     }

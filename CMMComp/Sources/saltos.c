@@ -43,7 +43,7 @@ void if_exp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float acc
@@ -62,7 +62,7 @@ void if_exp(int et)
         int etr,eti;
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("F2I_M %s\n", v_name[etr%OFST]);
     }
 
     // comp var
@@ -161,7 +161,7 @@ void while_expexp(int et)
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float acc
@@ -180,7 +180,7 @@ void while_expexp(int et)
         int etr,eti;
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("F2I_M %s\n", v_name[etr%OFST]);
     }
 
     // comp var
@@ -281,7 +281,7 @@ void exec_switch(int et)
     {
         fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float acc
@@ -300,7 +300,7 @@ void exec_switch(int et)
         int etr,eti;
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("F2I_M %s\n", v_name[etr%OFST]);
     }
 
     // comp var

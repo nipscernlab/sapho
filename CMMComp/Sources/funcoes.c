@@ -136,7 +136,7 @@ void declar_ret(int et, int ret)
     {
         fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função %s? Dá-lhe código!\n", line_num+1, v_name[fun_id1]);
 
-        add_instr("F2I_M %d // %s\n", f2mf(v_name[et%OFST]));
+        add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
 
     // int com float acc
@@ -153,7 +153,7 @@ void declar_ret(int et, int ret)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("F2I_M %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("F2I_M %s\n", v_name[etr % OFST]);
     }
 
     // int com comp var
@@ -200,7 +200,7 @@ void declar_ret(int et, int ret)
     // float com float const
     if ((left_type == 8) && (get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
     {
-        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
+        add_instr("LOD %s\n", v_name[et % OFST]);
     }
 
     // float com float acc
@@ -216,7 +216,7 @@ void declar_ret(int et, int ret)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
+        add_instr("LOD %s\n", v_name[etr % OFST]);
     }
 
     // float com comp var
@@ -243,7 +243,7 @@ void declar_ret(int et, int ret)
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe int.\n", line_num+1);
 
         add_instr("I2F_M %s\n", v_name[et % OFST]);
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // comp com int acc
@@ -252,7 +252,7 @@ void declar_ret(int et, int ret)
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe int.\n", line_num+1);
         
         add_instr("I2F\n");
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // comp com float var
@@ -261,7 +261,7 @@ void declar_ret(int et, int ret)
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe float.\n", line_num+1);
 
         add_instr("LOD %s\n", v_name[et % OFST]);
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // comp com float const
@@ -269,8 +269,8 @@ void declar_ret(int et, int ret)
     {
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe float.\n", line_num+1);
 
-        add_instr("LOD %u // %s\n", f2mf(v_name[et % OFST]), v_name[et % OFST]);
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("LOD %s\n", v_name[et % OFST]);
+        add_instr("P_LOD 0.0\n");
     }
 
     // comp com float acc
@@ -278,7 +278,7 @@ void declar_ret(int et, int ret)
     {
         fprintf(stdout, "Atenção na linha %d: retorno da função é comp, mas recebe float.\n", line_num+1);
 
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // comp com comp const
@@ -286,8 +286,8 @@ void declar_ret(int et, int ret)
     {
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("LOD %u // %s\n", f2mf(v_name[etr % OFST]), v_name[etr % OFST]);
-        add_instr("P_LOD %u // %s\n", f2mf(v_name[eti % OFST]), v_name[eti % OFST]);
+        add_instr("LOD %s\n", v_name[etr % OFST]);
+        add_instr("P_LOD %s\n", v_name[eti % OFST]);
     }
 
     // comp com comp var
@@ -505,7 +505,7 @@ void par_check(int et)
     {
         fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-        add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("%s %s\n", ld, v_name[et%OFST]);
         add_instr("F2I\n");
     }
 
@@ -526,7 +526,7 @@ void par_check(int et)
 
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("%s %s\n", ld, v_name[etr%OFST]);
         add_instr("F2I\n");
     }
 
@@ -579,7 +579,7 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 2) && (et % OFST != 0) && (v_isco[et%OFST] == 1))
     {
-        add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
+        add_instr("%s %s\n", ld, v_name[et%OFST]);
     }
 
     // original eh float e chamada eh float acc ---------------------------
@@ -597,7 +597,7 @@ void par_check(int et)
 
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("%s %d // %s\n", ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
+        add_instr("%s %s\n", ld, v_name[etr%OFST]);
     }
 
     // original eh float e chamada eh comp var ----------------------------
@@ -625,7 +625,7 @@ void par_check(int et)
         fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
         
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // original eh comp e chamada eh int acc ------------------------------
@@ -635,7 +635,7 @@ void par_check(int et)
         fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
         
         add_instr("I2F\n");
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // original eh comp e chamada eh float var ----------------------------
@@ -645,7 +645,7 @@ void par_check(int et)
         fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
         add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // original eh comp e chamada eh float const --------------------------
@@ -654,8 +654,8 @@ void par_check(int et)
     {
         fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-        add_instr("%s %d // %s\n", ld, f2mf(v_name[et%OFST]), v_name[et%OFST]);
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("%s %s\n", ld, v_name[et%OFST]);
+        add_instr("P_LOD 0.0\n");
     }
 
     // original eh comp e chamada eh float acc ----------------------------
@@ -664,7 +664,7 @@ void par_check(int et)
     {
         fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id2]);
 
-        add_instr("P_LOD %d // %s\n", f2mf("0.0"), "0.0");
+        add_instr("P_LOD 0.0\n");
     }
 
     // original eh comp e chamada eh comp const ---------------------------
@@ -673,8 +673,8 @@ void par_check(int et)
     {
         get_cmp_cst(et,&etr,&eti);
 
-        add_instr("%s %d // %s\n" , ld, f2mf(v_name[etr%OFST]), v_name[etr%OFST]);
-        add_instr("P_LOD %d // %s\n",     f2mf(v_name[eti%OFST]), v_name[eti%OFST]);
+        add_instr("%s %s\n", ld, v_name[etr%OFST]);
+        add_instr("P_LOD %s\n",  v_name[eti%OFST]);
     }
 
     // original eh comp e chamada eh comp var -----------------------------

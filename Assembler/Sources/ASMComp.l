@@ -14,7 +14,11 @@ int  pp       = 0;
 
 %}
 
-CONST    [-+]?[0-9]*\.?[0-9]+
+DIGITO [0-9]
+
+INNUM  [-+]?{DIGITO}+
+FLNUM  [-+]?(0|[1-9]+{DIGITO}*)\.?{DIGITO}*
+
 VARIA    [a-zA-Z][a-zA-Z0-9_]*
 STRIN     \"(\\.|[^\\"])*\"
 LABEL   @[a-zA-Z][a-zA-Z0-9_]*
@@ -159,9 +163,11 @@ LINHA          \n
    "SRS"   eval_opcode(91,1, yytext,   "SRS"  );
  "S_SRS"   eval_opcode(92,0, yytext,   "SRS"  );
 
-{CONST}   eval_opernd(yytext  ,1); // instrucoes da ula com constantes
-{STRIN}   eval_opernd(yytext+1,0); // tirar aspas dos arquivos pra nao usar mais isso
 {VARIA}   eval_opernd(yytext  ,0); // instrucoes da ula com variaveis
+{INNUM}   eval_opernd(yytext  ,1); // instrucoes da ula com constante int
+{FLNUM}   eval_opernd(yytext  ,2); // instrucoes da ula com constante float
+
+{STRIN}   eval_opernd(yytext+1,0); // instrucoes com strings (ex: arquivo de incializacao de array)
 {LABEL}   eval_label (yytext+1  ); // instrucoes de salto
 
 {COMEN}

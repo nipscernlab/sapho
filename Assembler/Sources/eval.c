@@ -163,12 +163,15 @@ int is_var(char *va, int *tipo, int *is_global)
 // soh eh executado na fase pp
 void oper_ula(char *va, int is_const)
 {
-    if (find_var(va) == -1) // aqui tem q mudar para saber se a constante eh fix ou float
-                            // talvez criar mais uma variavel array pra marcar cada constante
-                            // dependendo do mnemonico a esquerda
-
-    {   // variavel nao existe ainda
-        int val = (is_const) ? atoi(va) : 0; // usar f2mf pra escrever em float no assembley
+    if (find_var(va) == -1)
+    {
+        int val;
+        switch(is_const)
+        {
+            case 0: val = 0;        break;
+            case 1: val = atoi(va); break;
+            case 2: val = f2mf(va); break;
+        }
 
         add_var (va, val);
         add_data(    val);
