@@ -86,8 +86,8 @@ void build_proc()
     // copia o conteudo do processador
     while(fgets(texto, 1001, input) != NULL)
     {
-        if ( strstr(texto,             "core #(.NUBITS(NUBITS),") != NULL)
-            fprintf(output,     "core_%s_sim #(.NUBITS(NUBITS),\n",  name);
+        if ( strstr(texto,             "core #(.NBOPCO (NBOPCO ),") != NULL)
+            fprintf(output,     "core_%s_sim #(.NBOPCO (NBOPCO ),\n",  name);
         else if (strstr(texto,    "mem_data # (.NADDRE(MDATAS),")    != 0)
             fprintf(output,    "mem_data_%s # (.NADDRE(MDATAS),\n",  name);
         else
