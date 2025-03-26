@@ -22,55 +22,6 @@ FILE *f_float;
 // conversao de dados ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// converte um numero float (escrito em uma string) em meu float
-// soh funciona ate 32 bits. TODO: generalizar
-unsigned int f2mf(char *va)
-{
-    float f = atof(va);
-
-    if (f == 0.0) return 1 << (nbmant + nbexpo -1);
-
-    int *ifl = (int*)&f;
-
-    // desempacota padrao IEEE ------------------------------------------------
-
-    int s =  (*ifl >> 31) & 0x00000001;
-    int e = ((*ifl >> 23) & 0xFF) - 127 - 22;
-    int m = ((*ifl & 0x007FFFFF) + 0x00800000) >> 1;
-
-    // sinal ------------------------------------------------------------------
-
-    s = s << (nbmant + nbexpo);
-
-    // expoente ---------------------------------------------------------------
-
-    e = e + (23-nbmant);
-
-    int sh = 0;
-    while (e < -pow(2, nbexpo-1))
-    {
-        e   = e+1;
-        sh = sh+1;
-    }
-    e = e & ((int)(pow(2,nbexpo)-1));
-    e = e << nbmant;
-
-    // mantissa ---------------------------------------------------------------
-
-    if (nbmant == 23)
-    {
-        if (*ifl & 0x00000001) m = m+1; // arredonda
-    }
-    else
-    {
-        sh = 23-nbmant+sh;
-        int carry = (m >> (sh-1)) & 0x00000001; // carry de arredondamento
-        m = m >> sh;
-        if (carry) m = m+1; // arredonda
-    }
-    return (unsigned)(s + e + m);
-}
-
 // converte o inteiro x para binario de comprimento w
 // tentar mudar para conseguir converter int maior de 32 bits
 char *itob(int x, int w)
@@ -155,16 +106,13 @@ void get_cmp_ets(int et, int *et_r, int *et_i)
 // valor a ser usado na convergencia dos funcoes aritmeticas iterativas
 // o inum pega uma string com o numero inteiro equivalente
 // o fnum pega uma string com o proprio numero float
-void epsilon_taylor(char *inum, char *fnum)
+void epsilon_taylor(char *fnum)
 {
     // acha o dobro do menor valor possivel em float
     double numf = 2.0*pow(2, nbmant-1)*pow(2,-pow(2,nbexpo-1));
     // se  aprecisao for grande, usa o padrao
     if    (numf < 0.0000001) numf = 0.0000001;
     sprintf(fnum, "%.7f",    numf);
-
-    int     numi = f2mf(fnum);
-    sprintf(inum, "%d", numi);
 }
 
 // cria um novo arquivo e copia o conteudo
@@ -213,29 +161,13 @@ void header_int(char *fasm, char *pc_sim_mem)
     add_sinst(0, "// Gera variaveis auxiliares --------------------------------------------------\n\n");
 
     // LOD NULL deve ser a primeira instrucao sempre, pra evitar problemas de reset
-    add_sinst(-1, "LOD NULL              // evita problema da primeira instrucao com o reset ascincrono\n\n");
-
-    // numero zero
-    add_sinst(-1, "LOD %d           // 0.0\n", 1 << (nbmant+nbexpo-1));
-    add_sinst(-1, "SET  float_zero        // guarda o num zero\n\n");
+    add_sinst(-1, "LOD NULL              // evita problema da primeira instrucao com o reset ascincrono\n");
 
     // epsilon para convergencia de funcoes iterativas
-    char numi[64], numf[64];
-    epsilon_taylor(numi,numf);
-    add_sinst(-1, "LOD %s           // %s epsilon usado em funcoes aritmeticas iterativas\n", numi, numf);
-    add_sinst(-1, "SET  epsilon_taylor\n\n");
-
-    // pi sobre 2
-    add_sinst(-1, "LOD %d           // pi/2 usado em funcoes trigonimetricas\n",f2mf("1.57079632679489661923"));
-    add_sinst(-1, "SET  pi_div_2\n\n");
-
-    // 1/2
-    add_sinst(-1, "LOD %d           // 1/2\n", f2mf("0.5"));
-    add_sinst(-1, "SET  um_div_2\n\n");
-
-    // numero 1.0
-    add_sinst(-1, "LOD %d           // numero 1.0 em float\n", f2mf("1.0"));
-    add_sinst(-1, "SET  num_um\n\n");
+    char numf[64];
+    epsilon_taylor(numf);
+    add_sinst(-1, "LOD %s\n", numf);
+    add_sinst(-1, "SET epsilon_taylor\n\n");
 
     add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");
 

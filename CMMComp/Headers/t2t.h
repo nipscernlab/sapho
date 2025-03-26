@@ -4,8 +4,7 @@
 
 // conversao de dados ---------------------------------------------------------
 
-unsigned int f2mf(char     *va);                    // converte float   para meu float
-char        *itob(int x, int w);                    // converte inteiro para string binaria
+char* itob(int x, int w);                           // converte inteiro para string binaria
 
 // funcoes auxiliares de acesso a terminais -----------------------------------
 

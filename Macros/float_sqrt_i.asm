@@ -6,7 +6,7 @@
 
              F_DIV   sqrt_num                  // iteracao
              F_ADD   sqrt_x
-             F_MLT   um_div_2 // 0.5
+             F_MLT   0.5
              SET     sqrt_raiz
 
              F_NEG                              // negacao da raiz

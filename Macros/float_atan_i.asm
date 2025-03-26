@@ -3,27 +3,27 @@
 
 @float_atani SET my_atan_x          // pega parametro x
 
-EQU    float_zero // 0.0            // if (x == 0) return 0.0;
+EQU    0.0                          // if (x == 0) return 0.0;
 JIZ    L1else_atani
-LOD    float_zero // 0.0
+LOD    0.0
 RET
 
 @L1else_atani F_ABS_M my_atan_x     // if (abs(x) == 1.0) return sign(x,pi2*0.5);
-EQU     num_um // 1.0
+EQU     1.0
 JIZ     L2else_atani
-LOD     pi_div_2
-F_MLT   um_div_2 // 0.5
+LOD     1.57079632679489661923      // pi/2
+F_MLT   0.5
 F_SGN   my_atan_x
 RET
 JMP     L2end_atani
 
 @L2else_atani F_ABS_M my_atan_x     // else if (abs(x) > 1.0) return sign(x,pi2) - atan(1.0/x);
-F_LES   num_um // 1.0
+F_LES   1.0
 JIZ     L3else_atani
-LOD     pi_div_2
+LOD     1.57079632679489661923      // pi/2
 F_SGN   my_atan_x
 P_LOD   my_atan_x
-F_DIV   num_um // 1.0
+F_DIV   1.0
 CAL     float_atani
 F_NEG
 SF_ADD
