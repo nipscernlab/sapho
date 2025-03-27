@@ -33,6 +33,29 @@ char *get_iname  (){sprintf(tmp, "%s/Hardware/%s_inst.mif", proc_dir,name); retu
 char *get_vname  (){sprintf(tmp, "%s/Hardware/%s.v"       , proc_dir,name); return tmp;}
 char *get_tb_name(){sprintf(tmp, "%s/%s_tb.v"             , temp_dir,name); return tmp;}
 
+// pega num de instr no arquivo cmm_log.txt, depois do caractere #
+int get_num_ins()
+{
+    int num_ins;
+    char path[1024]; sprintf(path, "%s/cmm_log.txt", temp_dir);
+    FILE *input = fopen(path, "r");
+
+    char texto[1001] = "";
+    while(fgets(texto, 1001, input) != NULL)
+    {
+        if(strstr(texto, "#") != NULL)
+        {
+            memset(texto, 0, sizeof(char) * 1001);
+             fgets(texto, 1001, input);
+            num_ins = atoi(texto);
+        }
+        memset(texto, 0, sizeof(char) * 1001);
+    }
+    fclose(input );
+
+    return num_ins;
+}
+
 // cria arquivo de simulacao para o core.v
 // eh usado com multicore
 void build_core()
@@ -199,6 +222,8 @@ void build_vv_file()
     fprintf(f_veri,              ".NUGAIN(%d),\n",nugain);
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
+    fprintf(f_veri, ".NUINST(%d),\n", get_num_ins()); // nem sempre eh igual a n_ins (depende se tem macro)
+    fprintf(f_veri, ".MEMTAB(\"pc_%s_mem.txt\"),\n", name);
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
     fprintf(f_veri, ".SDEPTH(%d),\n", sdepth);
     fprintf(f_veri, ".NUIOIN(%d),\n", nmioin);
@@ -339,25 +364,11 @@ void build_pc_file()
     }
     fclose(input );
 
-    int num_ins; // guarda o num total de instrucoes
-
-    // pega num_ins no arquivo cmm_log.txt, depois do caractere #
-    sprintf(path, "%s/cmm_log.txt", temp_dir);
-    input = fopen(path, "r");
-
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        if(strstr(texto, "#") != NULL)
-        {
-            memset(texto, 0, sizeof(char) * 1001);
-             fgets(texto, 1001, input);
-            num_ins = atoi(texto);
-        }
-        memset(texto, 0, sizeof(char) * 1001);
-    }
-    fclose(input );
+    int num_ins = get_num_ins(); // guarda o num total de instrucoes
 
     fprintf(output, "// Simulacao ------------------------------------------------------------------\n\n");
+
+    fprintf(output, "`ifdef __ICARUS__\n\n");
 
     int nr = 10; // numero de atrasos
     for (int i=0;i<nr;i++)
@@ -406,6 +417,7 @@ void build_pc_file()
     fprintf(output, "end\nend\n\n");
     }
 
+    fprintf(output, "`endif\n\n");
     fprintf(output, "endmodule\n");
 
     fclose(output);

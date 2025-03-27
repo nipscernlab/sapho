@@ -1,6 +1,8 @@
 module pc
 #(
-	parameter NBITS = 8
+	parameter NBITS = 8,
+	parameter NUINS = 0,
+	parameter FNAME = ""
 )
 (
 	 input              clk, rst,

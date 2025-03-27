@@ -6,7 +6,7 @@ module processor
 
   // fluxo de dados
   parameter NBOPCO = 7,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
-  parameter ITRADD =  0,              // Endereco da interrupcao
+  parameter ITRADD = 0,               // Endereco da interrupcao
 
 	// memorias
 	parameter IFILE  = "inst.mif",      // Arquivo contendo o programa a ser executado
@@ -15,6 +15,10 @@ module processor
 	parameter MINSTS = 64,              // Tamanho da memoria de intrucoes
   parameter MDATAW = $clog2(MDATAS),  // Numero de bits de endereco da memoria de dados
 	parameter MINSTW = $clog2(MINSTS),  // Numero de bits de endereco da memoria de instrucao
+
+  // simulacao
+	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly
+	parameter MEMTAB = "",              // arquivo texto com a tabela de instrucoes
 
   // -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
@@ -152,6 +156,8 @@ core #(.NBOPCO (NBOPCO ),
        .MDATAW (MDATAW ),
        .MINSTW (MINSTW ),
        .MDATAS (MDATAS ),
+       .NUINST (NUINST ),
+       .MEMTAB (MEMTAB ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),
@@ -226,6 +232,8 @@ core #(.NBOPCO (NBOPCO ),
        .MDATAW (MDATAW ),
        .MINSTW (MINSTW ),
        .MDATAS (MDATAS ),
+       .NUINST (NUINST ),
+       .MEMTAB (MEMTAB ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),

@@ -15,6 +15,10 @@ module core
 	parameter NBINST = NBOPCO + NBOPER, // Numero de bits da memoria de instrucao
 	parameter MDATAS = 512,             // Numero de enderecos da memoria de dados
 
+	// simulacao
+	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly
+	parameter MEMTAB = "",              // arquivo texto com a tabela de instrucoes
+
 	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
 	// -------------------------------------------------------------------------
@@ -152,7 +156,7 @@ generate
 
 endgenerate
 
-pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);
+pc #(MINSTW,NUINST,MEMTAB) pc (clk, rst, pc_load, pcl, pc_addr);
 
 // Prefetch de instrucao ------------------------------------------------------
 
