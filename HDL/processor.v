@@ -19,6 +19,8 @@ module processor
   // simulacao
 	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly
 	parameter MEMTAB = "",              // arquivo texto com a tabela de instrucoes
+  parameter FIMADD =  0,              // endereco da instrucao FIM
+  parameter SIMTYP =  0,              // tipo de simulacao (0 para single e 1 para multicore)
 
   // -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
@@ -129,7 +131,10 @@ module processor
 	output [$clog2(NUIOIN)-1:0] addr_in ,
 	output [$clog2(NUIOOU)-1:0] addr_out,
 	output                      req_in  , out_en,
-	input                       itr
+	input                       itr,
+
+  output                      mem_wr,
+  output         [MDATAW-1:0] mem_addr_w
 );
 
 // ----------------------------------------------------------------------------
@@ -137,8 +142,7 @@ module processor
 // ----------------------------------------------------------------------------
 
 wire        [MINSTW-1:0] instr_addr;
-wire                     mem_wr;
-wire        [MDATAW-1:0] mem_addr_w, mem_addr_r;
+wire        [MDATAW-1:0] mem_addr_r;
 wire signed [NUBITS-1:0] mem_data_in;
 wire signed [NUBITS-1:0] mem_data_out;
 
@@ -158,6 +162,8 @@ core #(.NBOPCO (NBOPCO ),
        .MDATAS (MDATAS ),
        .NUINST (NUINST ),
        .MEMTAB (MEMTAB ),
+       .FIMADD (FIMADD ),
+       .SIMTYP (SIMTYP ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),
@@ -234,6 +240,8 @@ core #(.NBOPCO (NBOPCO ),
        .MDATAS (MDATAS ),
        .NUINST (NUINST ),
        .MEMTAB (MEMTAB ),
+       .FIMADD (FIMADD ),
+       .SIMTYP (SIMTYP ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),

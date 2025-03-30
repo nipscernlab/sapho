@@ -18,6 +18,8 @@ module core
 	// simulacao
 	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly
 	parameter MEMTAB = "",              // arquivo texto com a tabela de instrucoes
+	parameter FIMADD =  0,              // endereco da instrucao FIM
+	parameter SIMTYP =  0,              // tipo de simulacao (0 para single e 1 para multicore)
 
 	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
@@ -156,7 +158,7 @@ generate
 
 endgenerate
 
-pc #(MINSTW,NUINST,MEMTAB) pc (clk, rst, pc_load, pcl, pc_addr);
+pc #(MINSTW,NUINST,MEMTAB,FIMADD,SIMTYP) pc (clk, rst, pc_load, pcl, pc_addr);
 
 // Prefetch de instrucao ------------------------------------------------------
 

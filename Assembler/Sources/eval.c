@@ -110,12 +110,11 @@ void add_data(int val)
 // funcao auxiliar que procura no arquivo cmm_log.txt se ...
 // char *va aponta para uma variavel declarada no .cmm
 // tambem retorna o tipo da variavel encontrada
-int is_var(char *va, int *tipo, int *is_global)
+int is_var(char *va, int *tipo, int *is_global, char *nome)
 {
     char texto[1001];
     char funcao[128];
     char variav[128];
-    char nome  [128];
 
     // abre o arquivo de log
     char path[1024];
@@ -148,7 +147,12 @@ int is_var(char *va, int *tipo, int *is_global)
             sprintf(nome , "%s_%s", funcao, variav);
         }
 
-        if (strcmp(nome,va) == 0) {ok = 1; break;}
+        if (strcmp(nome,va) == 0)
+        {
+            sprintf(nome , "%s_v_%s", funcao, variav);
+            ok = 1;
+            break;
+        }
     }
     
     fclose(input);
@@ -181,12 +185,13 @@ void oper_ula(char *va, int is_const)
         // se sim, cadastra ela para mostrar no simulador
         int tipo;
         int is_global;
-        if (pp && is_var(va, &tipo, &is_global))
+        char var_name[128];
+        if (pp && is_var(va, &tipo, &is_global, var_name))
         {
             if (is_global)
-                sprintf(v_namo[v_cont], "me%d_global_%s", tipo, va);
+                sprintf(v_namo[v_cont], "me%d_f_global_v_%s_e_", tipo, va);
             else
-                sprintf(v_namo[v_cont], "me%d_%s", tipo, va);
+                sprintf(v_namo[v_cont], "me%d_f_%s_e_", tipo, var_name);
             v_add  [v_cont] = n_dat-1;
             v_tipo [v_cont] = tipo;
             v_cont++;

@@ -195,26 +195,28 @@ void build_vv_file()
     f_veri = fopen(get_vname(), "w");
 
     fprintf(f_veri, "module %s (\n", name);
-    fprintf(f_veri, "input clk, rst,\n");
+    fprintf(f_veri, "input  clk, rst,\n");
 
     int s1 = nbits-1;
     int s2 = nbits-1;
 
-    fprintf(f_veri, "input signed [%d:0] io_in,\n"  , s1);
+    fprintf(f_veri, "input  signed [%d:0] io_in ,\n", s1);
     fprintf(f_veri, "output signed [%d:0] io_out,\n", s2);
 
     fprintf(f_veri, "output [%d:0] req_in,\n", nmioin-1);
     fprintf(f_veri, "output [%d:0] out_en,\n", nuioou-1);
     fprintf(f_veri, "input itr);\n\n");
 
-    fprintf(f_veri, "wire signed [%d:0] in_float;\n"   , s2);
-    fprintf(f_veri, "wire signed [%d:0] out_float;\n\n", s2);
-
-    fprintf(f_veri, "assign in_float = io_in;\n\n");
-
     fprintf(f_veri, "wire proc_req_in, proc_out_en;\n");
-    fprintf(f_veri, "wire [%d:0] addr_in;\n"   , (int)ceil(log2(nmioin)-1));
-    fprintf(f_veri, "wire [%d:0] addr_out;\n\n", (int)ceil(log2(nuioou)-1));
+
+    int d1 = (int)ceil(log2(nmioin)-1); // ta dando problema quando eh < 2
+    int d2 = (int)ceil(log2(nuioou)-1); // aqui tb (rever)
+
+    fprintf(f_veri, "wire [%d:0] addr_in;\n"   , d1);
+    fprintf(f_veri, "wire [%d:0] addr_out;\n\n", d2);
+
+    fprintf(f_veri, "wire mem_wr;\n");
+    fprintf(f_veri, "wire [%d:0] mem_addr_wr;\n\n", (int)ceil(log2(n_dat)-1));
 
     fprintf(f_veri, "processor\n#(.NUBITS(%d),\n",nbits );
     fprintf(f_veri,              ".NBMANT(%d),\n",nbmant);
@@ -224,6 +226,8 @@ void build_vv_file()
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
     fprintf(f_veri, ".NUINST(%d),\n", get_num_ins()); // nem sempre eh igual a n_ins (depende se tem macro)
     fprintf(f_veri, ".MEMTAB(\"pc_%s_mem.txt\"),\n", name);
+    fprintf(f_veri, ".FIMADD(%d),\n", fim_addr);
+    fprintf(f_veri, ".SIMTYP(%d),\n", sim_typ);
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
     fprintf(f_veri, ".SDEPTH(%d),\n", sdepth);
     fprintf(f_veri, ".NUIOIN(%d),\n", nmioin);
@@ -236,9 +240,7 @@ void build_vv_file()
 
     fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n", name);
     fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , name);
-    fprintf(f_veri, ") p_%s (clk, rst, in_float, out_float, addr_in, addr_out, proc_req_in, proc_out_en, itr);\n\n", name);
-
-    fprintf(f_veri, "assign io_out = out_float;\n\n");
+    fprintf(f_veri, ") p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr);\n\n", name);
 
     if (nmioin == 1)
     fprintf(f_veri, "assign req_in = proc_req_in;\n");
@@ -249,6 +251,62 @@ void build_vv_file()
     fprintf(f_veri, "assign out_en = proc_out_en;\n\n");
     else
     fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou);
+
+    // simulacao --------------------------------------------------------------
+
+    fprintf(f_veri, "// Simulacao -------------------------------------------------------------\n\n");
+
+    fprintf(f_veri, "`ifdef __ICARUS__\n\n");
+
+    int i;
+    // cria um registrador para cada variavel encontrada
+    for (i = 0; i < v_cont; i++)
+    {
+        if (v_tipo[i] == 2)
+            fprintf(f_veri, "reg [16+%d-1:0] %s=0;\n", nbits, v_namo[i]);
+        else
+            fprintf(f_veri, "reg [%d-1:0] %s=0;\n"   , nbits, v_namo[i]);
+    }
+    
+    // inicia o always para registrar as variaveis
+    fprintf(f_veri, "\nalways @ (posedge clk) begin\n");
+
+    // registra cada variavel, dependendo do endereco de cada uma
+    for (i = 0; i < v_cont; i++)
+    {
+        if (v_tipo[i] == 2)
+            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,io_out};\n", v_add[i], v_namo[i], nbmant, nbexpo);
+        else
+            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= io_out;\n", v_add[i], v_namo[i]);
+    }
+
+    fprintf(f_veri, "end\n\n");
+
+    // se a variavel for comp ...
+    // junta a parte real e complexa em uma variavel do dobro de tamanho
+    for (i = 0; i < v_cont; i++)
+    {
+        if (v_tipo[i] == 3)
+        {
+            for (int j = 0; j < v_cont; j++)
+            {
+                char ni[64],nj[64];
+                strcpy(ni,v_namo[i]);
+                strcpy(nj,v_namo[j]);
+                ni[strlen(ni)-3] = '\0';
+                nj[strlen(nj)-3] = '\0';
+
+                char im[64];
+                sprintf(im, "%s_i", ni);
+                if (strcmp(nj,im) == 0)
+                    fprintf(f_veri,"wire [16+%d*2-1:0] comp_%s = {8'd%d, 8'd%d, %s, %s};\n", nbits, v_namo[i], nbmant, nbexpo, v_namo[i], v_namo[j]);
+            }
+        }
+    }
+
+    fprintf(f_veri, "\n`endif\n\n");
+
+    // -----------------------------------------------------------------------------------
 
     fprintf(f_veri, "endmodule");
 

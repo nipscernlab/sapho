@@ -107,11 +107,12 @@ cd  %BIN_DIR%
 
 (for %%i in (%PROC_LIST%) do (
     ASMComp.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i %HDL_DIR% %TMP_DIR%\%%i 0 0 1
+    cp %PROJ_DIR%\%%i\Hardware\%%i.v %TMP_DIR%\%%i
 ))
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
-cd  %TMP_DIR%
+cd %TMP_DIR%
 
 setlocal enabledelayedexpansion
 
@@ -123,14 +124,8 @@ for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "HDL_V=!HDL_V!%HDL_DIR%\%%
 dir %TOPL_DIR%\*.v /b > f_list.txt
 for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "TOP_V=!TOP_V!%TOPL_DIR%\%%a "
 
-:: lista arquivos dos processadores encontrados (simulacao)
-for %%a in (%PROC_LIST%) do (
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a_sim.v "
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\proc_%%a_sim.v "
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\core_%%a_sim.v "
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\pc_%%a.v "
-    set "PRO_V=!PRO_V!%TMP_DIR%\%%a\mem_data_%%a.v "
-)     
+:: lista arquivos dos processadores encontrados
+for %%a in (%PROC_LIST%) do set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a.v " 
 
 iverilog -s %TB% -o %TMP_DIR%\%PROJET%.vvp %HDL_V% %PRO_V% %TOP_V%
 

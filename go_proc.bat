@@ -122,7 +122,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v %TMP_PRO%\mem_data_%PROC%.v %TMP_PRO%\pc_%PROC%.v addr_dec.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v stack.v rel_addr.v processor.v core.v ula.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v mem_data.v addr_dec.v pc.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v stack.v rel_addr.v processor.v core.v ula.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 

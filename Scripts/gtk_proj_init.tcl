@@ -70,13 +70,13 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first "$proc.req_in_sim_" $facname]
+    set index [string first "$proc.req_in" $facname]
     if {$proc_id != -1 && $index != -1} {
         lappend req_in $facname
         incr j
     }
 
-    set index [string first "$proc.in_sim_" $facname]
+    set index [string first "$proc.in" $facname]
     if {$proc_id != -1 && $index != -1} {
         lappend entrada $facname
     }
@@ -108,7 +108,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first "$proc.out_en_sim_" $facname]
+    set index [string first "$proc.out_en" $facname]
     if {$proc_id != -1 && $index != -1} {
         lappend out_en $facname
         incr j
@@ -195,34 +195,24 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first mdata.me1 $facname]
+    set name $proc.me1
+    set index [string first $name $facname]
+
     if {$proc_id != -1 && $index != -1} {
         incr var_n
         lappend var_int $facname
 
-        # pega funcao
-        set findex [expr $index + 10]
-        for {set j $findex} {$j < [string length $facname]} {incr j} {
-            set char [string index $facname $j]
-            if {[string compare $char "_"] == 0} {
-                set lindex $j
-                break
-            }
+       # pega funcao
+        set funcao []
+        if {[regexp {_f_(.*?)_v_} $facname -> funcao]} {
+            lappend var_int_func $funcao
         }
-        set funcao [string range $facname $findex [expr $lindex -1]]
-        lappend var_int_func $funcao
 
         # pega variavel
-        set findex [expr $j + 1]
-        for {set j $findex} {$j < [string length $facname]} {incr j} {
-            set char [string index $facname $j]
-            if {[string compare $char {[}] == 0} {
-                set lindex $j
-                break
-            }
+        set variaveis []
+        if {[regexp {_v_(.*?)_e_} $facname -> variaveis]} {
+            lappend var_int_name $variaveis
         }
-        set variaveis [string range $facname $findex [expr $lindex -1]]
-        lappend var_int_name $variaveis
 	}
 }
 
@@ -257,34 +247,24 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first mdata.me2 $facname]
+    set name $proc.me2
+    set index [string first $name $facname]
+
     if {$proc_id != -1 && $index != -1} {
         incr var_n
         lappend var_float $facname
 
         # pega funcao
-        set findex [expr $index + 10]
-        for {set j $findex} {$j < [string length $facname]} {incr j} {
-            set char [string index $facname $j]
-            if {[string compare $char "_"] == 0} {
-                set lindex $j
-                break
-            }
+        set funcao []
+        if {[regexp {_f_(.*?)_v_} $facname -> funcao]} {
+            lappend var_float_func $funcao
         }
-        set funcao [string range $facname $findex [expr $lindex -1]]
-        lappend var_float_func $funcao
 
         # pega variavel
-        set findex [expr $j + 1]
-        for {set j $findex} {$j < [string length $facname]} {incr j} {
-            set char [string index $facname $j]
-            if {[string compare $char {[}] == 0} {
-                set lindex $j
-                break
-            }
+        set variaveis []
+        if {[regexp {_v_(.*?)_e_} $facname -> variaveis]} {
+            lappend var_float_name $variaveis
         }
-        set variaveis [string range $facname $findex [expr $lindex -1]]
-        lappend var_float_name $variaveis
 	}
 }
 
@@ -321,34 +301,24 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first mdata.comp_me3 $facname]
+    set name $proc.comp.me3
+    set index [string first $name $facname]
+
     if {$proc_id != -1 && $index != -1} {
         incr var_n
         lappend var_comp $facname
 
         # pega funcao
-        set findex [expr $index + 15]
-        for {set j $findex} {$j < [string length $facname]} {incr j} {
-            set char [string index $facname $j]
-            if {[string compare $char "_"] == 0} {
-                set lindex $j
-                break
-            }
+        set funcao []
+        if {[regexp {_f_(.*?)_v_} $facname -> funcao]} {
+            lappend var_comp_func $funcao
         }
-        set funcao [string range $facname $findex [expr $lindex -1]]
-        lappend var_comp_func $funcao
 
         # pega variavel
-        set findex [expr $j + 1]
-        for {set j $findex} {$j < [string length $facname]} {incr j} {
-            set char [string index $facname $j]
-            if {[string compare $char {[}] == 0} {
-                set lindex $j
-                break
-            }
+        set variaveis []
+        if {[regexp {_v_(.*?)_e_} $facname -> variaveis]} {
+            lappend var_comp_name $variaveis
         }
-        set variaveis [string range $facname $findex [expr $lindex -1]]
-        lappend var_comp_name $variaveis
 	}
 }
 
