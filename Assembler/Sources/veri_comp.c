@@ -56,138 +56,6 @@ int get_num_ins()
     return num_ins;
 }
 
-// cria arquivo de simulacao para o core.v
-// eh usado com multicore
-void build_core()
-{
-    char path[1024];
-    sprintf(path, "%s/core_%s_sim.v",temp_dir,name);
-
-    FILE *input;
-    FILE *output = fopen(path, "w");
-
-    char texto[1001] = "";
-
-    sprintf(path, "%s/core.v", hdl_dir);
-    input = fopen(path, "r");
-
-    fgets(texto, 1001, input);
-    fprintf(output, "module core_%s_sim\n", name);
-
-    // copia o conteudo do processador
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        if(strstr(texto,     "pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);") != NULL)
-          fprintf(output, "pc_%s #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);\n",  name);
-        else
-            fputs(texto, output);
-        memset(texto, 0, sizeof(char) * 1001);
-    }
-
-    fclose(input );
-    fclose(output);    
-}
-
-// cria arquivo de simulacao para o proc.v
-// eh usado com multicore
-void build_proc()
-{
-    char path[1024];
-    sprintf(path, "%s/proc_%s_sim.v",temp_dir,name);
-
-    FILE *input;
-    FILE *output = fopen(path, "w");
-
-    char texto[1001] = "";
-
-    sprintf(path, "%s/processor.v", hdl_dir);
-    input = fopen(path, "r");
-
-    fgets(texto, 1001, input);
-    fprintf(output, "module proc_%s_sim\n", name);
-
-    // copia o conteudo do processador
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        if ( strstr(texto,             "core #(.NBOPCO (NBOPCO ),") != NULL)
-            fprintf(output,     "core_%s_sim #(.NBOPCO (NBOPCO ),\n",  name);
-        else if (strstr(texto,    "mem_data # (.NADDRE(MDATAS),")    != 0)
-            fprintf(output,    "mem_data_%s # (.NADDRE(MDATAS),\n",  name);
-        else
-            fputs(texto, output);
-        memset(texto, 0, sizeof(char) * 1001);
-    }
-
-    fclose(input );
-    fclose(output);    
-}
-
-// cria arquivo de simulacao para o proc
-// eh usado com multicore
-void build_proc_sim()
-{
-    char path[1024];
-    sprintf(path, "%s/%s_sim.v", temp_dir,name);
-
-    FILE *input;
-    FILE *output = fopen(path, "w");
-
-    char texto[1001] = "";
-
-    // copia o conteudo do processador
-    sprintf(path, "%s/Hardware/%s.v", proc_dir, name);
-    input = fopen(path, "r");
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        if (strstr(texto, "processor") != NULL)
-            fprintf(f_veri, "proc_%s_sim\n", name);
-        else if(strcmp(texto, "endmodule") != 0)
-            fputs(texto, output);
-           memset(texto, 0, sizeof(char) * 1001);
-    }
-    fclose(input );
-
-    int s1 = nbits-1;
-    int s2 = nbits-1;
-
-    fprintf(output, "// Simulacao ------------------------------------------------------------------\n\n");
-
-    int i;
-
-    for(i=0;i<nmioin;i++)
-    {
-    fprintf(output, "reg signed [%d:0] in_sim_%d = 0;\n", s1, i);
-    fprintf(output, "reg req_in_sim_%d = 0;\n", i);
-    }
-    fprintf(output,"\n");
-
-    for(i=0;i<nuioou;i++)
-    {
-    fprintf(output, "reg signed [%d:0] out_sig_%d = 0;\n", s2, i);
-    fprintf(output, "reg out_en_sim_%d = 0;\n", i);
-    }
-
-    fprintf(output, "\nalways @ (*) begin\n");
-    for(i=0;i<nmioin;i++)
-    {
-    fprintf(output, "   if (req_in == %d) in_sim_%d = io_in;\n", (int)pow(2,i),i);
-    fprintf(output, "   req_in_sim_%d = req_in == %d;\n", i, (int)pow(2,i),i);
-    }
-    fprintf(output, "end\n");
-
-    fprintf(output, "\nalways @ (*) begin\n");
-    for(i=0;i<nuioou;i++)
-    {
-    fprintf(output, "   if (out_en == %d) out_sig_%d <= io_out;\n", (int)pow(2,i), i);
-    fprintf(output, "   out_en_sim_%d = out_en == %d;\n", i, (int)pow(2,i),i);
-    }
-    fprintf(output, "end\n\n");
-
-    fprintf(output, "endmodule");
-
-    fclose(output);
-}
-
 // gera arquivo verilog com uma instancia do processador
 void build_vv_file()
 {
@@ -216,7 +84,8 @@ void build_vv_file()
     fprintf(f_veri, "wire [%d:0] addr_out;\n\n", d2);
 
     fprintf(f_veri, "wire mem_wr;\n");
-    fprintf(f_veri, "wire [%d:0] mem_addr_wr;\n\n", (int)ceil(log2(n_dat)-1));
+    fprintf(f_veri, "wire [%d:0] mem_addr_wr;\n" , (int)ceil(log2(n_dat)-1));
+    fprintf(f_veri, "wire [%d:0] pc_sim_val;\n\n", (int)ceil(log2(n_ins)-1));
 
     fprintf(f_veri, "processor\n#(.NUBITS(%d),\n",nbits );
     fprintf(f_veri,              ".NBMANT(%d),\n",nbmant);
@@ -224,10 +93,6 @@ void build_vv_file()
     fprintf(f_veri,              ".NUGAIN(%d),\n",nugain);
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
-    fprintf(f_veri, ".NUINST(%d),\n", get_num_ins()); // nem sempre eh igual a n_ins (depende se tem macro)
-    fprintf(f_veri, ".MEMTAB(\"pc_%s_mem.txt\"),\n", name);
-    fprintf(f_veri, ".FIMADD(%d),\n", fim_addr);
-    fprintf(f_veri, ".SIMTYP(%d),\n", sim_typ);
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
     fprintf(f_veri, ".SDEPTH(%d),\n", sdepth);
     fprintf(f_veri, ".NUIOIN(%d),\n", nmioin);
@@ -240,7 +105,7 @@ void build_vv_file()
 
     fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n", name);
     fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , name);
-    fprintf(f_veri, ") p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr);\n\n", name);
+    fprintf(f_veri, ") p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr,pc_sim_val);\n\n", name);
 
     if (nmioin == 1)
     fprintf(f_veri, "assign req_in = proc_req_in;\n");
@@ -254,9 +119,13 @@ void build_vv_file()
 
     // simulacao --------------------------------------------------------------
 
-    fprintf(f_veri, "// Simulacao -------------------------------------------------------------\n\n");
+    fprintf(f_veri, "// ----------------------------------------------------------------------------\n");
+    fprintf(f_veri, "// Simulacao ------------------------------------------------------------------\n");
+    fprintf(f_veri, "// ----------------------------------------------------------------------------\n\n");
 
     fprintf(f_veri, "`ifdef __ICARUS__\n\n");
+
+    fprintf(f_veri, "// variaveis ------------------------------------------------------------------\n\n");
 
     int i;
     // cria um registrador para cada variavel encontrada
@@ -304,21 +173,50 @@ void build_vv_file()
         }
     }
 
-    fprintf(f_veri, "\n`endif\n\n");
+    fprintf(f_veri, "\n// instrucoes -----------------------------------------------------------------\n\n");
 
-    // -----------------------------------------------------------------------------------
+    int nreg = 10;
+    for (int i = 0; i < nreg; i++)
+    {
+        fprintf(f_veri, "reg [%d-1:0] valr%d=0;\n", nbits, i+1);
+    }
+    fprintf(f_veri, "\n");
+
+    fprintf(f_veri, "reg [19:0] min [0:%d-1];\n\n", get_num_ins());
+
+    fprintf(f_veri, "reg signed [19:0] linetab =-1;\n");
+    fprintf(f_veri, "reg signed [19:0] linetabs=-1;\n\n");
+
+    fprintf(f_veri, "initial	$readmemb(\"pc_%s_mem.txt\",min);\n\n", name);
+
+    fprintf(f_veri, "always @ (posedge clk) begin\n");
+    fprintf(f_veri, "if (pc_sim_val < %d) linetab <= min[pc_sim_val];\n", get_num_ins());
+    fprintf(f_veri, "valr1  <= pc_sim_val;\n");
+    fprintf(f_veri, "valr2  <= valr1;\n");
+    fprintf(f_veri, "valr3  <= valr2;\n");
+    fprintf(f_veri, "valr4  <= valr3;\n");
+    fprintf(f_veri, "valr5  <= valr4;\n");
+    fprintf(f_veri, "valr6  <= valr5;\n");
+    fprintf(f_veri, "valr7  <= valr6;\n");
+    fprintf(f_veri, "valr8  <= valr7;\n");
+    fprintf(f_veri, "valr9  <= valr8;\n");
+    fprintf(f_veri, "valr10 <= valr9;\n");
+    fprintf(f_veri, "linetabs <= linetab;\n");
+    fprintf(f_veri, "end\n\n");
+
+    if (sim_typ==0)
+    {
+    fprintf(f_veri, "always @ (posedge clk) if (valr10 == %d) begin\n", fim_addr);
+    fprintf(f_veri, "$display(\"Fim do programa!\");\n");
+    fprintf(f_veri, "$finish;\n");
+    fprintf(f_veri, "end\n\n");
+    }
+
+    fprintf(f_veri, "`endif\n\n");
 
     fprintf(f_veri, "endmodule");
 
     fclose(f_veri);
-
-    // se for multicore, criar arquivos de simulacao para cada tipo de proc
-    if (sim_typ==1)
-    {
-        build_proc_sim();
-        build_proc();
-        build_core();
-    }
 }
 
 void build_tb_file()
@@ -392,169 +290,4 @@ void build_tb_file()
     fprintf(f_veri, "\nendmodule\n");
 
     fclose (f_veri);
-}
-
-// gera arquivo verilog do program counter para simulacao
-void build_pc_file()
-{
-    char path[1024];
-    sprintf(path, "%s/pc_%s.v", temp_dir,name);
-
-    FILE *input;
-    FILE *output = fopen(path, "w");
-
-    char texto[1001] = "";
-
-    // copia o conteudo de pc.v
-    sprintf(path, "%s/pc.v", hdl_dir);
-    input = fopen(path, "r");
-
-    if (sim_typ == 1)
-    {
-        fgets  (texto , 1001, input);
-        fprintf(output, "module pc_%s\n", name);
-    }
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        if(strcmp(texto, "endmodule") != 0)
-            fputs(texto, output);
-           memset(texto, 0, sizeof(char) * 1001);
-    }
-    fclose(input );
-
-    int num_ins = get_num_ins(); // guarda o num total de instrucoes
-
-    fprintf(output, "// Simulacao ------------------------------------------------------------------\n\n");
-
-    fprintf(output, "`ifdef __ICARUS__\n\n");
-
-    int nr = 10; // numero de atrasos
-    for (int i=0;i<nr;i++)
-    {
-        // cria nr registradores para atrasar o valor de val em pc.v
-        // val contem o endereco da instrucao atualmente sendo executada
-        // o programa para nr clocks apos chegar a instrucao @fim JMP fim
-        fprintf(output, "reg [NBITS-1:0] valr%d=0;\n",i+1);
-    }
-
-    fprintf(output, "\n");
-    // cria memoria (min) para guardar o valor da linha ...
-    // no arquivo .cmm de cada instrucao gerada
-    fprintf(output, "reg [19:0] min [0:%d];\n\n", num_ins-1);
-
-    // linetab eh o valor da linha atual na tabela
-    fprintf(output, "reg signed [19:0] linetab =-1;\n");
-    // linetabs eh o valor atual registrado
-    fprintf(output, "reg signed [19:0] linetabs=-1;\n\n");
-
-    // le o arquivo gerado pelo compilador c com o conteudo da tabela
-    fprintf(output, "initial $readmemb(\"pc_%s_mem.txt\", min);\n\n", name);
-
-    fprintf(output, "always @ (posedge clk) begin\n");
-    fprintf(output, "    if (val < %d) linetab <= min[val];\n", num_ins);
-
-    // faz o shift register com os atrasos de val
-    fprintf(output, "	valr1 <= val;\n");
-    for (int i=2;i<=nr;i++)
-    {
-        fprintf(output, "	valr%d <= valr%d;\n", i, i-1);
-    }
-
-    fprintf(output,"\n");
-    // atrasa o conteudo da linha correspondente no .cmm
-    fprintf(output, "   linetabs <= linetab;\n");
-    fprintf(output, "end\n\n");
-
-    if (sim_typ == 0)
-    {
-    // para a simulacao nr clocks depois de achar a instrucao @fim JMP fim
-    fprintf(output, "always @ (posedge clk) begin\n");
-    fprintf(output, "if (valr%d == %d) begin\n",nr,fim_addr);
-    fprintf(f_veri, "$display(\"Fim do programa!\");\n");
-    fprintf(f_veri, "$finish;\n");
-    fprintf(output, "end\nend\n\n");
-    }
-
-    fprintf(output, "`endif\n\n");
-    fprintf(output, "endmodule\n");
-
-    fclose(output);
-}
-
-// gera arquivo verilog da memoria de dados para simulacao
-void build_dt_file()
-{
-    char path[1024];
-    sprintf(path, "%s/mem_data_%s.v", temp_dir,name);
-
-    FILE *input;
-    FILE *output = fopen(path, "w");
-
-    char texto[1001] = "";
-
-    // abre mem_data.v para leitura
-    sprintf(path, "%s/mem_data.v", hdl_dir);
-    input = fopen(path, "r");
-
-    // soh muda o nome do modulo se for simulacao multicore
-    if (sim_typ == 1)
-    {
-        fgets(texto, 1001, input);
-        fprintf(output, "module mem_data_%s\n", name);
-    }
-
-    // copia ate achar endmodule
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        if(strcmp(texto, "endmodule") != 0)
-        {
-            fputs(texto, output);
-        }
-        memset(texto, 0, sizeof(char) * 1001);
-    }
-    fclose(input );
-
-    int i;
-    // cria um registrador para cada variavel encontrada
-    for (i = 0; i < v_cont; i++)
-    {
-        if (v_tipo[i] == 2)
-            fprintf(output, "reg [16+NBDATA-1:0] %s=0;\n", v_namo[i]);
-        else
-            fprintf(output, "reg [NBDATA-1:0] %s=0;\n"   , v_namo[i]);
-    }
-    
-    // inicia o always para registrar as variaveis
-    fprintf(output, "\nalways @ (posedge clk) begin\n");
-
-    // registra cada variavel, dependendo do endereco de cada uma
-    for (i = 0; i < v_cont; i++)
-    {
-        if (v_tipo[i] == 2)
-            fprintf(output, "   if (addr_w == %d && wr) %s <= {8'd%d,8'd%d,data_in};\n", v_add[i], v_namo[i], nbmant, nbexpo);
-        else
-            fprintf(output, "   if (addr_w == %d && wr) %s <= data_in;\n", v_add[i], v_namo[i]);
-    }
-
-    fprintf(output, "end\n\n");
-
-    // se a variavel for comp ...
-    // junta a parte real e complexa em uma variavel do dobro de tamanho
-    for (i = 0; i < v_cont; i++)
-    {
-        if (v_tipo[i] == 3)
-        {
-            for (int j = 0; j < v_cont; j++)
-            {
-                char im[64];
-                sprintf(im, "%s_i", v_namo[i]);
-                if (strcmp(v_namo[j],im) == 0)
-                    fprintf(output,"wire [16+NBDATA*2-1:0] comp_%s = {8'd%d, 8'd%d, %s, %s};\n", v_namo[i], nbmant, nbexpo, v_namo[i], v_namo[j]);
-            }
-        }
-    }
-
-    fprintf(output, "\nendmodule\n");
-
-    fclose(output);
 }

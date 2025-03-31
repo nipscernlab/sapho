@@ -122,7 +122,7 @@ if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%PROC%_tb
 )
 
-iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v mem_data.v addr_dec.v pc.v mem_instr.v prefetch.v instr_dec.v stack_pointer.v stack.v rel_addr.v processor.v core.v ula.v
+iverilog -s %TB_MOD% -o %TMP_PRO%\%PROC%.vvp %SIMU_DIR%\%TB_MOD%.v %UPROC%.v mem_data.v addr_dec.v mem_instr.v instr_dec.v processor.v core.v ula.v
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
@@ -180,9 +180,7 @@ del %PROC%.v
 :: Limpa a pasta de arquivos temporarios --------------------------------------
 
 del %TMP_PRO%\cmm_log.txt
-del %TMP_PRO%\mem_data_%PROC%.v
 del %TMP_PRO%\pc_%PROC%_mem.txt
-del %TMP_PRO%\pc_%PROC%.v
 del %TMP_PRO%\%PROC%_data.mif
 del %TMP_PRO%\%PROC%_inst.mif
 del %TMP_PRO%\%PROC%_tb.v
@@ -191,8 +189,5 @@ del %TMP_PRO%\%PROC%.vvp
 del %TMP_PRO%\%TB_MOD%.vcd
 del %TMP_PRO%\trad_cmm.txt
 del %TMP_PRO%\trad_opcode.txt
-del %TMP_PRO%\swap.txt
-del %TMP_PRO%\tasm.txt
-del %TMP_PRO%\tmem.txt
 
 cd %ROOT_DIR%

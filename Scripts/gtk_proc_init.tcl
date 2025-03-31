@@ -132,7 +132,7 @@ set tradutor [gtkwave::setCurrentTranslateFile $tmp_dir/trad_opcode.txt]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
-    set index [string first pc.valr2 $facname]
+    set index [string first proc.valr2 $facname]
     if {$index != -1} {
         set filter [list $facname]
         gtkwave::addSignalsFromList $filter
@@ -151,7 +151,7 @@ set tradutor [gtkwave::setCurrentTranslateFile $tmp_dir/trad_cmm.txt]
 for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
-    set index [string first pc.linetabs $facname]
+    set index [string first proc.linetabs $facname]
     if {$index != -1} {
         set filter [list $facname]
         gtkwave::addSignalsFromList $filter

@@ -149,7 +149,8 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first pc.valr2 $facname]
+    set name $proc.valr2
+    set index [string first $name $facname]
     if {$proc_id != -1 && $index != -1} {
         set filter [list $facname]
         gtkwave::addSignalsFromList $filter
@@ -169,7 +170,8 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first pc.linetabs $facname]
+    set name $proc.linetabs
+    set index [string first $name $facname]
     if {$proc_id != -1 && $index != -1} {
         set filter [list $facname]
         gtkwave::addSignalsFromList $filter

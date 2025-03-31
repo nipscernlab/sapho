@@ -460,8 +460,6 @@ void eval_finish()
 
     build_vv_file();  // arquivo verilog top level do processador   
     build_tb_file();  // arquivo de test bench
-    build_pc_file();  // arquivo de simulacao do program counter
-    build_dt_file();  // arquivo de simulacao das variaveis
 
     // finaliza traducao ------------------------------------------------------
 

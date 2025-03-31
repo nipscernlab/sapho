@@ -17,7 +17,7 @@ module processor
 	parameter MINSTW = $clog2(MINSTS),  // Numero de bits de endereco da memoria de instrucao
 
   // simulacao
-	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly
+	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly (sem macros)
 	parameter MEMTAB = "",              // arquivo texto com a tabela de instrucoes
   parameter FIMADD =  0,              // endereco da instrucao FIM
   parameter SIMTYP =  0,              // tipo de simulacao (0 para single e 1 para multicore)
@@ -134,7 +134,8 @@ module processor
 	input                       itr,
 
   output                      mem_wr,
-  output         [MDATAW-1:0] mem_addr_w
+  output         [MDATAW-1:0] mem_addr_w,
+  output         [MINSTW-1:0] pc_sim_val
 );
 
 // ----------------------------------------------------------------------------
@@ -160,10 +161,6 @@ core #(.NBOPCO (NBOPCO ),
        .MDATAW (MDATAW ),
        .MINSTW (MINSTW ),
        .MDATAS (MDATAS ),
-       .NUINST (NUINST ),
-       .MEMTAB (MEMTAB ),
-       .FIMADD (FIMADD ),
-       .SIMTYP (SIMTYP ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),
@@ -222,7 +219,7 @@ core #(.NBOPCO (NBOPCO ),
          .SRS  (  SRS  )) core(clk, rst,
                                instr, instr_addr,
                                mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
-                               io_in, addr_in, addr_out, req_in, out_en, itr);
+                               io_in, addr_in, addr_out, req_in, out_en, itr, pc_sim_val);
 
 mem_instr # (.NADDRE(MINSTS       ),
              .NBDATA(NBOPCO+MDATAW),
@@ -238,10 +235,6 @@ core #(.NBOPCO (NBOPCO ),
        .MDATAW (MDATAW ),
        .MINSTW (MINSTW ),
        .MDATAS (MDATAS ),
-       .NUINST (NUINST ),
-       .MEMTAB (MEMTAB ),
-       .FIMADD (FIMADD ),
-       .SIMTYP (SIMTYP ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),
@@ -300,7 +293,7 @@ core #(.NBOPCO (NBOPCO ),
          .SRS  (  SRS  )) core(clk, rst,
                                instr, instr_addr,
                                mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
-                               io_in, addr_in, addr_out, req_in, out_en, itr);
+                               io_in, addr_in, addr_out, req_in, out_en, itr, pc_sim_val);
 
 mem_instr # (.NADDRE(MINSTS       ),
              .NBDATA(NBOPCO+MINSTW),
