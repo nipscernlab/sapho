@@ -90,7 +90,10 @@ void build_vv_file()
     fprintf(f_veri, "processor\n#(.NUBITS(%d),\n",nbits );
     fprintf(f_veri,              ".NBMANT(%d),\n",nbmant);
     fprintf(f_veri,              ".NBEXPO(%d),\n",nbexpo);
-    fprintf(f_veri,              ".NUGAIN(%d),\n",nugain);
+
+    int nb = (n_dat>n_ins) ? (int)ceil(log2(n_dat)) : (int)ceil(log2(n_ins));
+    fprintf(f_veri, ".NBOPER(%d),\n", nb);
+    fprintf(f_veri, ".NUGAIN(%d),\n", nugain);
 
     fprintf(f_veri, ".MDATAS(%d),\n", n_dat );
     fprintf(f_veri, ".MINSTS(%d),\n", n_ins );
