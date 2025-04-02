@@ -1,5 +1,3 @@
-extern int  ndstac, nbmant, nbexpo, nbits, fftsiz;
-
 extern char proc_dir[1024]; // diretorio do processador
 extern char temp_dir[1024]; // diretorio da pasta Tmp
 extern char  hdl_dir[1024]; // diretorio da pasta HDL

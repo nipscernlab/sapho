@@ -83,7 +83,7 @@ del  y.tab.h
 cd %ROOT_DIR%\Assembler\Sources
 
 flex -oASMComp.c ASMComp.l
-gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c
+gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c simulacao.c
 
 move ASMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del ASMComp.c

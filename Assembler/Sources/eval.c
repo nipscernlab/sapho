@@ -1,69 +1,88 @@
-// esse rquivo ta ficando confuso
-// nao esta claro o que executa nas fases pp e nao pp
-// tentar separar rotinas pp e nao pp em arquivos diferentes?
-// ou talvez em funcoes diferentes?
-// acho q vai ter q separar em dois executaveis
+// ----------------------------------------------------------------------------
+// rotinas para gerar os arquivos .mif das memorias ... -----------------------
+// a medida que o lex vai escaneando o .asm -----------------------------------
+// ----------------------------------------------------------------------------
 
+// includes locais
 #include "..\Headers\eval.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\variaveis.h"
 #include "..\Headers\labels.h"
 #include "..\Headers\veri_comp.h"
 #include "..\Headers\mnemonicos.h"
+#include "..\Headers\simulacao.h"
 
+// includes globais
 #include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include  <stdio.h>
+#include   <math.h>
 #include <string.h>
 
-// redeclaracao de variaveis globais
-int  fftsiz = 0;          // tamanho da fft
-int  nbexpo;              // numero de bits do expoente
-int  nbmant;              // numero de bits da mantissa
+// ----------------------------------------------------------------------------
+// redeclaracao de variaveis globais ------------------------------------------
+// ----------------------------------------------------------------------------
+
+// variaveis de estado --------------------------------------------------------
+
+int  pp       = 1;         // pre-processing
+char opcd[64];             // guarda opcode atual
+
+// informacoes atualizadas durante o pp ---------------------------------------
+
+int  n_ins	  = 0;        // numero de instrucoes adicionadas
+int  n_dat    = 0;        // numero de variaveis  adicionadas
+int  fftsiz   = 8;        // tamanho da fft (em bits)
+int  isrf     = 0;        // diz se achou uma instrucao pra fazer FFT
+int  itr_addr = 0;        // endereco de interrupcao
+
+// guarda os valores das diretivas
+char prname [128];        // nome do processador
+int  nubits  = 23;        // tamanho da palavra da ula
+int  nbmant  = 16;        // numero de bits da mantissa
+int  nbexpo  =  6;        // numero de bits do expoente
+int  ndstac  = 10;        // tamanho da pilha de dados
+int  sdepth  = 10;        // tamanho da pilha de subrotinas
+int  nuioin  =  1;        // numero de portas de entrada
+int  nuioou  =  1;        // numero de portas de saida
+int  nugain  = 64;        // constante de divisao
+
+// informacoes atualizadas depois do pp ---------------------------------------
+
+int  nbopr;               // num de bits de operando
+
 int  fim_addr;            // endereco do fim do programa
 int  v_tipo[1000];        // tipo da variavel encontrada
 int  v_add [1000];        // endereco da variavel encontrada
 char v_namo[1000][64];    // nome da variavel encontrada
-int  nbits;               // numero de bits do processador
-char opcd[64];            // guarda opcode atual
-int  ndstac;              // numero de destinos de acesso direto
-int  isrf;                // diz se achou a instrucao pra fazer FFT
-int  n_opc;               // numero de instrucoes no arquivo de traducao
-int  v_cont;              // numero de variaveis encontradas
-int  n_dat;               // numero de variaveis adicionadas
+
 int  m_count;             // contador de macros
 char m_name[NMNEMAX][64]; // nome das macros
 
+// ----------------------------------------------------------------------------
+// variaveis locais -----------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 #define NBITS_OPC 7     // tem que mudar no verilog de acordo (em proc.v)
 
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
-FILE *f_tran;           // arquivo para traducao do opcode
+
+// variaveis de estado --------------------------------------------------------
 
 int state = 0;          // estado do compilador
 int c_op;               // guarda opcode atual
-int nbopr;              // num de bits de operando
+
 int tam_var;            // auxilia no preenchimento de array em memoria (tamanho do array)
 int fil_typ;            // auxilia no preenchimento de array em memoria (tipo de dado)
 
+// executada antes de iniciar o lexer
 void eval_init(int prep)
 {
     pp = prep;          // se estou ou nao na fase de pre-processamento
 
-    var_reset();        // reseta a contagem de mnemonicos que alocam recursos em hardware
+    var_reset();        // reseta a contagem das variaveis
 
-    if (pp)             // pp soh conta, nao faz os arquivos ainda
+    if (!pp)            // pp soh conta, nao faz os arquivos ainda
     {
-        n_ins    = 0;
-        n_dat    = 0;
-        v_cont   = 0;
-        itr_addr = 0;   // reseta endereco de interrupcao
-    }
-    else                // segunda fase
-    {
-        n_opc    = 0;
-        isrf     = 0;   // ainda nao usou enderecamento invertido
-
         // num de bits de endereco para o operando (depois do mnemonico)
         // depende de quem eh maior, mem de dado ou de instr
         // esse valor foi achado na fase de pp
@@ -73,25 +92,62 @@ void eval_init(int prep)
         f_data  = fopen(get_dname(), "w");
         f_instr = fopen(get_iname(), "w");
 
-        // abre arquivo de traducao de opcode na pasta Tmp
-        char path[1024];
-        sprintf(path, "%s/trad_opcode.txt", temp_dir);
-        f_tran  = fopen(path, "w");
+        // inicializa rotinas pra simulacao com o iverilog
+        sim_init();
     }
 }
 
+// executado quando uma diretiva eh encontrada
+void eval_direct(int next_state)
+{
+    state = next_state; // vai pro estado que pega o argumento especifico da diretiva
+}
+
+// executado quando acha a diretiva #ITRAD
+void eval_itrad()
+{
+    if (pp) itr_addr = n_ins;
+}
+
+// funcao auxiliar usada em eval_opcode (abaixo)
 void add_instr(int opc, int opr)
 {
     // se for fase de pp, soh conta o num de instrucoes
-    if ( pp) n_ins++;
+    if ( pp)
+    {
+        n_ins++;
+
+        // vai usar inversao de bits (opc 3 e 7)
+        // entao, precisa checar tamanho da memoria no final
+        if ((opc == 3) || (opc == 7)) isrf = 1;
+    }
 
     // se nao, escreve a instrucao no .mif em binario
     // tambem escreve a traducao no arquivo de traducao de opcode
     if (!pp)
     {
         fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
-        fprintf(f_tran , "%d %s\n", n_opc++, opcd);
+        sim_add(opcd);
     }
+}
+
+// executado quando um novo opcode eh encontrado
+void eval_opcode(int op, int next_state, char *text, char *nome)
+{
+    c_op  = op;          // cadastra opcode atual
+    strcpy(opcd,text);   // guarda nome do opcode atual
+
+    // proximo estado depende do tipo de opcode:
+    // 0: nao tem operando
+    // 1: operando eh endereco da memoria de daddos
+    // 2: operando eh endereco da memoria de instrucao
+    state = next_state;
+
+    // nao tem operando, ja pode escrever a instrucao
+    if (state == 0) add_instr(op,0);
+
+    // cadastra mnemonico para alocar recurso em hardware
+    if (strcmp(nome,"") != 0) add_mne(nome);
 }
 
 void add_data(int val)
@@ -103,7 +159,7 @@ void add_data(int val)
     if (!pp)
     {
         // escreve o dado em binario no .mif
-        fprintf(f_data, "%s\n", itob(val,nbits));
+        fprintf(f_data, "%s\n", itob(val,nubits));
     }
 }
 
@@ -189,12 +245,12 @@ void oper_ula(char *va, int is_const)
         if (pp && is_var(va, &tipo, &is_global, var_name))
         {
             if (is_global)
-                sprintf(v_namo[v_cont], "me%d_f_global_v_%s_e_", tipo, va);
+                sprintf(v_namo[sim_v_cnt], "me%d_f_global_v_%s_e_", tipo, va);
             else
-                sprintf(v_namo[v_cont], "me%d_f_%s_e_", tipo, var_name);
-            v_add  [v_cont] = n_dat-1;
-            v_tipo [v_cont] = tipo;
-            v_cont++;
+                sprintf(v_namo[sim_v_cnt], "me%d_f_%s_e_", tipo, var_name);
+            v_add  [sim_v_cnt] = n_dat-1;
+            v_tipo [sim_v_cnt] = tipo;
+            sim_v_cnt++;
         }
     }
 
@@ -327,36 +383,6 @@ void add_array(int va, char *f_name)
         fill_mem(f_name, va);
 }
 
-// executado quando uma diretiva eh encontrada
-void eval_direct(int next_state)
-{
-    // vai pro estado que pega o argumento especifico da diretiva
-    state = next_state;
-}
-
-// executado quando um novo opcode eh encontrado
-void eval_opcode(int op, int next_state, char *text, char *nome)
-{
-    c_op  = op;          // cadastra opcode atual
-    strcpy(opcd,text);   // guarda nome do opcode atual
-
-    // proximo estado depende do tipo de opcode:
-    // 0: nao tem operando
-    // 1: operando eh endereco da memoria de daddos
-    // 2: operando eh endereco da memoria de instrucao
-    state = next_state;
-
-    // nao tem operando, ja pode escrever a instrucao
-    if (state == 0) add_instr(op,0);
-
-    // cadastra mnemonico para alocar recurso em hardware
-    if (strcmp(nome,"") != 0) add_mne(nome);
-
-    // vai usar inversao de bits
-    // entao, precisa checar tamanho da memoria no final
-    if (strcmp(nome, "ILI") == 0) isrf = 1;
-}
-
 void eval_opernd(char *va, int is_const)
 {
     switch (state)
@@ -429,7 +455,7 @@ void eval_finish()
 
     // completa memoria de dados ----------------------------------------------
 
-    int s = nbits;
+    int s = nubits;
 
     n_dat = ndstac+n_dat;
 	for (i=0; i<ndstac; i++)
@@ -453,8 +479,8 @@ void eval_finish()
 
     // checa integridade do tamanho do dado -----------------------------------
 
-    if (nbits != nbmant+nbexpo+1)
-        fprintf(stderr, "Erro: NUBITS (%d) tem que ser NBMANT (%d) + NBEXPO (%d) + 1!\n", nbits, nbmant, nbexpo);
+    if (nubits != nbmant+nbexpo+1)
+        fprintf(stderr, "Erro: NUBITS (%d) tem que ser NBMANT (%d) + NBEXPO (%d) + 1!\n", nubits, nbmant, nbexpo);
 
     // gera arquivos ----------------------------------------------------------
 
