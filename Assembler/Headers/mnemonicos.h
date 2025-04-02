@@ -3,4 +3,4 @@
 extern int  m_count;             // num  de  opcodes cadastrados para gerar circuitos dimanicamente
 extern char m_name[NMNEMAX][64]; // nome dos opcodes cadastrados
 
-void add_mne(char *mne);         // cadastra opcode
+void mne_add(char *mne);         // cadastra opcode

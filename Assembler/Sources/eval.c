@@ -3,20 +3,21 @@
 // a medida que o lex vai escaneando o .asm -----------------------------------
 // ----------------------------------------------------------------------------
 
-// includes locais
-#include "..\Headers\eval.h"
-#include "..\Headers\t2t.h"
-#include "..\Headers\variaveis.h"
-#include "..\Headers\labels.h"
-#include "..\Headers\veri_comp.h"
-#include "..\Headers\mnemonicos.h"
-#include "..\Headers\simulacao.h"
-
 // includes globais
-#include <stdlib.h>
-#include  <stdio.h>
 #include   <math.h>
+#include  <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+
+// includes locais
+#include "..\Headers\t2t.h"
+#include "..\Headers\eval.h"
+#include "..\Headers\array.h"
+#include "..\Headers\labels.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\veri_comp.h"
+#include "..\Headers\simulacao.h"
+#include "..\Headers\mnemonicos.h"
 
 // ----------------------------------------------------------------------------
 // redeclaracao de variaveis globais ------------------------------------------
@@ -24,15 +25,14 @@
 
 // variaveis de estado --------------------------------------------------------
 
-int  pp       = 1;         // pre-processing
-char opcd[64];             // guarda opcode atual
+int  pp       = 1;        // pre-processing
+int  isrf     = 0;        // diz se achou uma instrucao pra fazer FFT
+char opcd[64];            // guarda opcode atual
 
 // informacoes atualizadas durante o pp ---------------------------------------
 
 int  n_ins	  = 0;        // numero de instrucoes adicionadas
 int  n_dat    = 0;        // numero de variaveis  adicionadas
-int  fftsiz   = 8;        // tamanho da fft (em bits)
-int  isrf     = 0;        // diz se achou uma instrucao pra fazer FFT
 int  itr_addr = 0;        // endereco de interrupcao
 
 // guarda os valores das diretivas
@@ -45,18 +45,11 @@ int  sdepth  = 10;        // tamanho da pilha de subrotinas
 int  nuioin  =  1;        // numero de portas de entrada
 int  nuioou  =  1;        // numero de portas de saida
 int  nugain  = 64;        // constante de divisao
+int  fftsiz   = 8;        // tamanho da fft (em bits)
 
 // informacoes atualizadas depois do pp ---------------------------------------
 
 int  nbopr;               // num de bits de operando
-
-int  fim_addr;            // endereco do fim do programa
-int  v_tipo[1000];        // tipo da variavel encontrada
-int  v_add [1000];        // endereco da variavel encontrada
-char v_namo[1000][64];    // nome da variavel encontrada
-
-int  m_count;             // contador de macros
-char m_name[NMNEMAX][64]; // nome das macros
 
 // ----------------------------------------------------------------------------
 // variaveis locais -----------------------------------------------------------
@@ -70,9 +63,6 @@ FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 
 int state = 0;          // estado do compilador
 int c_op;               // guarda opcode atual
-
-int tam_var;            // auxilia no preenchimento de array em memoria (tamanho do array)
-int fil_typ;            // auxilia no preenchimento de array em memoria (tipo de dado)
 
 // executada antes de iniciar o lexer
 void eval_init(int prep)
@@ -109,7 +99,7 @@ void eval_itrad()
     if (pp) itr_addr = n_ins;
 }
 
-// funcao auxiliar usada em eval_opcode (abaixo)
+// essa eh a funcao que realmente escreve na mem de instrucao
 void add_instr(int opc, int opr)
 {
     // se for fase de pp, soh conta o num de instrucoes
@@ -117,18 +107,21 @@ void add_instr(int opc, int opr)
     {
         n_ins++;
 
-        // vai usar inversao de bits (opc 3 e 7)
+        // se vai usar inversao de bits (opc 3 e 7)
         // entao, precisa checar tamanho da memoria no final
         if ((opc == 3) || (opc == 7)) isrf = 1;
     }
 
     // se nao, escreve a instrucao no .mif em binario
-    // tambem escreve a traducao no arquivo de traducao de opcode
-    if (!pp)
-    {
-        fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
-        sim_add(opcd);
-    }
+    if (!pp) fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
+}
+
+// essa eh a funcao que realmente escreve na mem de dados
+void add_data(int val)
+{
+    // se for pp, soh conta a quantidade de dados
+    // se nao, escreve o valor no .mif
+    if (pp) n_dat++; else fprintf(f_data, "%s\n", itob(val,nubits));
 }
 
 // executado quando um novo opcode eh encontrado
@@ -147,251 +140,54 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     if (state == 0) add_instr(op,0);
 
     // cadastra mnemonico para alocar recurso em hardware
-    if (strcmp(nome,"") != 0) add_mne(nome);
-}
-
-void add_data(int val)
-{
-    // se for pp, soh conta a quantidade de dados
-    if ( pp) n_dat++;
-
-    // se nao, escreve o valor no .mif
-    if (!pp)
-    {
-        // escreve o dado em binario no .mif
-        fprintf(f_data, "%s\n", itob(val,nubits));
-    }
-}
-
-// funcao auxiliar que procura no arquivo cmm_log.txt se ...
-// char *va aponta para uma variavel declarada no .cmm
-// tambem retorna o tipo da variavel encontrada
-int is_var(char *va, int *tipo, int *is_global, char *nome)
-{
-    char texto[1001];
-    char funcao[128];
-    char variav[128];
-
-    // abre o arquivo de log
-    char path[1024];
-    sprintf(path, "%s/cmm_log.txt", temp_dir);
-    FILE *input = fopen(path, "r");
-
-    // pula as 3 primeiras linhas
-    fgets(texto, 1001, input); // nome do processador
-    fgets(texto, 1001, input); // numero de bits da mantissa
-    fgets(texto, 1001, input); // numero de bits do expoente
-  
-    int ok = 0;
-    // varre as linhas do arquivo
-    while(fgets(texto, 1001, input) != NULL)
-    {
-        // secao de variaveis termina quando encontra um #
-        if (strstr(texto, "#") != NULL) break;
-
-        sscanf (texto, "%s %s %d", funcao, variav, tipo);
-
-        // se for variavel global, nao coloca o nome da funcao
-        if (strcmp(funcao,"global")==0)
-        {
-            *is_global = 1;
-            sprintf(nome , "%s", variav);
-        }
-        else
-        {
-            *is_global = 0;
-            sprintf(nome , "%s_%s", funcao, variav);
-        }
-
-        if (strcmp(nome,va) == 0)
-        {
-            sprintf(nome , "%s_v_%s", funcao, variav);
-            ok = 1;
-            break;
-        }
-    }
-    
-    fclose(input);
-
-    return ok;
+    mne_add(nome);
 }
 
 // cadastra instrucao com a ula
 // se o operando for uma constante, converte seu valor para binario ...
 // e coloca o simbolo na memoria de dados
-// por ultimo, coloca a instrucao na memoria
-// soh eh executado na fase pp
-void oper_ula(char *va, int is_const)
+// por ultimo, coloca a instrucao na memoria de instrucao
+void instr_ula(char *va, int is_const)
 {
-    if (find_var(va) == -1)
+    // se for a primeira vez que a var aparece, faz o cadastro
+    if (var_find(va) == -1)
     {
+        // transforma char *va pra int val
         int val;
         switch(is_const)
         {
-            case 0: val = 0;        break;
-            case 1: val = atoi(va); break;
-            case 2: val = f2mf(va); break;
+            case 0: val = 0;        break; // nao eh constante
+            case 1: val = atoi(va); break; // constante tipo int
+            case 2: val = f2mf(va); break; // constante tipo float
         }
 
-        add_var (va, val);
-        add_data(    val);
-
-        // procura, no arquivo de log, se eh uma variavel ...
-        // declarada no codigo .cmm
-        // se sim, cadastra ela para mostrar no simulador
-        int tipo;
-        int is_global;
-        char var_name[128];
-        if (pp && is_var(va, &tipo, &is_global, var_name))
-        {
-            if (is_global)
-                sprintf(v_namo[sim_v_cnt], "me%d_f_global_v_%s_e_", tipo, va);
-            else
-                sprintf(v_namo[sim_v_cnt], "me%d_f_%s_e_", tipo, var_name);
-            v_add  [sim_v_cnt] = n_dat-1;
-            v_tipo [sim_v_cnt] = tipo;
-            sim_v_cnt++;
-        }
+        var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
+        add_data  (    val); // adiciona variavel na mem de dados
+        if (pp) sim_reg(va); // registra variavel no simulador
     }
 
-    strcat(opcd, " "); strcat(opcd, va);
-    add_instr(c_op, find_var(va));
+    // finamente, cadastra a nova instrucao
+    add_instr(c_op, var_find(va));
+    // cadastra, tambem, no tradutor da simulacao
+    if (!pp) sim_add(opcd,va);
 }
 
 // cadastra instrucoes de salto
-void oper_salto(char *va)
+void instr_salto(char *va)
 {
-    strcat(opcd, " "); strcat(opcd, va); 
-    add_instr (c_op, find_label(va));
-}
-
-// funcao auxiliar para remover espacos em branco
-void rem_space(char *text)
-{
-    int i = 0, j = 0;
-    char temp[256];
-    strcpy(temp, text);
-    while (temp[i] != '\0')
-    {
-        while (temp[i] == ' ') i++;
-        text[j] = temp[i];
-        i++;
-        j++;
-    }
-    text[j] = '\0';
-}
-
-// funcao auxiliar para preencher array na memoria de dados
-// usado com inicializacao de array (ex: int x[10] "nome do arquivo")
-// f_name eh o nome do arquivo a ser lido
-// tam eh o tamanho do arquivo
-// na fase de pp soh conta as variaveis
-void fill_mem(char *f_name, int tam)
-{
-    FILE* filepointer = NULL;
-
-    // primeiro pega o caminho completo e abre o arquivo ----------------------
-    // mudar a sintaxe para nao precisar das aspas
-
-    char addr_tab[2048];
-    if(pp == 0)
-    {
-        int tamanho = strlen(f_name); // tamanho da string do nome do arquivo
-        int idxToDel = tamanho-1;     // indice para deletar, nesse caso o ultimo, as aspas.
-        memmove(&f_name[idxToDel], &f_name[idxToDel +1], 1); // deletando de fato o indice
-        sprintf(addr_tab, "%s/Software/%s", proc_dir, f_name);
-
-        filepointer = fopen(addr_tab, "r");
-        if (filepointer == NULL)
-        fprintf(stderr, "Erro: Não rolou de abrir/achar o arquivo %s!!\n", addr_tab);
-    }
-
-    // agora le o arquivo -----------------------------------------------------
-
-    int  i,val = 0;
-    char linha[512];
-
-    for (i = 0; i < tam ; i++)
-    {
-        if (pp == 0)
-        {
-            // le linha por linha
-            // o que fazer depende ...
-            // do tipo de proc e do tipo de dado
-            fgets(linha, sizeof(linha), filepointer);
-
-            // com int
-            if (fil_typ == 1)
-            {
-                val = atoi(linha);
-            }
-
-            // com float
-            if (fil_typ == 2)
-            {
-                val = f2mf(linha);
-            }
-
-            // com real comp
-            if (fil_typ == 3)
-            {
-                char  num[64];
-                float real,img;
-
-                rem_space(linha);
-                   sscanf(linha,"%f %f",&real,&img);
-
-                   sprintf(num,"%f",real);
-                val = f2mf(num);
-            }
-
-            // com imag comp
-            if (fil_typ == 4)
-            {
-                char  num[64];
-                float real,img;
-
-                rem_space(linha);
-                   sscanf(linha,"%f %f",&real,&img);
-
-                   sprintf(num,"%f",img);
-                val = f2mf(num);
-            }
-
-            add_data(val);
-        }
-        else
-            add_data(0); // no pp soh conta as variaveis
-    }
-
-    if (pp == 0) fclose(filepointer);
-}
-
-// adiciona array na memoria de dados
-// se for array normal, completa com zero
-// se for array inicializado, chama fill_mem para preencher
-// va eh o tamanho do array
-void add_array(int va, char *f_name)
-{
-    // incrementa o tamanho da memoria de acordo
-    inc_vcont(va-1);
-
-    // se nao tem arquivo, preenche com zero
-    if (strcmp(f_name, "") == 0)
-        for (int i = 0; i < va; i++) add_data(0);
-    else
-        fill_mem(f_name, va);
+    add_instr(c_op, find_label(va));
+    if (!pp) sim_add(opcd,va);
 }
 
 void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  1: oper_ula  (va, is_const);                       // operacoes com a ULA
+        case  1: instr_ula  (va, is_const);                       // operacoes com a ULA
                  state = 0;  break;
-        case  2: oper_salto(va);                                 // operacoes de salto
+        case  2: instr_salto(va);                                 // operacoes de salto
                  state = 0;  break;
-        case  3: add_var   (va,0);                               // achou um array sem inicializacao
+        case  3: var_add   (va,0);                               // achou um array sem inicializacao
                  state = 4;  break;
         case  4: add_array (atoi(va), "");                       // declara  array sem inicializacao
                  state = 0;  break;
@@ -415,7 +211,7 @@ void eval_opernd(char *va, int is_const)
       //case 14: era usado para o nome do diretorio
         case 15: if (pp) set_nugain(atoi(va));                   // valor da normalizacao
                  state = 0;  break;
-        case 16: add_var(va,0);                                  // declarando array com arquivo
+        case 16: var_add(va,0);                                  // declarando array com arquivo
                  state = 17; break;
         case 17: fil_typ = atoi(va);                             // pega o tipo de array
                  state = 18; break;
@@ -435,8 +231,7 @@ void eval_label(char *la)
     {
         add_label(la, n_ins); // cadastra label
 
-        // cadastra endereco da instrucao de fim do programa
-        if (strcmp(la,"fim") == 0) fim_addr = n_ins;
+        sim_check_fim(la);
     }
 }
 

@@ -27,10 +27,7 @@ extern char opcd[64];         // guarda opcode atual
 extern int nbopr;             // num de bits de operando
 extern int fim_addr;          // endereco de @fim JMP fim
 
-extern char v_namo[1000][64]; //     nome da variavel  encontrada
-extern int  v_add [1000];     // endereco da variavel  encontrada
-extern int  v_tipo[1000];     // tipo     da variavel  encontrada
-
+void add_data(int val);
 
 void eval_direct(int   next_state);
 void eval_itrad ();
