@@ -10,7 +10,6 @@ extern int  pp;                  // flag do pre-processamento
 extern int  n_ins;               // numero de instrucoes adicionadas
 extern int  n_dat;               // numero de variaveis  adicionadas
 extern int  itr_addr;            // endereco da interrupcao
-extern int  isrf;                // diz se achou uma instrucao pra fazer FFT
 
 // guarda os valores das diretivas
 extern char prname[128];         // nome do processador

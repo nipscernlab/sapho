@@ -4,8 +4,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-int  m_count;             // contador de macros
-char m_name[NMNEMAX][64]; // nome das macros
+int  m_count;             // contador de mnem
+char m_name[NMNEMAX][64]; // nome dos mnem
 
 // ve se um mnemonico ja foi usado
 // se sim, pega o indice na tabela

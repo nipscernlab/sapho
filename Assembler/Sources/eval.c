@@ -26,7 +26,6 @@
 // variaveis de estado --------------------------------------------------------
 
 int  pp       = 1;        // pre-processing
-int  isrf     = 0;        // diz se achou uma instrucao pra fazer FFT
 char opcd[64];            // guarda opcode atual
 
 // informacoes atualizadas durante o pp ---------------------------------------
@@ -69,7 +68,7 @@ void eval_init(int prep)
 {
     pp = prep;          // se estou ou nao na fase de pre-processamento
 
-    var_reset();        // reseta a contagem das variaveis
+    var_reset();        // a tabela eh resetada nas duas fases (melhor, vai por mim!)
 
     if (!pp)            // pp soh conta, nao faz os arquivos ainda
     {
@@ -99,38 +98,6 @@ void eval_itrad()
     if (pp) itr_addr = n_ins;
 }
 
-// essa eh a funcao que realmente escreve na mem de instrucao
-void add_instr1(int opc, int opr)
-{
-    
-        n_ins++;
-
-        // se vai usar inversao de bits (opc 3 e 7)
-        // entao, precisa checar tamanho da memoria no final
-        if ((opc == 3) || (opc == 7)) isrf = 1;
-}
-
-// essa eh a funcao que realmente escreve na mem de instrucao
-void add_instr2(int opc, int opr)
-{
-    // se nao, escreve a instrucao no .mif em binario
-    fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
-}
-
-void add_data1(int val)
-{
-    // se for pp, soh conta a quantidade de dados
-    // se nao, escreve o valor no .mif
-    n_dat++;
-}
-
-void add_data2(int val)
-{
-    // se for pp, soh conta a quantidade de dados
-    // se nao, escreve o valor no .mif
-    fprintf(f_data, "%s\n", itob(val,nubits));
-}
-
 // executado quando um novo opcode eh encontrado
 void eval_opcode(int op, int next_state, char *text, char *nome)
 {
@@ -143,14 +110,16 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     // 2: operando eh endereco da memoria de instrucao
     state = next_state;
 
-    // nao tem operando, ja pode escrever a instrucao
-    if (state == 0) 
-    {
-        if (pp) add_instr1(op,0); else add_instr2(op,0);
+    if (pp)
+    {   // nao tem operando, ja pode contar uma instrucao
+        if (state == 0) n_ins++;
+        mne_add(nome);
     }
 
-    // cadastra mnemonico para alocar recurso em hardware
-    if (pp) mne_add(nome);
+    if (!pp) 
+    {   // nao tem operando, ja pode escrever a instrucao
+        if (state == 0) fprintf(f_instr, "%s%s\n" , itob(op,NBITS_OPC), itob(0,nbopr));
+    }
 }
 
 // cadastra instrucao com a ula
@@ -172,12 +141,12 @@ void instr_ula1(char *va, int is_const)
         }
 
         var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
-        add_data1  (    val); // adiciona variavel na mem de dados
+        n_dat++; // adiciona uma variavel
         sim_reg(va); // registra variavel no simulador
     }
 
-    // finamente, cadastra a nova instrucao
-    add_instr1(c_op, var_find(va));
+    // finamente, adiciona uma nova instrucao
+    n_ins++;
 }
 
 // cadastra instrucao com a ula
@@ -199,11 +168,11 @@ void instr_ula2(char *va, int is_const)
         }
 
         var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
-        add_data2  (    val); // adiciona variavel na mem de dados
+        fprintf(f_data, "%s\n", itob(val,nubits)); // adiciona variavel na mem de dados
     }
 
     // finamente, cadastra a nova instrucao
-    add_instr2(c_op, var_find(va));
+    fprintf(f_instr, "%s%s\n" , itob(c_op,NBITS_OPC), itob(var_find(va),nbopr));
     // cadastra, tambem, no tradutor da simulacao
     sim_add(opcd,va);
 }
@@ -211,13 +180,13 @@ void instr_ula2(char *va, int is_const)
 // cadastra instrucoes de salto
 void instr_salto1(char *va)
 {
-    add_instr1(c_op, find_label(va));
+    n_ins++;
 }
 
 // cadastra instrucoes de salto
 void instr_salto2(char *va)
 {
-    add_instr2(c_op, find_label(va));
+    fprintf(f_instr, "%s%s\n" , itob(c_op,NBITS_OPC), itob(find_label(va),nbopr));
     sim_add(opcd,va);
 }
 
@@ -304,7 +273,7 @@ void eval_finish()
         fprintf(f_data, "%s\n", itob(0,s));     // completando com potencia de 2
 */
     int fft_siz = 2*pow(2,fftsiz);
-    if ((isrf == 1) && (fft_siz > n_dat))
+    if ((find_mne("ILI") != 1) && (fft_siz > n_dat))
     {
         aux = n_dat;
         n_dat = fft_siz;
