@@ -100,28 +100,35 @@ void eval_itrad()
 }
 
 // essa eh a funcao que realmente escreve na mem de instrucao
-void add_instr(int opc, int opr)
+void add_instr1(int opc, int opr)
 {
-    // se for fase de pp, soh conta o num de instrucoes
-    if ( pp)
-    {
+    
         n_ins++;
 
         // se vai usar inversao de bits (opc 3 e 7)
         // entao, precisa checar tamanho da memoria no final
         if ((opc == 3) || (opc == 7)) isrf = 1;
-    }
-
-    // se nao, escreve a instrucao no .mif em binario
-    if (!pp) fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
 }
 
-// essa eh a funcao que realmente escreve na mem de dados
-void add_data(int val)
+// essa eh a funcao que realmente escreve na mem de instrucao
+void add_instr2(int opc, int opr)
+{
+    // se nao, escreve a instrucao no .mif em binario
+    fprintf(f_instr, "%s%s\n" , itob(opc,NBITS_OPC), itob(opr,nbopr));
+}
+
+void add_data1(int val)
 {
     // se for pp, soh conta a quantidade de dados
     // se nao, escreve o valor no .mif
-    if (pp) n_dat++; else fprintf(f_data, "%s\n", itob(val,nubits));
+    n_dat++;
+}
+
+void add_data2(int val)
+{
+    // se for pp, soh conta a quantidade de dados
+    // se nao, escreve o valor no .mif
+    fprintf(f_data, "%s\n", itob(val,nubits));
 }
 
 // executado quando um novo opcode eh encontrado
@@ -137,17 +144,20 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     state = next_state;
 
     // nao tem operando, ja pode escrever a instrucao
-    if (state == 0) add_instr(op,0);
+    if (state == 0) 
+    {
+        if (pp) add_instr1(op,0); else add_instr2(op,0);
+    }
 
     // cadastra mnemonico para alocar recurso em hardware
-    mne_add(nome);
+    if (pp) mne_add(nome);
 }
 
 // cadastra instrucao com a ula
 // se o operando for uma constante, converte seu valor para binario ...
 // e coloca o simbolo na memoria de dados
 // por ultimo, coloca a instrucao na memoria de instrucao
-void instr_ula(char *va, int is_const)
+void instr_ula1(char *va, int is_const)
 {
     // se for a primeira vez que a var aparece, faz o cadastro
     if (var_find(va) == -1)
@@ -162,34 +172,66 @@ void instr_ula(char *va, int is_const)
         }
 
         var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
-        add_data  (    val); // adiciona variavel na mem de dados
-        if (pp) sim_reg(va); // registra variavel no simulador
+        add_data1  (    val); // adiciona variavel na mem de dados
+        sim_reg(va); // registra variavel no simulador
     }
 
     // finamente, cadastra a nova instrucao
-    add_instr(c_op, var_find(va));
+    add_instr1(c_op, var_find(va));
+}
+
+// cadastra instrucao com a ula
+// se o operando for uma constante, converte seu valor para binario ...
+// e coloca o simbolo na memoria de dados
+// por ultimo, coloca a instrucao na memoria de instrucao
+void instr_ula2(char *va, int is_const)
+{
+    // se for a primeira vez que a var aparece, faz o cadastro
+    if (var_find(va) == -1)
+    {
+        // transforma char *va pra int val
+        int val;
+        switch(is_const)
+        {
+            case 0: val = 0;        break; // nao eh constante
+            case 1: val = atoi(va); break; // constante tipo int
+            case 2: val = f2mf(va); break; // constante tipo float
+        }
+
+        var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
+        add_data2  (    val); // adiciona variavel na mem de dados
+    }
+
+    // finamente, cadastra a nova instrucao
+    add_instr2(c_op, var_find(va));
     // cadastra, tambem, no tradutor da simulacao
-    if (!pp) sim_add(opcd,va);
+    sim_add(opcd,va);
 }
 
 // cadastra instrucoes de salto
-void instr_salto(char *va)
+void instr_salto1(char *va)
 {
-    add_instr(c_op, find_label(va));
-    if (!pp) sim_add(opcd,va);
+    add_instr1(c_op, find_label(va));
+}
+
+// cadastra instrucoes de salto
+void instr_salto2(char *va)
+{
+    add_instr2(c_op, find_label(va));
+    sim_add(opcd,va);
 }
 
 void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  1: instr_ula  (va, is_const);                       // operacoes com a ULA
+        case  1: if (pp) instr_ula1  (va, is_const);  else instr_ula2  (va, is_const);                       // operacoes com a ULA
                  state = 0;  break;
-        case  2: instr_salto(va);                                 // operacoes de salto
+        case  2: if (pp) instr_salto1(va);  else instr_salto2(va);                                 // operacoes de salto
                  state = 0;  break;
         case  3: var_add   (va,0);                               // achou um array sem inicializacao
                  state = 4;  break;
-        case  4: add_array (atoi(va), "");                       // declara  array sem inicializacao
+        case  4: if (pp) add_array1 (atoi(va), ""); else add_array2 (atoi(va), "");                       // declara  array sem inicializacao
                  state = 0;  break;
         case  5: if (pp) set_name  (va);                         // nome do processador
                  state = 0;  break;
@@ -217,7 +259,7 @@ void eval_opernd(char *va, int is_const)
                  state = 18; break;
         case 18: tam_var = atoi(va);                             // pega o tamanho do array com arquivo
                  state = 19; break;
-        case 19: add_array (tam_var,va);                         // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 19: if (pp) add_array1 (tam_var,va); else  add_array2 (tam_var,va);                        // preenche memoria com valor do arquivo (zero se nao tem arquivo)
                  state =  0; break;
         case 20: if (pp) set_fftsiz(atoi(va));                   // num de bits pra inverter na fft
                  state =  0; break;

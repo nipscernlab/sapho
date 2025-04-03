@@ -3,6 +3,8 @@
 // a medida que o lex vai escaneando o .asm -----------------------------------
 // ----------------------------------------------------------------------------
 
+#include  <stdio.h>
+
 // variaveis de estado
 extern int  pp;                  // flag do pre-processamento
 extern int  n_ins;               // numero de instrucoes adicionadas
@@ -26,8 +28,7 @@ extern char opcd[64];         // guarda opcode atual
 
 extern int nbopr;             // num de bits de operando
 extern int fim_addr;          // endereco de @fim JMP fim
-
-void add_data(int val);
+extern FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 
 void eval_direct(int   next_state);
 void eval_itrad ();
