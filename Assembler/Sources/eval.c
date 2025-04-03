@@ -66,11 +66,12 @@ int c_op;               // guarda opcode atual
 // executada antes de iniciar o lexer
 void eval_init(int prep)
 {
-    pp = prep;          // se estou ou nao na fase de pre-processamento
-
-    var_reset();        // a tabela eh resetada nas duas fases (melhor, vai por mim!)
-
-    if (!pp)            // pp soh conta, nao faz os arquivos ainda
+    // se estou ou nao na fase de pre-processamento
+    pp = prep;          
+    // a tabela eh resetada nas duas fases (melhor, vai por mim!)
+    var_reset();        
+    // pp soh conta, nao faz os arquivos ainda
+    if (!pp)
     {
         // num de bits de endereco para o operando (depois do mnemonico)
         // depende de quem eh maior, mem de dado ou de instr
@@ -89,12 +90,14 @@ void eval_init(int prep)
 // executado quando uma diretiva eh encontrada
 void eval_direct(int next_state)
 {
-    state = next_state; // vai pro estado que pega o argumento especifico da diretiva
+    // vai pro estado que pega o argumento especifico da diretiva
+    state = next_state;
 }
 
 // executado quando acha a diretiva #ITRAD
 void eval_itrad()
 {
+    // instrucao atual eh cadastrada como ponto de interrupcao
     if (pp) itr_addr = n_ins;
 }
 
@@ -111,38 +114,29 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     state = next_state;
 
     if (pp)
-    {   // nao tem operando, ja pode contar uma instrucao
+    {   
+        // nao tem operando, ja pode contar uma instrucao
         if (state == 0) n_ins++;
+        // cadastra mnemonico
         mne_add(nome);
     }
 
     if (!pp) 
-    {   // nao tem operando, ja pode escrever a instrucao
-        if (state == 0) fprintf(f_instr, "%s%s\n" , itob(op,NBITS_OPC), itob(0,nbopr));
+    {   
+        // nao tem operando, ja pode escrever a instrucao
+        if (state == 0) fprintf(f_instr, "%s%s\n", itob(op,NBITS_OPC), itob(0,nbopr));
     }
 }
 
-// cadastra instrucao com a ula
-// se o operando for uma constante, converte seu valor para binario ...
-// e coloca o simbolo na memoria de dados
-// por ultimo, coloca a instrucao na memoria de instrucao
-void instr_ula1(char *va, int is_const)
+// cadastra instrucao com a ula para a fase pp
+void instr_ula_pp(char *va, int is_const)
 {
     // se for a primeira vez que a var aparece, faz o cadastro
     if (var_find(va) == -1)
     {
-        // transforma char *va pra int val
-        int val;
-        switch(is_const)
-        {
-            case 0: val = 0;        break; // nao eh constante
-            case 1: val = atoi(va); break; // constante tipo int
-            case 2: val = f2mf(va); break; // constante tipo float
-        }
-
-        var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
-        n_dat++; // adiciona uma variavel
-        sim_reg(va); // registra variavel no simulador
+        var_add(va, is_const); // adiciona variavel na tabela (esta fazendo isso nas duas fases)
+        n_dat++;               // adiciona uma variavel
+        sim_reg(va);           // registra variavel no simulador
     }
 
     // finamente, adiciona uma nova instrucao
@@ -150,43 +144,29 @@ void instr_ula1(char *va, int is_const)
 }
 
 // cadastra instrucao com a ula
-// se o operando for uma constante, converte seu valor para binario ...
-// e coloca o simbolo na memoria de dados
+// adiciona a variavel na memoria de dados
 // por ultimo, coloca a instrucao na memoria de instrucao
-void instr_ula2(char *va, int is_const)
+void instr_ula(char *va, int is_const)
 {
     // se for a primeira vez que a var aparece, faz o cadastro
     if (var_find(va) == -1)
     {
-        // transforma char *va pra int val
-        int val;
-        switch(is_const)
-        {
-            case 0: val = 0;        break; // nao eh constante
-            case 1: val = atoi(va); break; // constante tipo int
-            case 2: val = f2mf(va); break; // constante tipo float
-        }
-
-        var_add   (va, val); // adiciona variavel na tabela (esta fazendo isso nas duas fases pq?)
-        fprintf(f_data, "%s\n", itob(val,nubits)); // adiciona variavel na mem de dados
+        var_add(va, is_const);                                     // adiciona variavel na tabela
+        fprintf(f_data, "%s\n", itob(v_val[var_find(va)],nubits)); // adiciona variavel na mem de dados
     }
 
-    // finamente, cadastra a nova instrucao
+    // escreve a nova instrucao
     fprintf(f_instr, "%s%s\n" , itob(c_op,NBITS_OPC), itob(var_find(va),nbopr));
     // cadastra, tambem, no tradutor da simulacao
     sim_add(opcd,va);
 }
 
 // cadastra instrucoes de salto
-void instr_salto1(char *va)
+void instr_salto(char *va)
 {
-    n_ins++;
-}
-
-// cadastra instrucoes de salto
-void instr_salto2(char *va)
-{
+    // escreve a nova instrucao
     fprintf(f_instr, "%s%s\n" , itob(c_op,NBITS_OPC), itob(find_label(va),nbopr));
+    // cadastra, tambem, no tradutor da simulacao
     sim_add(opcd,va);
 }
 
@@ -194,46 +174,43 @@ void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  1: if (pp) instr_ula1  (va, is_const);  else instr_ula2  (va, is_const);                       // operacoes com a ULA
+        case  1: if (pp) instr_ula_pp(va,is_const); else instr_ula(va,is_const); // operacoes com a ULA
                  state = 0;  break;
-        case  2: if (pp) instr_salto1(va);  else instr_salto2(va);                                 // operacoes de salto
+        case  2: if (pp) n_ins++; else instr_salto(va);                          // operacoes de salto
                  state = 0;  break;
-        case  3: var_add   (va,0);                               // achou um array sem inicializacao
+        case  3: var_add(va,0);                                                  // achou um array sem inicializacao
                  state = 4;  break;
-        case  4: if (pp) add_array1 (atoi(va), ""); else add_array2 (atoi(va), "");                       // declara  array sem inicializacao
+        case  4: if (pp) add_array_pp(atoi(va),""); else add_array(atoi(va),""); // declara  array sem inicializacao
                  state = 0;  break;
-        case  5: if (pp) set_name  (va);                         // nome do processador
+        case  5: if (pp) set_name(va);                                           // nome do processador
                  state = 0;  break;
-        case  6: if (pp) set_nbits (atoi(va));                   // numero de bits de dados
+        case  6: if (pp) set_nbits (atoi(va));                                   // numero de bits de dados
                  state = 0;  break;
-        case  7: if (pp) set_nbmant(atoi(va));                   // numero de bits de mantissa
+        case  7: if (pp) set_nbmant(atoi(va));                                   // numero de bits de mantissa
                  state = 0;  break;
-        case  8: if (pp) set_nbexpo(atoi(va));                   // numero de bits do expoente
+        case  8: if (pp) set_nbexpo(atoi(va));                                   // numero de bits do expoente
                  state = 0;  break;
-        case  9: if (pp) set_ndstac(atoi(va));                   // tamanho da pilha de dados
+        case  9: if (pp) set_ndstac(atoi(va));                                   // tamanho da pilha de dados
                  state = 0;  break;
-        case 10: if (pp) set_sdepth(atoi(va));                   // tamanho da pilha de instrucoes
+        case 10: if (pp) set_sdepth(atoi(va));                                   // tamanho da pilha de instrucoes
                  state = 0;  break;
-        case 11: if (pp) set_nuioin(atoi(va));                   // numero de enderecoes de io - entrada
+        case 11: if (pp) set_nuioin(atoi(va));                                   // numero de enderecoes de entrada
                  state = 0;  break;
-        case 12: if (pp) set_nuioou(atoi(va));                   // numero de enderecoes de io - saida
+        case 12: if (pp) set_nuioou(atoi(va));                                   // numero de enderecoes de saida
                  state = 0;  break;
-      //case 13: era usado para setar float ou int
-      //case 14: era usado para o nome do diretorio
-        case 15: if (pp) set_nugain(atoi(va));                   // valor da normalizacao
+        case 15: if (pp) set_nugain(atoi(va));                                   // valor da normalizacao
                  state = 0;  break;
-        case 16: var_add(va,0);                                  // declarando array com arquivo
+        case 16: var_add(va,0);                                                  // declarando array com arquivo
                  state = 17; break;
-        case 17: fil_typ = atoi(va);                             // pega o tipo de array
+        case 17: fil_typ = atoi(va);                                             // pega o tipo de array
                  state = 18; break;
-        case 18: tam_var = atoi(va);                             // pega o tamanho do array com arquivo
+        case 18: tam_var = atoi(va);                                             // pega o tamanho do array com arquivo
                  state = 19; break;
-        case 19: if (pp) add_array1 (tam_var,va); else  add_array2 (tam_var,va);                        // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 19: if (pp) add_array_pp(tam_var,va); else add_array(tam_var,va);   // preenche memoria com valor do arquivo (zero se nao tem arquivo)
                  state =  0; break;
-        case 20: if (pp) set_fftsiz(atoi(va));                   // num de bits pra inverter na fft
+        case 20: if (pp) set_fftsiz(atoi(va));                                   // num de bits pra inverter na fft
                  state =  0; break;
     }
-
 }
 
 void eval_label(char *la)

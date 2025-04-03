@@ -1,10 +1,9 @@
 #include "..\Headers\variaveis.h"
+#include "..\Headers\t2t.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-#define NVARMAX 999999
 
 int  v_count = 0;
 char v_name[NVARMAX][512];
@@ -27,18 +26,27 @@ int var_find(char *val)
 }
 
 // addiciona uma nova variavel na tabela
-void var_add(char *var, int val)
+// se o operando for uma constante, converte seu valor para binario ...
+void var_add(char *var, int is_const)
 {
     if (v_count == NVARMAX)
     {
         fprintf(stderr, "Erro: número de variáveis > %d", NVARMAX);
+        return;
     }
-    else
+
+    // transforma char *var pra int val
+    int val;
+    switch(is_const)
     {
-        strcpy(v_name [v_count], var);
-        v_val [v_count]        = val ;
-        v_count++;
+        case 0: val = 0;         break; // nao eh constante
+        case 1: val = atoi(var); break; // constante tipo int
+        case 2: val = f2mf(var); break; // constante tipo float
     }
+
+    strcpy(v_name [v_count], var);
+    v_val [v_count]        = val ;
+    v_count++;
 }
 
 void inc_vcont(int val)

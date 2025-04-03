@@ -47,7 +47,7 @@ void fill_mem1(char *f_name, int tam)
 // usado com inicializacao de array (ex: int x[10] "nome do arquivo")
 // f_name eh o nome do arquivo a ser lido
 // tam eh o tamanho do arquivo
-void fill_mem2(char *f_name, int tam)
+void fill_mem(char *f_name, int tam)
 {
     FILE* filepointer = NULL;
 
@@ -124,35 +124,27 @@ void fill_mem2(char *f_name, int tam)
 }
 
 // adiciona array na memoria de dados
+// para a fase de pre-processamento
+// va eh o tamanho do array
+void add_array_pp(int va, char *f_name)
+{
+    // incrementa o tamanho da memoria de acordo
+    inc_vcont(va-1);
+    // incrementa o num de variaveis de acordo
+    n_dat += va;
+}
+
+// adiciona array na memoria de dados
 // se for array normal, completa com zero
 // se for array inicializado, chama fill_mem para preencher
 // va eh o tamanho do array
-void add_array1(int va, char *f_name)
+void add_array(int va, char *f_name)
 {
     // incrementa o tamanho da memoria de acordo
     inc_vcont(va-1);
-
     // se nao tem arquivo, preenche com zero
     if (strcmp(f_name, "") == 0)
-        for (int i = 0; i < va; i++)
-        {
-            n_dat++;
-        } 
+        for (int i = 0; i < va; i++) fprintf(f_data, "%s\n", itob(0,nubits));
     else
-        fill_mem1(f_name, va);
-}
-
-void add_array2(int va, char *f_name)
-{
-    // incrementa o tamanho da memoria de acordo
-    inc_vcont(va-1);
-
-    // se nao tem arquivo, preenche com zero
-    if (strcmp(f_name, "") == 0)
-        for (int i = 0; i < va; i++)
-        {
-            fprintf(f_data, "%s\n", itob(0,nubits));
-        } 
-    else
-        fill_mem2(f_name, va);
+        fill_mem(f_name, va);
 }
