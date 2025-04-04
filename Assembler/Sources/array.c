@@ -31,22 +31,6 @@ void rem_space(char *text)
 // usado com inicializacao de array (ex: int x[10] "nome do arquivo")
 // f_name eh o nome do arquivo a ser lido
 // tam eh o tamanho do arquivo
-void fill_mem1(char *f_name, int tam)
-{
-
-    int  i;
-
-    for (i = 0; i < tam ; i++)
-    {
-        
-        n_dat++;
-    }
-}
-
-// funcao auxiliar para preencher array na memoria de dados
-// usado com inicializacao de array (ex: int x[10] "nome do arquivo")
-// f_name eh o nome do arquivo a ser lido
-// tam eh o tamanho do arquivo
 void fill_mem(char *f_name, int tam)
 {
     FILE* filepointer = NULL;

@@ -174,42 +174,42 @@ void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  1: if (pp) instr_ula_pp(va,is_const); else instr_ula(va,is_const); // operacoes com a ULA
+        case  1: if (pp) set_name(va);                                           // nome do processador
                  state = 0;  break;
-        case  2: if (pp) n_ins++; else instr_salto(va);                          // operacoes de salto
+        case  2: if (pp) set_nbits (atoi(va));                                   // numero de bits de dados
                  state = 0;  break;
-        case  3: var_add(va,0);                                                  // achou um array sem inicializacao
-                 state = 4;  break;
-        case  4: if (pp) add_array_pp(atoi(va),""); else add_array(atoi(va),""); // declara  array sem inicializacao
+        case  3: if (pp) set_nbmant(atoi(va));                                   // numero de bits de mantissa
                  state = 0;  break;
-        case  5: if (pp) set_name(va);                                           // nome do processador
+        case  4: if (pp) set_nbexpo(atoi(va));                                   // numero de bits do expoente
                  state = 0;  break;
-        case  6: if (pp) set_nbits (atoi(va));                                   // numero de bits de dados
+        case  5: if (pp) set_ndstac(atoi(va));                                   // tamanho da pilha de dados
                  state = 0;  break;
-        case  7: if (pp) set_nbmant(atoi(va));                                   // numero de bits de mantissa
+        case  6: if (pp) set_sdepth(atoi(va));                                   // tamanho da pilha de instrucoes
                  state = 0;  break;
-        case  8: if (pp) set_nbexpo(atoi(va));                                   // numero de bits do expoente
+        case  7: if (pp) set_nuioin(atoi(va));                                   // numero de enderecoes de entrada
                  state = 0;  break;
-        case  9: if (pp) set_ndstac(atoi(va));                                   // tamanho da pilha de dados
+        case  8: if (pp) set_nuioou(atoi(va));                                   // numero de enderecoes de saida
                  state = 0;  break;
-        case 10: if (pp) set_sdepth(atoi(va));                                   // tamanho da pilha de instrucoes
+        case  9: if (pp) set_nugain(atoi(va));                                   // valor da normalizacao
                  state = 0;  break;
-        case 11: if (pp) set_nuioin(atoi(va));                                   // numero de enderecoes de entrada
-                 state = 0;  break;
-        case 12: if (pp) set_nuioou(atoi(va));                                   // numero de enderecoes de saida
-                 state = 0;  break;
-        case 15: if (pp) set_nugain(atoi(va));                                   // valor da normalizacao
-                 state = 0;  break;
-        case 16: var_add(va,0);                                                  // declarando array com arquivo
-                 state = 17; break;
-        case 17: fil_typ = atoi(va);                                             // pega o tipo de array
-                 state = 18; break;
-        case 18: tam_var = atoi(va);                                             // pega o tamanho do array com arquivo
-                 state = 19; break;
-        case 19: if (pp) add_array_pp(tam_var,va); else add_array(tam_var,va);   // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 10: if (pp) set_fftsiz(atoi(va));                                   // num de bits pra inverter na fft
                  state =  0; break;
-        case 20: if (pp) set_fftsiz(atoi(va));                                   // num de bits pra inverter na fft
+        case 11: var_add(va,0);                                                  // achou um array sem inicializacao
+                 state = 12; break;
+        case 12: if (pp) add_array_pp(atoi(va),""); else add_array(atoi(va),""); // declara  array sem inicializacao
+                 state = 0;  break;
+        case 13: var_add(va,0);                                                  // achou um array com inicializacao
+                 state = 14; break;
+        case 14: fil_typ = atoi(va);                                             // pega o tipo de array
+                 state = 15; break;
+        case 15: tam_var = atoi(va);                                             // pega o tamanho do array com arquivo
+                 state = 16; break;
+        case 16: if (pp) add_array_pp(tam_var,va); else add_array(tam_var,va);   // preenche memoria com valor do arquivo (zero se nao tem arquivo)
                  state =  0; break;
+        case 17: if (pp) instr_ula_pp(va,is_const); else instr_ula(va,is_const); // operacoes com a ULA
+                 state = 0;  break;
+        case 18: if (pp) n_ins++; else instr_salto(va);                          // operacoes de salto
+                 state = 0;  break;
     }
 }
 

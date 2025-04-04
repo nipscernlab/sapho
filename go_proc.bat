@@ -78,6 +78,16 @@ del lex.yy.c
 del  y.tab.c
 del  y.tab.h
 
+:: Gera o Assembler pre-processor ---------------------------------------------
+
+cd %ROOT_DIR%\APP\Sources
+
+flex -oapp.c app.l
+gcc -o APP.exe app.c eval.c variaveis.c
+
+move APP.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+del app.c
+
 :: Gera o compilador Assembler ------------------------------------------------
 
 cd %ROOT_DIR%\Assembler\Sources
@@ -103,6 +113,12 @@ move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
 cd %BIN_DIR%
 
 CMMComp.exe %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
+
+:: Executa o Assembler pre-processor ------------------------------------------
+
+set ASM_FILE=%SOFT_DIR%\%PROC%.asm
+
+APP.exe %ASM_FILE%
 
 :: Executa o compilador Assembler ---------------------------------------------
 
