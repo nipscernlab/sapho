@@ -29,7 +29,7 @@ LINHA          \n
 "#array"   eval_direct(11); // array normal
 "#arrays"  eval_direct(13); // array com arquivo de inicializacao
 
-"#ITRAD"                  ; // ponto de endereco da interrupcao
+"#ITRAD"   eval_itrad (  ); // ponto de endereco da interrupcao
 
    "LOD"   eval_opcode(17); // carrega dado da memoria
  "P_LOD"   eval_opcode(17); // PUSH + LOD
@@ -154,7 +154,7 @@ LINHA          \n
 {FLNUM}   eval_opernd(yytext); // usado em instrucoes da ula com constante float
 
 {STRIN}   eval_opernd(yytext); // usado em instrucoes com strings (ex: arquivo de incializacao de array)
-{LABEL}                      ; // usado em instrucoes de salto
+{LABEL}   eval_label (yytext); // usado em instrucoes de salto
 
 {COMEN}
 {EMPTY}
@@ -166,10 +166,10 @@ LINHA          \n
 int main(int argc, char *argv[])
 {
 	yyin = fopen(argv[1], "r");      // primeiro argumento eh o arquivo .asm de entrada
+  eval_init(argv[2]);              // segundo  argumento eh o arquivo de log
   yylex();                         // executa o lexer
 	fclose(yyin);                    // fecha o arquivo .asm
-
-  eval_finish();
+  eval_finish();                   // finaliza o arquivo de log
 
   return 0;
 }

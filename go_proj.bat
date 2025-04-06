@@ -5,7 +5,7 @@
 :: Configura o ambiente -------------------------------------------------------
 
 cls
-echo off
+::echo off
 set ROOT_DIR=%cd%
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
@@ -75,6 +75,26 @@ del lex.yy.c
 del  y.tab.c
 del  y.tab.h
 
+:: Gera o Assembler pre-processor ---------------------------------------------
+
+cd %ROOT_DIR%\APP\Sources
+
+flex -oapp.c app.l
+gcc -o APP.exe app.c eval.c variaveis.c
+
+move APP.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
+del app.c
+
+:: Gera o compilador Assembler ------------------------------------------------
+
+cd %ROOT_DIR%\ASM\Sources
+
+flex -oASMComp.c ASMComp.l
+gcc -o ASM.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c simulacao.c array.c
+
+move ASM.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
+del ASMComp.c
+
 :: Gera o compilador Assembler ------------------------------------------------
 
 cd %ROOT_DIR%\Assembler\Sources
@@ -103,10 +123,16 @@ cd  %BIN_DIR%
     CMMComp.exe %%i %PROJ_DIR%\%%i %MAC_DIR% %TMP_DIR%\%%i
 ))
 
+:: Executa o Assembler pre-processor ------------------------------------------
+
+(for %%i in (%PROC_LIST%) do (
+    APP.exe %PROJ_DIR%\%%i\Software\%%i.asm %TMP_DIR%\%%i\app_log.txt
+))
+
 :: Executa o compilador Assembler ---------------------------------------------
 
 (for %%i in (%PROC_LIST%) do (
-    ASMComp.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i %HDL_DIR% %TMP_DIR%\%%i 0 0 1
+    ASM.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i %HDL_DIR% %TMP_DIR%\%%i 0 0 1
     cp %PROJ_DIR%\%%i\Hardware\%%i.v %TMP_DIR%\%%i
 ))
 

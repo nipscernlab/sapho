@@ -90,6 +90,16 @@ del app.c
 
 :: Gera o compilador Assembler ------------------------------------------------
 
+cd %ROOT_DIR%\ASM\Sources
+
+flex -oASMComp.c ASMComp.l
+gcc -o ASM.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c simulacao.c array.c
+
+move ASM.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+del ASMComp.c
+
+:: Gera o compilador Assembler ------------------------------------------------
+
 cd %ROOT_DIR%\Assembler\Sources
 
 flex -oASMComp.c ASMComp.l
@@ -118,13 +128,19 @@ CMMComp.exe %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
 
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
-APP.exe %ASM_FILE%
+APP.exe %ASM_FILE% %TMP_PRO%\app_log.txt
 
 :: Executa o compilador Assembler ---------------------------------------------
 
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
-ASMComp.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
+ASM.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
+
+:: Executa o compilador Assembler ---------------------------------------------
+
+set ASM_FILE=%SOFT_DIR%\%PROC%.asm
+
+::ASMComp.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
@@ -196,6 +212,7 @@ del %PROC%.v
 :: Limpa a pasta de arquivos temporarios --------------------------------------
 
 del %TMP_PRO%\cmm_log.txt
+del %TMP_PRO%\app_log.txt
 del %TMP_PRO%\pc_%PROC%_mem.txt
 del %TMP_PRO%\%PROC%_data.mif
 del %TMP_PRO%\%PROC%_inst.mif

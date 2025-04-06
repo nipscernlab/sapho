@@ -2,8 +2,7 @@
 // Tabela de variaveis --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-#include "..\Headers\variaveis.h"
-
+// includes globais
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -13,18 +12,17 @@
 int  v_count = 0;
 char v_name[NVARMAX][512];
 
-// ve se uma variavel ja foi usado
+// ve se uma variavel ja foi usada
 // se sim, pega o indice na tabela
 // se nao, retorna -1
 int var_find(char *val)
 {
-	int i, ind = -1;
+	int ind = -1;
 
-	for (i = 0; i < v_count; i++)
+	for (int i = 0; i < v_count; i++)
 		if (strcmp(val, v_name[i]) == 0)
 		{
-			ind = i;
-			break;
+			ind = i; break;
 		}
 	return ind;
 }

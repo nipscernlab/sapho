@@ -64,27 +64,31 @@ int state = 0;          // estado do compilador
 int c_op;               // guarda opcode atual
 
 // executada antes de iniciar o lexer
-void eval_init(int prep)
+void eval_init()
 {
-    // se estou ou nao na fase de pre-processamento
-    pp = prep;          
-    // a tabela eh resetada nas duas fases (melhor, vai por mim!)
-    var_reset();        
-    // pp soh conta, nao faz os arquivos ainda
-    if (!pp)
-    {
-        // num de bits de endereco para o operando (depois do mnemonico)
-        // depende de quem eh maior, mem de dado ou de instr
-        // esse valor foi achado na fase de pp
-        nbopr = (n_ins > n_dat+ndstac) ? ceil(log2(n_ins)) : ceil(log2(n_dat+ndstac));
+    char aux[128];
 
-        // abre os arquivos .mif
-        f_data  = fopen(get_dname(), "w");
-        f_instr = fopen(get_iname(), "w");
+    var_get("prname", prname);   //strcpy(prname,"proc_fft_teste");                  // nome do processador
+    var_get("n_ins" ,    aux); n_ins  = atoi(aux); // numero de instrucoes adicionadas
+    var_get("n_dat" ,    aux); n_dat  = atoi(aux); // numero de variaveis  adicionadas
+    var_get("nubits",    aux); nubits = atoi(aux); // numero de variaveis  adicionadas
 
-        // inicializa rotinas pra simulacao com o iverilog
-        sim_init();
-    }
+    if (var_get("itr_addr", aux) == 1) itr_addr = atoi(aux); // endereco de interrupcao
+    else                               itr_addr = 0; // se nao tem, assume que eh zero
+
+    lab_reg(); // registra labels no arquivo de log
+
+    // num de bits de endereco para o operando (depois do mnemonico)
+    // depende de quem eh maior, mem de dado ou de instr
+    // esse valor foi achado na fase de pp
+    nbopr = (n_ins > n_dat) ? ceil(log2(n_ins)) : ceil(log2(n_dat));
+    
+    // abre os arquivos .mif
+    f_data  = fopen(get_dname(), "w");
+    f_instr = fopen(get_iname(), "w");
+
+    // inicializa rotinas pra simulacao com o iverilog
+    sim_init();
 }
 
 // executado quando uma diretiva eh encontrada
@@ -97,15 +101,14 @@ void eval_direct(int next_state)
 // executado quando acha a diretiva #ITRAD
 void eval_itrad()
 {
-    // instrucao atual eh cadastrada como ponto de interrupcao
-    if (pp) itr_addr = n_ins;
+    
 }
 
 // executado quando um novo opcode eh encontrado
 void eval_opcode(int op, int next_state, char *text, char *nome)
 {
     c_op  = op;          // cadastra opcode atual
-    strcpy(opcd,text);   // guarda nome do opcode atual
+    strcpy(opcd,text);   // guarda nome do opcode atual para arquivo de traducao
 
     // proximo estado depende do tipo de opcode:
     // 0: nao tem operando
@@ -113,38 +116,14 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     // 2: operando eh endereco da memoria de instrucao
     state = next_state;
 
-    if (pp)
-    {   
-        // nao tem operando, ja pode contar uma instrucao
-        if (state == 0) n_ins++;
-        // cadastra mnemonico
-        mne_add(nome);
-    }
-
-    if (!pp) 
-    {   
-        // nao tem operando, ja pode escrever a instrucao
-        if (state == 0)
-        {
-             fprintf(f_instr, "%s%s\n", itob(op,NBITS_OPC), itob(0,nbopr));
-            sim_add(opcd,"");
-        }
-    }
-}
-
-// cadastra instrucao com a ula para a fase pp
-void instr_ula_pp(char *va, int is_const)
-{
-    // se for a primeira vez que a var aparece, faz o cadastro
-    if (var_find(va) == -1)
+    // nao tem operando, ja pode escrever a instrucao
+    if (state == 0)
     {
-        var_add(va, is_const); // adiciona variavel na tabela (esta fazendo isso nas duas fases)
-        n_dat++;               // adiciona uma variavel
-        sim_reg(va);           // registra variavel no simulador
+        fprintf(f_instr, "%s%s\n", itob(op,NBITS_OPC), itob(0,nbopr));
+        sim_add(opcd,"");
     }
-
-    // finamente, adiciona uma nova instrucao
-    n_ins++;
+    // cadastra mnemonico
+    mne_add(nome);
 }
 
 // cadastra instrucao com a ula
@@ -156,6 +135,7 @@ void instr_ula(char *va, int is_const)
     if (var_find(va) == -1)
     {
         var_add(va, is_const);                                     // adiciona variavel na tabela
+        sim_reg(va);                                               // registra variavel no simulador
         fprintf(f_data, "%s\n", itob(v_val[var_find(va)],nubits)); // adiciona variavel na mem de dados
     }
 
@@ -178,29 +158,25 @@ void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  1: if (pp) set_name(va);                                           // nome do processador
+        case  3: set_nbmant(atoi(va));                                   // numero de bits de mantissa
                  state = 0;  break;
-        case  2: if (pp) set_nbits (atoi(va));                                   // numero de bits de dados
+        case  4: set_nbexpo(atoi(va));                                   // numero de bits do expoente
                  state = 0;  break;
-        case  3: if (pp) set_nbmant(atoi(va));                                   // numero de bits de mantissa
+        case  5: set_ndstac(atoi(va));                                   // tamanho da pilha de dados
                  state = 0;  break;
-        case  4: if (pp) set_nbexpo(atoi(va));                                   // numero de bits do expoente
+        case  6: set_sdepth(atoi(va));                                   // tamanho da pilha de instrucoes
                  state = 0;  break;
-        case  5: if (pp) set_ndstac(atoi(va));                                   // tamanho da pilha de dados
+        case  7: set_nuioin(atoi(va));                                   // numero de enderecoes de entrada
                  state = 0;  break;
-        case  6: if (pp) set_sdepth(atoi(va));                                   // tamanho da pilha de instrucoes
+        case  8: set_nuioou(atoi(va));                                   // numero de enderecoes de saida
                  state = 0;  break;
-        case  7: if (pp) set_nuioin(atoi(va));                                   // numero de enderecoes de entrada
+        case  9: set_nugain(atoi(va));                                   // valor da normalizacao
                  state = 0;  break;
-        case  8: if (pp) set_nuioou(atoi(va));                                   // numero de enderecoes de saida
-                 state = 0;  break;
-        case  9: if (pp) set_nugain(atoi(va));                                   // valor da normalizacao
-                 state = 0;  break;
-        case 10: if (pp) set_fftsiz(atoi(va));                                   // num de bits pra inverter na fft
+        case 10: set_fftsiz(atoi(va));                                   // num de bits pra inverter na fft
                  state =  0; break;
         case 11: var_add(va,0);                                                  // achou um array sem inicializacao
                  state = 12; break;
-        case 12: if (pp) add_array_pp(atoi(va),""); else add_array(atoi(va),""); // declara  array sem inicializacao
+        case 12: add_array(atoi(va),""); // declara  array sem inicializacao
                  state = 0;  break;
         case 13: var_add(va,0);                                                  // achou um array com inicializacao
                  state = 14; break;
@@ -208,73 +184,37 @@ void eval_opernd(char *va, int is_const)
                  state = 15; break;
         case 15: tam_var = atoi(va);                                             // pega o tamanho do array com arquivo
                  state = 16; break;
-        case 16: if (pp) add_array_pp(tam_var,va); else add_array(tam_var,va);   // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 16: add_array(tam_var,va);   // preenche memoria com valor do arquivo (zero se nao tem arquivo)
                  state =  0; break;
-        case 17: if (pp) instr_ula_pp(va,is_const); else instr_ula(va,is_const); // operacoes com a ULA
+        case 17: instr_ula(va,is_const); // operacoes com a ULA
                  state = 0;  break;
-        case 18: if (pp) n_ins++; else instr_salto(va);                          // operacoes de salto
+        case 18: instr_salto(va);                          // operacoes de salto
                  state = 0;  break;
     }
 }
 
 void eval_label(char *la)
 {
-    if (pp)
-    {
-        add_label(la, n_ins); // cadastra label
-
-        sim_check_fim(la);
-    }
+    
 }
 
 void eval_finish()
 {
-    int i, aux;
-
-    // completa memoria de instrucao ------------------------------------------
-/*
-    aux = n_ins;
-    n_ins = (n_ins % (int)pow(2, logb(n_ins))) ? pow(2, logb(n_ins)+1) : pow(2, logb(n_ins));
-    for (i=0; i<n_ins-aux; i++)
-        fprintf(f_instr, "%s\n", itob(0,NBITS_OPC+nbopr));    // completando com potencia de 2
-*/
     fclose(f_instr);
 
     // completa memoria de dados ----------------------------------------------
 
-    int s = nubits;
-
-    n_dat = ndstac+n_dat;
-	for (i=0; i<ndstac; i++)
-        fprintf(f_data, "%s\n", itob(0,s));     // completando com a pilha
-/*
-    aux = n_dat;
-    n_dat = (n_dat % (int)pow(2, logb(n_dat))) ? pow(2, logb(n_dat)+1) : pow(2, logb(n_dat));
-    for (i=0; i<n_dat-aux; i++)
-        fprintf(f_data, "%s\n", itob(0,s));     // completando com potencia de 2
-*/
-    int fft_siz = 2*pow(2,fftsiz);
-    if ((find_mne("ILI") != 1) && (fft_siz > n_dat))
-    {
-        aux = n_dat;
-        n_dat = fft_siz;
-        for (i=0; i<n_dat-aux; i++)
-            fprintf(f_data, "%s\n", itob(0,s)); // completa com tamanho da fft (se necessario)
-    }
+	for (int i=0; i<ndstac; i++)
+        fprintf(f_data, "%s\n", itob(0,nubits));     // completando com a pilha
 
     fclose(f_data);
 
-    // checa integridade do tamanho do dado -----------------------------------
+    // finaliza traducao ------------------------------------------------------
 
-    if (nubits != nbmant+nbexpo+1)
-        fprintf(stderr, "Erro: NUBITS (%d) tem que ser NBMANT (%d) + NBEXPO (%d) + 1!\n", nubits, nbmant, nbexpo);
+    fclose(f_tran);
 
     // gera arquivos ----------------------------------------------------------
 
     build_vv_file();  // arquivo verilog top level do processador   
     build_tb_file();  // arquivo de test bench
-
-    // finaliza traducao ------------------------------------------------------
-
-    fclose(f_tran);
 }
