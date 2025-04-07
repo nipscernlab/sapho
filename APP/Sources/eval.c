@@ -11,7 +11,7 @@
 #include "..\Headers\variaveis.h"
 
 // variaveis auxiliares para lexer de arrays
-int  tam_arr;       // tamanho do array
+int   tam_arr;      // tamanho do array
 char name_arr[128]; // nome da variavel que esta sendo lida
 
 // variaveis de estado
@@ -24,7 +24,10 @@ FILE *f_log;        // arquivo de log
 // executado antes do lexer
 void eval_init(char *path)
 {
-    f_log = fopen(path, "w");
+    char    file[1001];
+    sprintf(file, "%s/app_log.txt", path);
+
+    f_log = fopen(file, "w");
 }
 
 // executado quando uma diretiva eh encontrada
@@ -94,6 +97,6 @@ void eval_label(char *va)
 void eval_finish()
 {
     fprintf(f_log, "n_ins %d\n", n_ins);
-    fprintf(f_log, "n_dat %d\n", ndstac+var_cnt());
+    fprintf(f_log, "n_dat %d\n", var_cnt()+ndstac);
     fclose (f_log);
 }

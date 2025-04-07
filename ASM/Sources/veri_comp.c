@@ -128,9 +128,41 @@ void build_vv_file()
 
     fprintf(f_veri, "`ifdef __ICARUS__\n\n");
 
+    int i;
+
+    fprintf(f_veri, "// I/O ------------------------------------------------------------------------\n\n");
+
+    for(i=0;i<nuioin;i++)
+    {
+    fprintf(f_veri, "reg signed [%d:0] in_sim_%d = 0;\n", s1, i);
+    fprintf(f_veri, "reg req_in_sim_%d = 0;\n", i);
+    }
+    fprintf(f_veri,"\n");
+
+    for(i=0;i<nuioou;i++)
+    {
+    fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", s2, i);
+    fprintf(f_veri, "reg out_en_sim_%d = 0;\n", i);
+    }
+
+    fprintf(f_veri, "\nalways @ (*) begin\n");
+    for(i=0;i<nuioin;i++)
+    {
+    fprintf(f_veri, "   if (req_in == %d) in_sim_%d = io_in;\n", (int)pow(2,i),i);
+    fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n", i, (int)pow(2,i),i);
+    }
+    fprintf(f_veri, "end\n");
+
+    fprintf(f_veri, "\nalways @ (*) begin\n");
+    for(i=0;i<nuioou;i++)
+    {
+    fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= io_out;\n", (int)pow(2,i), i);
+    fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n", i, (int)pow(2,i),i);
+    }
+    fprintf(f_veri, "end\n\n");
+
     fprintf(f_veri, "// variaveis ------------------------------------------------------------------\n\n");
 
-    int i;
     // cria um registrador para cada variavel encontrada
     for (i = 0; i < sim_v_cnt; i++)
     {

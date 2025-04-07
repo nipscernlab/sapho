@@ -70,13 +70,13 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first "$proc.req_in" $facname]
+    set index [string first "$proc.req_in_sim" $facname]
     if {$proc_id != -1 && $index != -1} {
         lappend req_in $facname
         incr j
     }
 
-    set index [string first "$proc.in" $facname]
+    set index [string first "$proc.in_sim" $facname]
     if {$proc_id != -1 && $index != -1} {
         lappend entrada $facname
     }
@@ -108,7 +108,7 @@ for {set i 0} {$i < $nfacs } {incr i} {
     set facname [gtkwave::getFacName $i]
 
     set proc_id [string first $proc $facname]
-    set index [string first "$proc.out_en" $facname]
+    set index [string first "$proc.out_en_sim" $facname]
     if {$proc_id != -1 && $index != -1} {
         lappend out_en $facname
         incr j

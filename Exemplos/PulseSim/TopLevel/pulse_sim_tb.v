@@ -13,7 +13,7 @@ always #10 clk = ~clk;
 wire signed [22:0] out;
 wire        [1 :0] out_en;
 
-pulse_sim sim (clk, rst, 0, out_en, out);
+pulse_sim sim (clk, rst, 1'b0, out_en, out);
 
 reg signed [22:0] truth, readout;
 

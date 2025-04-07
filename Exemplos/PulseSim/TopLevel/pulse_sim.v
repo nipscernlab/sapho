@@ -11,6 +11,6 @@ generate_random_32 gen_rand(clk, rst, rand_out);
 
 wire proc_req_in;
 
-proc_sim proc(clk, rst, {7'b0, rand_out}, out, proc_req_in, out_en, itr);
+proc_sim proc(clk, rst, {14'b0, rand_out}, out, proc_req_in, out_en, itr);
 
 endmodule

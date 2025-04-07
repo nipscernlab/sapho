@@ -5,7 +5,7 @@
 :: Configura o ambiente -------------------------------------------------------
 
 cls
-::echo off
+echo off
 set ROOT_DIR=%cd%
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
@@ -95,16 +95,6 @@ gcc -o ASM.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_com
 move ASM.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 del ASMComp.c
 
-:: Gera o compilador Assembler ------------------------------------------------
-
-cd %ROOT_DIR%\Assembler\Sources
-
-flex -oASMComp.c ASMComp.l
-gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c simulacao.c array.c
-
-move ASMComp.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
-del ASMComp.c
-
 :: Gera tradutores de dados ---------------------------------------------------
 
 cd %SCR_DIR%
@@ -126,7 +116,7 @@ cd  %BIN_DIR%
 :: Executa o Assembler pre-processor ------------------------------------------
 
 (for %%i in (%PROC_LIST%) do (
-    APP.exe %PROJ_DIR%\%%i\Software\%%i.asm %TMP_DIR%\%%i\app_log.txt
+    APP.exe %PROJ_DIR%\%%i\Software\%%i.asm %TMP_DIR%\%%i
 ))
 
 :: Executa o compilador Assembler ---------------------------------------------

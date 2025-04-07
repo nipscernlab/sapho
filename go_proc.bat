@@ -98,16 +98,6 @@ gcc -o ASM.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_com
 move ASM.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del ASMComp.c
 
-:: Gera o compilador Assembler ------------------------------------------------
-
-cd %ROOT_DIR%\Assembler\Sources
-
-flex -oASMComp.c ASMComp.l
-gcc -o ASMComp.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c simulacao.c array.c
-
-move ASMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
-del ASMComp.c
-
 :: Gera tradutores para o GTKWave ---------------------------------------------
 
 cd %SCR_DIR%
@@ -128,7 +118,7 @@ CMMComp.exe %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
 
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
-APP.exe %ASM_FILE% %TMP_PRO%\app_log.txt
+APP.exe %ASM_FILE% %TMP_PRO%
 
 :: Executa o compilador Assembler ---------------------------------------------
 

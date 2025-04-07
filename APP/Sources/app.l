@@ -1,5 +1,5 @@
 %{
-  #include "..\Headers\eval.h"
+    #include "..\Headers\eval.h"
 %}
 
 INNUM  [-+]?[0-9]+
@@ -149,12 +149,12 @@ LINHA          \n
    "SRS"   eval_opcode(17); // shift right aritmetico com memoria
  "S_SRS"   eval_opcode( 0); // shift right aritmetico com pilha
 
-{VARIA}   eval_opernd(yytext); // usado em instrucoes da ula com variaveis (IDs)
-{INNUM}   eval_opernd(yytext); // usado em instrucoes da ula com constante int
-{FLNUM}   eval_opernd(yytext); // usado em instrucoes da ula com constante float
+{VARIA}    eval_opernd(yytext); // usado em instrucoes da ula com variaveis (IDs)
+{INNUM}    eval_opernd(yytext); // usado em instrucoes da ula com constante int
+{FLNUM}    eval_opernd(yytext); // usado em instrucoes da ula com constante float
 
-{STRIN}   eval_opernd(yytext); // usado em instrucoes com strings (ex: arquivo de incializacao de array)
-{LABEL}   eval_label (yytext); // usado em instrucoes de salto
+{STRIN}    eval_opernd(yytext); // usado em instrucoes com strings (ex: arquivo de incializacao de array)
+{LABEL}    eval_label (yytext); // usado em instrucoes de salto
 
 {COMEN}
 {EMPTY}
@@ -165,13 +165,13 @@ LINHA          \n
 
 int main(int argc, char *argv[])
 {
-	yyin = fopen(argv[1], "r");      // primeiro argumento eh o arquivo .asm de entrada
-  eval_init(argv[2]);              // segundo  argumento eh o arquivo de log
-  yylex();                         // executa o lexer
-	fclose(yyin);                    // fecha o arquivo .asm
-  eval_finish();                   // finaliza o arquivo de log
+	  yyin = fopen(argv[1], "r"); // primeiro argumento eh o arquivo .asm de entrada
+    eval_init(argv[2]);         // segundo  argumento eh o arquivo de log
+    yylex();                    // executa o lexer
+	  fclose(yyin);               // fecha o arquivo .asm
+    eval_finish();              // finaliza o arquivo de log
 
-  return 0;
+    return 0;
 }
 
 int yywrap(void) {return 1;}
