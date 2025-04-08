@@ -1,10 +1,13 @@
 #include "..\Headers\variaveis.h"
 #include "..\Headers\t2t.h"
-#include "..\Headers\veri_comp.h"
+#include "..\Headers\hdl.h"
+#include "..\Headers\eval.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define NVARMAX 999999
 
 int  v_count = 0;
 char v_name[NVARMAX][512];
@@ -50,33 +53,18 @@ void var_add(char *var, int is_const)
     v_count++;
 }
 
-void inc_vcont(int val)
+void var_inc(int val)
 {
     v_count += val;
 }
 
-void var_reset()
+
+int var_val(char *var)
 {
-    v_count = 0;
+    return v_val[var_find(var)]; // retorna o valor da variavel
 }
 
-int var_get(char *var, char *val)
+int var_cnt()
 {
-    // abre o arquivo de log
-    char path[1024];
-    sprintf(path, "%s/app_log.txt", temp_dir);
-    FILE *input = fopen(path, "r");
-    
-    char linha[1001];
-    char nome[128];
-    while (fgets(linha, sizeof(linha), input)) {
-        if (sscanf(linha, "%s %s", nome, val) == 2) {
-            if (strcmp(nome, var) == 0) {
-                fclose(input);
-                return 1; // encontrou a variavel
-            }
-        }
-    }  
-    fclose(input);
-    return 0; // nao encontrou a variavel
+    return v_count; // retorna o numero de variaveis
 }

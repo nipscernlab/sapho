@@ -1,16 +1,25 @@
-#include  <stdio.h>
+// ----------------------------------------------------------------------------
+// rotinas para simulacao com o iverilog/gtkwave ------------------------------
+// ----------------------------------------------------------------------------
 
-extern char v_namo[1000][64]; //     nome da variavel  encontrada
-extern int  v_add [1000];     // endereco da variavel  encontrada
-extern int  v_tipo[1000];     // tipo     da variavel  encontrada
+// acoes com o arquivo de traducao --------------------------------------------
 
-extern int sim_v_cnt;
-extern int sim_n_opc;             // numero de instrucoes no arquivo de traducao
+void  sim_init   (int   clk, int clk_n, int s_typ); // cria arquivo de traducao
+void  sim_add    (char *opc, char *opr);            // adiciona opcode e operando
+void  sim_set_fim(int   fim);                       // define  endereco de @fim
+int   sim_get_fim();                                // retorna endereco de @fim
+void  sim_finish ();                                // fecha arquivo de traducao
 
-extern FILE *f_tran;          // arquivo para traducao do opcode
+// acessa parametros da simulacao --------------------------------------------------
 
-void sim_init();
-void sim_add (char *opc, char *opr);
-int  sim_is_var(char *va, int *tipo, int *is_global, char *nome);
-void sim_reg(char *va);
-void sim_check_fim(char *la);
+int   sim_clk    ();                                // pega frequencia do clock de simulacao
+int   sim_clk_num();                                // pega numero de clocks a simular
+int   sim_multi  ();                                // pega tipo de simulacao (um proc ou multicore)
+
+// acessa variaveis de simulacao ----------------------------------------------
+
+void  sim_reg    (char *va);                        // registra         variavel
+char* sim_name   (int   i);                         // pega nome     da variavel
+int   sim_addr   (int   i);                         // pega endereco da variavel
+int   sim_type   (int   i);                         // pega tipo     da variavel
+int   sim_cnt    ();                                // pega numero   de variaveis registradas

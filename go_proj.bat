@@ -90,7 +90,7 @@ del app.c
 cd %ROOT_DIR%\ASM\Sources
 
 flex -oASMComp.c ASMComp.l
-gcc -o ASM.exe ASMComp.c eval.c labels.c mnemonicos.c variaveis.c t2t.c veri_comp.c simulacao.c array.c
+gcc -o ASM.exe ASMComp.c eval.c labels.c opcodes.c variaveis.c t2t.c hdl.c simulacao.c array.c
 
 move ASM.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 del ASMComp.c

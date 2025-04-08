@@ -1,6 +1,7 @@
 #include "..\Headers\labels.h"
-#include "..\Headers\veri_comp.h"
+#include "..\Headers\hdl.h"
 #include "..\Headers\eval.h"
+#include "..\Headers\simulacao.h"
 
 #include <string.h>
 #include <stdio.h>
@@ -12,14 +13,10 @@ int  l_count;
 char l_name[NLABMAX][512];
 int  l_val [NLABMAX];
 
-int find_label(char *la)
+int lab_find(char *la)
 {
-	int i;
-
-	for (i = 0; i < l_count; i++)
-	{
-		if (strcmp(la, l_name[i]) == 0) return l_val[i];
-	}
+	for (int i = 0; i < l_count; i++) if (strcmp(la, l_name[i]) == 0)
+    return l_val[i];
 	return -1;
 }
 
@@ -27,7 +24,7 @@ void add_label(char *la, int val)
 {
     if (l_count == NLABMAX)
     {
-        fprintf(stderr, "Erro: n�mero de labels > %d", NLABMAX);
+        fprintf(stderr, "Erro: número de labels > %d", NLABMAX);
     }
     else
     {
@@ -50,7 +47,7 @@ void lab_reg()
     while (fgets(linha, sizeof(linha), input)) {
         if (sscanf(linha, "@%s %d", nome, &val) == 2) {
             add_label(nome, val); // cadastra label
-            if (strcmp(nome,"fim") == 0) fim_addr = val;
+            if (strcmp(nome,"fim") == 0) sim_set_fim(val); // define endereco de @fim
         }
     }  
     fclose(input);

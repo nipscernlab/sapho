@@ -1,8 +1,10 @@
-#include "..\Headers\mnemonicos.h"
+#include "..\Headers\opcodes.h"
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define NMNEMAX 999999           // o preco por nao usar C++ com o flex e bison
 
 int  m_count;             // contador de mnem
 char m_name[NMNEMAX][64]; // nome dos mnem
@@ -26,10 +28,20 @@ int find_mne(char *val)
 }
 
 // addiciona um novo mnemonico na tabela
-void mne_add(char *mne)
+void opc_add(char *mne)
 {
     if ((find_mne(mne) != -1) || (strcmp(mne,"") == 0)) return;
 
     strcpy(m_name[m_count], mne);
     m_count++;
+}
+
+int opc_cnt()
+{
+	return m_count;
+}
+
+char* opc_get(int i)
+{
+	return m_name[i];
 }

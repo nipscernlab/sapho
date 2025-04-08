@@ -1,5 +1,5 @@
 #include "..\Headers\array.h"
-#include "..\Headers\veri_comp.h"
+#include "..\Headers\hdl.h"
 #include "..\Headers\eval.h"
 #include "..\Headers\t2t.h"
 #include "..\Headers\variaveis.h"
@@ -7,9 +7,6 @@
 #include  <stdio.h>
 #include  <string.h>
 #include <stdlib.h>
-
-int fil_typ;            // auxilia no preenchimento de array em memoria (tipo de dado)
-int tam_var;            // auxilia no preenchimento de array em memoria (tamanho do array)
 
 // funcao auxiliar para remover espacos em branco
 void rem_space(char *text)
@@ -31,7 +28,7 @@ void rem_space(char *text)
 // usado com inicializacao de array (ex: int x[10] "nome do arquivo")
 // f_name eh o nome do arquivo a ser lido
 // tam eh o tamanho do arquivo
-void fill_mem(char *f_name, int tam)
+void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
 {
     FILE* filepointer = NULL;
 
@@ -108,16 +105,15 @@ void fill_mem(char *f_name, int tam)
 }
 
 // adiciona array na memoria de dados
-// se for array normal, completa com zero
+// se for array normal (f_name = ""), completa com zero
 // se for array inicializado, chama fill_mem para preencher
-// va eh o tamanho do array
-void add_array(int va, char *f_name)
+void arr_add(int size, int type, char *f_name, FILE *f_data)
 {
     // incrementa o tamanho da memoria de acordo
-    inc_vcont(va-1);
+    var_inc(size-1);
     // se nao tem arquivo, preenche com zero
     if (strcmp(f_name, "") == 0)
-        for (int i = 0; i < va; i++) fprintf(f_data, "%s\n", itob(0,nubits));
+        for (int i = 0; i < size; i++) fprintf(f_data, "%s\n", itob(0,nubits));
     else
-        fill_mem(f_name, va);
+        fill_mem(f_name, size, type, f_data);
 }

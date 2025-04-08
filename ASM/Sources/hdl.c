@@ -1,6 +1,6 @@
-#include "..\Headers\veri_comp.h"
+#include "..\Headers\hdl.h"
 #include "..\Headers\eval.h"
-#include "..\Headers\mnemonicos.h"
+#include "..\Headers\opcodes.h"
 #include "..\Headers\simulacao.h"
 
 #include <string.h>
@@ -10,28 +10,13 @@
 
 // redeclaracao de variaveis globais ------------------------------------------
 
-char temp_dir[1024], hdl_dir[1024], proc_dir[1024]; // diretorios
-int  sim_typ, clk_frq, clk_num;                     // simulacao
 
 char  tmp[512]; // guarda, temporariamente, os nomes de arquivos .v, .mif criados
 
 FILE *f_veri;
 
 // funcoes auxiliares para setar e pegar variaveis globais
-void set_name (char *va){strcpy(prname, va);}
 
-void set_nbits (int n){nubits  = n;}
-void set_nbmant(int n){nbmant = n;}
-void set_nbexpo(int n){nbexpo = n;}
-void set_ndstac(int n){ndstac = n;}
-void set_sdepth(int n){sdepth = n;}
-void set_nuioin(int n){nuioin = n;}
-void set_nuioou(int n){nuioou = n;}
-void set_nugain(int n){nugain = n;}
-void set_fftsiz(int n){fftsiz = n;}
-
-char *get_dname  (){sprintf(tmp, "%s/Hardware/%s_data.mif", proc_dir,prname); return tmp;}
-char *get_iname  (){sprintf(tmp, "%s/Hardware/%s_inst.mif", proc_dir,prname); return tmp;}
 char *get_vname  (){sprintf(tmp, "%s/Hardware/%s.v"       , proc_dir,prname); return tmp;}
 char *get_tb_name(){sprintf(tmp, "%s/%s_tb.v"             , temp_dir,prname); return tmp;}
 
@@ -59,7 +44,7 @@ int get_num_ins()
 }
 
 // gera arquivo verilog com uma instancia do processador
-void build_vv_file()
+void build_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 {
     // arquivo .v do processador
     f_veri = fopen(get_vname(), "w");
@@ -104,7 +89,7 @@ void build_vv_file()
 
     if (itr_addr != 0) fprintf(f_veri, ".ITRADD(%d),\n", itr_addr); // vai ter interrupcao
 
-    for (int i = 0; i < m_count; i++) fprintf(f_veri, ".%s(1),\n", m_name[i]);
+    for (int i = 0; i < opc_cnt(); i++) fprintf(f_veri, ".%s(1),\n", opc_get(i)); // todos os opcodes cadastrados
 
     fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n", prname);
     fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , prname);
@@ -164,46 +149,46 @@ void build_vv_file()
     fprintf(f_veri, "// variaveis ------------------------------------------------------------------\n\n");
 
     // cria um registrador para cada variavel encontrada
-    for (i = 0; i < sim_v_cnt; i++)
+    for (i = 0; i < sim_cnt(); i++)
     {
-        if (v_tipo[i] == 2)
-            fprintf(f_veri, "reg [16+%d-1:0] %s=0;\n", nubits, v_namo[i]);
+        if (sim_type(i) == 2)
+            fprintf(f_veri, "reg [16+%d-1:0] %s=0;\n", nubits, sim_name(i));
         else
-            fprintf(f_veri, "reg [%d-1:0] %s=0;\n"   , nubits, v_namo[i]);
+            fprintf(f_veri, "reg [%d-1:0] %s=0;\n"   , nubits, sim_name(i));
     }
     
     // inicia o always para registrar as variaveis
     fprintf(f_veri, "\nalways @ (posedge clk) begin\n");
 
     // registra cada variavel, dependendo do endereco de cada uma
-    for (i = 0; i < sim_v_cnt; i++)
+    for (i = 0; i < sim_cnt(); i++)
     {
-        if (v_tipo[i] == 2)
-            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,io_out};\n", v_add[i], v_namo[i], nbmant, nbexpo);
+        if (sim_type(i) == 2)
+            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,io_out};\n", sim_addr(i), sim_name(i), nbmant, nbexpo);
         else
-            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= io_out;\n", v_add[i], v_namo[i]);
+            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= io_out;\n", sim_addr(i), sim_name(i));
     }
 
     fprintf(f_veri, "end\n\n");
 
     // se a variavel for comp ...
     // junta a parte real e complexa em uma variavel do dobro de tamanho
-    for (i = 0; i < sim_v_cnt; i++)
+    for (i = 0; i < sim_cnt(); i++)
     {
-        if (v_tipo[i] == 3)
+        if (sim_type(i) == 3)
         {
-            for (int j = 0; j < sim_v_cnt; j++)
+            for (int j = 0; j < sim_cnt(); j++)
             {
                 char ni[64],nj[64];
-                strcpy(ni,v_namo[i]);
-                strcpy(nj,v_namo[j]);
+                strcpy(ni,sim_name(i));
+                strcpy(nj,sim_name(j));
                 ni[strlen(ni)-3] = '\0';
                 nj[strlen(nj)-3] = '\0';
 
                 char im[64];
                 sprintf(im, "%s_i", ni);
                 if (strcmp(nj,im) == 0)
-                    fprintf(f_veri,"wire [16+%d*2-1:0] comp_%s = {8'd%d, 8'd%d, %s, %s};\n", nubits, v_namo[i], nbmant, nbexpo, v_namo[i], v_namo[j]);
+                    fprintf(f_veri,"wire [16+%d*2-1:0] comp_%s = {8'd%d, 8'd%d, %s, %s};\n", nubits, sim_name(i), nbmant, nbexpo, sim_name(i), sim_name(j));
             }
         }
     }
@@ -239,9 +224,9 @@ void build_vv_file()
     fprintf(f_veri, "linetabs <= linetab;\n");
     fprintf(f_veri, "end\n\n");
 
-    if (sim_typ==0)
+    if (sim_multi()==0)
     {
-    fprintf(f_veri, "always @ (posedge clk) if (valr10 == %d) begin\n", fim_addr);
+    fprintf(f_veri, "always @ (posedge clk) if (valr10 == %d) begin\n", sim_get_fim());
     fprintf(f_veri, "$display(\"Fim do programa!\");\n");
     fprintf(f_veri, "$finish;\n");
     fprintf(f_veri, "end\n\n");
@@ -256,7 +241,7 @@ void build_vv_file()
 
 void build_tb_file()
 {
-    double T = 1000.0/clk_frq; // periodo do clock em ns (clk_frq em MHz)
+    double T = 1000.0/sim_clk(); // periodo do clock em ns (clk_frq em MHz)
 
     f_veri = fopen(get_tb_name(), "w");
 
@@ -273,7 +258,7 @@ void build_tb_file()
     fprintf(f_veri,       "#%f;\n", T);
     fprintf(f_veri, "rst = 0;\n\n"   );
     fprintf(f_veri, "for (i = 10; i <= 100; i = i + 10) begin\n");
-    fprintf(f_veri, "#%f;\n", T*clk_num/10);
+    fprintf(f_veri, "#%f;\n", T*sim_clk_num()/10);
     fprintf(f_veri, "$display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
     fprintf(f_veri, "end\n"          );
     fprintf(f_veri, "$finish;\n\n"   );

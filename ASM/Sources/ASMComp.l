@@ -1,7 +1,7 @@
 %{
 
 #include "..\Headers\eval.h"
-#include "..\Headers\veri_comp.h"
+#include "..\Headers\hdl.h"
 
 #include <string.h>
 
@@ -174,13 +174,9 @@ int main(int argc, char *argv[])
 	strcpy( hdl_dir,argv[3]);        // path da pasta HDL
 	strcpy(temp_dir,argv[4]);        // path da pasta Temp
 
-	clk_frq =  atoi(argv[5]);        // frequencia do clock  de simulacao
-	clk_num =  atoi(argv[6]);        // numero     de clocks da simulacao
-	sim_typ =  atoi(argv[7]);        // 0 para single-core e 1 para multi-core
-
   yyin = fopen(argv[1], "r");      // primeiro argumento eh o arquivo .asm de entrada
-	eval_init();                     // inicializa fase de pre-processamento (pp)
-  yylex();                         // executa fase pp
+	eval_init(atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));        // inicializa as variaveis de estado
+  yylex();                         // executa o lexer
 	fclose(yyin);                    // fecha o arquivo .asm
 
 	eval_finish();                   // executa finalizacao do assembler

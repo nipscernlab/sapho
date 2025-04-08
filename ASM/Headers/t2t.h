@@ -1,2 +1,6 @@
-         char *itob(int x, int w); // converte inteiro para binario
+// ----------------------------------------------------------------------------
+// rotinas de conversao entre tipos de dados ----------------------------------
+// ----------------------------------------------------------------------------
+
+         char* itob(int x, int w); // converte inteiro para binario (string)
 unsigned int   f2mf(char *va    ); // converte string com float para representacao do meu float

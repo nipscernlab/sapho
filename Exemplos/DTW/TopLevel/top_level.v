@@ -36,7 +36,7 @@ end
 
 myFIFO	#(.WORD(16), .LENGTH(128), .ALMOST(2))
 	FIFO16x32_inst_my (
-	.clock ( clk ),
+	.clk ( clk ),
 	.data ( data ),
 	.rdreq ( req_in_DTW[1] ),
 	.sclr ( rst_geral ),

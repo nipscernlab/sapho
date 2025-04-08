@@ -1,10 +1,9 @@
-#define NVARMAX 999999
+// ----------------------------------------------------------------------------
+// rotinas para manipular variaveis encontradas no arquivo .asm ---------------
+// ----------------------------------------------------------------------------
 
-extern int  v_val [NVARMAX];
-extern int  v_count;
-
-int  var_find  (char *val);
-void  var_add  (char *var, int val);
-void  inc_vcont(int   val);
-void  var_reset();
-int   var_get(char *var, char *val);
+void var_add (char *var, int val); // adiciona variavel na tabela
+void var_inc (int   val);          // incrementa o tamanho da memoria (para arrays)
+int  var_find(char *val);          // retorna o indice da variavel na tabela
+int  var_val (char *var);          // retorna o valor  da variavel
+int  var_cnt ();                   // retorna o numero de variaveis

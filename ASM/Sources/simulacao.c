@@ -1,25 +1,32 @@
 #include "..\Headers\simulacao.h"
-#include "..\Headers\veri_comp.h"
+#include "..\Headers\hdl.h"
 #include "..\Headers\eval.h"
 #include "..\Headers\variaveis.h"
 
+#include  <stdio.h>
 #include <string.h>
 
-int sim_v_cnt = 0;
+int s_count = 0;
 int sim_n_opc     = 0;               // numero de instrucoes no arquivo de traducao
-char v_namo[1000][64];    // nome da variavel encontrada
-int  v_add [1000];        // endereco da variavel encontrada
-int  v_tipo[1000];        // tipo da variavel encontrada
-int  fim_addr;            // endereco do fim do programa
-
+char s_name[1000][64];    // nome da variavel encontrada
+int  v_addr [1000];        // endereco da variavel encontrada
+int  s_type[1000];        // tipo da variavel encontrada
+int  sim_fim;            // endereco do fim do programa
 FILE *f_tran;
+int clk_frq;          // frequencia do clock de simulacao
+int clk_num;         // num de clocks maximo a simular
+int sim_typ;         // tipo de simulacao (um proc ou multicore)
 
-void sim_init()
+void sim_init(int clk, int clk_n, int s_typ)
 {
     // abre arquivo de traducao de opcode na pasta Temp
     char path[1024];
     sprintf(path, "%s/trad_opcode.txt", temp_dir);
     f_tran  = fopen(path, "w");
+
+    clk_frq = clk;        // frequencia do clock  de simulacao
+    clk_num = clk_n;     // numero de clocks a simular
+    sim_typ = s_typ;     // tipo de simulacao (um proc ou multicore)
 }
 
 void sim_add (char *opc, char *opr)
@@ -91,17 +98,61 @@ void sim_reg(char *va)
     if (sim_is_var(va, &tipo, &is_global, var_name))
     {
         if (is_global)
-            sprintf(v_namo[sim_v_cnt], "me%d_f_global_v_%s_e_", tipo, va);
+            sprintf(s_name[s_count], "me%d_f_global_v_%s_e_", tipo, va);
         else
-            sprintf(v_namo[sim_v_cnt], "me%d_f_%s_e_", tipo, var_name);
-        v_add  [sim_v_cnt] = v_count-1;
-        v_tipo [sim_v_cnt] = tipo;
-        sim_v_cnt++;
+            sprintf(s_name[s_count], "me%d_f_%s_e_", tipo, var_name);
+        v_addr  [s_count] = var_cnt()-1;
+        s_type [s_count] = tipo;
+        s_count++;
     }
 }
 
-void sim_check_fim(char *la)
+char* sim_name(int i)
 {
-    // cadastra endereco da instrucao de fim do programa
-    if (strcmp(la,"fim") == 0) fim_addr = n_ins;
+    return s_name[i];
+}
+
+int sim_addr(int i)
+{
+    return v_addr[i];
+}
+
+int sim_type(int i)
+{
+    return s_type[i];
+}
+
+int sim_cnt()
+{
+    return s_count;
+}
+
+void sim_finish()
+{
+    fclose(f_tran);
+}
+
+void sim_set_fim(int fim)
+{
+    sim_fim = fim;
+}
+
+int sim_get_fim()
+{
+    return sim_fim;
+}
+
+int sim_clk()
+{
+    return clk_frq;
+}
+
+int sim_clk_num()
+{
+    return clk_num; // numero de clocks a simular
+}
+
+int sim_multi()
+{
+    return sim_typ; // tipo de simulacao (um proc ou multicore)
 }
