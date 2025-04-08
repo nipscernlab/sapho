@@ -34,7 +34,7 @@ LINHA          \n
 "#array"   eval_direct(11);                       // array normal
 "#arrays"  eval_direct(13);                       // array com arquivo de inicializacao
 
-"#ITRAD"   eval_itrad (  );                       // ponto de endereco da interrupcao
+"#ITRAD"                  ;                       // ponto de endereco da interrupcao
 
    "LOD"   eval_opcode( 0,17, yytext,   ""     ); // carrega dado da memoria
  "P_LOD"   eval_opcode( 1,17, yytext,   ""     ); // PUSH + LOD
@@ -154,12 +154,12 @@ LINHA          \n
    "SRS"   eval_opcode(91,17, yytext,   "SRS"  ); // shift right aritmetico com memoria
  "S_SRS"   eval_opcode(92, 0, yytext,   "SRS"  ); // shift right aritmetico com pilha
 
-{VARIA}   eval_opernd(yytext  ,0); // usado em instrucoes da ula com variaveis (IDs)
-{INNUM}   eval_opernd(yytext  ,1); // usado em instrucoes da ula com constante int
-{FLNUM}   eval_opernd(yytext  ,2); // usado em instrucoes da ula com constante float
+{VARIA}    eval_opernd(yytext,0); // usado em instrucoes da ula com variaveis (IDs)
+{INNUM}    eval_opernd(yytext,1); // usado em instrucoes da ula com constante int
+{FLNUM}    eval_opernd(yytext,2); // usado em instrucoes da ula com constante float
 
-{STRIN}   eval_opernd(yytext+1,0); // usado em instrucoes com strings (ex: arquivo de incializacao de array)
-{LABEL}   eval_label (yytext    ); // usado em instrucoes de salto
+{STRIN}    eval_opernd(yytext,0); // usado em instrucoes com strings (ex: arquivo de incializacao de array)
+{LABEL}                         ; // usado em instrucoes de salto
 
 {COMEN}
 {EMPTY}
@@ -168,20 +168,17 @@ LINHA          \n
 .;
 %%
 
-int main(int argc, char *argv[])
+void main(int argc, char *argv[])
 {
-	strcpy(proc_dir,argv[2]);        // path da pasta Hardware
-	strcpy( hdl_dir,argv[3]);        // path da pasta HDL
-	strcpy(temp_dir,argv[4]);        // path da pasta Temp
+	strcpy(proc_dir,argv[2]);                             // path da pasta Hardware
+	strcpy( hdl_dir,argv[3]);                             // path da pasta HDL
+	strcpy(temp_dir,argv[4]);                             // path da pasta Temp
 
-  yyin = fopen(argv[1], "r");      // primeiro argumento eh o arquivo .asm de entrada
-	eval_init(atoi(argv[5]), atoi(argv[6]), atoi(argv[7]));        // inicializa as variaveis de estado
-  yylex();                         // executa o lexer
-	fclose(yyin);                    // fecha o arquivo .asm
-
-	eval_finish();                   // executa finalizacao do assembler
-
-  return 0;
+  yyin = fopen(argv[1], "r");                           // primeiro argumento eh o arquivo .asm de entrada
+	eval_init(atoi(argv[5]),atoi(argv[6]),atoi(argv[7])); // inicializa as variaveis de estado
+  yylex();                                              // executa o lexer
+	fclose(yyin);                                         // fecha o arquivo .asm
+	eval_finish();                                        // executa finalizacao do assembler
 }
 
 int yywrap(void) {return 1;}

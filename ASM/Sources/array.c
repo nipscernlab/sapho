@@ -1,27 +1,23 @@
-#include "..\Headers\array.h"
-#include "..\Headers\hdl.h"
-#include "..\Headers\eval.h"
-#include "..\Headers\t2t.h"
-#include "..\Headers\variaveis.h"
+// ----------------------------------------------------------------------------
+// tratamento de arrays em assembly -------------------------------------------
+// ----------------------------------------------------------------------------
 
-#include  <stdio.h>
-#include  <string.h>
+// includes globais
+#include <string.h>
 #include <stdlib.h>
 
-// funcao auxiliar para remover espacos em branco
-void rem_space(char *text)
+// includes locais
+#include "..\Headers\t2t.h"
+#include "..\Headers\eval.h"
+#include "..\Headers\array.h"
+#include "..\Headers\variaveis.h"
+
+// funcao auxiliar para remover aspas de uma string
+void rem_aspas(char *str)
 {
-    int i = 0, j = 0;
-    char temp[256];
-    strcpy(temp, text);
-    while (temp[i] != '\0')
-    {
-        while (temp[i] == ' ') i++;
-        text[j] = temp[i];
-        i++;
-        j++;
-    }
-    text[j] = '\0';
+    int j = 0; char c;
+    for (int i = 0; (c = str[i]) != '\0'; i++) if (c != '"') str[j++] = c;
+    str[j] = '\0';
 }
 
 // funcao auxiliar para preencher array na memoria de dados
@@ -30,78 +26,35 @@ void rem_space(char *text)
 // tam eh o tamanho do arquivo
 void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
 {
-    FILE* filepointer = NULL;
+    // abre o arquivo para leitura -------------------------------------------
 
-    // primeiro pega o caminho completo e abre o arquivo ----------------------
-    // mudar a sintaxe para nao precisar das aspas
-    char addr_tab[2048];
+    rem_aspas(f_name);
+    char path[2048];      sprintf(path  , "%s/Software/%s", proc_dir, f_name);
+    FILE *f_file =          fopen(path  , "r");
+    if   (f_file == NULL) fprintf(stderr, "Erro: não rolou de abrir o arquivo %s!!\n", path);
    
-        int tamanho = strlen(f_name); // tamanho da string do nome do arquivo
-        int idxToDel = tamanho-1;     // indice para deletar, nesse caso o ultimo, as aspas.
-        memmove(&f_name[idxToDel], &f_name[idxToDel +1], 1); // deletando de fato o indice
-        sprintf(addr_tab, "%s/Software/%s", proc_dir, f_name);
-
-        filepointer = fopen(addr_tab, "r");
-        if (filepointer == NULL)
-        fprintf(stderr, "Erro: Não rolou de abrir/achar o arquivo %s!!\n", addr_tab);
-   
-
     // agora le o arquivo -----------------------------------------------------
 
-    int  i,val = 0;
-    char linha[512];
+    int  val;
+    char linha[128];
+    char real [64], imag[64];
 
-    for (i = 0; i < tam ; i++)
+    for (int i = 0; i < tam ; i++)
     {
-        
-            // le linha por linha
-            // o que fazer depende ...
-            // do tipo de proc e do tipo de dado
-            fgets(linha, sizeof(linha), filepointer);
+        // le linha por linha
+        // o que fazer depende do tipo de dado
+        fgets (linha, sizeof(linha), f_file);
+        sscanf(linha, "%s %si",real,   imag);
 
-            // com int
-            if (fil_typ == 1)
-            {
-                val = atoi(linha);
-            }
+        if (fil_typ == 1) val = atoi(linha);    // tipo int
+        if (fil_typ == 2) val = f2mf(linha);    // tipo float
+        if (fil_typ == 3) val = f2mf(real );    // tipo comp (parte real)
+        if (fil_typ == 4) val = f2mf(imag );    // tipo comp (parte imag)
 
-            // com float
-            if (fil_typ == 2)
-            {
-                val = f2mf(linha);
-            }
-
-            // com real comp
-            if (fil_typ == 3)
-            {
-                char  num[64];
-                float real,img;
-
-                rem_space(linha);
-                   sscanf(linha,"%f %f",&real,&img);
-
-                   sprintf(num,"%f",real);
-                val = f2mf(num);
-            }
-
-            // com imag comp
-            if (fil_typ == 4)
-            {
-                char  num[64];
-                float real,img;
-
-                rem_space(linha);
-                   sscanf(linha,"%f %f",&real,&img);
-
-                   sprintf(num,"%f",img);
-                val = f2mf(num);
-            }
-
-            fprintf(f_data, "%s\n", itob(val,nubits));
-        
+        fprintf(f_data, "%s\n", itob(val,nubits));
     }
 
-    fclose(filepointer);
+    fclose(f_file);
 }
 
 // adiciona array na memoria de dados

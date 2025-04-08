@@ -163,15 +163,13 @@ LINHA          \n
 .;
 %%
 
-int main(int argc, char *argv[])
+void main(int argc, char *argv[])
 {
 	  yyin = fopen(argv[1], "r"); // primeiro argumento eh o arquivo .asm de entrada
     eval_init(argv[2]);         // segundo  argumento eh o arquivo de log
     yylex();                    // executa o lexer
 	  fclose(yyin);               // fecha o arquivo .asm
     eval_finish();              // finaliza o arquivo de log
-
-    return 0;
 }
 
 int yywrap(void) {return 1;}

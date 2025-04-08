@@ -1,7 +1,9 @@
 // ----------------------------------------------------------------------------
 // rotinas para gerar os arquivos .mif das memorias ... -----------------------
-// a medida que o lex vai escaneando o .asm -----------------------------------
+// a medida que o lexer vai escaneando o .asm ---------------------------------
 // ----------------------------------------------------------------------------
+
+#define NBITS_OPC 7 // tem que mudar no verilog de acordo (em proc.v)
 
 // includes globais
 #include   <math.h>
@@ -11,59 +13,59 @@
 
 // includes locais
 #include "..\Headers\t2t.h"
+#include "..\Headers\hdl.h"
 #include "..\Headers\eval.h"
 #include "..\Headers\array.h"
 #include "..\Headers\labels.h"
-#include "..\Headers\variaveis.h"
-#include "..\Headers\hdl.h"
-#include "..\Headers\simulacao.h"
 #include "..\Headers\opcodes.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\simulacao.h"
 
 // ----------------------------------------------------------------------------
 // redeclaracao de variaveis globais ------------------------------------------
 // ----------------------------------------------------------------------------
 
-char proc_dir[1024]; // diretorio do processador
-char temp_dir[1024]; // diretorio da pasta Tmp
-char  hdl_dir[1024]; // diretorio da pasta HDL
-
-// variaveis de estado --------------------------------------------------------
-
-char opcd[64];            // guarda opcode atual
-
-int  n_ins	  = 0;        // numero de instrucoes adicionadas
-int  n_dat    = 0;        // numero de variaveis  adicionadas
-int  itr_addr = 0;        // endereco de interrupcao
+// diretorios de acesso aos arquivos .mif e .v
+char proc_dir[1024];    // diretorio do processador
+char temp_dir[1024];    // diretorio da pasta Tmp
+char  hdl_dir[1024];    // diretorio da pasta HDL
 
 // guarda os valores das diretivas
-char prname [128];        // nome do processador
-int  nubits  = 23;        // tamanho da palavra da ula
-int  nbmant  = 16;        // numero de bits da mantissa
-int  nbexpo  =  6;        // numero de bits do expoente
-int  ndstac  = 10;        // tamanho da pilha de dados
-int  sdepth  = 10;        // tamanho da pilha de subrotinas
-int  nuioin  =  1;        // numero de portas de entrada
-int  nuioou  =  1;        // numero de portas de saida
-int  nugain  = 64;        // constante de divisao
-int  fftsiz   = 8;        // tamanho da fft (em bits)
-
-int  nbopr;               // num de bits de operando
+char prname [128];      // nome do processador
+int  nubits  = 23;      // tamanho da palavra da ula
+int  nbmant  = 16;      // numero de bits da mantissa
+int  nbexpo  =  6;      // numero de bits do expoente
+int  ndstac  = 10;      // tamanho da pilha de dados
+int  sdepth  = 10;      // tamanho da pilha de subrotinas
+int  nuioin  =  1;      // numero de portas de entrada
+int  nuioou  =  1;      // numero de portas de saida
+int  nugain  = 64;      // constante de divisao
+int  fftsiz   = 8;      // tamanho da fft (em bits)
 
 // ----------------------------------------------------------------------------
 // variaveis locais -----------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-#define NBITS_OPC 7     // tem que mudar no verilog de acordo (em proc.v)
-
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 
-// variaveis de estado --------------------------------------------------------
+// variaveis de estados
+int  state = 0;         // guarda estado do compilador
+char opc_name[64];      // guarda nome   do opcode atual
+int  opc_idx;           // guarda indice do opcode atual
+int  arr_typ;           // guarda tipo    de array
+int  arr_tam;           // guarda tamanho do array
 
-int state = 0;          // estado do compilador
-int c_op;               // guarda opcode atual
-int fil_typ;           // tipo de arquivo
-int tam_var;            // auxilia no preenchimento de array em memoria (tamanho do array)
+// variaveis auxiliares
+int  n_ins	  = 0;      // numero de instrucoes adicionadas
+int  n_dat    = 0;      // numero de variaveis  adicionadas
+int  itr_addr = 0;      // endereco de interrupcao
+int  nbopr;             // num de bits de operando
 
+// ----------------------------------------------------------------------------
+// funcoes auxiliares ---------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+// pega parametros no arquivo app_log.txt
 int par_get(char *var, char *val)
 {
     // abre o arquivo de log
@@ -72,44 +74,74 @@ int par_get(char *var, char *val)
     FILE *input = fopen(path, "r");
     
     char linha[1001];
-    char nome[128];
-    while (fgets(linha, sizeof(linha), input)) {
-        if (sscanf(linha, "%s %s", nome, val) == 2) {
-            if (strcmp(nome, var) == 0) {
-                fclose(input);
-                return 1; // encontrou a variavel
-            }
-        }
-    }  
+    char nome [128 ];
+    while (fgets (linha,sizeof(linha),input)) if (sscanf(linha,"%s %s", nome, val) == 2) if (strcmp(nome,var) == 0)
+    {
+        fclose(input);
+        return 1; // encontrou a variavel
+    }
+
     fclose(input);
     return 0; // nao encontrou a variavel
 }
 
-// executada antes de iniciar o lexer
+// cadastra instrucao com a ula
+// adiciona a variavel na memoria de dados
+// por ultimo, coloca a instrucao na memoria de instrucao
+void instr_ula(char *va, int is_const)
+{
+    // se for a primeira vez que a var aparece, faz o cadastro
+    if (var_find(va) == -1)
+    {
+        var_add(va, is_const);                             // adiciona variavel na tabela
+        fprintf(f_data, "%s\n", itob(var_val(va),nubits)); // adiciona variavel na mem de dados
+        sim_reg(va);                                       // registra variavel no simulador (se for do usuario)
+    }
+
+    // escreve a nova instrucao
+    fprintf(f_instr, "%s%s\n" , itob(opc_idx,NBITS_OPC), itob(var_find(va),nbopr));
+    // cadastra, tambem, no tradutor da simulacao
+    sim_add(opc_name,va);
+}
+
+// cadastra instrucoes de salto
+void instr_salto(char *va)
+{
+    // escreve a nova instrucao
+    fprintf(f_instr, "%s%s\n" , itob(opc_idx,NBITS_OPC), itob(lab_find(va),nbopr));
+    // cadastra, tambem, no tradutor da simulacao
+    sim_add(opc_name,va);
+}
+
+// ----------------------------------------------------------------------------
+// funcoes de evolucao do lexer -----------------------------------------------
+// ----------------------------------------------------------------------------
+
+// executado antes de iniciar o lexer
 void eval_init(int clk, int clk_n, int s_typ)
 {
-    char aux[128];
+    char aux[256];
 
-    par_get("prname", prname);   //strcpy(prname,"proc_fft_teste");                  // nome do processador
+    // pega parametros no arquivo app_log.txt ---------------------------------
+
+    par_get("prname", prname);                     // nome do processador
     par_get("n_ins" ,    aux); n_ins  = atoi(aux); // numero de instrucoes adicionadas
     par_get("n_dat" ,    aux); n_dat  = atoi(aux); // numero de variaveis  adicionadas
-    par_get("nubits",    aux); nubits = atoi(aux); // numero de variaveis  adicionadas
+    par_get("nubits",    aux); nubits = atoi(aux); // numero de bits da ULA
 
     if (par_get("itr_addr", aux) == 1) itr_addr = atoi(aux); // endereco de interrupcao
-    else                               itr_addr = 0; // se nao tem, assume que eh zero
 
-    lab_reg(); // registra labels no arquivo de log
+    lab_reg(); // registra labels do arquivo de log
+
+    // executa a inicializacao ------------------------------------------------
 
     // num de bits de endereco para o operando (depois do mnemonico)
     // depende de quem eh maior, mem de dado ou de instr
     nbopr = (n_ins > n_dat) ? ceil(log2(n_ins)) : ceil(log2(n_dat));
     
     // abre os arquivos .mif
-    char tmp[512];
-    sprintf(tmp, "%s/Hardware/%s_data.mif", proc_dir, prname);
-    f_data  = fopen(tmp, "w");
-    sprintf(tmp, "%s/Hardware/%s_inst.mif", proc_dir, prname);
-    f_instr = fopen(tmp, "w");
+    sprintf(aux, "%s/Hardware/%s_data.mif", proc_dir, prname); f_data  = fopen(aux, "w");
+    sprintf(aux, "%s/Hardware/%s_inst.mif", proc_dir, prname); f_instr = fopen(aux, "w");
 
     // inicializa rotinas pra simulacao com o iverilog
     sim_init(clk, clk_n, s_typ);
@@ -122,17 +154,11 @@ void eval_direct(int next_state)
     state = next_state;
 }
 
-// executado quando acha a diretiva #ITRAD
-void eval_itrad()
-{
-    
-}
-
 // executado quando um novo opcode eh encontrado
 void eval_opcode(int op, int next_state, char *text, char *nome)
 {
-    c_op  = op;          // cadastra opcode atual
-    strcpy(opcd,text);   // guarda nome do opcode atual para arquivo de traducao
+    opc_idx = op;          // cadastra opcode atual
+    strcpy(opc_name,text); // guarda nome do opcode atual para arquivo de traducao
 
     // proximo estado depende do tipo de opcode:
     // 0: nao tem operando
@@ -144,101 +170,50 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     if (state == 0)
     {
         fprintf(f_instr, "%s%s\n", itob(op,NBITS_OPC), itob(0,nbopr));
-        sim_add(opcd,"");
+        sim_add(opc_name,"");
     }
-    // cadastra mnemonico
+    // cadastra opcode
     opc_add(nome);
 }
 
-// cadastra instrucao com a ula
-// adiciona a variavel na memoria de dados
-// por ultimo, coloca a instrucao na memoria de instrucao
-void instr_ula(char *va, int is_const)
-{
-    // se for a primeira vez que a var aparece, faz o cadastro
-    if (var_find(va) == -1)
-    {
-        var_add(va, is_const);                             // adiciona variavel na tabela
-        sim_reg(va);                                       // registra variavel no simulador (se for do usuario)
-        fprintf(f_data, "%s\n", itob(var_val(va),nubits)); // adiciona variavel na mem de dados
-    }
-
-    // escreve a nova instrucao
-    fprintf(f_instr, "%s%s\n" , itob(c_op,NBITS_OPC), itob(var_find(va),nbopr));
-    // cadastra, tambem, no tradutor da simulacao
-    sim_add(opcd,va);
-}
-
-// cadastra instrucoes de salto
-void instr_salto(char *va)
-{
-    // escreve a nova instrucao
-    fprintf(f_instr, "%s%s\n" , itob(c_op,NBITS_OPC), itob(lab_find(va),nbopr));
-    // cadastra, tambem, no tradutor da simulacao
-    sim_add(opcd,va);
-}
-
+// executado quando um operando eh encontrado
 void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  3: nbmant =   atoi(va);                                    // numero de bits de mantissa
-                 state  = 0; break;
-        case  4: nbexpo =   atoi(va);                                    // numero de bits do expoente
-                 state  = 0; break;
-        case  5: ndstac =   atoi(va);                                    // tamanho da pilha de dados
-                 state  = 0; break;
-        case  6: sdepth =   atoi(va);                                    // tamanho da pilha de instrucoes
-                 state  = 0; break;
-        case  7: nuioin =   atoi(va);                                    // numero de enderecoes de entrada
-                 state  = 0; break;
-        case  8: nuioou =   atoi(va);                                   // numero de enderecoes de saida
-                 state  = 0; break;
-        case  9: nugain = atoi(va);                                   // valor da normalizacao
-                 state = 0;  break;
-        case 10: fftsiz = atoi(va);                                   // num de bits pra inverter na fft
-                 state =  0; break;
-        case 11: var_add(va,0);                                                  // achou um array sem inicializacao
-                 state = 12; break;
-        case 12: arr_add(atoi(va),0,"",f_data); // declara  array sem inicializacao
-                 state = 0;  break;
-        case 13: var_add(va,0);                                                  // achou um array com inicializacao
-                 state = 14; break;
-        case 14: fil_typ = atoi(va);                                             // pega o tipo de array
-                 state = 15; break;
-        case 15: tam_var = atoi(va);                                             // pega o tamanho do array com arquivo
-                 state = 16; break;
-        case 16: arr_add(tam_var,fil_typ,va,f_data);   // preenche memoria com valor do arquivo (zero se nao tem arquivo)
-                 state =  0; break;
-        case 17: instr_ula(va,is_const); // operacoes com a ULA
-                 state = 0;  break;
-        case 18: instr_salto(va);                          // operacoes de salto
-                 state = 0;  break;
+        case  3: nbmant =  atoi(va);                   state =  0; break; // numero de bits de mantissa
+        case  4: nbexpo =  atoi(va);                   state =  0; break; // numero de bits do expoente
+        case  5: ndstac =  atoi(va);                   state =  0; break; // tamanho da pilha de dados
+        case  6: sdepth =  atoi(va);                   state =  0; break; // tamanho da pilha de instrucoes
+        case  7: nuioin =  atoi(va);                   state =  0; break; // numero de enderecoes de entrada
+        case  8: nuioou =  atoi(va);                   state =  0; break; // numero de enderecoes de saida
+        case  9: nugain =  atoi(va);                   state =  0; break; // valor da normalizacao
+        case 10: fftsiz =  atoi(va);                   state =  0; break; // num de bits pra inverter na fft
+        case 11: var_add       (va ,0);                state = 12; break; // achou um array sem inicializacao
+        case 12: arr_add  (atoi(va),0     ,"",f_data); state =  0; break; // declara  array sem inicializacao
+        case 13: var_add       (va ,0);                state = 14; break; // achou um array com inicializacao
+        case 14: arr_typ = atoi(va);                   state = 15; break; // pega o tipo de array
+        case 15: arr_tam = atoi(va);                   state = 16; break; // pega o tamanho do array com arquivo
+        case 16: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 17: instr_ula     (va,is_const);          state =  0; break; // operacoes com a ULA
+        case 18: instr_salto   (va);                   state =  0; break; // operacoes de salto
     }
 }
 
-void eval_label(char *la)
-{
-    
-}
-
+// executado depois do lexer
 void eval_finish()
 {
+    // completa memoria de dados com a pilha
+	for (int i=0; i<ndstac; i++) fprintf(f_data, "%s\n", itob(0,nubits));
+
+    // ja pode fechar os arquivos .mif
     fclose(f_instr);
+    fclose(f_data );
 
-    // completa memoria de dados ----------------------------------------------
-
-	for (int i=0; i<ndstac; i++)
-        fprintf(f_data, "%s\n", itob(0,nubits));     // completando com a pilha
-
-    fclose(f_data);
-
-    // finaliza traducao ------------------------------------------------------
-
+    // finaliza simulacao
     sim_finish();
 
-    // gera arquivos ----------------------------------------------------------
-
-    build_vv_file(n_ins,n_dat,nbopr,itr_addr);  // arquivo verilog top level do processador   
-    build_tb_file();  // arquivo de test bench
+    // gera arquivos hdl
+    hdl_vv_file(n_ins,n_dat,nbopr,itr_addr); // arquivo verilog top level do processador   
+    hdl_tb_file();                           // arquivo verilog de test bench
 }

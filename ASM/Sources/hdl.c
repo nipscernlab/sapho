@@ -1,3 +1,7 @@
+// ----------------------------------------------------------------------------
+// rotinas para geracao dos arquivos .v do processador e test bench -----------
+// ----------------------------------------------------------------------------
+
 #include "..\Headers\hdl.h"
 #include "..\Headers\eval.h"
 #include "..\Headers\opcodes.h"
@@ -44,7 +48,7 @@ int get_num_ins()
 }
 
 // gera arquivo verilog com uma instancia do processador
-void build_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
+void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 {
     // arquivo .v do processador
     f_veri = fopen(get_vname(), "w");
@@ -239,7 +243,7 @@ void build_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fclose(f_veri);
 }
 
-void build_tb_file()
+void hdl_tb_file()
 {
     double T = 1000.0/sim_clk(); // periodo do clock em ns (clk_frq em MHz)
 
