@@ -12,6 +12,10 @@
 #include "..\Headers\array.h"
 #include "..\Headers\variaveis.h"
 
+// ----------------------------------------------------------------------------
+// funcoes auxiliares ---------------------------------------------------------
+// ----------------------------------------------------------------------------
+
 // funcao auxiliar para remover aspas de uma string
 void rem_aspas(char *str)
 {
@@ -46,16 +50,20 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
         fgets (linha, sizeof(linha), f_file);
         sscanf(linha, "%s %si",real,   imag);
 
-        if (fil_typ == 1) val = atoi(linha);    // tipo int
-        if (fil_typ == 2) val = f2mf(linha);    // tipo float
-        if (fil_typ == 3) val = f2mf(real );    // tipo comp (parte real)
-        if (fil_typ == 4) val = f2mf(imag );    // tipo comp (parte imag)
+        if (fil_typ == 1) val = atoi(linha); // tipo int
+        if (fil_typ == 2) val = f2mf(linha); // tipo float
+        if (fil_typ == 3) val = f2mf(real ); // tipo comp (parte real)
+        if (fil_typ == 4) val = f2mf(imag ); // tipo comp (parte imag)
 
         fprintf(f_data, "%s\n", itob(val,nubits));
     }
 
     fclose(f_file);
 }
+
+// ----------------------------------------------------------------------------
+// funcoes de manipulacao de arrays -------------------------------------------
+// ----------------------------------------------------------------------------
 
 // adiciona array na memoria de dados
 // se for array normal (f_name = ""), completa com zero

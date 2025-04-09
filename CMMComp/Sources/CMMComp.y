@@ -371,7 +371,6 @@ int main(int argc, char *argv[])
 
   // termina o arquivo de log do cmm ------------------------------------------
 
-  fprintf(f_log, "#\n%d\n", num_ins); // numero de instrucoes vem na linha depois de #
   fclose (f_log);
 
   // gera o arquivo de traducao pro codigo cmm --------------------------------

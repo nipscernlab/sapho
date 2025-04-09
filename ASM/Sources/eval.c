@@ -25,7 +25,7 @@
 // redeclaracao de variaveis globais ------------------------------------------
 // ----------------------------------------------------------------------------
 
-// diretorios de acesso aos arquivos .mif e .v
+// diretorios de acesso aos arquivos
 char proc_dir[1024];    // diretorio do processador
 char temp_dir[1024];    // diretorio da pasta Tmp
 char  hdl_dir[1024];    // diretorio da pasta HDL
@@ -65,12 +65,12 @@ int  nbopr;             // num de bits de operando
 // funcoes auxiliares ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// pega parametros no arquivo app_log.txt
-int par_get(char *var, char *val)
+// pega parametros no arquivo de log
+int eval_get(char *fname, char *var, char *val)
 {
     // abre o arquivo de log
     char path[1024];
-    sprintf(path, "%s/app_log.txt", temp_dir);
+    sprintf(path, "%s/%s", temp_dir, fname);
     FILE *input = fopen(path, "r");
     
     char linha[1001];
@@ -124,12 +124,12 @@ void eval_init(int clk, int clk_n, int s_typ)
 
     // pega parametros no arquivo app_log.txt ---------------------------------
 
-    par_get("prname", prname);                     // nome do processador
-    par_get("n_ins" ,    aux); n_ins  = atoi(aux); // numero de instrucoes adicionadas
-    par_get("n_dat" ,    aux); n_dat  = atoi(aux); // numero de variaveis  adicionadas
-    par_get("nubits",    aux); nubits = atoi(aux); // numero de bits da ULA
+    eval_get("app_log.txt","prname", prname);                     // nome do processador
+    eval_get("app_log.txt","n_ins" ,    aux); n_ins  = atoi(aux); // numero de instrucoes adicionadas
+    eval_get("app_log.txt","n_dat" ,    aux); n_dat  = atoi(aux); // numero de variaveis  adicionadas
+    eval_get("app_log.txt","nubits",    aux); nubits = atoi(aux); // numero de bits da ULA
 
-    if (par_get("itr_addr", aux) == 1) itr_addr = atoi(aux); // endereco de interrupcao
+    if (eval_get("app_log.txt","itr_addr", aux) == 1) itr_addr = atoi(aux); // endereco de interrupcao
 
     lab_reg(); // registra labels do arquivo de log
 

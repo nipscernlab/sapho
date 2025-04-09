@@ -1,33 +1,28 @@
-#include "..\Headers\variaveis.h"
-#include "..\Headers\t2t.h"
-#include "..\Headers\hdl.h"
-#include "..\Headers\eval.h"
+// ----------------------------------------------------------------------------
+// rotinas para manipular variaveis encontradas no arquivo .asm ---------------
+// ----------------------------------------------------------------------------
 
-#include <stdio.h>
+#define NVARMAX 999999 // trocar para arrays dinamicos
+
+// includes globais
+#include  <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#define NVARMAX 999999
+// includes locais
+#include "..\Headers\t2t.h"
+
+// ----------------------------------------------------------------------------
+// variaveis locais -----------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 int  v_count = 0;
 char v_name[NVARMAX][512];
 int  v_val [NVARMAX];
 
-// ve se uma variavel ja foi usado
-// se sim, pega o indice na tabela
-// se nao, retorna -1
-int var_find(char *val)
-{
-	int i, ind = -1;
-
-	for (i = 0; i < v_count; i++)
-		if (strcmp(val, v_name[i]) == 0)
-		{
-			ind = i;
-			break;
-		}
-	return ind;
-}
+// ----------------------------------------------------------------------------
+// rotinas de interface -------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 // addiciona uma nova variavel na tabela
 // se o operando for uma constante, converte seu valor para binario ...
@@ -53,18 +48,22 @@ void var_add(char *var, int is_const)
     v_count++;
 }
 
-void var_inc(int val)
+// ve se uma variavel ja foi usado
+// se sim, pega o indice na tabela
+// se nao, retorna -1
+int var_find(char *val)
 {
-    v_count += val;
+	int i, ind = -1;
+
+	for (i = 0; i < v_count; i++)
+		if (strcmp(val, v_name[i]) == 0)
+		{
+			ind = i;
+			break;
+		}
+	return ind;
 }
 
-
-int var_val(char *var)
-{
-    return v_val[var_find(var)]; // retorna o valor da variavel
-}
-
-int var_cnt()
-{
-    return v_count; // retorna o numero de variaveis
-}
+void var_inc(int   val){v_count += val             ;} // incrementa o tamanho da memoria (para arrays)
+int  var_val(char *var){return v_val[var_find(var)];} // retorna o valor da variavel
+int  var_cnt(         ){return v_count             ;} // retorna o numero de variaveis

@@ -1,11 +1,15 @@
-#include "..\Headers\t2t.h"
-#include "..\Headers\hdl.h"
-#include "..\Headers\eval.h"
+// ----------------------------------------------------------------------------
+// rotinas de conversao entre tipos de dados ----------------------------------
+// ----------------------------------------------------------------------------
 
+// includes globais
 #include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include  <stdio.h>
+#include   <math.h>
+
+// includes locais
+#include "..\Headers\eval.h"
 
 // converte o inteiro x para binario de comprimento w
 // tentar mudar para conseguir converter int maior que 32 bits
@@ -85,5 +89,6 @@ unsigned int f2mf(char *va)
         m = m >> sh;
         if (carry) m = m+1; // arredonda
     }
+    
     return s + e + m;
 }
