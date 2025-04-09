@@ -31,16 +31,16 @@ char temp_dir[1024];    // diretorio da pasta Tmp
 char  hdl_dir[1024];    // diretorio da pasta HDL
 
 // guarda os valores das diretivas
-char prname [128];      // nome do processador
-int  nubits  = 23;      // tamanho da palavra da ula
-int  nbmant  = 16;      // numero de bits da mantissa
-int  nbexpo  =  6;      // numero de bits do expoente
-int  ndstac  = 10;      // tamanho da pilha de dados
-int  sdepth  = 10;      // tamanho da pilha de subrotinas
-int  nuioin  =  1;      // numero de portas de entrada
-int  nuioou  =  1;      // numero de portas de saida
-int  nugain  = 64;      // constante de divisao
-int  fftsiz   = 8;      // tamanho da fft (em bits)
+char prname   [128];    // nome do processador
+int  nubits    = 23;    // tamanho da palavra da ula
+int  nbmant    = 16;    // numero de bits da mantissa
+int  nbexpo    =  6;    // numero de bits do expoente
+int  ndstac    = 10;    // tamanho da pilha de dados
+int  sdepth    = 10;    // tamanho da pilha de subrotinas
+int  nuioin    =  1;    // numero de portas de entrada
+int  nuioou    =  1;    // numero de portas de saida
+int  nugain    = 64;    // constante de divisao
+int  fftsiz     = 8;    // tamanho da fft (em bits)
 
 // ----------------------------------------------------------------------------
 // variaveis locais -----------------------------------------------------------
@@ -49,7 +49,7 @@ int  fftsiz   = 8;      // tamanho da fft (em bits)
 FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 
 // variaveis de estados
-int  state = 0;         // guarda estado do compilador
+int  state =   0 ;      // guarda estado do compilador
 char opc_name[64];      // guarda nome   do opcode atual
 int  opc_idx;           // guarda indice do opcode atual
 int  arr_typ;           // guarda tipo    de array

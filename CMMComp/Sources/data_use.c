@@ -78,7 +78,7 @@ int pplus1d2exp(int id, int ete)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
 
     // equivalente a pegar o x na expressao (x+1)
-    int et = array1d2exp(id,ete,0);
+    int et = arr_1d2exp(id,ete,0);
     // agora transforma o 1 em um exp
     // primeiro faz o lexer do 1
     if (find_var("1") == -1) add_var("1");
@@ -90,7 +90,7 @@ int pplus1d2exp(int id, int ete)
     // depois faz operacao de soma
     int ret = oper_soma(et,et1);
     // faz o load no indice do array novamente
-    get_1d_index(id, ete);
+    arr_1d_index(id, ete);
     // por ultimo, atribui de volta pra id
     array_set(id, ret, 0);
 
@@ -106,7 +106,7 @@ int pplus2d2exp(int id, int et1, int et2)
         fprintf (stderr, "Erro na linha %d: o que você bebeu pra querer incrementar um número complexo?\n", line_num+1);
 
     // equivalente a pegar o x na expressao (x+1)
-    int et = array2d2exp(id,et1,et2);
+    int et = arr_2d2exp(id,et1,et2);
     // agora transforma o 1 em um exp
     // primeiro faz o lexer do 1
     if (find_var("1") == -1) add_var("1");
@@ -118,7 +118,7 @@ int pplus2d2exp(int id, int et1, int et2)
     // depois faz operacao de soma
     int ret = oper_soma(et,etx);
     // faz o load no indice do array novamente
-    get_2d_index(id, et1, et2);
+    arr_2d_index(id, et1, et2);
     // por ultimo, atribui de volta pra id
     array_set(id, ret, 0);
 

@@ -466,21 +466,11 @@ int oper_soma(int et1, int et2)
     }
 
     // comp const com int var
-    if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0) && (v_isco[et2%OFST]==0))
+    if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         get_cmp_cst(et1,&etr,&eti);
 
         add_instr("%s %s\n", i2f, v_name[et2%OFST]);
-        add_instr("F_ADD %s\n", v_name[etr%OFST]);
-        add_instr("P_LOD  %s\n", v_name[eti%OFST]);
-    }
-
-    // comp const com int const
-    if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0) && (v_isco[et2%OFST]==1))
-    {
-        get_cmp_cst(et1,&etr,&eti);
-
-        add_instr("%s  %s\n", ld, v_name[et2%OFST]);
         add_instr("F_ADD %s\n", v_name[etr%OFST]);
         add_instr("P_LOD  %s\n", v_name[eti%OFST]);
     }

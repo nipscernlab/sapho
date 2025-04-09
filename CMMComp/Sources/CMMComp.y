@@ -250,22 +250,22 @@ assignment : ID  '=' exp ';'                       {var_set($1,$3);}
            | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
            | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
            // array normal
-           | ID  '[' exp ']'  '='                  {get_1d_index($1,$3);}
+           | ID  '[' exp ']'  '='                  {arr_1d_index($1,$3);}
                      exp ';'                       {array_set ($1,$7,0);}
            // array invertido
-           | ID  '[' exp ')'  '='                  {get_1d_index($1,$3);}
+           | ID  '[' exp ')'  '='                  {arr_1d_index($1,$3);}
                      exp ';'                       {array_set ($1,$7,1);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='       {get_2d_index($1, $3,$6);}
+           | ID  '[' exp ']' '[' exp ']' '='       {arr_2d_index($1, $3,$6);}
                      exp ';'                       {array_set   ($1,$10, 0);}
 
 // expressoes -----------------------------------------------------------------
 
 exp:       terminal                           {$$ = $1;}
          // arrays
-         | ID '[' exp ']'                     {$$ = array1d2exp($1,$3, 0);}
-         | ID '[' exp ')'                     {$$ = array1d2exp($1,$3, 1);}
-         | ID '[' exp ']' '[' exp ']'         {$$ = array2d2exp($1,$3,$6);}
+         | ID '[' exp ']'                     {$$ = arr_1d2exp($1,$3, 0);}
+         | ID '[' exp ')'                     {$$ = arr_1d2exp($1,$3, 1);}
+         | ID '[' exp ']' '[' exp ']'         {$$ = arr_2d2exp($1,$3,$6);}
          // std library que retorna valores
          | std_in                             {$$ = $1;}
          | std_pst                            {$$ = $1;}
