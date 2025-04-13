@@ -14,6 +14,14 @@
 #include <math.h>
 
 int v_count = 0; // guarda o tamanho da tabela
+int  v_asgn[NVARMAX];      // se variavel ja recebeu algum valor
+int  v_isar[NVARMAX];      // se variavel eh um array
+int  v_type[NVARMAX];      // 0 -> nao identificada, 1 -> int, 2 -> float
+char v_name[NVARMAX][512]; // nome da variavel ou funcao
+int v_fnid[NVARMAX]; // ID da funcao a qual a variavel pertence
+int v_used[NVARMAX]; // se ID ja foi usado
+int v_isco[NVARMAX];  // se variavel eh uma constante
+int v_fpar[NVARMAX]; // se ID eh uma funcao, diz a lista de parametros
 
 // procura variavel na tabela (-1 se nao achar)
 int find_var(char *val)

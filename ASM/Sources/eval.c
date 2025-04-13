@@ -128,7 +128,9 @@ void eval_init(int clk, int clk_n, int s_typ)
     eval_get("app_log.txt","n_ins" ,    aux); n_ins  = atoi(aux); // numero de instrucoes adicionadas
     eval_get("app_log.txt","n_dat" ,    aux); n_dat  = atoi(aux); // numero de variaveis  adicionadas
     eval_get("app_log.txt","nubits",    aux); nubits = atoi(aux); // numero de bits da ULA
-
+    eval_get("app_log.txt","nbmant",    aux); nbmant = atoi(aux); // numero de bits da mantissa
+    eval_get("app_log.txt","nbexpo",    aux); nbexpo = atoi(aux); // numero de bits da mantissa
+    
     if (eval_get("app_log.txt","itr_addr", aux) == 1) itr_addr = atoi(aux); // endereco de interrupcao
 
     lab_reg(); // registra labels do arquivo de log
@@ -181,8 +183,6 @@ void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  3: nbmant =  atoi(va);                   state =  0; break; // numero de bits de mantissa
-        case  4: nbexpo =  atoi(va);                   state =  0; break; // numero de bits do expoente
         case  5: ndstac =  atoi(va);                   state =  0; break; // tamanho da pilha de dados
         case  6: sdepth =  atoi(va);                   state =  0; break; // tamanho da pilha de instrucoes
         case  7: nuioin =  atoi(va);                   state =  0; break; // numero de enderecoes de entrada

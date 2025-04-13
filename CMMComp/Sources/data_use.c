@@ -1,15 +1,19 @@
+// ----------------------------------------------------------------------------
+// rotinas para reducao exp ---------------------------------------------------
+// ----------------------------------------------------------------------------
+
+// includes globais
+#include <stdio.h>
+
+// includes locais
+#include "..\Headers\t2t.h"
+#include "..\Headers\oper.h"
+#include "..\Headers\global.h"
+#include "..\Headers\funcoes.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\variaveis.h"
-#include "..\Headers\diretivas.h"
 #include "..\Headers\data_assign.h"
-#include "..\Headers\oper.h"
 #include "..\Headers\array_index.h"
-#include "..\Headers\global.h"
-#include "..\Headers\t2t.h"
-#include "..\Headers\funcoes.h"
-
-// redeclaracao de variaveis globais
-int v_isco[NVARMAX];  // se variavel eh uma constante
 
 // reducao de constantes para exp
 // nao da load, soh atualiza estados das variaveis
@@ -64,7 +68,7 @@ int pplus2exp(int id)
     // depois faz operacao de soma
     int ret = oper_soma(et,et1);
     // por ultimo, atribui de volta pra id
-    var_set(id, ret);
+    ass_set(id, ret);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -92,7 +96,7 @@ int pplus1d2exp(int id, int ete)
     // faz o load no indice do array novamente
     arr_1d_index(id, ete);
     // por ultimo, atribui de volta pra id
-    array_set(id, ret, 0);
+    ass_array(id, ret, 0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 
@@ -120,7 +124,7 @@ int pplus2d2exp(int id, int et1, int et2)
     // faz o load no indice do array novamente
     arr_2d_index(id, et1, et2);
     // por ultimo, atribui de volta pra id
-    array_set(id, ret, 0);
+    ass_array(id, ret, 0);
 
     acc_ok = 1; //nao pode liberar o acc, pois eh um exp
 

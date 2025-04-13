@@ -1,36 +1,38 @@
+// ----------------------------------------------------------------------------
+// funcoes e variaveis globais do compilador ----------------------------------
+// ----------------------------------------------------------------------------
+
 #include <stdio.h>
 
 // ----------------------------------------------------------------------------
-// Globais do compilador ------------------------------------------------------
+// variaveis globais ----------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// variaveis globais ----------------------------------------------------------
-
+extern FILE *yyin ;              // precisa linkar o .cmm a esse ponteiro do bison
 extern FILE *f_asm;              // arquivo .asm a ser gerado pelo compilador
-
-extern char pr_name[128];        // nome do processador
-extern int  nbmant;              // numero de bits de mantissa
-extern int  nbexpo;              // numero de bits de expoente
+extern FILE *f_log;              // arquivo de log com algumas informacoes do projeto
+extern FILE *f_lin;              // memoria no pc.v para ver as instrucoes no gtkwave
 
 extern char dir_macro[1024];     // diretorio Macros
 extern char dir_soft [1024];     // diretorio Software
+extern char dir_tmp  [1024];     // diretorio Temp
 
+// ----------------------------------------------------------------------------
 // variaveis de estado --------------------------------------------------------
+// ----------------------------------------------------------------------------
 
 extern int  acc_ok;              // 0 -> acc vazio (use LOD), 1 -> acc carregado (use P_LOD)
 extern int  line_num;            // numero da linha sendo parseada
-extern int  num_ins ;            // numero de instrucoes parseadas
-
-// funcoes globais ------------------------------------------------------------
-
-void add_instr(char *inst, ...); // cadastra as instrucoes assembly
-void add_sinst(int type, char *inst, ...);
+extern int  num_ins ;            // numero de instrucoes parseadas (sem macros finais)
 
 // ----------------------------------------------------------------------------
-// Globais da simulacao -------------------------------------------------------
+// funcoes de interface -------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-extern FILE *f_log;              // arquivo de log com algumas informacoes do projeto
-extern FILE *f_lin;              // memoria no pc.v que passa do endereco da instrucao para a linha em cmm
+// inicio e fim do parse
+void parse_init(char *prname, char *d_proc, char *d_macro, char *d_tmp);
+void parse_end (char *prname, char *d_proc);
 
-extern char dir_tmp[1024];       // diretorio Temp
+// cadastra as instrucoes assembly
+void add_instr(char *inst, ...);           // padrao
+void add_sinst(int type, char *inst, ...); // especiais

@@ -1,11 +1,13 @@
-#include "..\Headers\variaveis.h"
-#include "..\Headers\diretivas.h"
-#include "..\Headers\data_use.h"
-#include "..\Headers\data_assign.h"
-#include "..\Headers\labels.h"
-#include "..\Headers\oper.h"
+// ----------------------------------------------------------------------------
+// rotinas para implementacao de saltos ---------------------------------------
+// ----------------------------------------------------------------------------
+
 #include "..\Headers\t2t.h"
+#include "..\Headers\oper.h"
+#include "..\Headers\labels.h"
 #include "..\Headers\global.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\variaveis.h"
 
 // variaveis de estado para switch case
 int switching = 0;
@@ -31,15 +33,7 @@ void if_exp(int et)
     }
 
     // float var
-    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-    {
-        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-
-        add_instr("F2I_M %s\n", v_name[et%OFST]);
-    }
-
-    // float const
-    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    if ((get_type(et) == 2) && (et%OFST!=0))
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
@@ -122,7 +116,7 @@ void while_stmt()
 void exec_break()
 {
     // checa se o break esta dentro de um while
-    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake a� t� perdido!\n",  line_num+1);
+    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aí tá perdido!\n",  line_num+1);
     add_instr("JMP L%dend\n", get_while());
 }
 
@@ -149,15 +143,7 @@ void while_expexp(int et)
     }
 
     // float var
-    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-    {
-        fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
-
-        add_instr("F2I_M %s\n", v_name[et%OFST]);
-    }
-
-    // float const
-    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    if ((get_type(et) == 2) && (et%OFST!=0))
     {
         fprintf(stdout, "Atenção na linha %d: expressão condicional dando float! Vou arredondar.\n", line_num+1);
 
@@ -254,7 +240,7 @@ void exec_switch(int et)
     v_type[id] = get_type(et);
     v_used[id] = 0;
 
-    // equivalente a var_set --------------------------------------------------
+    // equivalente a ass_set --------------------------------------------------
 
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))
@@ -269,15 +255,7 @@ void exec_switch(int et)
     }
 
     // float var
-    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==0))
-    {
-        fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
-
-        add_instr("F2I_M %s\n", v_name[et%OFST]);
-    }
-
-    // float const
-    if ((get_type(et) == 2) && (et%OFST!=0) && (v_isco[et%OFST]==1))
+    if ((get_type(et) == 2) && (et%OFST!=0))
     {
         fprintf(stdout, "Atenção na linha %d: índice do case dando float! Vou arredondar.\n", line_num+1);
 

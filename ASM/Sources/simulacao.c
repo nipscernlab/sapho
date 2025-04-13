@@ -47,18 +47,13 @@ int sim_is_var(char *va, int *tipo, int *is_global, char *nome)
     char path[1024];
     sprintf(path, "%s/cmm_log.txt", temp_dir);
     FILE *input = fopen(path, "r");
-
-    // pula as 3 primeiras linhas
-    fgets(texto, 1001, input); // nome do processador
-    fgets(texto, 1001, input); // numero de bits da mantissa
-    fgets(texto, 1001, input); // numero de bits do expoente
   
     int ok = 0;
     // varre as linhas do arquivo
     while(fgets(texto, 1001, input) != NULL)
     {
-        // pega os parametros da variavel
-        sscanf (texto, "%s %s %d", funcao, variav, tipo);
+        // pega os 3 parametros da variavel
+        if (sscanf (texto, "%s %s %d", funcao, variav, tipo) != 3) continue;
 
         // se for variavel global, nao coloca o nome da funcao
         if (strcmp(funcao,"global")==0)

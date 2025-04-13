@@ -18,8 +18,8 @@ void  exec_break();                  // da um JMP pro final do while
 
 // switch/case ----------------------------------------------------------------
 
-void   case_test (int id, int type);
-void defaut_test ();
-void switch_break();
-void exec_switch (int et);
-void  end_switch ();
+void   case_test (int id, int type); // testa se eh o case correto
+void defaut_test ();                 // testa se eh o default
+void switch_break();                 // achou um break do switch/case
+void exec_switch (int et);           // inicio do switch/case
+void  end_switch ();                 // final do switch/case

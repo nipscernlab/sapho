@@ -4,6 +4,7 @@
 
 // includes globais
 #include <string.h>
+#include <stdlib.h>
 #include  <stdio.h>
 #include   <math.h>
 
@@ -221,8 +222,10 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     }
     fprintf(f_veri, "\n");
 
+    char aux[256]; eval_get("cmm_log.txt","num_ins", aux); int num_ins = atoi(aux);
+
     // cria memoria que vai guardar a tabela de instrucoes
-    fprintf(f_veri, "reg [19:0] min [0:%d-1];\n\n", n_ins);
+    fprintf(f_veri, "reg [19:0] min [0:%d-1];\n\n", num_ins);
     // cria interface com essa memoria
     fprintf(f_veri, "reg signed [19:0] linetab =-1;\n");
     fprintf(f_veri, "reg signed [19:0] linetabs=-1;\n\n");
@@ -230,7 +233,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, "initial	$readmemb(\"pc_%s_mem.txt\",min);\n\n", prname);
     // executa os registros
     fprintf(f_veri, "always @ (posedge clk) begin\n");
-    fprintf(f_veri, "if (pc_sim_val < %d) linetab <= min[pc_sim_val];\n", n_ins);
+    fprintf(f_veri, "if (pc_sim_val < %d) linetab <= min[pc_sim_val];\n", num_ins);
     fprintf(f_veri, "linetabs <= linetab;\n");
     fprintf(f_veri, "valr1  <= pc_sim_val;\n");
     fprintf(f_veri, "valr2  <= valr1;\n");
@@ -258,8 +261,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // ------------------------------------------------------------------------
 
     fprintf(f_veri, "`endif\n\n");
-
-    fprintf(f_veri, "endmodule");
+    fprintf(f_veri, "endmodule" );
 
     fclose(f_veri);
 }

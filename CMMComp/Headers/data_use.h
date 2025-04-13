@@ -12,8 +12,8 @@
 // 5*OFST+id -> identificador const comp
 #define OFST 1000000
 
-int       num2exp(int id, int dtype);         // reduz de um numero        para exp
-int        id2exp(int id);                    // reduz de um identificador para exp
-int     pplus2exp(int et);                    // reduz de um i++           para exp
-int   pplus1d2exp(int id, int et);            // reduz de um x[i]++        para exp
-int   pplus2d2exp(int id, int et1, int et2);  // reduz de um x[i][j]++     para exp
+int      num2exp(int id, int dtype);         // reduz de um numero        para exp
+int       id2exp(int id);                    // reduz de um identificador para exp
+int    pplus2exp(int et);                    // reduz de um i++           para exp
+int  pplus1d2exp(int id, int et);            // reduz de um x[i]++        para exp
+int  pplus2d2exp(int id, int et1, int et2);  // reduz de um x[i][j]++     para exp

@@ -3,6 +3,7 @@
 #include "..\Headers\global.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\variaveis.h"
+#include "..\Headers\stdlib.h"
 
 #include <math.h>
 #include <stdlib.h>
@@ -11,10 +12,6 @@
 // ----------------------------------------------------------------------------
 // redeclaracao de variaveis globais ------------------------------------------
 // ----------------------------------------------------------------------------
-
-char dir_macro[1024]; // diretorio Macros
-char dir_tmp  [1024]; // diretorio Temp
-char dir_soft [1024]; // diretorio Software
 
 FILE *f_float;
 
@@ -110,9 +107,9 @@ void epsilon_taylor(char *fnum)
 {
     // acha o dobro do menor valor possivel em float
     double numf = 2.0*pow(2, nbmant-1)*pow(2,-pow(2,nbexpo-1));
-    // se  aprecisao for grande, usa o padrao
-    if    (numf < 0.0000001) numf = 0.0000001;
-    sprintf(fnum, "%.7f",    numf);
+    // se a precisao for grande, usa o padrao
+    if     (numf < 0.0000001) numf = 0.0000001;
+    sprintf(fnum, "%.7f",     numf);
 }
 
 // cria um novo arquivo e copia o conteudo
@@ -189,9 +186,9 @@ void mac_geni(char *fasm)
     char tmem[1024]; // arquivo temporario para a tabela de memoria
     char fmem[1024]; // arquivo final para a tabela de memoria
 
-    sprintf  (tasm, "%s/%s", dir_tmp, "tasm.txt");
-    sprintf  (tmem, "%s/%s", dir_tmp, "tmem.txt");
-    sprintf  (fmem, "%s/pc_%s_mem.txt", dir_tmp, pr_name);
+    sprintf(tasm, "%s/%s", dir_tmp, "tasm.txt");
+    sprintf(tmem, "%s/%s", dir_tmp, "tmem.txt");
+    sprintf(fmem, "%s/pc_%s_mem.txt", dir_tmp, prname);
 
     // cria os cabecalhos -----------------------------------------------------
 

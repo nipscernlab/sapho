@@ -2,11 +2,11 @@
     Coisas que só tem em C+-
 
     - Diretivas #USEMAC #ENDMAC: seleciona trechos do código que serão substituidos por Macros otimizados em assembly
-    - Diretiva  #INTERPOINT     : marca ponto de retorno para um reset no pino itr
+    - Diretiva  #INTERPOINT    : marca ponto de retorno para um reset no pino itr
 
     - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
 
-    - StdLib   in(.,.): leitura de dados externos
+    - StdLib     in(.): leitura de dados externos
     - StdLib  out(.,.): escrita pra fora do processador
     - StdLib   norm(.): função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
     - StdLib   pset(.): função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
@@ -26,26 +26,21 @@
 
 %{
 
-#include "..\Headers\variaveis.h"   // tabela de variaveis
-#include "..\Headers\labels.h"      // geracao de labels para saltos
-#include "..\Headers\t2t.h"         // conversoes de tipos
-#include "..\Headers\funcoes.h"     // criacao e uso de funcoes
 #include "..\Headers\oper.h"        // operacoes da ULA
 #include "..\Headers\stdlib.h"      // biblioteca padrao do sapho
-#include "..\Headers\diretivas.h"   // diretivas de compilacao
 #include "..\Headers\saltos.h"      // gerenciamento saltos (if/else while)
-#include "..\Headers\data_declar.h" // declaracao de dados
+#include "..\Headers\global.h"      // variaveis e funcoes globais
+#include "..\Headers\funcoes.h"     // criacao e uso de funcoes
 #include "..\Headers\data_use.h"    // utilizacao de dados
+#include "..\Headers\variaveis.h"   // tabela de variaveis
+#include "..\Headers\diretivas.h"   // diretivas de compilacao
+#include "..\Headers\data_declar.h" // declaracao de dados
 #include "..\Headers\data_assign.h" // atribuicao de dados
-#include "..\Headers\array_index.h"
-#include "..\Headers\global.h"
+#include "..\Headers\array_index.h" // tratamento de indice de array
 
-#include <string.h>
-#include <stdlib.h>
 
 // variaveis obrigatorias do flex/bison ---------------------------------------
 
-extern FILE *yyin;
 int   yylex  (void);
 void  yyerror(char const *s);
 
@@ -103,25 +98,25 @@ prog_elements : direct | declar_full | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
-direct : PRNAME  ID    {exec_dire("#PRNAME",$2,6);} // nome do processador
-       | NUBITS INUM   {exec_dire("#NUBITS",$2,0);} // tamanho da palavra da ULA
-       | NBMANT INUM   {exec_dire("#NBMANT",$2,2);} // numero de bits da mantissa
-       | NBEXPO INUM   {exec_dire("#NBEXPO",$2,3);} // numero de bits do expoente
-       | NDSTAC INUM   {exec_dire("#NDSTAC",$2,0);} // tamanho da pilha de dados
-       | SDEPTH INUM   {exec_dire("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
-       | NUIOIN INUM   {exec_dire("#NUIOIN",$2,4);} // numero de portas de entrada
-       | NUIOOU INUM   {exec_dire("#NUIOOU",$2,5);} // numero de portas de saida
-       | NUGAIN INUM   {exec_dire("#NUGAIN",$2,0);} // contante de divisao (norm(.))
-       | FFTSIZ INUM   {exec_dire("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
+direct : PRNAME  ID    {dire_exec("#PRNAME",$2,6);} // nome do processador
+       | NUBITS INUM   {dire_exec("#NUBITS",$2,0);} // tamanho da palavra da ULA
+       | NBMANT INUM   {dire_exec("#NBMANT",$2,2);} // numero de bits da mantissa
+       | NBEXPO INUM   {dire_exec("#NBEXPO",$2,3);} // numero de bits do expoente
+       | NDSTAC INUM   {dire_exec("#NDSTAC",$2,0);} // tamanho da pilha de dados
+       | SDEPTH INUM   {dire_exec("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
+       | NUIOIN INUM   {dire_exec("#NUIOIN",$2,4);} // numero de portas de entrada
+       | NUIOOU INUM   {dire_exec("#NUIOOU",$2,5);} // numero de portas de saida
+       | NUGAIN INUM   {dire_exec("#NUGAIN",$2,0);} // contante de divisao (norm(.))
+       | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
 
-       | USEMAC STRING INUM {use_macro($2,1,$3);}   // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
-       | ENDMAC             {end_macro();}          // ponto de termino do uso da macro
+       | USEMAC STRING INUM {dire_macro($2,1,$3);}  // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
+       | ENDMAC             {dire_maend();}         // ponto de termino do uso da macro
 
 // Diretivas comportamentais --------------------------------------------------
 
-use_macro : USEMAC STRING INUM {use_macro($2,0,$3);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
-end_macro : ENDMAC             {end_macro();}        // ponto final de uso de uma macro
-use_inter : ITRADD             {use_inter();}        // ponto de inicio da interrupcao (usado com o pino itr)
+dire_macro : USEMAC STRING INUM {dire_macro($2,0,$3);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
+dire_maend : ENDMAC             {dire_maend();}        // ponto final de uso de uma macro
+dire_inter : ITRADD             {dire_inter();}        // ponto de inicio da interrupcao (usado com o pino itr)
 
 // Declaracao de variaveis ----------------------------------------------------
 
@@ -162,7 +157,7 @@ stmt_full: '{' stmt_list '}' // bloco de statments
          |     stmt_case     // todos os tipos de stmts aceitos no case
          |   switch_case     // switch case
          |         break     // break; dentro do while
-         |     use_inter     // ponto de interrupcao
+         |    dire_inter     // ponto de interrupcao
 
 // statments que podem ser usados dentro do case :
 stmt_case:   declar_full     // declaracoes de variaveis
@@ -172,16 +167,16 @@ stmt_case:   declar_full     // declaracoes de variaveis
          |       std_out     // std lib de output de dados
          |     void_call     // chamada de subrotina
          |   return_call     // retorno de funcao
-         |     use_macro     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
-         |     end_macro     // termina uma chamada de macro assembler
+         |    dire_macro     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
+         |    dire_maend     // termina uma chamada de macro assembler
 
 // chamadas de funcoes --------------------------------------------------------
 
 // funcao void
-void_call   : ID '('            {fun_id2  = $1 ;} // fun_id2 -> id da funcao chamada
+void_call   : ID '('            {fun_id   = $1 ;} // fun_id -> id da funcao chamada
               exp_list ')' ';'  {vcall     ($1);} // ja pode dar o call void
 // funcao com retorno
-func_call   : ID '('            {fun_id2  = $1 ;}
+func_call   : ID '('            {fun_id   = $1 ;}
               exp_list ')'      {$$ = fcall($1);} // da call e retorna o tipo de dado final
 
 // eh preciso colocar os parametros na pilha
@@ -239,25 +234,25 @@ break      : BREAK ';'                     {exec_break  (  );}
 // declaracoes com assignment -------------------------------------------------
 
 declar_full : declar
-            | TYPE ID '=' exp ';'          {declar_var($2); var_set($2,$4);}
+            | TYPE ID '=' exp ';'          {declar_var($2); ass_set($2,$4);}
 
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '=' exp ';'                       {var_set($1,$3);}
+assignment : ID  '=' exp ';'                       {ass_set($1,$3);}
            // incremento
-           | ID                          PPLUS ';' {pplus_assign($1      );}
-           | ID  '[' exp ']'             PPLUS ';' {aplus_assign($1,$3   );}
-           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {aplu2_assign($1,$3,$6);}
+           | ID                          PPLUS ';' {ass_pplus($1      );}
+           | ID  '[' exp ']'             PPLUS ';' {ass_aplus($1,$3   );}
+           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {ass_apl2d($1,$3,$6);}
            // array normal
            | ID  '[' exp ']'  '='                  {arr_1d_index($1,$3);}
-                     exp ';'                       {array_set ($1,$7,0);}
+                     exp ';'                       {ass_array ($1,$7,0);}
            // array invertido
            | ID  '[' exp ')'  '='                  {arr_1d_index($1,$3);}
-                     exp ';'                       {array_set ($1,$7,1);}
+                     exp ';'                       {ass_array ($1,$7,1);}
            // array 2D (completar)
            | ID  '[' exp ']' '[' exp ']' '='       {arr_2d_index($1, $3,$6);}
-                     exp ';'                       {array_set   ($1,$10, 0);}
+                     exp ';'                       {ass_array   ($1,$10, 0);}
 
 // expressoes -----------------------------------------------------------------
 
@@ -294,9 +289,9 @@ exp:       terminal                           {$$ = $1;}
          | exp  SHIFTR exp                    {$$ = oper_shift($1,$3, 1);}
          | exp SSHIFTR exp                    {$$ = oper_shift($1,$3, 2);}
          // operadores bitwise
-         | exp   '&'   exp                    {$$ = oper_bitw ($1,$3, 0);}
-         | exp   '|'   exp                    {$$ = oper_bitw ($1,$3, 1);}
-         | exp   '^'   exp                    {$$ = oper_bitw ($1,$3, 2);}
+         | exp   '&'   exp                    {$$ = oper_bitw($1,$3, 0);}
+         | exp   '|'   exp                    {$$ = oper_bitw($1,$3, 1);}
+         | exp   '^'   exp                    {$$ = oper_bitw($1,$3, 2);}
          // operadores aritmeticos
          | exp   '%'   exp                    {$$ = oper_mod ($1,$3);}
          | exp   '+'   exp                    {$$ = oper_soma($1,$3);}
@@ -324,84 +319,16 @@ terminal : INUM                               {$$ = num2exp($1,1);}
 
 %%
 
-int main(int argc, char *argv[])
+// ponto de inicio do programa
+void main(int argc, char *argv[])
 {
-  // pega os argumentos -------------------------------------------------------
-
-  char cmm_file[1024];
-  char asm_file[1024];
-
-  sprintf(cmm_file, "%s/Software/%s.cmm", argv[2],argv[1]);
-  sprintf(asm_file, "%s/Software/%s.asm", argv[2],argv[1]);
-
-  yyin  = fopen(cmm_file, "r"); // arquivo .cmm de entrada
-  f_asm = fopen(asm_file, "w"); // arquivo .asm de saida
-
-  sprintf(dir_soft , "%s/Software", argv[2]); // pega o diretorio software
-  strcpy (dir_macro, argv[3]);                // pega o diretorio Macro
-  strcpy (dir_tmp  , argv[4]);                // pega o diretorio Tmp
-
-  // cria arquivos auxiliares -------------------------------------------------
-
-  char path[1024];
-  sprintf(path,   "%s/cmm_log.txt", dir_tmp         ); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
-  sprintf(path, "%s/pc_%s_mem.txt", dir_tmp, argv[1]); f_lin = fopen(path,"w"); // memoria no pc.v que passa de asm para cmm
-
-  // gera uma instrucao LOD NULL no inicio (tentar tirar isso) ---------------
-
-  add_sinst(-1,"LOD NULL\n");
-
-  // executa o parse no arquivo .cmm ------------------------------------------
-
-	yyparse(); // aqui a magica acontece!!
-
-  // terminou o parse, entao libera arquivos pra pos-processamento ------------
-
-	fclose( yyin);
-	fclose(f_asm);
-  fclose(f_lin);
-
-  // checa se precisa adicionar macros no arquivo .asm ------------------------
-
-	mac_geni(asm_file);
-
-	// checa consistencia de todas as variaveis e funcoes -----------------------
-  
-	check_var(); // (variaveis.c)
-
-  // termina o arquivo de log do cmm ------------------------------------------
-
-  fclose (f_log);
-
-  // gera o arquivo de traducao pro codigo cmm --------------------------------
-
-  sprintf(path, "%s/%s", dir_tmp, "trad_cmm.txt");
-  
-  FILE *output = fopen(path    , "w");
-  FILE *input  = fopen(cmm_file, "r");
-
-  char linha[1001], texto[1001] = "";
-  fputs("-1 INTERNO\n"     , output); // codigo para inicio do arquivo
-  fputs("-2 void main();\n", output); // codigo pra CAL main
-  fputs("-3 FIM\n"         , output); // codigo para @fim JMP fim
-  fputs("-4 User Macro\n"  , output); // codigo asm do usuario (#USEMAC)
-
-  int cnt = 1;
-  while(fgets(texto, 1001, input) != NULL)
-  {
-    sprintf(linha, "%d %s", cnt++, texto);
-      fputs(linha, output);
-     memset(texto, 0, sizeof(char) * 1001);
-  }
-
-  fclose(input );
-  fclose(output);
-
-	return 0;
+    parse_init(argv[1], argv[2], argv[3], argv[4]); // inicializa o parser e as variaveis globais
+	  yyparse   ();                                   // aqui a magica acontece!!
+    parse_end (argv[1], argv[2]);                   // finaliza o parser e gera interface com iverilog/gtkwave
 }
 
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
+	  fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
 }

@@ -24,8 +24,9 @@ extern int  fftsiz;            // tamanho da fft (em bits)
 
 // funcoes usadas no lexer (.l) -----------------------------------------------
 
-void eval_init  (int clk, int clk_n, int s_typ);
-void eval_direct(int next_state);
-void eval_opcode(int op, int next_state, char *text, char *nome);
-void eval_opernd(char *va, int is_const);
+int  eval_get   (char *fname, char *var, char *val);
+void eval_init  (int   clk  , int clk_n, int s_typ);
+void eval_direct(int   next_state);
+void eval_opcode(int   op   , int next_state, char *text, char *nome);
+void eval_opernd(char *va   , int is_const);
 void eval_finish();
