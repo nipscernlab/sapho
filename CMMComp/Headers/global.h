@@ -21,7 +21,7 @@ extern char dir_tmp  [1024];     // diretorio Temp
 // variaveis de estado --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-extern int  acc_ok;              // 0 -> acc vazio (use LOD), 1 -> acc carregado (use P_LOD)
+extern int  acc_ok  ;            // 0 -> acc vazio (use LOD), 1 -> acc carregado (use P_LOD)
 extern int  line_num;            // numero da linha sendo parseada
 extern int  num_ins ;            // numero de instrucoes parseadas (sem macros finais)
 

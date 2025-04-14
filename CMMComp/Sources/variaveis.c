@@ -2,26 +2,26 @@
 // implementacao da tabela de indentificadores --------------------------------
 // ----------------------------------------------------------------------------
 
-#include "..\Headers\variaveis.h"
-#include "..\Headers\t2t.h"
-#include "..\Headers\diretivas.h"
-#include "..\Headers\global.h"
-#include "..\Headers\funcoes.h"
-
-#include <stdio.h>
+// includes globais
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
+#include   <math.h>
 
-int v_count = 0; // guarda o tamanho da tabela
+// includes locais
+#include "..\Headers\global.h"
+#include "..\Headers\funcoes.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\diretivas.h"
+
+int  v_count = 0;          // guarda o tamanho da tabela
+char v_name[NVARMAX][512]; // nome da variavel ou funcao
 int  v_asgn[NVARMAX];      // se variavel ja recebeu algum valor
 int  v_isar[NVARMAX];      // se variavel eh um array
 int  v_type[NVARMAX];      // 0 -> nao identificada, 1 -> int, 2 -> float
-char v_name[NVARMAX][512]; // nome da variavel ou funcao
-int v_fnid[NVARMAX]; // ID da funcao a qual a variavel pertence
-int v_used[NVARMAX]; // se ID ja foi usado
-int v_isco[NVARMAX];  // se variavel eh uma constante
-int v_fpar[NVARMAX]; // se ID eh uma funcao, diz a lista de parametros
+int  v_fnid[NVARMAX];      // ID da funcao a qual a variavel pertence
+int  v_used[NVARMAX];      // se ID ja foi usado
+int  v_isco[NVARMAX];      // se variavel eh uma constante
+int  v_fpar[NVARMAX];      // se ID eh uma funcao, diz a lista de parametros
 
 // procura variavel na tabela (-1 se nao achar)
 int find_var(char *val)

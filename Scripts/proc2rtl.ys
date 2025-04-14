@@ -9,8 +9,8 @@ prep -top @PROC@
 cd @PROC@
 write_json -selected @PROC@.json
 
-cd p_proc_fft
-write_json -selected p_proc_fft.json
+cd p_@PROC@
+write_json -selected p_@PROC@.json
 
 cd core
 write_json -selected core.json

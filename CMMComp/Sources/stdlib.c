@@ -2,24 +2,17 @@
 // biblioteca padrao do sapho -------------------------------------------------
 // ----------------------------------------------------------------------------
 
-#include <math.h>
+// includes globais
 #include <string.h>
 
-#include "..\Headers\stdlib.h"
-#include "..\Headers\variaveis.h"
+// includes locais
 #include "..\Headers\t2t.h"
-#include "..\Headers\diretivas.h"
-#include "..\Headers\data_assign.h"
-#include "..\Headers\data_use.h"
 #include "..\Headers\oper.h"
+#include "..\Headers\stdlib.h"
 #include "..\Headers\global.h"
-
-// ----------------------------------------------------------------------------
-// redeclaracao de variaveis globais ------------------------------------------
-// ----------------------------------------------------------------------------
-
-int fatani = 0; // se vai precisar de macro pra arco tangente
-int fsqrti = 0; // se vai precisar de macro pra raiz quadrada
+#include "..\Headers\macros.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\variaveis.h"
 
 // ----------------------------------------------------------------------------
 // entrada e saida ------------------------------------------------------------

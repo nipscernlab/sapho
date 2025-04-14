@@ -2,17 +2,16 @@
 // rotinas e variaveis de estado para parser de funcoes -----------------------
 // ----------------------------------------------------------------------------
 
+// includes globais
 #include <string.h>
 
-#include "..\Headers\funcoes.h"
-#include "..\Headers\variaveis.h"
+// includes locais
 #include "..\Headers\t2t.h"
-#include "..\Headers\diretivas.h"
-#include "..\Headers\data_declar.h"
-#include "..\Headers\data_assign.h"
-#include "..\Headers\data_use.h"
 #include "..\Headers\labels.h"
 #include "..\Headers\global.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\variaveis.h"
+#include "..\Headers\data_declar.h"
 
 // ----------------------------------------------------------------------------
 // redeclaracao de variaveis globais ------------------------------------------

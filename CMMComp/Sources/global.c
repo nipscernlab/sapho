@@ -8,8 +8,8 @@
 
 // includes locais
 #include "..\Headers\t2t.h"
+#include "..\Headers\macros.h"
 #include "..\Headers\global.h"
-#include "..\Headers\diretivas.h"
 #include "..\Headers\variaveis.h"
 
 // ----------------------------------------------------------------------------

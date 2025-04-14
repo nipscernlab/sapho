@@ -26,10 +26,12 @@
 
 %{
 
+#include "..\Headers\itr.h"         // tratamento de interrupcao
 #include "..\Headers\oper.h"        // operacoes da ULA
 #include "..\Headers\stdlib.h"      // biblioteca padrao do sapho
 #include "..\Headers\saltos.h"      // gerenciamento saltos (if/else while)
 #include "..\Headers\global.h"      // variaveis e funcoes globais
+#include "..\Headers\macros.h"      // macros assembler
 #include "..\Headers\funcoes.h"     // criacao e uso de funcoes
 #include "..\Headers\data_use.h"    // utilizacao de dados
 #include "..\Headers\variaveis.h"   // tabela de variaveis
@@ -98,14 +100,14 @@ prog_elements : direct | declar_full | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
-direct : PRNAME  ID    {dire_exec("#PRNAME",$2,6);} // nome do processador
+direct : PRNAME  ID    {dire_exec("#PRNAME",$2,1);} // nome do processador
        | NUBITS INUM   {dire_exec("#NUBITS",$2,0);} // tamanho da palavra da ULA
-       | NBMANT INUM   {dire_exec("#NBMANT",$2,2);} // numero de bits da mantissa
-       | NBEXPO INUM   {dire_exec("#NBEXPO",$2,3);} // numero de bits do expoente
+       | NBMANT INUM   {dire_exec("#NBMANT",$2,3);} // numero de bits da mantissa
+       | NBEXPO INUM   {dire_exec("#NBEXPO",$2,4);} // numero de bits do expoente
        | NDSTAC INUM   {dire_exec("#NDSTAC",$2,0);} // tamanho da pilha de dados
        | SDEPTH INUM   {dire_exec("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
-       | NUIOIN INUM   {dire_exec("#NUIOIN",$2,4);} // numero de portas de entrada
-       | NUIOOU INUM   {dire_exec("#NUIOOU",$2,5);} // numero de portas de saida
+       | NUIOIN INUM   {dire_exec("#NUIOIN",$2,7);} // numero de portas de entrada
+       | NUIOOU INUM   {dire_exec("#NUIOOU",$2,8);} // numero de portas de saida
        | NUGAIN INUM   {dire_exec("#NUGAIN",$2,0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
 

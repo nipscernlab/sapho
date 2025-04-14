@@ -2,16 +2,16 @@
 // operacoes com a ula --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+// includes globais
 #include <string.h>
 
-#include "..\Headers\oper.h"
-#include "..\Headers\variaveis.h"
+// includes locais
 #include "..\Headers\t2t.h"
-#include "..\Headers\diretivas.h"
-#include "..\Headers\data_use.h"
-#include "..\Headers\data_assign.h"
+#include "..\Headers\oper.h"
 #include "..\Headers\stdlib.h"
 #include "..\Headers\global.h"
+#include "..\Headers\data_use.h"
+#include "..\Headers\variaveis.h"
 
 // ----------------------------------------------------------------------------
 // operacoes aritmeticas ------------------------------------------------------

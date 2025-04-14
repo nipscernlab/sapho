@@ -2,10 +2,6 @@
 // biblioteca padrao do sapho -------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// variaveis globais
-extern int fsqrti;                // vai usar macro de raiz quadrada
-extern int fatani;                // vai usar macro de arco tangente
-
 // ----------------------------------------------------------------------------
 // entrada e saida ------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -36,6 +32,6 @@ int  exec_atan(int et);           // arco tangente
 
 int  exec_real(int et);           // pega parte real
 int  exec_imag(int et);           // pega parte imaginaria
-int  exec_sqr2(int et);           // modulo ao quadrado
-int  exec_absc(int et);           // valor absoluto de um numero complexo
+int  exec_sqr2(int et);           // modulo ao quadrado (interna)
+int  exec_absc(int et);           // valor absoluto de um numero complexo (interna)
 int  exec_fase(int et);           // fase em radianos
