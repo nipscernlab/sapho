@@ -174,7 +174,7 @@ cp %UPROC%.v .
 cp %SCR_DIR%\proc2rtl.ys .
 
 sed -i "s/@PROC@/%PROC%/" proc2rtl.ys
-yosys -s proc2rtl.ys
+yosys -s proc2rtl.ys>%TMP_PRO%\yosys.log
 
 cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
 cp %PROC%.svg %TMP_PRO%
