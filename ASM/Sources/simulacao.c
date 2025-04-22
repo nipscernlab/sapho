@@ -21,7 +21,7 @@ int sim_typ;           // tipo de simulacao (um proc ou multicore)
 
 // arquivo de traducao
 FILE *f_tran;          // arquivo de traducao de opcode
-int sim_n_opc = 0;     // numero de instrucoes no arquivo de traducao
+int  sim_n_opc = 0;    // numero de instrucoes no arquivo de traducao
 int  sim_fim;          // endereco do fim do programa
 
 // variaveis do usuario
@@ -112,7 +112,7 @@ void sim_add(char *opc, char *opr)
     fprintf(f_tran , "%d %s %s\n", sim_n_opc++, opc, opr);
 }
 
-void sim_set_fim(int fim){sim_fim  = fim;} // define endereco de @fim
+void sim_set_fim(int fim){sim_fim  = fim;} // define  endereco de @fim
 int  sim_get_fim(       ){return sim_fim;} // retorna endereco de @fim
 void sim_finish (       ){fclose(f_tran);} // fecha arquivo de traducao
 

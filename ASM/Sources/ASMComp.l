@@ -170,7 +170,7 @@ LINHA          \n
 
 void main(int argc, char *argv[])
 {
-	strcpy(proc_dir,argv[2]);                             // path da pasta Hardware
+	strcpy(proc_dir,argv[2]);                             // path da pasta do projeto
 	strcpy( hdl_dir,argv[3]);                             // path da pasta HDL
 	strcpy(temp_dir,argv[4]);                             // path da pasta Temp
 

@@ -8,6 +8,7 @@ cls
 echo off
 
 set ROOT_DIR=%cd%
+set GCC=C:\GNU\msys64\mingw64\bin\x86_64-w64-mingw32-gcc.exe
 
 set TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
@@ -71,7 +72,7 @@ cd %ROOT_DIR%\CMMComp\Sources
 
 bison -y -d CMMComp.y
 flex        CMMComp.l
-gcc      -o CMMComp.exe data_assign.c data_declar.c data_use.c itr.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c global.c macros.c y.tab.c
+%GCC%    -o CMMComp.exe data_assign.c data_declar.c data_use.c itr.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c global.c macros.c y.tab.c
 
 move CMMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del lex.yy.c
@@ -82,8 +83,8 @@ del  y.tab.h
 
 cd %ROOT_DIR%\APP\Sources
 
-flex -oapp.c app.l
-gcc -o APP.exe app.c eval.c variaveis.c
+flex  -o app.c app.l
+%GCC% -o APP.exe app.c eval.c variaveis.c
 
 move APP.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del app.c
@@ -92,8 +93,8 @@ del app.c
 
 cd %ROOT_DIR%\ASM\Sources
 
-flex -oASMComp.c ASMComp.l
-gcc -o ASM.exe ASMComp.c eval.c labels.c opcodes.c variaveis.c t2t.c hdl.c simulacao.c array.c
+flex  -o ASMComp.c ASMComp.l
+%GCC% -o ASM.exe ASMComp.c eval.c labels.c opcodes.c variaveis.c t2t.c hdl.c simulacao.c array.c
 
 move ASM.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 del ASMComp.c
@@ -102,8 +103,8 @@ del ASMComp.c
 
 cd %SCR_DIR%
 
-gcc -o float2gtkw.exe float2gtkw.c
-gcc -o comp2gtkw.exe comp2gtkw.c
+%GCC% -o float2gtkw.exe float2gtkw.c
+%GCC% -o comp2gtkw.exe comp2gtkw.c
 
 move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
@@ -125,12 +126,6 @@ APP.exe %ASM_FILE% %TMP_PRO%
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
 ASM.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
-
-:: Executa o compilador Assembler ---------------------------------------------
-
-set ASM_FILE=%SOFT_DIR%\%PROC%.asm
-
-::ASMComp.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
