@@ -709,7 +709,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			1 : begin                     // P_LOD
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -758,7 +758,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			8: begin                      // PSH
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -954,7 +954,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			36: begin                     // P_NEG_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -975,7 +975,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			39: begin                     // PF_NEG_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -996,7 +996,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			42: begin                     // P_ABS_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1017,7 +1017,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			45: begin                     // PF_ABS_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1038,7 +1038,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			48: begin                     // P_PST_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1059,7 +1059,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			51: begin                     // PF_PST_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1080,7 +1080,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			54: begin                     // P_NRM_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1101,7 +1101,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			57: begin                     // P_I2F_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1122,7 +1122,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			60: begin                     // P_F2I_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1185,7 +1185,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			69: begin                     // P_INV_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1234,7 +1234,7 @@ always @ (*) begin
 						invl     <= 1'b0;
 					end
 			76: begin                     // P_LIN_M
-						mem_wr   <= 1'b1;
+						mem_wr   <= 1'b0;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;

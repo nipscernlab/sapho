@@ -318,10 +318,13 @@ module core
 	input      [NBINST        -1:0] instr,
 	output     [MINSTW        -1:0] instr_addr,
 
-	output                          mem_wr,
-	output     [MDATAW        -1:0] mem_addr_w, mem_addr_r,
+	output                          mem_wra,
+	output     [MDATAW        -1:0] mem_addr_wa, mem_addr_r,
 	input      [NUBITS        -1:0] mem_data_in,
 	output     [NUBITS        -1:0] data_out,
+
+	output                          mem_wrb,
+	output     [MDATAW        -1:0] mem_addr_wb,
 
 	input      [NUBITS        -1:0] io_in,
 	output reg [$clog2(NUIOIN)-1:0] addr_in,
@@ -389,7 +392,7 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                             id_opcode, id_operand,
                                             id_dsp_push, id_dsp_pop,
                                             id_ula_op, id_ula_data,
-                                            mem_wr, id_mem_addr, mem_data_in,
+                                            mem_wra, id_mem_addr, mem_data_in,
                                             io_in, req_in, out_en,
                                             id_srf, id_ldi, id_inv);
 
@@ -508,9 +511,11 @@ endgenerate
 
 // Interface externa ----------------------------------------------------------
 
-assign data_out   =  ula_out;
-assign mem_addr_w = (sp_push   ) ? sp_addr_w : rf;
-assign mem_addr_r = (sp_pop    ) ? sp_addr_r : rf;
+assign data_out    =  ula_out;
+assign mem_wrb     =  id_dsp_push;
+assign mem_addr_wa =  rf;
+assign mem_addr_wb =  sp_addr_w;
+assign mem_addr_r  = (sp_pop) ? sp_addr_r : rf;
 
 generate
 
@@ -521,22 +526,7 @@ generate
 
 endgenerate
 
-generate
-
-	if (NUIOIN > 1)
-		always @ (posedge clk) addr_in <= mem_data_in[$clog2(NUIOIN)-1:0];
-	else
-		always @ (posedge clk) addr_in <= 1'bx;
-
-endgenerate
-
-generate
-
-	if (NUIOOU > 1)
-		assign addr_out = mem_data_in[$clog2(NUIOOU)-1:0];
-	else
-		assign addr_out = 1'bx;
-
-endgenerate
+generate if (NUIOIN > 1) always @ (posedge clk) addr_in <= mem_data_in[$clog2(NUIOIN)-1:0]; endgenerate
+generate if (NUIOOU > 1) assign                 addr_out = mem_data_in[$clog2(NUIOOU)-1:0]; endgenerate
 
 endmodule
