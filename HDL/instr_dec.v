@@ -1,14 +1,17 @@
 module instr_dec
 #(
-	parameter NBDATA = 32, // Numero de bits dos dados
-	parameter NBOPCO = 7,  // Numero de bits de  opcode
-	parameter NBOPER = 9,  // Numero de bits de  operando
-	parameter MDATAW = 8   // Numero de bits de  endereco da memoria de dados
+	parameter NBDATA = 32,             // Numero de bits dos dados
+	parameter NBOPCO = 7,              // Numero de bits de  opcode
+	parameter NBOPER = 9,              // Numero de bits de  operando
+	parameter MDATAW = 8,              // Numero de bits de  endereco da memoria de dados
+	parameter NUIOIN = 8,              // Numero de                      portas  de entrada
+	parameter NUIOOU = 8,              // Numero de                      portas  de saida
+	parameter NBITIN = $clog2(NUIOIN), // Numero de bits de  endereco da porta   de entrada
+	parameter NBIOUT = $clog2(NUIOOU)  // Numero de bits de  endereco da porta   de saida
 )
 (
 	input                   clk, rst,
 	input      [NBOPCO-1:0] opcode,
-	input      [NBOPER-1:0] operand,
 
 	output reg              dsp_push, dsp_pop,
 
@@ -16,14 +19,16 @@ module instr_dec
 	output     [NBDATA-1:0] ula_data,
 
 	output reg              mem_wr,
-	output     [MDATAW-1:0] mem_addr,
 	input      [NBDATA-1:0] mem_data_in,
 
 	input      [NBDATA-1:0] io_in,
 	output reg              req_in, out_en,
+	output reg [NBITIN-1:0] addr_in,
+	output     [NBIOUT-1:0] addr_out,
 
 	output reg              srf, ldi,
-	output                  inv
+	output                  inv,
+	output     [MDATAW-1:0] ra_ofst
 );
 
 reg invl, invr;
@@ -1364,6 +1369,9 @@ always @ (*) begin
 end
 
 assign ula_data = (req_in) ? io_in : mem_data_in;
-assign mem_addr =  operand[MDATAW-1:0];
+assign ra_ofst  =  mem_data_in[MDATAW-1:0];
+
+generate if (NUIOIN > 1) always @ (posedge clk) addr_in <= mem_data_in[NBITIN-1:0]; endgenerate
+generate if (NUIOOU > 1) assign                 addr_out = mem_data_in[NBIOUT-1:0]; endgenerate
 
 endmodule
