@@ -127,7 +127,7 @@ module processor
 	// implementa enderecamento indireto
 	parameter   LDI   = 0,
 	parameter   ILI   = 0,
-	parameter   SRF   = 0,
+	parameter   STI   = 0,
 	
 	// implementa pilha de subrotinas
 	parameter   CAL   = 0,
@@ -212,11 +212,16 @@ module processor
 	input                       itr,
 
   	output                      mem_wr,
-  	output         [MDATAW-1:0] mem_addr_w,
-  	output         [MINSTW-1:0] pc_sim_val
+  	output         [MDATAW-1:0] mem_addr_w
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+  , output         [MINSTW-1:0] pc_sim_val
+
+`endif // ---------------------------------------------------------------------
 );
 
-// processador ----------------------------------------------------------------
+// core -----------------------------------------------------------------------
 
 wire        [MINSTW-1:0] instr_addr;
 
@@ -248,7 +253,7 @@ core #(.NBOPCO (NBOPCO ),
        .FFTSIZ (FFTSIZ ),
          .LDI  (  LDI  ),
          .ILI  (  ILI  ),
-         .SRF  (  SRF  ),
+         .STI  (  STI  ),
          .CAL  (  CAL  ),
          .ADD  (  ADD  ),
        .F_ADD  (F_ADD  ),
@@ -297,7 +302,14 @@ core #(.NBOPCO (NBOPCO ),
                                instr, instr_addr,
                                mem_wra, mem_addr_wa, mem_addr_r, mem_data_in, mem_data_out,
 							   mem_wrb, mem_addr_wb,
-                               io_in, addr_in, addr_out, req_in, out_en, itr, pc_sim_val);
+                               io_in, addr_in, addr_out, req_in, out_en, itr
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+							 , pc_sim_val
+
+`endif // ---------------------------------------------------------------------
+);
 
 // memoria de instrucao -------------------------------------------------------
 

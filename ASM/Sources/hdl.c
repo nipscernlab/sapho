@@ -47,7 +47,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
     fprintf(f_veri, "output [%d:0] req_in,\n", nuioin-1);
     fprintf(f_veri, "output [%d:0] out_en,\n", nuioou-1);
-    fprintf(f_veri, "input itr);\n\n");
+    fprintf(f_veri, "input  itr);\n\n");
 
     // ------------------------------------------------------------------------
     // wires de interface com I/O ---------------------------------------------
@@ -64,10 +64,12 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
     // acesso as variaveis na memoria de dados
     fprintf(f_veri, "wire mem_wr;\n");
-    fprintf(f_veri, "wire [%d:0] mem_addr_wr;\n" , (int)ceil(log2(n_dat)-1));
+    fprintf(f_veri, "wire [%d:0] mem_addr_wr;\n\n" , (int)ceil(log2(n_dat)-1));
 
     // acesso ao indice da instrucao no program counter
-    fprintf(f_veri, "wire [%d:0] pc_sim_val;\n\n", (int)ceil(log2(n_ins)-1));
+    fprintf(f_veri, "`ifdef __ICARUS__\n");
+    fprintf(f_veri, "wire [%d:0] pc_sim_val;\n", (int)ceil(log2(n_ins)-1));
+    fprintf(f_veri, "`endif\n\n");
 
     // ------------------------------------------------------------------------
     // parametros do processador ----------------------------------------------
@@ -98,9 +100,13 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // finaizacao da instancia do processador ---------------------------------
     // ------------------------------------------------------------------------
 
-    fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n", prname);
-    fprintf(f_veri, ".IFILE(\"%s_inst.mif\")\n" , prname);
-    fprintf(f_veri, ") p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr,pc_sim_val);\n\n", prname);
+    fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n"  , prname);
+    fprintf(f_veri, ".IFILE(\"%s_inst.mif\"))\n\n", prname);
+    fprintf(f_veri, "`ifdef __ICARUS__\n");
+    fprintf(f_veri, "p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr,pc_sim_val);\n", prname);
+    fprintf(f_veri, "`else\n");
+    fprintf(f_veri, "p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr);\n"           , prname);
+    fprintf(f_veri, "`endif\n\n");
 
     // ------------------------------------------------------------------------
     // decodificadores de endereco de I/O -------------------------------------

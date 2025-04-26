@@ -286,7 +286,7 @@ void ass_array(int id, int et, int fft)
 
     int  etr, eti;
 
-    char set_type[16]; if (fft == 0) strcpy(set_type, "SRF"); else strcpy(set_type, "IRF");
+    char set_type[16]; if (fft == 0) strcpy(set_type, "STI"); else strcpy(set_type, "ISI");
 
     // left int e right int na memoria ----------------------------------------
 

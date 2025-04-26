@@ -11,12 +11,17 @@ module pc
 	 input             clk , rst,
 	 input             load,
 	 input [NBITS-1:0] data,
-	output [NBITS-1:0] addr,
+	output [NBITS-1:0] addr
 
-    output [NBITS-1:0] val // para simulacao
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+                     , sim
+
+`endif // ---------------------------------------------------------------------
 );
 
-reg [NBITS-1:0] cnt = 0;
+reg  [NBITS-1:0] cnt = 0;
+wire [NBITS-1:0] val;
 
 assign val = (load) ? data : cnt;
 
@@ -26,6 +31,12 @@ always @ (posedge clk or posedge rst) begin
 end
 
 assign addr = cnt;
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+assign sim  = val;
+
+`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -153,7 +164,7 @@ always @ (posedge clk)    out <= mem[cnt + {{$clog2(DEPTH)-1{1'b0}}, {1'b1}} + p
 
 endmodule
 
-// Controle de enredecamento com array ----------------------------------------
+// Controle de enderecamento com array ----------------------------------------
 
 module addr_ctrl_a
 #(
@@ -188,11 +199,10 @@ assign addr_w =                    val;
 
 endmodule
 
-// Controle de enredecamento sem array ----------------------------------------
+// Controle de enderecamento sem array ----------------------------------------
 
 module addr_ctrl_b
-#(
-	parameter MDATAW = 8
+#(parameter MDATAW = 8
 )(
 	input               pop,
 	input  [MDATAW-1:0] std_addr, pop_addr,
@@ -201,6 +211,40 @@ module addr_ctrl_b
 
 assign addr_r = (pop) ? pop_addr : std_addr;
 assign addr_w =                    std_addr;
+
+endmodule
+
+// Controle de I/O ------------------------------------------------------------
+
+module io_ctrl
+#(
+	parameter NUIOIN = 3,
+	parameter NUIOOU = 3,
+	parameter NUBITS = 8
+)(
+	input                           clk,
+	input      [NUBITS        -1:0] mem_data_in,
+	output reg [$clog2(NUIOIN)-1:0] addr_in,
+	output     [$clog2(NUIOOU)-1:0] addr_out
+);
+
+generate if (NUIOIN > 1) always @ (posedge clk) addr_in <= mem_data_in[$clog2(NUIOIN)-1:0]; endgenerate
+generate if (NUIOOU > 1) assign                 addr_out = mem_data_in[$clog2(NUIOOU)-1:0]; endgenerate
+
+endmodule
+
+// Controle de dados ----------------------------------------------------------
+
+module data_ctrl
+#(
+	parameter NUBITS = 8
+)(
+	input               req_in,
+	input  [NUBITS-1:0] io_in, mem_data_in,
+	output [NUBITS-1:0] ula_data
+);
+
+assign ula_data = (req_in) ? io_in : mem_data_in;
 
 endmodule
 
@@ -252,7 +296,7 @@ module core
 	// implementa enderecamento indireto
 	parameter   LDI   = 0,
 	parameter   ILI   = 0,
-	parameter   SRF   = 0,
+	parameter   STI   = 0,
 	
 	// implementa pilha de subrotinas
 	parameter   CAL   = 0,
@@ -346,9 +390,13 @@ module core
 	output     [$clog2(NUIOOU)-1:0] addr_out,
 	output                          req_in, out_en,
 
-	input                           itr,
+	input                           itr
 
-	output     [MINSTW        -1:0] pc_sim_val // para simulacao
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+  , output     [MINSTW        -1:0] pc_sim_val
+
+`endif // ---------------------------------------------------------------------
 );
 
 // Program Counter ------------------------------------------------------------
@@ -363,7 +411,15 @@ generate
 	else          assign pcl = pc_lval;
 endgenerate
 
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
 pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr, pc_sim_val);
+
+`else
+
+pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);
+
+`endif // ---------------------------------------------------------------------
 
 // Prefetch de instrucao ------------------------------------------------------
 
@@ -386,38 +442,34 @@ prefetch #(.MINSTW(MINSTW),
 
 // Decodificador de instrucao -------------------------------------------------
 
-wire [NBOPCO-1:0] id_opcode  = pf_opcode;
-
 wire              id_dsp_push;
 wire              id_dsp_pop;
 
 wire [       5:0] id_ula_op;
-wire [NUBITS-1:0] id_ula_data;
 
-wire              id_srf, id_ldi, id_inv;
-wire [MDATAW-1:0] id_rf_in;
+wire              id_sti, id_ldi, id_fft;
 
-instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW, NUIOIN, NUIOOU) id(clk, rst,
-                                                               id_opcode,
-                                                               id_dsp_push, id_dsp_pop,
-                                                               id_ula_op, id_ula_data,
-                                                               mem_wra, mem_data_in,
-                                                               io_in, req_in, out_en, addr_in, addr_out,
-                                                               id_srf, id_ldi, id_inv, id_rf_in);
+instr_dec #(NBOPCO) id(clk, rst,
+                       pf_opcode,
+                       id_dsp_push, id_dsp_pop,
+                       id_ula_op,
+                       mem_wra,
+                       req_in, out_en,
+                       id_sti, id_ldi, id_fft);
 
 // Ponteiro pra pilha de dados ------------------------------------------------
 
-wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
 wire [MDATAW-1:0] sp_addr_w, sp_addr_r;
 
 stack_pointer #(.NDATAW(MDATAW),
-                .NDATAS(MDATAS)) sp(clk, rst, sp_push, sp_pop, sp_addr_w, sp_addr_r);
+                .NDATAS(MDATAS)) sp(clk, rst, id_dsp_push, sp_pop, sp_addr_w, sp_addr_r);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
 wire signed [NUBITS-1:0] ula_out;
 wire signed [NUBITS-1:0] ula_acc;
+wire signed [NUBITS-1:0] ula_data;
 
 ula #(.NUBITS (NUBITS ),
       .NBMANT (NBMANT ),
@@ -466,7 +518,7 @@ ula #(.NUBITS (NUBITS ),
         .EQU  (  EQU  ),
         .SHL  (  SHL  ),
         .SHR  (  SHR  ),
-        .SRS  (  SRS  )) ula (id_ula_op, id_ula_data, ula_acc, ula_out);
+        .SRS  (  SRS  )) ula (id_ula_op, ula_data, ula_acc, ula_out);
 
 // Acumulador -----------------------------------------------------------------
 
@@ -482,27 +534,32 @@ assign  pf_acc = ula_out[0];
 wire [MINSTW-1:0] stack_out;
 
 generate
-	if (CAL == 1) begin
-
+	if (CAL) begin
 		stack #($clog2(SDEPTH), SDEPTH, MINSTW) isp(clk, rst, pf_isp_push, pf_isp_pop, pc_addr, stack_out);
 
 		assign pc_lval = (pf_isp_pop) ? stack_out : instr[MINSTW-1:0];
-
 	end else
-
 		assign pc_lval = instr[MINSTW-1:0];
 endgenerate
+
+// Controle de I/O ------------------------------------------------------------
+
+io_ctrl #(NUIOIN, NUIOOU, NUBITS) io_ctrl(clk, mem_data_in, addr_in, addr_out);
 
 // Controle de enredecamento --------------------------------------------------
 
 wire [MDATAW-1:0] rf_r, rf_w;
 
 generate
-	if (SRF | LDI)
-		addr_ctrl_a #(MDATAW, FFTSIZ, ILI) addr_ctrl(id_srf, id_ldi, id_inv, sp_pop, ula_out[MDATAW-1:0], mem_data_in[MDATAW-1:0], pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
+	if (STI | LDI)
+		addr_ctrl_a #(MDATAW, FFTSIZ, ILI) addr_ctrl(id_sti, id_ldi, id_fft, sp_pop, ula_out[MDATAW-1:0], mem_data_in[MDATAW-1:0], pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
 	else
 		addr_ctrl_b #(MDATAW) addr_ctrl(sp_pop, pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
 endgenerate
+
+// Controle de dados ----------------------------------------------------------
+
+data_ctrl #(NUBITS) data_ctrl(req_in, io_in, mem_data_in, ula_data);
 
 // Interface externa ----------------------------------------------------------
 
@@ -513,8 +570,8 @@ assign mem_addr_wb = sp_addr_w;
 assign mem_addr_r  = rf_r;
 
 generate
-	if (CAL == 1) assign instr_addr = (pf_isp_pop) ? stack_out : pf_addr;
-	else          assign instr_addr =  pf_addr;
+	if (CAL) assign instr_addr = (pf_isp_pop) ? stack_out : pf_addr;
+	else     assign instr_addr =  pf_addr;
 endgenerate
 
 endmodule
