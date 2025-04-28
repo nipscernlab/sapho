@@ -13,7 +13,7 @@ module mem_instr
 (
 	input                           clk,
 	input      [$clog2(NADDRE)-1:0] addr,
-	output reg [NBDATA        -1:0] data = 0 // para o modelsim
+	output reg [NBDATA        -1:0] data = 0
 );
 
 reg [NBDATA-1:0] mem [0:NADDRE-1];
@@ -46,12 +46,12 @@ module mem_data
 
 	input                                  wra,
 	input             [$clog2(NADDRE)-1:0] addr_wa, addr_ra,
-	input      signed [NBDATA        -1:0] data_ina,
-	output reg signed [NBDATA        -1:0] data_outa,
+	input      signed [       NBDATA -1:0] data_ina,
+	output reg signed [       NBDATA -1:0] data_outa,
 
 	input                                  wrb,
 	input             [$clog2(NADDRE)-1:0] addr_wb,
-	input      signed [NBDATA        -1:0] data_inb
+	input      signed [       NBDATA -1:0] data_inb
 );
 
 reg [NBDATA-1:0] mem [0:NADDRE-1];
@@ -65,7 +65,6 @@ reg [NBDATA-1:0] mem [0:NADDRE-1];
 always @ (posedge clk) begin
 	if (wra)     mem[addr_wa] <= data_ina;
 	data_outa <= mem[addr_ra];
-
 	if (wrb)     mem[addr_wb] <= data_inb;
 end
 
@@ -92,12 +91,6 @@ module processor
 	parameter MINSTS = 64,              // Tamanho da memoria de intrucoes
   	parameter MDATAW = $clog2(MDATAS),  // Numero de bits de endereco da memoria de dados
 	parameter MINSTW = $clog2(MINSTS),  // Numero de bits de endereco da memoria de instrucao
-
-  	// simulacao
-	parameter NUINST =  0,              // numero de instrucoes encontradas pelo comp assembly (sem macros)
-	parameter MEMTAB = "",              // arquivo texto com a tabela de instrucoes
-  	parameter FIMADD =  0,              // endereco da instrucao FIM
-  	parameter SIMTYP =  0,              // tipo de simulacao (0 para single e 1 para multicore)
 
   	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
@@ -209,14 +202,13 @@ module processor
 	output [$clog2(NUIOIN)-1:0] addr_in ,
 	output [$clog2(NUIOOU)-1:0] addr_out,
 	output                      req_in  , out_en,
-	input                       itr,
-
-  	output                      mem_wr,
-  	output         [MDATAW-1:0] mem_addr_w
+	input                       itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
 
-  , output         [MINSTW-1:0] pc_sim_val
+  , output                      mem_wr,
+  	output         [MDATAW-1:0] mem_addr_w,
+	output         [MINSTW-1:0] pc_sim_val
 
 `endif // ---------------------------------------------------------------------
 );
@@ -232,8 +224,13 @@ wire signed [NUBITS-1:0] mem_data_in;
 wire signed [NUBITS-1:0] mem_data_out;
 
 assign io_out     = mem_data_out;
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
 assign mem_wr     = mem_wra;
 assign mem_addr_w = mem_addr_wa;
+
+`endif // ---------------------------------------------------------------------
 
 wire [NBOPCO+NBOPER-1:0] instr;
 

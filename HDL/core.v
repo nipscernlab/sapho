@@ -8,34 +8,25 @@ module pc
 #(
 	parameter NBITS = 8
 )(
-	 input             clk , rst,
-	 input             load,
-	 input [NBITS-1:0] data,
-	output [NBITS-1:0] addr
+	 input                 clk , rst,
+	 input                 load,
+	 input     [NBITS-1:0] data,
+	output reg [NBITS-1:0] addr = 0
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-
-                     , sim
-
+  , output     [NBITS-1:0] sim
 `endif // ---------------------------------------------------------------------
 );
 
-reg  [NBITS-1:0] cnt = 0;
-wire [NBITS-1:0] val;
-
-assign val = (load) ? data : cnt;
+wire [NBITS-1:0] val = (load) ? data : addr;
 
 always @ (posedge clk or posedge rst) begin
-	if (rst) cnt <= 0;
-	else     cnt <= val + {{NBITS-1{1'b0}}, {1'b1}};
+	if (rst) addr <= 0;
+	else     addr <= val + {{NBITS-1{1'b0}}, {1'b1}};
 end
 
-assign addr = cnt;
-
 `ifdef __ICARUS__ // ----------------------------------------------------------
-
 assign sim  = val;
-
 `endif // ---------------------------------------------------------------------
 
 endmodule
@@ -51,10 +42,10 @@ module prefetch
 	parameter  [MINSTW-1:0] ITRADD = 0)
 (
 	 input                         clk, rst  ,
-	 input     [MINSTW       -1:0] addr      ,
+	 input     [MINSTW       -1:0] pc_instr  ,
 	output     [NBOPCO       -1:0] opcode    ,
 	output     [NBOPER       -1:0] operand   ,
-	 input     [NBOPCO+NBOPER-1:0] instr     ,
+	 input     [NBOPCO+NBOPER-1:0] mem_instr ,
 	output     [MINSTW       -1:0] instr_addr,
 	output                         pc_l      ,
 	 input                         is_zero   ,
@@ -65,10 +56,10 @@ module prefetch
 
 reg pc_load;
 
-assign opcode  =  instr[NBOPCO+NBOPER-1:NBOPER];
-assign operand =  instr[NBOPER       -1:     0];
-assign pc_l = itr | pc_load;
-assign instr_addr = (itr) ? ITRADD : (pc_load & ~rst) ? operand[MINSTW-1:0] : addr;
+assign opcode     =  mem_instr[NBOPCO+NBOPER-1:NBOPER];
+assign operand    =  mem_instr[NBOPER       -1:     0];
+assign pc_l       =  itr  | pc_load;
+assign instr_addr = (itr) ? ITRADD : (pc_load & ~rst) ? operand[MINSTW-1:0] : pc_instr;
 
 always @ (*) begin
 	case (opcode)
@@ -393,9 +384,7 @@ module core
 	input                           itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-
   , output     [MINSTW        -1:0] pc_sim_val
-
 `endif // ---------------------------------------------------------------------
 );
 
@@ -412,13 +401,9 @@ generate
 endgenerate
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-
 pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr, pc_sim_val);
-
 `else
-
 pc #(MINSTW) pc (clk, rst, pc_load, pcl, pc_addr);
-
 `endif // ---------------------------------------------------------------------
 
 // Prefetch de instrucao ------------------------------------------------------
@@ -442,20 +427,12 @@ prefetch #(.MINSTW(MINSTW),
 
 // Decodificador de instrucao -------------------------------------------------
 
-wire              id_dsp_push;
-wire              id_dsp_pop;
+wire       id_dsp_push;
+wire       id_dsp_pop;
+wire [5:0] id_ula_op;
+wire       id_sti, id_ldi, id_fft;
 
-wire [       5:0] id_ula_op;
-
-wire              id_sti, id_ldi, id_fft;
-
-instr_dec #(NBOPCO) id(clk, rst,
-                       pf_opcode,
-                       id_dsp_push, id_dsp_pop,
-                       id_ula_op,
-                       mem_wra,
-                       req_in, out_en,
-                       id_sti, id_ldi, id_fft);
+instr_dec #(NBOPCO) id(clk, rst, pf_opcode, id_dsp_push, id_dsp_pop, id_ula_op, mem_wra, req_in, out_en, id_sti, id_ldi, id_fft);
 
 // Ponteiro pra pilha de dados ------------------------------------------------
 
@@ -536,7 +513,6 @@ wire [MINSTW-1:0] stack_out;
 generate
 	if (CAL) begin
 		stack #($clog2(SDEPTH), SDEPTH, MINSTW) isp(clk, rst, pf_isp_push, pf_isp_pop, pc_addr, stack_out);
-
 		assign pc_lval = (pf_isp_pop) ? stack_out : instr[MINSTW-1:0];
 	end else
 		assign pc_lval = instr[MINSTW-1:0];
@@ -552,9 +528,8 @@ wire [MDATAW-1:0] rf_r, rf_w;
 
 generate
 	if (STI | LDI)
-		addr_ctrl_a #(MDATAW, FFTSIZ, ILI) addr_ctrl(id_sti, id_ldi, id_fft, sp_pop, ula_out[MDATAW-1:0], mem_data_in[MDATAW-1:0], pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
-	else
-		addr_ctrl_b #(MDATAW) addr_ctrl(sp_pop, pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
+		 addr_ctrl_a #(MDATAW, FFTSIZ, ILI) addr_ctrl(id_sti, id_ldi, id_fft, sp_pop, ula_out[MDATAW-1:0], mem_data_in[MDATAW-1:0], pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
+	else addr_ctrl_b #(MDATAW)              addr_ctrl(sp_pop, pf_operand[MDATAW-1:0], sp_addr_r, rf_r, rf_w);
 endgenerate
 
 // Controle de dados ----------------------------------------------------------
