@@ -66,18 +66,12 @@ void parse_end(char *prname, char *d_proc)
 {
     // fecha os arquivos --------------------------------------------------------
 
-    fclose(f_asm);
-    fclose(f_lin);
-
-    // prepara para abri-los novamente (para leitura) -------------------------
-
-    char cmm_file[1024];
-    char asm_file[1024];
-
-    sprintf(cmm_file, "%s/Software/%s.cmm", d_proc, prname);
-    sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname);
-
+    fclose(f_asm); // codigo   assembly
+    fclose(f_lin); // tradutor assembly
+    
     // checa se precisa adicionar macros no arquivo .asm ------------------------
+
+    char asm_file[1024]; sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname);
 
 	mac_geni(asm_file);
 
@@ -92,8 +86,8 @@ void parse_end(char *prname, char *d_proc)
 
     // gera o arquivo de traducao pro codigo cmm --------------------------------
 
-    char path[1024];
-    sprintf(path, "%s/%s", dir_tmp, "trad_cmm.txt");
+    char     path[1024]; sprintf(path    , "%s/%s", dir_tmp,     "trad_cmm.txt");
+    char cmm_file[1024]; sprintf(cmm_file, "%s/Software/%s.cmm", d_proc, prname);
   
     FILE *output = fopen(path    , "w");
     FILE *input  = fopen(cmm_file, "r");

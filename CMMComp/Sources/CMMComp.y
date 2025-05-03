@@ -326,7 +326,7 @@ void main(int argc, char *argv[])
 {
     parse_init(argv[1], argv[2], argv[3], argv[4]); // inicializa o parser e as variaveis globais
 	  yyparse   ();                                   // aqui a magica acontece!!
-    parse_end (argv[1], argv[2]);                   // finaliza o parser e gera interface com iverilog/gtkwave
+    parse_end (argv[1], argv[2]);                   // finaliza o parser
 }
 
 // erro de sintaxes do bison

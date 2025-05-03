@@ -57,9 +57,10 @@ void add_var(char *var)
 // checa quais variaveis e funcoes foram usadas (no final do parse)
 void check_var()
 {
-    int i;
+    if (mainok == 0) fprintf (stderr, "Erro: cadê a função main()?\n");
+    
     // varre toda a tabela de variaveis
-    for (i = 0; i < v_count; i++)
+    for (int i = 0; i < v_count; i++)
     {
         // checa se variavel foi declarada e nao foi usada ...
         if (((v_type[i] == 1) || (v_type[i] == 2) || (v_type[i] == 3)) && (v_used[i] == 0))
