@@ -136,7 +136,7 @@ module stack
 
 reg [NBITS-1:0] mem [DEPTH-1:0];
 
-// Stack Pointer --------------------------------------------------------------
+// Stack Pointer
 
 reg         [NADDR-1:0] cnt = DEPTH    -{{NADDR-1{1'b0}}, {1'b1}};
 wire signed [NADDR-1:0] pm  = (push) ? -{{NADDR-1{1'b0}}, {1'b1}} : {{NADDR-1{1'b0}}, {1'b1}};
@@ -148,10 +148,45 @@ always @ (posedge clk or posedge rst) begin
 		cnt <= cnt + pm;
 end
 
-// Stack ----------------------------------------------------------------------
+// Stack
 
 always @ (posedge clk) if (push) mem[cnt] <= in; 
 always @ (posedge clk)    out <= mem[cnt + {{$clog2(DEPTH)-1{1'b0}}, {1'b1}} + pop]; 
+
+endmodule
+
+// pilha de dados -------------------------------------------------------------
+
+module stack_d
+#(
+	parameter              NADDR = 7,
+	parameter  [NADDR-1:0] DEPTH = 3,
+	parameter              NBITS = 8
+)(
+	input                   clk, rst,
+	input                  push, pop,
+	input      [NBITS-1:0] in,
+	output reg [NBITS-1:0] out
+);
+
+reg [NBITS-1:0] mem [DEPTH-1:0];
+
+// Stack Pointer
+
+reg         [NADDR-1:0] cnt = DEPTH    -{{NADDR-1{1'b0}}, {1'b1}};
+wire signed [NADDR-1:0] pm  = (push) ? -{{NADDR-1{1'b0}}, {1'b1}} : {{NADDR-1{1'b0}}, {1'b1}};
+
+always @ (posedge clk or posedge rst) begin
+	if (rst)
+		cnt <= DEPTH-{{NADDR-1{1'b0}}, {1'b1}};
+	else if (push | pop)
+		cnt <= cnt + pm;
+end
+
+// Stack
+
+always @ (posedge clk) if (push) mem[cnt] <= in; 
+always @ (posedge clk)    out <= mem[cnt + pm];
 
 endmodule
 
@@ -230,12 +265,15 @@ module data_ctrl
 #(
 	parameter NUBITS = 8
 )(
-	input               req_in,
-	input  [NUBITS-1:0] io_in, mem_data_in,
+	input               clk,
+	input               req_in, pop,
+	input  [NUBITS-1:0] io_in, mem_data_in, stack_in,
 	output [NUBITS-1:0] ula_data
 );
 
-assign ula_data = (req_in) ? io_in : mem_data_in;
+reg popr; always @ (posedge clk) popr <= pop;
+
+assign ula_data = (popr) ? stack_in : (req_in) ? io_in : mem_data_in;
 
 endmodule
 
@@ -506,6 +544,13 @@ always @ (posedge clk or posedge rst) if (rst) racc <= 0; else racc <= ula_out;
 assign ula_acc = racc;
 assign  pf_acc = ula_out[0];
 
+// Pilha de dados -------------------------------------------------------------
+
+wire [NUBITS-1:0] stack_d_out;
+wire [NUBITS-1:0] stack_d_in = ula_out;
+
+stack_d #($clog2(MDATAS), MDATAS, NUBITS) sdsp(clk, rst, id_dsp_push, sp_pop, stack_d_in, stack_d_out);
+
 // Pilha de instrucao ---------------------------------------------------------
 
 wire [MINSTW-1:0] stack_out;
@@ -534,7 +579,7 @@ endgenerate
 
 // Controle de dados ----------------------------------------------------------
 
-data_ctrl #(NUBITS) data_ctrl(req_in, io_in, mem_data_in, ula_data);
+data_ctrl #(NUBITS) data_ctrl(clk, req_in, sp_pop, io_in, mem_data_in, stack_d_out, ula_data);
 
 // Interface externa ----------------------------------------------------------
 

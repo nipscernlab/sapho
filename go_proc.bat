@@ -1,12 +1,14 @@
 :: ****************************************************************************
-:: Script para emular o SAPHO na compilacao de um unico processador
+:: Script para emular o SAPHO na compilacao de um unico processador ***********
 :: ****************************************************************************
 
-:: Configura o ambiente -------------------------------------------------------
+:: Configura o terminal -------------------------------------------------------
 
 cls
 echo off
-chcp 65001
+chcp 65001>%TMP_PRO%\log.txt
+
+:: Configura o ambiente -------------------------------------------------------
 
 :: diretorio atual
 set ROOT_DIR=%cd%
@@ -71,10 +73,10 @@ mkdir %TESTE_DIR%
 
 :: Copia os arquivos para os diretorios de teste ------------------------------
 
-xcopy Exemplos %USER_DIR% /e /i /q>%TMP_PRO%\xcopy.txt
-xcopy HDL      %HDL_DIR%  /q    /y>%TMP_PRO%\xcopy.txt
-xcopy Macros   %MAC_DIR%  /q    /y>%TMP_PRO%\xcopy.txt
-xcopy Scripts  %SCR_DIR%  /q    /y>%TMP_PRO%\xcopy.txt
+xcopy Exemplos %USER_DIR% /e /i /q>%TMP_PRO%\log.txt
+xcopy HDL      %HDL_DIR%  /q    /y>%TMP_PRO%\log.txt
+xcopy Macros   %MAC_DIR%  /q    /y>%TMP_PRO%\log.txt
+xcopy Scripts  %SCR_DIR%  /q    /y>%TMP_PRO%\log.txt
 
 :: Gera o compilador CMM ------------------------------------------------------
 
@@ -84,7 +86,7 @@ cd %ROOT_DIR%\CMMComp\Sources
 %FLEX%        CMMComp.l
 %GCC%      -o CMMComp.exe data_assign.c data_declar.c data_use.c itr.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c global.c macros.c y.tab.c
 
-move CMMComp.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move CMMComp.exe %BIN_DIR%>%TMP_PRO%\log.txt
 del  lex.yy.c
 del  y.tab.c
 del  y.tab.h
@@ -96,7 +98,7 @@ cd %ROOT_DIR%\APP\Sources
 %FLEX% -o app.c app.l
 %GCC%  -o APP.exe app.c eval.c variaveis.c
 
-move APP.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move APP.exe %BIN_DIR%>%TMP_PRO%\log.txt
 del  app.c
 
 :: Gera o compilador Assembler ------------------------------------------------
@@ -106,7 +108,7 @@ cd %ROOT_DIR%\ASM\Sources
 %FLEX% -o ASMComp.c ASMComp.l
 %GCC%  -o ASM.exe ASMComp.c eval.c labels.c opcodes.c variaveis.c t2t.c hdl.c simulacao.c array.c
 
-move ASM.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move ASM.exe %BIN_DIR%>%TMP_PRO%\log.txt
 del  ASMComp.c
 
 :: Gera tradutores para o GTKWave ---------------------------------------------
@@ -116,10 +118,12 @@ cd %SCR_DIR%
 %GCC% -o float2gtkw.exe float2gtkw.c
 %GCC% -o comp2gtkw.exe comp2gtkw.c
 
-move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\xcopy.txt
-move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\xcopy.txt
+move float2gtkw.exe %BIN_DIR%>%TMP_PRO%\log.txt
+move comp2gtkw.exe  %BIN_DIR%>%TMP_PRO%\log.txt
 
 :: Executa o compilador CMM ---------------------------------------------------
+
+echo #### Roda o compilador CMM
 
 cd %BIN_DIR%
 
@@ -127,11 +131,15 @@ CMMComp.exe %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
 
 :: Executa o Assembler pre-processor ------------------------------------------
 
+echo #### Roda o Pre-assembler
+
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
 APP.exe %ASM_FILE% %TMP_PRO%
 
 :: Executa o compilador Assembler ---------------------------------------------
+
+echo #### Roda o Assembler
 
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
@@ -139,13 +147,15 @@ ASM.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 
+echo #### Roda o Icarus
+
 set UPROC=%HARD_DIR%\%PROC%
 cd  %HDL_DIR%
 
 if exist %SIMU_DIR%\%TB%.v (
     set TB_MOD=%TB%
 ) else (
-    copy %TMP_PRO%\%PROC%_tb.v %SIMU_DIR%>%TMP_PRO%\xcopy.txt
+    copy %TMP_PRO%\%PROC%_tb.v %SIMU_DIR%>%TMP_PRO%\log.txt
     set TB_MOD=%PROC%_tb
 )
 
@@ -153,26 +163,31 @@ if exist %SIMU_DIR%\%TB%.v (
 
 :: Roda o testbench com o vvp -------------------------------------------------
 
-copy %UPROC%_data.mif %TMP_PRO%>%TMP_PRO%\xcopy.txt
-copy %UPROC%_inst.mif %TMP_PRO%>%TMP_PRO%\xcopy.txt
+echo #### Roda o VVP
+
+copy %UPROC%_data.mif %TMP_PRO%>%TMP_PRO%\log.txt
+copy %UPROC%_inst.mif %TMP_PRO%>%TMP_PRO%\log.txt
 
 cd  %TMP_PRO%
-del xcopy.txt
 
 %VVP% %PROC%.vvp -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
+echo #### Roda o GTKWave
+
 echo %TMP_PRO%>tcl_infos.txt
 echo %BIN_DIR%>>tcl_infos.txt
 
 if exist %SIMU_DIR%\%GTKW% (
-    %GTKWAVE% --rcvar "hide_sst on" --dark %SIMU_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
+    %GTKWAVE% --rcvar "hide_sst on" --dark %SIMU_DIR%\%GTKW%      --script=%SCR_DIR%\pos_gtkw.tcl
 ) else (
     %GTKWAVE% --rcvar "hide_sst on" --dark %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl
 )
 
 :: RTL Viewer -----------------------------------------------------------------
+
+echo #### Roda o Yosys
 
 cd %HDL_DIR%
 cp %UPROC%.v .
@@ -180,6 +195,8 @@ cp %SCR_DIR%\proc2rtl.ys .
 
 sed -i "s/@PROC@/%PROC%/" proc2rtl.ys
 %YOSYS% -s proc2rtl.ys>%TMP_PRO%\yosys.log
+
+echo #### Roda o NetlistSvg
 
 cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
 cp %PROC%.svg %TMP_PRO%
@@ -206,6 +223,8 @@ del %PROC%.v
 
 :: Limpa a pasta de arquivos temporarios --------------------------------------
 
+echo #### Limpa tudo
+
 del %TMP_PRO%\cmm_log.txt
 del %TMP_PRO%\app_log.txt
 del %TMP_PRO%\pc_%PROC%_mem.txt
@@ -218,5 +237,6 @@ del %TMP_PRO%\%TB_MOD%.vcd
 del %TMP_PRO%\trad_cmm.txt
 del %TMP_PRO%\trad_opcode.txt
 del %TMP_PRO%\yosys.log
+del %TMP_PRO%\log.txt
 
 cd %ROOT_DIR%
