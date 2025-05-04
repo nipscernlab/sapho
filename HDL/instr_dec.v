@@ -1,19 +1,33 @@
 module instr_dec
 #(
-	parameter NBOPCO = 7 // Numero de bits de opcode
-)(
+	parameter NBDATA = 32, // Numero de bits dos dados
+	parameter NBOPCO = 7,  // Numero de bits de  opcode
+	parameter NBOPER = 9,  // Numero de bits de  operando
+	parameter MDATAW = 8   // Numero de bits de  endereco da memoria de dados
+)
+(
 	input                   clk, rst,
 	input      [NBOPCO-1:0] opcode,
+	input      [NBOPER-1:0] operand,
 
 	output reg              dsp_push, dsp_pop,
+
 	output reg [       5:0] ula_op,
+	output     [NBDATA-1:0] ula_data,
+
 	output reg              mem_wr,
+	output     [MDATAW-1:0] mem_addr,
+	input      [NBDATA-1:0] mem_data_in,
+
+	input      [NBDATA-1:0] io_in,
 	output reg              req_in, out_en,
+
 	output reg              sti, ldi,
 	output                  fft
 );
 
-reg          fftl , fftr;
+reg fftl, fftr;
+
 assign fft = fftl | fftr;
 
 always @ (posedge clk or posedge rst) begin
@@ -695,7 +709,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			1 : begin                     // P_LOD
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -744,7 +758,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			8: begin                      // PSH
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -940,7 +954,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			36: begin                     // P_NEG_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -961,7 +975,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			39: begin                     // PF_NEG_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -982,7 +996,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			42: begin                     // P_ABS_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1003,7 +1017,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			45: begin                     // PF_ABS_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1024,7 +1038,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			48: begin                     // P_PST_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1045,7 +1059,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			51: begin                     // PF_PST_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1066,7 +1080,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			54: begin                     // P_NRM_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1087,7 +1101,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			57: begin                     // P_I2F_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1108,7 +1122,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			60: begin                     // P_F2I_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1171,7 +1185,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			69: begin                     // P_INV_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1220,7 +1234,7 @@ always @ (*) begin
 						fftl     <= 1'b0;
 					end
 			76: begin                     // P_LIN_M
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						dsp_push <= 1'b1;
 						dsp_pop  <= 1'b0;
 						ldi      <= 1'b0;
@@ -1348,5 +1362,8 @@ always @ (*) begin
 					end
 	endcase
 end
+
+assign ula_data = (req_in) ? io_in : mem_data_in;
+assign mem_addr =  operand[MDATAW-1:0];
 
 endmodule

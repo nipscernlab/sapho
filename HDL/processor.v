@@ -43,15 +43,10 @@ module mem_data
 )
 (
 	input                                  clk,
-
-	input                                  wra,
-	input             [$clog2(NADDRE)-1:0] addr_wa, addr_ra,
-	input      signed [       NBDATA -1:0] data_ina,
-	output reg signed [       NBDATA -1:0] data_outa,
-
-	input                                  wrb,
-	input             [$clog2(NADDRE)-1:0] addr_wb,
-	input      signed [       NBDATA -1:0] data_inb
+	input                                   wr,
+	input             [$clog2(NADDRE)-1:0] addr_w, addr_r,
+	input      signed [NBDATA        -1:0] data_in,
+	output reg signed [NBDATA        -1:0] data_out
 );
 
 reg [NBDATA-1:0] mem [0:NADDRE-1];
@@ -63,9 +58,11 @@ reg [NBDATA-1:0] mem [0:NADDRE-1];
 `endif
 
 always @ (posedge clk) begin
-	if (wra)     mem[addr_wa] <= data_ina;
-	data_outa <= mem[addr_ra];
-	if (wrb)     mem[addr_wb] <= data_inb;
+	if (wr) mem[addr_w] <= data_in;
+end
+
+always @ (posedge clk) begin
+	data_out <= mem[addr_r];
 end
 
 endmodule
@@ -216,21 +213,11 @@ module processor
 // core -----------------------------------------------------------------------
 
 wire        [MINSTW-1:0] instr_addr;
-
-wire                     mem_wra, mem_wrb;
 wire        [MDATAW-1:0] mem_addr_r;
-wire        [MDATAW-1:0] mem_addr_wa, mem_addr_wb;
 wire signed [NUBITS-1:0] mem_data_in;
 wire signed [NUBITS-1:0] mem_data_out;
 
-assign io_out     = mem_data_out;
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-assign mem_wr     = mem_wra;
-assign mem_addr_w = mem_addr_wa;
-
-`endif // ---------------------------------------------------------------------
+assign io_out = mem_data_out;
 
 wire [NBOPCO+NBOPER-1:0] instr;
 
@@ -297,8 +284,7 @@ core #(.NBOPCO (NBOPCO ),
          .SHR  (  SHR  ),
          .SRS  (  SRS  )) core(clk, rst,
                                instr, instr_addr,
-                               mem_wra, mem_addr_wa, mem_addr_r, mem_data_in, mem_data_out,
-							   mem_wrb, mem_addr_wb,
+                               mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
                                io_in, addr_in, addr_out, req_in, out_en, itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
@@ -318,6 +304,6 @@ mem_instr # (.NADDRE(MINSTS       ),
 
 mem_data # (.NADDRE(MDATAS),
             .NBDATA(NUBITS),
-            .FNAME (DFILE )) mdata(clk, mem_wra, mem_addr_wa, mem_addr_r, mem_data_out, mem_data_in, mem_wrb, mem_addr_wb, mem_data_out);
+            .FNAME (DFILE )) mdata(clk, mem_wr, mem_addr_w, mem_addr_r, mem_data_out, mem_data_in);
 
 endmodule
