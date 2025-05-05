@@ -19,7 +19,7 @@ module mem_instr
 reg [NBDATA-1:0] mem [0:NADDRE-1];
 
 `ifdef YOSYS
-  // Yosys vai ignorar isso
+	// Yosys vai ignorar isso
 `else
 	initial $readmemb(FNAME, mem);
 `endif
@@ -52,16 +52,13 @@ module mem_data
 reg [NBDATA-1:0] mem [0:NADDRE-1];
 
 `ifdef YOSYS
-  // Yosys vai ignorar isso
+	// Yosys vai ignorar isso
 `else
 	initial $readmemb(FNAME, mem);
 `endif
 
 always @ (posedge clk) begin
-	if (wr) mem[addr_w] <= data_in;
-end
-
-always @ (posedge clk) begin
+	if (wr)     mem[addr_w] <= data_in;
 	data_out <= mem[addr_r];
 end
 
@@ -77,37 +74,37 @@ module processor
 	// Parametros de configuracao internos -------------------------------------
 	// -------------------------------------------------------------------------
 
-  	// fluxo de dados
-  	parameter NBOPCO = 7,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
-  	parameter ITRADD = 0,               // Endereco da interrupcao
+	// fluxo de dados
+	parameter NBOPCO = 7,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
+	parameter ITRADD = 0,               // Endereco da interrupcao
 
 	// memorias
 	parameter IFILE  = "inst.mif",      // Arquivo contendo o programa a ser executado
 	parameter DFILE  = "data.mif",      // Arquivo com conteudo da memoria de dados
-  	parameter MDATAS = 64,              // Tamanho da memoria de dados
+	parameter MDATAS = 64,              // Tamanho da memoria de dados
 	parameter MINSTS = 64,              // Tamanho da memoria de intrucoes
-  	parameter MDATAW = $clog2(MDATAS),  // Numero de bits de endereco da memoria de dados
+	parameter MDATAW = $clog2(MDATAS),  // Numero de bits de endereco da memoria de dados
 	parameter MINSTW = $clog2(MINSTS),  // Numero de bits de endereco da memoria de instrucao
 
-  	// -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
 	// -------------------------------------------------------------------------
 
-  	// fluxo de dados
+	// fluxo de dados
 	parameter NUBITS = 16,              // Tamanho da palavra do processador
-  	parameter NBMANT = 23,              // Numero de bits da mantissa
-  	parameter NBEXPO =  8,              // Numero de bits do expoente
-  	parameter NBOPER =  7,              // Numero de bits de operando
+	parameter NBMANT = 23,              // Numero de bits da mantissa
+	parameter NBEXPO =  8,              // Numero de bits do expoente
+	parameter NBOPER =  7,              // Numero de bits de operando
 
-  	// memorias
+	// memorias
 	parameter SDEPTH =  8,              // Tamanho da pilha   de instrucao
 
-  	// entrada e Saida
+	// entrada e Saida
 	parameter NUIOIN =  2,              // Numero de portas de entrada
 	parameter NUIOOU =  2,              // Numero de portas de saida
 
-  	// constantes aritmeticas
-  	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
+	// constantes aritmeticas
+	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
 	parameter FFTSIZ =  3,              // Tamanho da ILI na inversao de bits
 
 	// -------------------------------------------------------------------------
@@ -203,12 +200,18 @@ module processor
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
 
-  , output                      mem_wr,
-  	output         [MDATAW-1:0] mem_addr_w,
-	output         [MINSTW-1:0] pc_sim_val
+	, output                    mem_wr,
+	  output       [MDATAW-1:0] mem_addr_w,
+	  output       [MINSTW-1:0] pc_sim_val);
+
+`else
+
+);
+
+wire                     mem_wr;
+wire        [MDATAW-1:0] mem_addr_w;
 
 `endif // ---------------------------------------------------------------------
-);
 
 // core -----------------------------------------------------------------------
 
@@ -289,7 +292,7 @@ core #(.NBOPCO (NBOPCO ),
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
 
-							 , pc_sim_val
+                             , pc_sim_val
 
 `endif // ---------------------------------------------------------------------
 );

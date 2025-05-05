@@ -14,7 +14,7 @@ module pc
 	output reg [NBITS-1:0] addr = 0
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-  , output     [NBITS-1:0] sim
+ , output     [NBITS-1:0] sim
 `endif // ---------------------------------------------------------------------
 );
 
@@ -179,9 +179,9 @@ generate
 
 		wire [MDATAW-1:0] add = (fft) ? {in[MDATAW-1:FFTSIZ], aux} : in;
 
-		assign out = (sti || ldi) ? add + addr: addr;
+		assign out = (sti | ldi) ? add + addr: addr;
 	end else
-		assign out = (sti || ldi) ? in  + addr: addr;
+		assign out = (sti | ldi) ? in  + addr: addr;
 endgenerate
 
 endmodule
@@ -328,7 +328,7 @@ module core
 	input                           itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-  , output     [MINSTW        -1:0] pc_sim_val
+ , output     [MINSTW        -1:0] pc_sim_val
 `endif // ---------------------------------------------------------------------
 );
 
@@ -482,15 +482,11 @@ wire [MDATAW-1:0] rf;
 generate
 
 	if (STI | LDI) begin
-
 		wire [MDATAW-1:0] rf_in = (id_ldi) ? ula_out[MDATAW-1:0] : mem_data_in[MDATAW-1:0];
-
 		rel_addr #(MDATAW, FFTSIZ, ILI) ra(id_sti, id_ldi, id_fft, rf_in, id_mem_addr, rf);
-
 	end else
-
 		assign rf = id_mem_addr;
-
+		
 endgenerate
 
 // Interface externa ----------------------------------------------------------

@@ -99,8 +99,10 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // finaizacao da instancia do processador ---------------------------------
     // ------------------------------------------------------------------------
 
-    fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n"  , prname);
-    fprintf(f_veri, ".IFILE(\"%s_inst.mif\"))\n\n", prname);
+    char path[1024]; sprintf(path, "%s/Hardware/%s", proc_dir, prname); force_rightbar(path);
+
+    fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n"  , path);
+    fprintf(f_veri, ".IFILE(\"%s_inst.mif\"))\n\n", path);
     fprintf(f_veri, "`ifdef __ICARUS__\n");
     fprintf(f_veri, "p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr,pc_sim_val);\n", prname);
     fprintf(f_veri, "`else\n");

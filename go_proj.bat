@@ -2,12 +2,26 @@
 :: Script para emular o SAPHO na compilacao de um projeto com varios procs
 :: ****************************************************************************
 
-:: Configura o ambiente -------------------------------------------------------
+:: Configura o terminal -------------------------------------------------------
 
 cls
 echo off
+chcp 65001>%TMP_PRO%\log.txt
+
+:: Configura o ambiente -------------------------------------------------------
+
+:: diretorio atual
 set ROOT_DIR=%cd%
-set TESTE_DIR=%ROOT_DIR%\Teste
+
+:: programas necessarios
+set BISON=C:\packs\msys64\usr\bin\bison.exe
+set FLEX=C:\packs\msys64\usr\bin\flex.exe
+set GCC=C:\packs\msys64\mingw64\bin\x86_64-w64-mingw32-gcc.exe
+set IVERILOG=C:\nipscern\Aurora\saphoComponents\Packages\iverilog\bin\iverilog.exe
+set VVP=C:\nipscern\Aurora\saphoComponents\Packages\iverilog\bin\vvp.exe
+set GTKWAVE=C:\nipscern\Aurora\saphoComponents\Packages\iverilog\gtkwave\bin\gtkwave.exe
+
+set    TESTE_DIR=%ROOT_DIR%\Teste
 rmdir %TESTE_DIR% /s /q
 
 :: Parametros definidos pelo usuario do SAPHO para compilacao -----------------
@@ -66,9 +80,9 @@ xcopy Scripts %SCR_DIR% /q /y>%TMP_DIR%\xcopy.txt
 
 cd %ROOT_DIR%\CMMComp\Sources
 
-bison -y -d CMMComp.y
-flex        CMMComp.l
-gcc      -o CMMComp.exe data_assign.c data_declar.c macros.c itr.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c global.c y.tab.c
+%BISON% -y -d CMMComp.y
+%FLEX%        CMMComp.l
+%GCC%      -o CMMComp.exe data_assign.c data_declar.c macros.c itr.c data_use.c diretivas.c funcoes.c labels.c lex.yy.c oper.c saltos.c stdlib.c t2t.c variaveis.c array_index.c global.c y.tab.c
 
 move CMMComp.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 del lex.yy.c
@@ -79,8 +93,8 @@ del  y.tab.h
 
 cd %ROOT_DIR%\APP\Sources
 
-flex -oapp.c app.l
-gcc -o APP.exe app.c eval.c variaveis.c
+%FLEX% -o app.c app.l
+%GCC%  -o APP.exe app.c eval.c variaveis.c
 
 move APP.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 del app.c
@@ -89,8 +103,8 @@ del app.c
 
 cd %ROOT_DIR%\ASM\Sources
 
-flex -oASMComp.c ASMComp.l
-gcc -o ASM.exe ASMComp.c eval.c labels.c opcodes.c variaveis.c t2t.c hdl.c simulacao.c array.c
+%FLEX% -o ASMComp.c ASMComp.l
+%GCC%  -o ASM.exe ASMComp.c eval.c labels.c opcodes.c variaveis.c t2t.c hdl.c simulacao.c array.c
 
 move ASM.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 del ASMComp.c
@@ -99,8 +113,8 @@ del ASMComp.c
 
 cd %SCR_DIR%
 
-gcc -o float2gtkw.exe float2gtkw.c
-gcc -o comp2gtkw.exe comp2gtkw.c
+%GCC% -o float2gtkw.exe float2gtkw.c
+%GCC% -o comp2gtkw.exe comp2gtkw.c
 
 move float2gtkw.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_DIR%\xcopy.txt
@@ -143,7 +157,7 @@ for /f "delims=" %%a in (%TMP_DIR%\f_list.txt) do set "TOP_V=!TOP_V!%TOPL_DIR%\%
 :: lista arquivos dos processadores encontrados
 for %%a in (%PROC_LIST%) do set "PRO_V=!PRO_V!%TMP_DIR%\%%a\%%a.v " 
 
-iverilog -s %TB% -o %TMP_DIR%\%PROJET%.vvp %HDL_V% %PRO_V% %TOP_V%
+%IVERILOG% -s %TB% -o %TMP_DIR%\%PROJET%.vvp %HDL_V% %PRO_V% %TOP_V%
 
 for %%a in (%PROC_LIST%) do copy %TMP_DIR%\%%a\%%a_tb.v %PROJ_DIR%\%%a\Simulation>%TMP_DIR%\xcopy.txt
 
@@ -160,7 +174,7 @@ endlocal
 del f_list.txt
 del xcopy.txt
 
-vvp %PROJET%.vvp -fst
+%VVP% %PROJET%.vvp -fst
 
 :: Roda o GtkWave -------------------------------------------------------------
 
@@ -170,9 +184,9 @@ echo %TMP_DIR%>>  tcl_infos.txt
 echo %BIN_DIR%>>  tcl_infos.txt
 
 if exist %TOPL_DIR%\%GTKW% (
-    gtkwave --rcvar "hide_sst on" --dark %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
+    %GTKWAVE% --rcvar "hide_sst on" --dark %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
 ) else (
-    gtkwave --rcvar "hide_sst on" --dark %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl
+    %GTKWAVE% --rcvar "hide_sst on" --dark %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl
 )
 
 cd %ROOT_DIR%
