@@ -19,7 +19,6 @@ int   tam_arr;      // tamanho do array
 char name_arr[128]; // nome da variavel que esta sendo lida
 
 // variaveis de estado
-int  ndstac;        // tamanho da pilha de dados
 int  n_ins = 0;     // numero de instrucoes
 int  state = 0;     // estado do compilador
 
@@ -74,7 +73,6 @@ void eval_opernd(char *va)
         case  2: fprintf(f_log, "nubits %s\n", va ); state =  0; break; // num de bits da ula
         case  3: fprintf(f_log, "nbmant %s\n", va ); state =  0; break; // num de bits da mantissa
         case  4: fprintf(f_log, "nbexpo %s\n", va ); state =  0; break; // num de bits do expoente
-        case  5:         ndstac   =       atoi(va ); state =  0; break; // tamanho da pilha de dados
         case 11: strcpy (name_arr,             va ); state = 12; break; // achou um array sem inicializacao
         case 12: var_add(name_arr,        atoi(va)); state =  0; break; // declara  array sem inicializacao
         case 13: strcpy (name_arr,             va ); state = 14; break; // achou um array com inicializacao
@@ -95,7 +93,7 @@ void eval_label(char *va)
 // executado depois do lexer
 void eval_finish()
 {
-    fprintf(f_log, "n_ins %d\n", n_ins);
-    fprintf(f_log, "n_dat %d\n", var_cnt()+ndstac);
+    fprintf(f_log, "n_ins %d\n", n_ins    );
+    fprintf(f_log, "n_dat %d\n", var_cnt());
     fclose (f_log);
 }

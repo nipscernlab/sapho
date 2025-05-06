@@ -82,6 +82,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri,            ".MDATAS(%d),\n", n_dat );
     fprintf(f_veri,            ".MINSTS(%d),\n", n_ins );
     fprintf(f_veri,            ".SDEPTH(%d),\n", sdepth);
+    fprintf(f_veri,            ".DDEPTH(%d),\n", ddepth);
     fprintf(f_veri,            ".NUIOIN(%d),\n", nuioin);
     fprintf(f_veri,            ".NUIOOU(%d),\n", nuioou);
     fprintf(f_veri,            ".FFTSIZ(%d),\n", fftsiz);

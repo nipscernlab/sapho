@@ -35,7 +35,7 @@ char prname   [128];    // nome do processador
 int  nubits    = 23;    // tamanho da palavra da ula
 int  nbmant    = 16;    // numero de bits da mantissa
 int  nbexpo    =  6;    // numero de bits do expoente
-int  ndstac    = 10;    // tamanho da pilha de dados
+int  ddepth    = 10;    // tamanho da pilha de dados
 int  sdepth    = 10;    // tamanho da pilha de subrotinas
 int  nuioin    =  1;    // numero de portas de entrada
 int  nuioou    =  1;    // numero de portas de saida
@@ -183,7 +183,7 @@ void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  5: ndstac =  atoi(va);                   state =  0; break; // tamanho da pilha de dados
+        case  5: ddepth =  atoi(va);                   state =  0; break; // tamanho da pilha de dados
         case  6: sdepth =  atoi(va);                   state =  0; break; // tamanho da pilha de instrucoes
         case  7: nuioin =  atoi(va);                   state =  0; break; // numero de enderecoes de entrada
         case  8: nuioou =  atoi(va);                   state =  0; break; // numero de enderecoes de saida
@@ -203,9 +203,6 @@ void eval_opernd(char *va, int is_const)
 // executado depois do lexer
 void eval_finish()
 {
-    // completa memoria de dados com a pilha
-	for (int i=0; i<ndstac; i++) fprintf(f_data, "%s\n", itob(0,nubits));
-
     // ja pode fechar os arquivos .mif
     fclose(f_instr);
     fclose(f_data );

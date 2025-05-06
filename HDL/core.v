@@ -98,7 +98,7 @@ endmodule
 module stack_pointer
 #(
 	parameter              NDATAW = 8,  // Numero de bits de endereco  da memoria
-	parameter [NDATAW-1:0] NDATAS = 8   // Numero de         enderecos da memoria
+	parameter [NDATAW-1:0] NDATAS = 8   // Tamanho da memoria
 )(
 	 input              clk   , rst,
 	 input              push  , pop,
@@ -205,7 +205,6 @@ module core
 	parameter MDATAW = 9,               // Numero de bits de endereco da memoria de dados
 	parameter MINSTW = 9,               // Numero de bits de endereco da memoria de instrucao
 	parameter NBINST = NBOPCO + NBOPER, // Numero de bits da memoria de instrucao
-	parameter MDATAS = 512,             // Numero de enderecos da memoria de dados
 
 	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
@@ -217,7 +216,8 @@ module core
 	parameter NBEXPO =  8,              // Numero de bits do expoente
 
 	// memorias
-	parameter SDEPTH =  5,              // Numero de bits de endereco da pilha de subrotinas
+	parameter SDEPTH = 10,              // Tamanho da pilha de instrucao
+	parameter DDEPTH = 10,              // Tamanho da pilha de dados
 
 	// entradas e Saidas
 	parameter NUIOIN =  8,              // Numero de enderecos de IO - entrada
@@ -325,7 +325,12 @@ module core
 	output     [$clog2(NUIOOU)-1:0] addr_out,
 	output                          req_in, out_en,
 
-	input                           itr
+	input                           itr,
+
+	output                          sw,
+	output     [MDATAW        -1:0] mem_addr_rb,
+	output                          mem_wrb,
+	output     [MDATAW        -1:0] mem_addr_wb
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
  , output     [MINSTW        -1:0] pc_sim_val
@@ -398,7 +403,7 @@ wire              sp_pop  = id_dsp_pop;
 wire [MDATAW-1:0] sp_addr_w, sp_addr_r;
 
 stack_pointer #(.NDATAW(MDATAW),
-                .NDATAS(MDATAS)) sp(clk, rst, sp_push, sp_pop, sp_addr_w, sp_addr_r);
+                .NDATAS(DDEPTH)) sp(clk, rst, sp_push, sp_pop, sp_addr_w, sp_addr_r);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
@@ -492,8 +497,13 @@ endgenerate
 // Interface externa ----------------------------------------------------------
 
 assign data_out   =  ula_out;
-assign mem_addr_w = (sp_push   ) ? sp_addr_w : rf;
-assign mem_addr_r = (sp_pop    ) ? sp_addr_r : rf;
+assign mem_addr_w = rf;
+assign mem_addr_r = rf;
+assign mem_addr_rb = sp_addr_r;
+assign sw         =  sp_pop;
+assign mem_wrb = sp_push;
+assign mem_addr_wb = sp_addr_w;
+
 
 generate
 

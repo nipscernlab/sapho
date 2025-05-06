@@ -15,7 +15,7 @@ extern char prname  [128 ];    // nome do processador
 extern int  nubits;            // tamanho da palavra da ula
 extern int  nbmant;            // numero de bits da mantissa
 extern int  nbexpo;            // numero de bits do expoente
-extern int  ndstac;            // tamanho da pilha de dados
+extern int  ddepth;            // tamanho da pilha de dados
 extern int  sdepth;            // tamanho da pilha de subrotinas
 extern int  nuioin;            // numero de portas de entrada
 extern int  nuioou;            // numero de portas de saida

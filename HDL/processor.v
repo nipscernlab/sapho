@@ -38,18 +38,24 @@ endmodule
 module mem_data
 #(
 	parameter NADDRE =  8,
+	parameter DDEPTH = 10,
 	parameter NBDATA = 32,
 	parameter FNAME  = "data.mif"
-)
-(
-	input                                  clk,
-	input                                   wr,
-	input             [$clog2(NADDRE)-1:0] addr_w, addr_r,
-	input      signed [NBDATA        -1:0] data_in,
-	output reg signed [NBDATA        -1:0] data_out
+)(
+	input                               clk,
+	input                                wr,
+	input          [$clog2(NADDRE)-1:0] addr_w, addr_r,
+	input   signed [NBDATA        -1:0] data_in,
+	output  signed [NBDATA        -1:0] data_out,
+
+	input sw,
+	input          [$clog2(NADDRE)-1:0] addr_rb,
+	input wrb,
+	input          [$clog2(NADDRE)-1:0] addr_wb
 );
 
 reg [NBDATA-1:0] mem [0:NADDRE-1];
+reg [NBDATA-1:0] meb [0:DDEPTH-1];
 
 `ifdef YOSYS
 	// Yosys vai ignorar isso
@@ -57,10 +63,20 @@ reg [NBDATA-1:0] mem [0:NADDRE-1];
 	initial $readmemb(FNAME, mem);
 `endif
 
+reg signed [NBDATA-1:0] data_outa, data_outb;
+
 always @ (posedge clk) begin
-	if (wr)     mem[addr_w] <= data_in;
-	data_out <= mem[addr_r];
+	if (wr)      mem[addr_w] <= data_in;
+	data_outa <= mem[addr_r];
 end
+
+always @ (posedge clk) begin
+	if (wrb)     meb[addr_wb] <= data_in;
+	data_outb <= meb[addr_rb];
+end
+
+reg swr; always @ (posedge clk) swr <= sw;
+assign data_out = (swr) ? data_outb : data_outa; 
 
 endmodule
 
@@ -97,7 +113,8 @@ module processor
 	parameter NBOPER =  7,              // Numero de bits de operando
 
 	// memorias
-	parameter SDEPTH =  8,              // Tamanho da pilha   de instrucao
+	parameter SDEPTH = 10,              // Tamanho da pilha de instrucao
+	parameter DDEPTH = 10,              // Tamanho da pilha de dados
 
 	// entrada e Saida
 	parameter NUIOIN =  2,              // Numero de portas de entrada
@@ -216,9 +233,10 @@ wire        [MDATAW-1:0] mem_addr_w;
 // core -----------------------------------------------------------------------
 
 wire        [MINSTW-1:0] instr_addr;
-wire        [MDATAW-1:0] mem_addr_r;
+wire        [MDATAW-1:0] mem_addr_r, mem_addr_rb, mem_addr_wb;
 wire signed [NUBITS-1:0] mem_data_in;
 wire signed [NUBITS-1:0] mem_data_out;
+wire sw, mem_wrb;
 
 assign io_out = mem_data_out;
 
@@ -229,11 +247,11 @@ core #(.NBOPCO (NBOPCO ),
        .ITRADD (ITRADD ),
        .MDATAW (MDATAW ),
        .MINSTW (MINSTW ),
-       .MDATAS (MDATAS ),
        .NUBITS (NUBITS ),
        .NBMANT (NBMANT ),
        .NBEXPO (NBEXPO ),
        .SDEPTH (SDEPTH ),
+	   .DDEPTH (DDEPTH ),
        .NUIOIN (NUIOIN ),
        .NUIOOU (NUIOOU ),
        .NUGAIN (NUGAIN ),
@@ -288,7 +306,9 @@ core #(.NBOPCO (NBOPCO ),
          .SRS  (  SRS  )) core(clk, rst,
                                instr, instr_addr,
                                mem_wr, mem_addr_w, mem_addr_r, mem_data_in, mem_data_out,
-                               io_in, addr_in, addr_out, req_in, out_en, itr
+                               io_in, addr_in, addr_out, req_in, out_en, itr,
+							   
+							   sw, mem_addr_rb, mem_wrb, mem_addr_wb
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
 
@@ -306,7 +326,8 @@ mem_instr # (.NADDRE(MINSTS       ),
 // memoria de dados -----------------------------------------------------------
 
 mem_data # (.NADDRE(MDATAS),
+            .DDEPTH(DDEPTH),
             .NBDATA(NUBITS),
-            .FNAME (DFILE )) mdata(clk, mem_wr, mem_addr_w, mem_addr_r, mem_data_out, mem_data_in);
+            .FNAME (DFILE )) mdata(clk, mem_wr, mem_addr_w, mem_addr_r, mem_data_out, mem_data_in, sw, mem_addr_rb, mem_wrb, mem_addr_wb);
 
 endmodule
