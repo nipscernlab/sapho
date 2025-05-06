@@ -93,16 +93,18 @@ end
 
 endmodule
 
-// ponteiro pra pilha de dados ------------------------------------------------
+// pilha de dados -------------------------------------------------------------
 
-module stack_pointer
+module stack_data
 #(
 	parameter              NDATAW = 8,  // Numero de bits de endereco  da memoria
-	parameter [NDATAW-1:0] NDATAS = 8   // Tamanho da memoria
+	parameter [NDATAW-1:0] NDATAS = 8,  // Tamanho da memoria
+	parameter              NBDATA = 32  // Num de bits de dados
 )(
-	 input              clk   , rst,
-	 input              push  , pop,
-	output [NDATAW-1:0] addr_w, addr_r
+	 input              clk    , rst,
+	 input              push   , pop,
+	 input [NBDATA-1:0] data_in, 
+	output reg [NBDATA-1:0] data_out
 );
 
 reg         [NDATAW-1:0] cnt = NDATAS   -{{NDATAW-1{1'b0}}, {1'b1}};
@@ -115,8 +117,15 @@ always @ (posedge clk or posedge rst) begin
 		cnt <= cnt + pm;
 end
 
-assign addr_w = cnt;
-assign addr_r = cnt + pm;
+wire [NDATAW-1:0] addr_w = cnt;
+wire [NDATAW-1:0] addr_r = cnt + pm;
+
+reg [NBDATA-1:0] mem [0:NDATAS-1];
+
+always @ (posedge clk) begin
+	if (push)   mem[addr_w] <= data_in;
+	data_out <= mem[addr_r];
+end
 
 endmodule
 
@@ -316,8 +325,8 @@ module core
 	output     [MINSTW        -1:0] instr_addr,
 
 	output                          mem_wr,
-	output     [MDATAW        -1:0] mem_addr_w, mem_addr_r,
-	input      [NUBITS        -1:0] mem_data_in,
+	output     [MDATAW        -1:0] mem_addr,
+	input      [NUBITS        -1:0] mem_data_inn,
 	output     [NUBITS        -1:0] data_out,
 
 	input      [NUBITS        -1:0] io_in,
@@ -325,12 +334,7 @@ module core
 	output     [$clog2(NUIOOU)-1:0] addr_out,
 	output                          req_in, out_en,
 
-	input                           itr,
-
-	output                          sw,
-	output     [MDATAW        -1:0] mem_addr_rb,
-	output                          mem_wrb,
-	output     [MDATAW        -1:0] mem_addr_wb
+	input                           itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
  , output     [MINSTW        -1:0] pc_sim_val
@@ -384,6 +388,7 @@ wire              id_dsp_pop;
 
 wire [       5:0] id_ula_op;
 wire [NUBITS-1:0] id_ula_data;
+wire [NUBITS-1:0] mem_data_in;
 
 wire [MDATAW-1:0] id_mem_addr;
 wire              id_sti, id_ldi, id_fft;
@@ -396,14 +401,18 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                             io_in, req_in, out_en,
                                             id_sti, id_ldi, id_fft);
 
-// Ponteiro pra pilha de dados ------------------------------------------------
+// Pilha de dados -------------------------------------------------------------
 
 wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
 wire [MDATAW-1:0] sp_addr_w, sp_addr_r;
+wire [NUBITS-1:0] sp_data_out;
 
-stack_pointer #(.NDATAW(MDATAW),
-                .NDATAS(DDEPTH)) sp(clk, rst, sp_push, sp_pop, sp_addr_w, sp_addr_r);
+reg sp_popr; always @ (posedge clk) sp_popr <= sp_pop;
+assign mem_data_in = (sp_popr) ? sp_data_out : mem_data_inn;
+
+stack_data #(.NDATAW(MDATAW),
+             .NDATAS(DDEPTH)) sp(clk, rst, sp_push, sp_pop, data_out, sp_data_out);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
@@ -496,14 +505,8 @@ endgenerate
 
 // Interface externa ----------------------------------------------------------
 
-assign data_out   =  ula_out;
-assign mem_addr_w = rf;
-assign mem_addr_r = rf;
-assign mem_addr_rb = sp_addr_r;
-assign sw         =  sp_pop;
-assign mem_wrb = sp_push;
-assign mem_addr_wb = sp_addr_w;
-
+assign data_out = ula_out;
+assign mem_addr = rf;
 
 generate
 
