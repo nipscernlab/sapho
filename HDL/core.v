@@ -405,14 +405,14 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
 
 wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
-wire [MDATAW-1:0] sp_addr_w, sp_addr_r;
 wire [NUBITS-1:0] sp_data_out;
 
 reg sp_popr; always @ (posedge clk) sp_popr <= sp_pop;
 assign mem_data_in = (sp_popr) ? sp_data_out : mem_data_inn;
 
-stack_data #(.NDATAW(MDATAW),
-             .NDATAS(DDEPTH)) sp(clk, rst, sp_push, sp_pop, data_out, sp_data_out);
+stack_data #(.NDATAW($clog2(DDEPTH)),
+             .NDATAS(DDEPTH),
+			 .NBDATA(NUBITS)) sp(clk, rst, sp_push, sp_pop, data_out, sp_data_out);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
