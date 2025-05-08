@@ -14,15 +14,16 @@ module pc
 	output reg [NBITS-1:0] addr = 0
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
- , output     [NBITS-1:0] sim
+  , output     [NBITS-1:0] sim
 `endif // ---------------------------------------------------------------------
 );
 
+wire [NBITS-1:0] um  = {{NBITS-1{1'b0}}, {1'b1}};
 wire [NBITS-1:0] val = (load) ? data : addr;
 
 always @ (posedge clk or posedge rst) begin
 	if (rst) addr <= 0;
-	else     addr <= val + {{NBITS-1{1'b0}}, {1'b1}};
+	else     addr <= val + um;
 end
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
@@ -36,60 +37,77 @@ endmodule
 module prefetch
 #
 (
-	parameter               MINSTW = 8,
-	parameter               NBOPCO = 7,
-	parameter               NBOPER = 9,
-	parameter  [MINSTW-1:0] ITRADD = 0)
+	parameter              MINSTW = 8,
+	parameter              NBOPCO = 7,
+	parameter              NBOPER = 9,
+	parameter [MINSTW-1:0] ITRADD = 0)
 (
-	 input                         clk, rst  ,
-	 input     [MINSTW       -1:0] pc_instr  ,
-	output     [NBOPCO       -1:0] opcode    ,
-	output     [NBOPER       -1:0] operand   ,
-	 input     [NBOPCO+NBOPER-1:0] mem_instr ,
-	output     [MINSTW       -1:0] instr_addr,
-	output                         pc_l      ,
-	 input                         is_zero   ,
-	output reg                     isp_push  ,
-	output reg                     isp_pop   ,
-	input                          itr
+	 input                        clk, rst  ,
+	 input    [MINSTW       -1:0] pc_instr  ,
+	output    [NBOPCO       -1:0] opcode    ,
+	output    [NBOPER       -1:0] operand   ,
+	 input    [NBOPCO+NBOPER-1:0] mem_instr ,
+	output    [MINSTW       -1:0] instr_addr,
+	output                        pc_l      ,
+	 input                        is_zero   ,
+	output                        isp_push  ,
+	output                        isp_pop   ,
+	input                         itr
 );
 
-reg pc_load;
+wire JMP = (opcode == 12);
+wire JIZ = (opcode == 13);
+wire CAL = (opcode == 14);
+wire RET = (opcode == 15);
+
+wire pc_load = JMP | (JIZ & ~is_zero) | CAL | RET;
 
 assign opcode     =  mem_instr[NBOPCO+NBOPER-1:NBOPER];
 assign operand    =  mem_instr[NBOPER       -1:     0];
 assign pc_l       =  itr  | pc_load;
 assign instr_addr = (itr) ? ITRADD : (pc_load & ~rst) ? operand[MINSTW-1:0] : pc_instr;
+assign isp_push   =  CAL;
+assign isp_pop    =  RET;
 
-always @ (*) begin
-	case (opcode)
-		12      : begin
-						 pc_load <=     1'b1;  // JMP
-						isp_push <=     1'b0;
-						isp_pop  <=     1'b0;
-					 end
-		13      : begin
-						 pc_load <= ~is_zero;  // JIZ
-						isp_push <=     1'b0;
-						isp_pop  <=     1'b0;
-					 end
-		14      : begin
-						 pc_load <=     1'b1;  // CAL
-						isp_push <=     1'b1;
-						isp_pop  <=     1'b0;
-					 end
-		15      : begin
-						 pc_load <=     1'b1;  // RET
-						isp_push <=     1'b0;
-						isp_pop  <=     1'b1;
-					 end
-		default : begin
-						 pc_load <=     1'b0;
-						isp_push <=     1'b0;
-						isp_pop  <=     1'b0;
-					 end
-	endcase
+endmodule
+
+// pilha de instrucao ---------------------------------------------------------
+
+module stack
+#(
+	parameter              NADDR = 7,
+	parameter  [NADDR-1:0] DEPTH = 3,
+	parameter              NBITS = 8
+)(
+	input                   clk, rst,
+	input                  push, pop,
+	input      [NBITS-1:0] in,
+	output     [NBITS-1:0] out
+);
+
+// Constantes
+
+wire [NADDR-1:0] zero = {{NADDR-1{1'b0}}, {1'b0}};
+wire [NADDR-1:0] um   = {{NADDR-1{1'b0}}, {1'b1}};
+
+// Memoria
+
+reg [NBITS-1:0] mem [DEPTH-1:0];
+
+// Stack Pointer
+
+reg signed [NADDR-1:0] pointer = 0;
+
+always @ (posedge clk or posedge rst) begin
+	if      (rst ) pointer <= zero;
+	else if (push) pointer <= pointer + um;
+	else if (pop ) pointer <= pointer - um;
 end
+
+// Stack interface
+
+always @ (posedge clk) if (push) mem[pointer   ] <= in;
+assign                     out = mem[pointer-um];
 
 endmodule
 
@@ -129,40 +147,6 @@ end
 
 endmodule
 
-// pilha de instrucao ---------------------------------------------------------
-
-module stack
-#(
-	parameter              NADDR = 7,
-	parameter  [NADDR-1:0] DEPTH = 3,
-	parameter              NBITS = 8
-)(
-	input                   clk, rst,
-	input                  push, pop,
-	input      [NBITS-1:0] in,
-	output reg [NBITS-1:0] out
-);
-
-reg [NBITS-1:0] mem [DEPTH-1:0];
-
-// Stack Pointer
-
-reg         [NADDR-1:0] cnt = DEPTH    -{{NADDR-1{1'b0}}, {1'b1}};
-wire signed [NADDR-1:0] pm  = (push) ? -{{NADDR-1{1'b0}}, {1'b1}} : {{NADDR-1{1'b0}}, {1'b1}};
-
-always @ (posedge clk or posedge rst) begin
-	if (rst)
-		cnt <= DEPTH-{{NADDR-1{1'b0}}, {1'b1}};
-	else if (push | pop)
-		cnt <= cnt + pm;
-end
-
-// Stack
-
-always @ (posedge clk) if (push) mem[cnt] <= in; 
-always @ (posedge clk)    out <= mem[cnt + {{$clog2(DEPTH)-1{1'b0}}, {1'b1}} + pop]; 
-
-endmodule
 
 // enderecamento indireto -----------------------------------------------------
 
@@ -174,7 +158,7 @@ module rel_addr
 )
 (
 	input               sti, ldi, fft,
-	input  [MDATAW-1:0] in,
+	input  [MDATAW-1:0] offset,
 	input  [MDATAW-1:0] addr,
 	output [MDATAW-1:0] out
 );
@@ -184,13 +168,13 @@ generate
 		reg [FFTSIZ-1:0] aux;
 
 		integer i;
-		always @ (*) for (i = 0; i < FFTSIZ; i = i+1) aux[i] <= in[FFTSIZ-1-i];
+		always @ (*) for (i = 0; i < FFTSIZ; i = i+1) aux[i] <= offset[FFTSIZ-1-i];
 
-		wire [MDATAW-1:0] add = (fft) ? {in[MDATAW-1:FFTSIZ], aux} : in;
+		wire [MDATAW-1:0] add = (fft) ? {offset[MDATAW-1:FFTSIZ], aux} : offset;
 
-		assign out = (sti | ldi) ? add + addr: addr;
+		assign out = (sti | ldi) ?     add + addr: addr;
 	end else
-		assign out = (sti | ldi) ? in  + addr: addr;
+		assign out = (sti | ldi) ? offset  + addr: addr;
 endgenerate
 
 endmodule
