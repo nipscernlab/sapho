@@ -13,13 +13,10 @@ module instr_dec
 	output reg              dsp_push, dsp_pop,
 
 	output reg [       5:0] ula_op,
-	output     [NBDATA-1:0] ula_data,
 
 	output reg              mem_wr,
 	output     [MDATAW-1:0] mem_addr,
-	input      [NBDATA-1:0] mem_data_in,
 
-	input      [NBDATA-1:0] io_in,
 	output reg              req_in, out_en,
 
 	output reg              sti, ldi,
@@ -1363,7 +1360,6 @@ always @ (*) begin
 	endcase
 end
 
-assign ula_data = (req_in) ? io_in : mem_data_in;
 assign mem_addr =  operand[MDATAW-1:0];
 
 endmodule
