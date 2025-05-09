@@ -279,17 +279,12 @@ module offset_ctrl
 	parameter NBOPCO = 7
 )(
 	
-	input  [NBOPCO-1:0] opcode,
+	input               ldi,
 	input  [MDATAW-1:0] ula, stack,
 	output [MDATAW-1:0] offset
 );
 
-wire ldi  = (opcode == 2);
-wire ili  = (opcode == 3);
-
-wire wldi = (ldi | ili);
-
-assign offset = (wldi) ? ula : stack;
+assign offset = (ldi) ? ula : stack;
 
 endmodule
 
@@ -460,12 +455,13 @@ module core
 	input      [NUBITS        -1:0] io_in,
 	output reg [$clog2(NUIOIN)-1:0] addr_in,
 	output     [$clog2(NUIOOU)-1:0] addr_out,
-	output                          req_in, out_en,
+	output reg                      req_in,
+	output                          out_en,
 
 	input                           itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
- , output     [MINSTW        -1:0] pc_sim_val
+  , output     [MINSTW        -1:0] pc_sim_val
 `endif // ---------------------------------------------------------------------
 );
 
@@ -507,15 +503,16 @@ wire              id_dsp_pop;
 wire [       5:0] id_ula_op;
 wire [NUBITS-1:0] mem_data_in;
 
-wire [MDATAW-1:0] id_mem_addr;
 wire              id_sti, id_ldi, id_fft;
+
+wire id_req_in;
 
 instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                                id_opcode, id_operand,
                                                id_dsp_push, id_dsp_pop,
                                                id_ula_op,
-                                               mem_wr, id_mem_addr,
-                                               req_in, out_en,
+                                               mem_wr,
+                                               id_req_in, out_en,
                                                id_sti, id_ldi, id_fft);
 
 // Pilha de dados -------------------------------------------------------------
@@ -608,17 +605,19 @@ generate
 		wire [MDATAW-1:0] oc_offset;
 
 		offset_ctrl #(.MDATAW(MDATAW),
-		              .NBOPCO(NBOPCO))  oc(if_opcode, ula_out[MDATAW-1:0], sp_data_out[MDATAW-1:0], oc_offset);
+		              .NBOPCO(NBOPCO))  oc(id_ldi, ula_out[MDATAW-1:0], sp_data_out[MDATAW-1:0], oc_offset);
 
 		rel_addr #(MDATAW, FFTSIZ, ILI) ra(id_sti, id_ldi, id_fft, oc_offset, if_operand[MDATAW-1:0], rf);
 	end else
-		assign rf = id_mem_addr;
+		assign rf = if_operand[MDATAW-1:0];
 endgenerate
 
 // Interface externa ----------------------------------------------------------
 
 assign data_out = ula_out;
 assign mem_addr = rf;
+
+always @ (posedge clk) req_in <= id_req_in;
 
 generate
 	if (NUIOIN > 1)
