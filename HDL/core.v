@@ -287,6 +287,32 @@ endgenerate
 
 endmodule
 
+// Controle do enderecamento da memoria ---------------------------------------
+
+module mem_ctrl
+#(
+	parameter NUBITS = 8,
+	parameter MDATAW = 8,
+	parameter FFTSIZ = 3
+)(
+	input               sti, ldi, fft, wr,
+	input  [NUBITS-1:0] ula,
+	input  [MDATAW-1:0] base_addr, stk_ofst,
+
+	output              mem_wr,
+	output [MDATAW-1:0] mem_addr,
+	output [NUBITS-1:0] mem_data
+);
+
+assign mem_data = ula;
+assign mem_wr   = wr;
+
+wire [MDATAW-1:0] oc_out;
+offset_ctrl #(.MDATAW(MDATAW))             oc(ldi, ula[MDATAW-1:0], stk_ofst, oc_out);
+rel_addr    #(.MDATAW(MDATAW), .FFTSIZ(3)) ra(sti, ldi, fft, oc_out, base_addr, mem_addr);
+
+endmodule
+
 // I/O controller -------------------------------------------------------------
 
 module in_ctrl
@@ -327,6 +353,26 @@ reg popr; always @ (posedge clk) popr <= pop;
 
 assign enable   = out_en;
 assign addr_out = (popr) ? addr_stack : addr_mem;
+
+endmodule
+
+module io_ctrl
+#(
+	parameter MDATAW = 8,
+	parameter NBIOIN = 8,
+	parameter NBIOOU = 8
+)(
+	input               clk,
+	input               pop, req_in, out_en,
+	input  [MDATAW-1:0] addr_mem, addr_stk,
+
+	output              en_in, en_out,
+	output [NBIOIN-1:0] addr_in,
+	output [NBIOOU-1:0] addr_out
+);
+
+ in_ctrl #(.NBIOIN(NBIOIN)) ic(clk, pop, req_in, addr_mem[NBIOIN-1:0], addr_stk[NBIOIN-1:0], en_in , addr_in );
+out_ctrl #(.NBIOOU(NBIOOU)) oc(clk, pop, out_en, addr_mem[NBIOOU-1:0], addr_stk[NBIOOU-1:0], en_out, addr_out);
 
 endmodule
 
@@ -511,14 +557,14 @@ wire [NBOPER-1:0] id_operand = if_operand;
 
 wire [       5:0] id_ula_op;
 wire              id_dsp_push, id_dsp_pop;
-wire              id_sti, id_ldi, id_fft;
+wire              id_sti, id_ldi, id_fft, id_wr;
 wire              id_req_in, id_out_en;
 
 instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                                id_opcode, id_operand,
                                                id_dsp_push, id_dsp_pop,
                                                id_ula_op,
-                                               mem_wr,
+                                               id_wr,
                                                id_req_in, id_out_en,
                                                id_sti, id_ldi, id_fft);
 
@@ -526,11 +572,11 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
 
 wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
-wire [NUBITS-1:0] sp_data_out;
+wire [NUBITS-1:0] sp_in, sp_data_out;
 
 stack_data #(.NADDR($clog2(DDEPTH)),
              .DEPTH(DDEPTH),
-			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, mem_data_out, sp_data_out);
+			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, sp_data_out);
 
 // Controle da entrada in1 da ULA ---------------------------------------------
 
@@ -592,6 +638,8 @@ ula #(.NUBITS (NUBITS ),
         .SHR  (  SHR  ),
         .SRS  (  SRS  )) ula (id_ula_op, uic_ula_data, ula_acc, ula_out);
 
+assign sp_in = ula_out;
+
 // Acumulador -----------------------------------------------------------------
 
 reg signed [NUBITS-1:0] racc;
@@ -607,33 +655,25 @@ wire [MDATAW-1:0] rf;
 
 generate
 	if (STI | LDI) begin
-		wire [MDATAW-1:0] oc_offset;
-
-		offset_ctrl #(.MDATAW(MDATAW),
-		              .NBOPCO(NBOPCO))  oc(id_ldi, ula_out[MDATAW-1:0], sp_data_out[MDATAW-1:0], oc_offset);
-
-		rel_addr #(MDATAW, FFTSIZ, ILI) ra(id_sti, id_ldi, id_fft, oc_offset, if_operand[MDATAW-1:0], rf);
-	end else
-		assign rf = if_operand[MDATAW-1:0];
+		mem_ctrl #(.NUBITS(NUBITS),
+			       .MDATAW(MDATAW),
+		           .FFTSIZ(FFTSIZ)) ac(id_sti, id_ldi, id_fft, id_wr,
+				                       ula_out,
+			    	                   if_operand[MDATAW-1:0], sp_data_out[MDATAW-1:0], mem_wr, mem_addr, mem_data_out);
+	end else begin
+		assign mem_wr       = id_wr;
+		assign mem_addr     = if_operand[MDATAW-1:0];
+		assign mem_data_out = ula_out;
+	end
 endgenerate
 
-// Interface externa ----------------------------------------------------------
+// Controle de I/O ------------------------------------------------------------
 
-assign mem_data_out = ula_out;
-assign mem_addr     = rf;
-
-generate
-	if (NUIOIN > 1)
-		in_ctrl	#($clog2(NUIOIN)) ic(clk, id_dsp_pop, id_req_in, mem_data_in[$clog2(NUIOIN)-1:0], sp_data_out[$clog2(NUIOIN)-1:0], req_in, addr_in);
-	else
-		assign addr_in = 1'bx;
-endgenerate
-
-generate
-	if (NUIOOU > 1)
-		out_ctrl #($clog2(NUIOOU)) ocn(clk, id_dsp_pop, id_out_en, mem_data_in[$clog2(NUIOOU)-1:0], sp_data_out[$clog2(NUIOOU)-1:0], out_en, addr_out);
-	else
-		assign addr_out = 1'bx;
-endgenerate
+io_ctrl #(.MDATAW(MDATAW),
+          .NBIOIN($clog2(NUIOIN)),
+          .NBIOOU($clog2(NUIOOU))) io(clk, id_dsp_pop, id_req_in, id_out_en,
+								      mem_data_in[MDATAW-1:0], sp_data_out[MDATAW-1:0],
+								           req_in, out_en,
+								          addr_in, addr_out);
 
 endmodule
