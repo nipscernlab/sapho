@@ -228,46 +228,15 @@ module ula_in1_ctrl
 	parameter NBOPCO = 7
 )(
 	input               clk,
-	input  [NBOPCO-1:0] opcode,
+	input               req_in, pop,
 	input  [NUBITS-1:0] mem, io, stack,
 	output [NUBITS-1:0] out
 );
 
-wire    inn   = (opcode == 10);
+reg  req_inr; always @ (posedge clk) req_inr <= req_in;
+reg  popr   ; always @ (posedge clk) popr    <= pop   ;
 
-wire    set_p = (opcode ==  5);
-wire    pop   = (opcode ==  9);
-wire  s_add   = (opcode == 17);
-wire sf_add   = (opcode == 19);
-wire  s_mlt   = (opcode == 21);
-wire sf_mlt   = (opcode == 23);
-wire  s_div   = (opcode == 25);
-wire sf_div   = (opcode == 27);
-wire  s_mod   = (opcode == 29);
-wire  s_sgn   = (opcode == 31);
-wire sf_sgn   = (opcode == 33);
-wire  s_and   = (opcode == 62);
-wire  s_orr   = (opcode == 64);
-wire  s_xor   = (opcode == 66);
-wire  s_lan   = (opcode == 71);
-wire  s_lor   = (opcode == 73);
-wire  s_les   = (opcode == 78);
-wire sf_les   = (opcode == 80);
-wire  s_gre   = (opcode == 82);
-wire sf_gre   = (opcode == 84);
-wire  s_equ   = (opcode == 86);
-wire  s_shl   = (opcode == 88);
-wire  s_shr   = (opcode == 90);
-wire  s_srs   = (opcode == 91);
-
-wire wpop = (  set_p |    pop |  s_add | sf_add | s_mlt | sf_mlt | s_div | sf_div |
-             s_mod   |  s_sgn | sf_sgn |  s_and | s_orr |  s_xor | s_lan | s_lor  |
-             s_les   | sf_les |  s_gre | sf_gre | s_equ |  s_shl | s_shr | s_srs  );
-
-reg  innr; always @ (posedge clk) innr <= inn;
-reg  popr; always @ (posedge clk) popr <= wpop;
-
-assign out = (innr) ? io : (popr) ? stack : mem;
+assign out = (req_inr) ? io : (popr) ? stack : mem;
 
 endmodule
 
@@ -315,6 +284,49 @@ generate
 	end else
 		assign out = (sti | ldi) ? offset  + addr: addr;
 endgenerate
+
+endmodule
+
+// I/O controller -------------------------------------------------------------
+
+module in_ctrl
+#(
+	parameter NBIOIN = 8
+)(
+	input                   clk,
+	input                   pop, req_in,
+	input      [NBIOIN-1:0] addr_mem, addr_stack,
+
+	output reg              enable,
+	output reg [NBIOIN-1:0] addr_out
+);
+
+reg popr;
+
+always @ (posedge clk) begin
+	popr     <=          pop;
+	enable   <=          req_in;
+	addr_out <= (popr) ? addr_stack : addr_mem;
+end
+
+endmodule
+
+module out_ctrl
+#(
+	parameter NBIOOU = 8
+)(
+	input               clk,
+	input               pop, out_en,
+	input  [NBIOOU-1:0] addr_mem, addr_stack,
+
+output                  enable,
+	output [NBIOOU-1:0] addr_out
+);
+
+reg popr; always @ (posedge clk) popr <= pop;
+
+assign enable   = out_en;
+assign addr_out = (popr) ? addr_stack : addr_mem;
 
 endmodule
 
@@ -449,13 +461,13 @@ module core
 
 	output                          mem_wr,
 	output     [MDATAW        -1:0] mem_addr,
-	input      [NUBITS        -1:0] mem_data_inn,
-	output     [NUBITS        -1:0] data_out,
+	input      [NUBITS        -1:0] mem_data_in,
+	output     [NUBITS        -1:0] mem_data_out,
 
 	input      [NUBITS        -1:0] io_in,
-	output reg [$clog2(NUIOIN)-1:0] addr_in,
+	output     [$clog2(NUIOIN)-1:0] addr_in,
 	output     [$clog2(NUIOOU)-1:0] addr_out,
-	output reg                      req_in,
+	output                          req_in,
 	output                          out_en,
 
 	input                           itr
@@ -497,22 +509,17 @@ instr_fetch #(
 wire [NBOPCO-1:0] id_opcode  = if_opcode;
 wire [NBOPER-1:0] id_operand = if_operand;
 
-wire              id_dsp_push;
-wire              id_dsp_pop;
-
 wire [       5:0] id_ula_op;
-wire [NUBITS-1:0] mem_data_in;
-
+wire              id_dsp_push, id_dsp_pop;
 wire              id_sti, id_ldi, id_fft;
-
-wire id_req_in;
+wire              id_req_in, id_out_en;
 
 instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
                                                id_opcode, id_operand,
                                                id_dsp_push, id_dsp_pop,
                                                id_ula_op,
                                                mem_wr,
-                                               id_req_in, out_en,
+                                               id_req_in, id_out_en,
                                                id_sti, id_ldi, id_fft);
 
 // Pilha de dados -------------------------------------------------------------
@@ -521,17 +528,15 @@ wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
 wire [NUBITS-1:0] sp_data_out;
 
-reg sp_popr; always @ (posedge clk) sp_popr <= sp_pop;
-assign mem_data_in = (sp_popr) ? sp_data_out : mem_data_inn;
-
 stack_data #(.NADDR($clog2(DDEPTH)),
              .DEPTH(DDEPTH),
-			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, data_out, sp_data_out);
+			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, mem_data_out, sp_data_out);
 
 // Controle da entrada in1 da ULA ---------------------------------------------
 
 wire [NUBITS-1:0] uic_ula_data;
-ula_in1_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic (clk, if_opcode, mem_data_inn, io_in, sp_data_out, uic_ula_data);
+
+ula_in1_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic (clk, id_req_in, id_dsp_pop, mem_data_in, io_in, sp_data_out, uic_ula_data);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
@@ -614,21 +619,19 @@ endgenerate
 
 // Interface externa ----------------------------------------------------------
 
-assign data_out = ula_out;
-assign mem_addr = rf;
-
-always @ (posedge clk) req_in <= id_req_in;
+assign mem_data_out = ula_out;
+assign mem_addr     = rf;
 
 generate
 	if (NUIOIN > 1)
-		always @ (posedge clk) addr_in <= mem_data_in[$clog2(NUIOIN)-1:0];
+		in_ctrl	#($clog2(NUIOIN)) ic(clk, id_dsp_pop, id_req_in, mem_data_in[$clog2(NUIOIN)-1:0], sp_data_out[$clog2(NUIOIN)-1:0], req_in, addr_in);
 	else
-		always @ (posedge clk) addr_in <= 1'bx;
+		assign addr_in = 1'bx;
 endgenerate
 
 generate
 	if (NUIOOU > 1)
-		assign addr_out = mem_data_in[$clog2(NUIOOU)-1:0];
+		out_ctrl #($clog2(NUIOOU)) ocn(clk, id_dsp_pop, id_out_en, mem_data_in[$clog2(NUIOOU)-1:0], sp_data_out[$clog2(NUIOOU)-1:0], out_en, addr_out);
 	else
 		assign addr_out = 1'bx;
 endgenerate
