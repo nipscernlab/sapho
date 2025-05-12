@@ -43,7 +43,7 @@ module mem_data
 )(
 	input                                  clk,
 	input                                  wr,
-	input             [$clog2(NADDRE)-1:0] addr,
+	input             [$clog2(NADDRE)-1:0] addr_rd, addr_wr,
 	input      signed [NBDATA        -1:0] data_in,
 	output reg signed [NBDATA        -1:0] data_out
 );
@@ -57,8 +57,8 @@ reg [NBDATA-1:0] mem [0:NADDRE-1];
 `endif
 
 always @ (posedge clk) begin
-	if (wr)     mem[addr] <= data_in;
-	data_out <= mem[addr];
+	if (wr)     mem[addr_wr] <= data_in;
+	data_out <= mem[addr_rd];
 end
 
 endmodule
@@ -201,7 +201,7 @@ module processor
 `ifdef __ICARUS__ // ----------------------------------------------------------
 
 	, output                    mem_wr,
-	  output       [MDATAW-1:0] mem_addr,
+	  output       [MDATAW-1:0] mem_addr_wr,
 	  output       [MINSTW-1:0] pc_sim_val);
 
 `else
@@ -209,9 +209,11 @@ module processor
 );
 
 wire                     mem_wr;
-wire        [MDATAW-1:0] mem_addr;
+wire        [MDATAW-1:0] mem_addr_wr;
 
 `endif // ---------------------------------------------------------------------
+
+wire        [MDATAW-1:0] mem_addr_rd;
 
 // core -----------------------------------------------------------------------
 
@@ -287,7 +289,7 @@ core #(.NBOPCO (NBOPCO ),
          .SHR  (  SHR  ),
          .SRS  (  SRS  )) core(clk, rst,
                                instr, instr_addr,
-                               mem_wr, mem_addr, mem_data_in, mem_data_out,
+                               mem_wr, mem_addr_rd, mem_addr_wr, mem_data_in, mem_data_out,
                                io_in, addr_in, addr_out, req_in, out_en, itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
@@ -307,6 +309,6 @@ mem_instr # (.NADDRE(MINSTS       ),
 
 mem_data # (.NADDRE(MDATAS),
             .NBDATA(NUBITS),
-            .FNAME (DFILE )) mdata(clk, mem_wr, mem_addr, mem_data_out, mem_data_in);
+            .FNAME (DFILE )) mdata(clk, mem_wr, mem_addr_rd, mem_addr_wr, mem_data_out, mem_data_in);
 
 endmodule

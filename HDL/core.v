@@ -301,16 +301,21 @@ module mem_ctrl
 	input  [MDATAW-1:0] base_addr, stk_ofst,
 
 	output              mem_wr,
-	output [MDATAW-1:0] mem_addr,
-	output [NUBITS-1:0] mem_data
+	output [MDATAW-1:0] mem_addr_rd, mem_addr_wr,
+	output [NUBITS-1:0] mem_data_wr
 );
 
-assign mem_data = ula;
-assign mem_wr   = wr;
+assign mem_data_wr = ula;
+assign mem_wr      = wr;
 
 wire [MDATAW-1:0] oc_out;
+wire [MDATAW-1:0] mem_addr;
+
 offset_ctrl #(.MDATAW(MDATAW))             oc(ldi, ula[MDATAW-1:0], stk_ofst, oc_out);
 rel_addr    #(.MDATAW(MDATAW), .FFTSIZ(3)) ra(sti, ldi, fft, oc_out, base_addr, mem_addr);
+
+assign mem_addr_rd = mem_addr;
+assign mem_addr_wr = mem_addr;
 
 endmodule
 
@@ -471,9 +476,9 @@ module core
 	output     [MINSTW        -1:0] instr_addr,
 
 	output                          mem_wr,
-	output     [MDATAW        -1:0] mem_addr,
-	input      [NUBITS        -1:0] mem_data_in,
-	output     [NUBITS        -1:0] mem_data_out,
+	output     [MDATAW        -1:0] mem_addr_rd, mem_addr_wr,
+	input      [NUBITS        -1:0] mem_data_rd,
+	output     [NUBITS        -1:0] mem_data_wr,
 
 	input      [NUBITS        -1:0] io_in,
 	output     [$clog2(NUIOIN)-1:0] addr_in,
@@ -547,7 +552,7 @@ stack_data #(.NADDR($clog2(DDEPTH)),
 
 wire [NUBITS-1:0] uic_ula_data;
 
-ula_in1_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic (clk, id_req_in, id_dsp_pop, mem_data_in, io_in, sp_data_out, uic_ula_data);
+ula_in1_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic (clk, id_req_in, id_dsp_pop, mem_data_rd, io_in, sp_data_out, uic_ula_data);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
@@ -624,11 +629,12 @@ generate
 			       .MDATAW(MDATAW),
 		           .FFTSIZ(FFTSIZ)) ac(id_sti, id_ldi, id_fft, id_wr,
 				                       ula_out,
-			    	                   if_operand[MDATAW-1:0], sp_data_out[MDATAW-1:0], mem_wr, mem_addr, mem_data_out);
+			    	                   if_operand[MDATAW-1:0], sp_data_out[MDATAW-1:0], mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin
-		assign mem_wr       = id_wr;
-		assign mem_addr     = if_operand[MDATAW-1:0];
-		assign mem_data_out = ula_out;
+		assign mem_wr      = id_wr;
+		assign mem_addr_rd = if_operand[MDATAW-1:0];
+		assign mem_addr_wr = if_operand[MDATAW-1:0];
+		assign mem_data_wr = ula_out;
 	end
 endgenerate
 
