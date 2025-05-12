@@ -6,9 +6,8 @@
 // entrada e saida ------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-int  exec_in  (int et);           // input de dados
-void exec_out1(int et);           // primeiro argumento do out
-void exec_out2(int et);           // segundo  argumento do out
+int  exec_in (int et);            //  input de dados
+void exec_out(int et1, int et2);  // output de dados
 
 // ----------------------------------------------------------------------------
 // funcoes especiais que evitam codigo ----------------------------------------

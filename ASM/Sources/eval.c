@@ -113,6 +113,15 @@ void instr_salto(char *va)
     sim_add(opc_name,va);
 }
 
+// cadastra instrucoes de I/O
+void instr_io(char *va)
+{
+    // escreve a nova instrucao
+    fprintf(f_instr, "%s%s\n" , itob(opc_idx,NBITS_OPC), itob(atoi(va),nbopr));
+    // cadastra, tambem, no tradutor da simulacao
+    sim_add(opc_name,va);
+}
+
 // ----------------------------------------------------------------------------
 // funcoes de evolucao do lexer -----------------------------------------------
 // ----------------------------------------------------------------------------
@@ -197,6 +206,7 @@ void eval_opernd(char *va, int is_const)
         case 16: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
         case 17: instr_ula     (va,is_const);          state =  0; break; // operacoes com a ULA
         case 18: instr_salto   (va);                   state =  0; break; // operacoes de salto
+        case 19: instr_io      (va);                   state =  0; break; // operacoes de I/O
     }
 }
 

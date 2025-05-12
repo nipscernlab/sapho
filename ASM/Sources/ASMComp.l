@@ -50,7 +50,7 @@ LINHA          \n
    "POP"   eval_opcode( 9, 0, yytext,   ""     ); // retira dado da pilha
 
    "INN"   eval_opcode(10, 0, yytext,   ""     ); // entrada de dados
-   "OUT"   eval_opcode(11, 0, yytext,   ""     ); // saida   de dados
+   "OUT"   eval_opcode(11,19, yytext,   ""     ); // saida   de dados
 
    "JMP"   eval_opcode(12,18, yytext,   ""     ); // salto incondicional
    "JIZ"   eval_opcode(13,18, yytext,   ""     ); // salta se acc for zero

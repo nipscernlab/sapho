@@ -31,17 +31,7 @@ int exec_in(int id)
     return OFST;
 }
 
-// primeiro parametro da funcao out(a,b)
-// o endereco da porta
-void exec_out1(int id)
-{
-    add_instr("LOD %s\n", v_name[id]);
-    acc_ok = 1;
-}
-
-// segundo parametro da funcao out(a,b)
-// valor de saida
-void exec_out2(int et)
+void exec_out(int id, int et)
 {
     if (get_type(et) > 2)
         fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1);
@@ -49,7 +39,7 @@ void exec_out2(int et)
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))
     {
-        add_instr("P_LOD %s\n", v_name[et%OFST]);
+       if (acc_ok == 0) add_instr("LOD %s\n", v_name[et%OFST]); else add_instr("P_LOD %s\n", v_name[et%OFST]);
     }
 
     // int acc
@@ -63,7 +53,7 @@ void exec_out2(int et)
     {
         fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
 
-        add_instr("P_F2I_M %s\n", v_name[et%OFST]);
+        if (acc_ok == 0) add_instr("F2I_M %s\n", v_name[et%OFST]); else add_instr("P_F2I_M %s\n", v_name[et%OFST]);
     }
 
     // float acc
@@ -74,9 +64,9 @@ void exec_out2(int et)
         add_instr("F2I\n");
     }
 
-    add_instr("OUT\n");
+    add_instr("OUT %s\n", v_name[id]);
 
-    acc_ok = 0; // libera acc
+    acc_ok = 0; // libera acc    
 }
 
 // ----------------------------------------------------------------------------

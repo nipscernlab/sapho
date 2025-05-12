@@ -45,7 +45,7 @@ LINHA          \n
    "POP"   eval_opcode( 0); // retira dado da pilha
 
    "INN"   eval_opcode( 0); // entrada de dados
-   "OUT"   eval_opcode( 0); // saida de dados
+   "OUT"   eval_opcode(19); // saida de dados
 
    "JMP"   eval_opcode(18); // salto incondicional
    "JIZ"   eval_opcode(18); // salta se acc for zero

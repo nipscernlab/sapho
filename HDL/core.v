@@ -341,18 +341,16 @@ module out_ctrl
 #(
 	parameter NBIOOU = 8
 )(
-	input               clk,
-	input               pop, out_en,
-	input  [NBIOOU-1:0] addr_mem, addr_stack,
+	input                   clk,
+	input                   out_en,
+	input      [NBIOOU-1:0] addr_mem, addr_stack,
 
-output                  enable,
-	output [NBIOOU-1:0] addr_out
+	output reg              enable,
+	output reg [NBIOOU-1:0] addr_out
 );
 
-reg popr; always @ (posedge clk) popr <= pop;
-
-assign enable   = out_en;
-assign addr_out = (popr) ? addr_stack : addr_mem;
+always @ (posedge clk) enable   <= out_en;
+always @ (posedge clk) addr_out <= addr_mem;
 
 endmodule
 
@@ -364,7 +362,7 @@ module io_ctrl
 )(
 	input               clk,
 	input               pop, req_in, out_en,
-	input  [MDATAW-1:0] addr_mem, addr_stk,
+	input  [MDATAW-1:0] addr, addr_mem, addr_stk,
 
 	output              en_in, en_out,
 	output [NBIOIN-1:0] addr_in,
@@ -372,7 +370,7 @@ module io_ctrl
 );
 
  in_ctrl #(.NBIOIN(NBIOIN)) ic(clk, pop, req_in, addr_mem[NBIOIN-1:0], addr_stk[NBIOIN-1:0], en_in , addr_in );
-out_ctrl #(.NBIOOU(NBIOOU)) oc(clk, pop, out_en, addr_mem[NBIOOU-1:0], addr_stk[NBIOOU-1:0], en_out, addr_out);
+out_ctrl #(.NBIOOU(NBIOOU)) oc(clk,      out_en, addr    [NBIOOU-1:0], addr_stk[NBIOOU-1:0], en_out, addr_out);
 
 endmodule
 
@@ -672,7 +670,7 @@ endgenerate
 io_ctrl #(.MDATAW(MDATAW),
           .NBIOIN($clog2(NUIOIN)),
           .NBIOOU($clog2(NUIOOU))) io(clk, id_dsp_pop, id_req_in, id_out_en,
-								      mem_data_in[MDATAW-1:0], sp_data_out[MDATAW-1:0],
+								      id_operand[MDATAW-1:0], mem_data_in[MDATAW-1:0], sp_data_out[MDATAW-1:0],
 								           req_in, out_en,
 								          addr_in, addr_out);
 

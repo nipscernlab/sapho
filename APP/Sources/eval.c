@@ -80,7 +80,8 @@ void eval_opernd(char *va)
         case 15:          tam_arr =       atoi(va ); state = 16; break; // pega o tamanho do array com arquivo
         case 16: var_add(name_arr,         tam_arr); state =  0; break; // preenche memoria com valor do arquivo
         case 17: var_add(va,1);             n_ins++; state =  0; break; // operacoes com a ULA
-        case 18:                            n_ins++; state =  0; break; // operacoes de salto      
+        case 18:                            n_ins++; state =  0; break; // operacoes de salto
+        case 19:                            n_ins++; state =  0; break; // operacoes de I/O
     }
 }
 
