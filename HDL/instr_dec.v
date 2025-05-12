@@ -494,6 +494,11 @@ always @ (posedge clk or posedge rst) begin
 						sti     <= 1'b0;
 						fftr    <= 1'b0;
 					end
+			93  : begin
+						ula_op  <= 6'd1;     // INN -> Input de dados
+						sti     <= 1'b0;
+						fftr    <= 1'b0;
+					end
 		default: begin
 						ula_op  <= 6'dx;
 						sti     <= 1'bx;
@@ -1340,6 +1345,15 @@ always @ (*) begin
 						ldi      <= 1'b0;
 						fftl     <= 1'b0;
 						req_in   <= 1'b0;
+						out_en   <= 1'b0;
+					end
+			93: begin                     // INN
+						mem_wr   <= 1'b0;
+						push     <= 1'b1;
+						pop      <= 1'b0;
+						ldi      <= 1'b0;
+						fftl     <= 1'b0;
+						req_in   <= 1'b1;
 						out_en   <= 1'b0;
 					end
 		default: begin

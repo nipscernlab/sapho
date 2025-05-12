@@ -44,7 +44,7 @@ LINHA          \n
    "PSH"   eval_opcode( 0); // xuxa dado na pilha
    "POP"   eval_opcode( 0); // retira dado da pilha
 
-   "INN"   eval_opcode( 0); // entrada de dados
+   "INN"   eval_opcode(19); // entrada de dados
    "OUT"   eval_opcode(19); // saida de dados
 
    "JMP"   eval_opcode(18); // salto incondicional
@@ -148,6 +148,7 @@ LINHA          \n
  "S_SHR"   eval_opcode( 0); // shift right com pilha
    "SRS"   eval_opcode(17); // shift right aritmetico com memoria
  "S_SRS"   eval_opcode( 0); // shift right aritmetico com pilha
+ "P_INN"   eval_opcode(19); // PUSH + INN
 
 {VARIA}    eval_opernd(yytext); // usado em instrucoes da ula com variaveis (IDs)
 {INNUM}    eval_opernd(yytext); // usado em instrucoes da ula com constante int

@@ -49,7 +49,7 @@ LINHA          \n
    "PSH"   eval_opcode( 8, 0, yytext,   ""     ); // xuxa dado na pilha
    "POP"   eval_opcode( 9, 0, yytext,   ""     ); // retira dado da pilha
 
-   "INN"   eval_opcode(10, 0, yytext,   ""     ); // entrada de dados
+   "INN"   eval_opcode(10,19, yytext,   ""     ); // entrada de dados
    "OUT"   eval_opcode(11,19, yytext,   ""     ); // saida   de dados
 
    "JMP"   eval_opcode(12,18, yytext,   ""     ); // salto incondicional
@@ -153,6 +153,7 @@ LINHA          \n
  "S_SHR"   eval_opcode(90, 0, yytext,   "SHR"  ); // shift right com pilha
    "SRS"   eval_opcode(91,17, yytext,   "SRS"  ); // shift right aritmetico com memoria
  "S_SRS"   eval_opcode(92, 0, yytext,   "SRS"  ); // shift right aritmetico com pilha
+ "P_INN"   eval_opcode(93,19, yytext,   ""     ); // PUSH + INN
 
 {VARIA}    eval_opernd(yytext,0); // usado em instrucoes da ula com variaveis (IDs)
 {INNUM}    eval_opernd(yytext,1); // usado em instrucoes da ula com constante int

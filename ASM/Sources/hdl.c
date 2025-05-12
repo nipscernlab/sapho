@@ -372,6 +372,7 @@ void hdl_tb_file()
     fprintf(f_veri, "    proc_io_in = 0; \n");
     for(int i=0;i<nuioin;i++)
     {
+    fprintf(f_veri, "    #1;\n");
     fprintf(f_veri, "    if (proc_req_in == %d) begin\n"  ,             (int)pow(2,i)  );
     fprintf(f_veri, "        scan_result = $fscanf(data_in_%d, \"%%d\", in_%d);\n", i,i);
     fprintf(f_veri, "        proc_io_in  = in_%d;\n"                                 ,i);

@@ -21,10 +21,7 @@
 // input
 int exec_in(int id)
 {
-    if (acc_ok == 0) add_instr("LOD %s\n", v_name[id]); else add_instr("P_LOD %s\n", v_name[id]);
-
-    // executa instrucao INN
-    add_instr("INN\n");
+    if (acc_ok == 0) add_instr("INN %s\n", v_name[id]); else add_instr("P_INN %s\n", v_name[id]);
 
     acc_ok = 1;  // diz que o acc agora tem um valor carregado
 
