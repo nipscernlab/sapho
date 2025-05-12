@@ -55,10 +55,10 @@ module prefetch
 	input                         itr
 );
 
-wire JMP = (opcode == 12);
-wire JIZ = (opcode == 13);
-wire CAL = (opcode == 14);
-wire RET = (opcode == 15);
+wire JMP = (opcode == 13);
+wire JIZ = (opcode == 14);
+wire CAL = (opcode == 15);
+wire RET = (opcode == 16);
 
 wire pc_load = JMP | (JIZ & ~is_zero) | CAL | RET;
 
