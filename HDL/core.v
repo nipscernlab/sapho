@@ -279,6 +279,7 @@ module mem_ctrl
 	parameter MDATAW = 8,
 	parameter FFTSIZ = 3
 )(
+	input			    clk,
 	input               sti, ldi, fft, wr,
 	input  [NUBITS-1:0] ula,
 	input  [MDATAW-1:0] base_addr, stk_ofst,
@@ -291,8 +292,11 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_rd(ldi, fft, ula[MDATAW-1:0], base_addr, mem_addr_rd);
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_wr(sti, fft, stk_ofst       , base_addr, mem_addr_wr);
+reg fftr; always @ (posedge clk) fftr <= fft;
+reg stir; always @ (posedge clk) stir <= sti;
+
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_rd(ldi , fft , ula[MDATAW-1:0], base_addr, mem_addr_rd);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_wr(stir, fftr, stk_ofst       , base_addr, mem_addr_wr);
 
 endmodule
 
@@ -604,7 +608,7 @@ generate
 	if (STI | LDI) begin
 		mem_ctrl #(.NUBITS(NUBITS),
 			       .MDATAW(MDATAW),
-		           .FFTSIZ(FFTSIZ)) ac(id_sti, id_ldi, id_fft, id_wr,
+		           .FFTSIZ(FFTSIZ)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
 				                       ula_out,
 			    	                   if_operand[MDATAW-1:0], sp_data_out[MDATAW-1:0], mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin

@@ -17,492 +17,297 @@ module instr_dec
 	output reg              mem_wr,
 	output reg              req_in, out_en,
 	output reg              sti, ldi,
-	output                  fft
+	output reg              fft
 );
-
-reg    fftl, fftr;
-assign fft = fftl | fftr;
 
 always @ (posedge clk or posedge rst) begin
 	if (rst)     begin
-						ula_op  <= 6'd0;
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;
 	end else case (opcode)
 			0   : begin
-						ula_op  <= 6'd1;     // LOD -> carrega accumulador com dado da memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // LOD -> carrega accumulador com dado da memoria
 					end
 			1   : begin
-						ula_op  <= 6'd1;     // P_LOD -> PSH e LOD
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // P_LOD -> PSH e LOD
 					end
 			2   : begin
-						ula_op  <= 6'd1;     // LDI -> Load com enderecamentto indireto
-						sti     <= 1'b0;     // o offset esta no acumulador
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // LDI -> Load com enderecamentto indireto
 					end
 			3   : begin
-						ula_op  <= 6'd1;     // ILI -> Load com enderecamento indireto invertido
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // ILI -> Load com enderecamento indireto invertido
 					end
 			4   : begin
-						ula_op  <= 6'd0;     // SET -> carrega memoria com valor do acumulador
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // SET -> carrega memoria com valor do acumulador
 					end
 			5   : begin
-						ula_op  <= 6'd1;     // SET_P -> SET e POP
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // SET_P -> SET e POP
 					end
 			6   : begin
-						ula_op  <= 6'd0;     // STI -> Set com enderecamento indireto
-						sti     <= 1'b1;     // o indice esta na pilha
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // STI -> Set com enderecamento indireto
 					end
 			7   : begin
-						ula_op  <= 6'd0;     // ISI -> STI com bits invertidos
-						sti     <= 1'b1;
-						fftr    <= 1'b1;
+						ula_op   <= 6'd0;     // ISI -> STI com bits invertidos
 					end
 			8   : begin
-						ula_op  <= 6'd0;     // PSH
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // PSH
 					end
 			9   : begin
-						ula_op  <= 6'd1;     // POP
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // POP
 					end
 			10  : begin
-						ula_op  <= 6'd1;     // INN -> Input de dados
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // INN -> Input de dados
 					end
 			11  : begin
-						ula_op  <= 6'd1;     // P_INN -> PUSH + INN
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd1;     // P_INN -> PUSH + INN
 					end
 			12  : begin
-						ula_op  <= 6'd0;     // OUT -> Output de Dados
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // OUT -> Output de Dados
 					end
 			13  : begin
-						ula_op  <= 6'd0;     // JMP (ver prefetch)
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // JMP (ver prefetch)
 					end
 			14  : begin
-						ula_op  <= 6'd0;     // JIZ (ver prefetch)
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // JIZ (ver prefetch)
 					end
 			15  : begin
-						ula_op  <= 6'd0;     // CAL (ver prefetch)
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // CAL (ver prefetch)
 					end
 			16  : begin
-						ula_op  <= 6'd0;     // RET
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd0;     // RET
 					end
 			17  : begin
-						ula_op  <= 6'd2;     // ADD -> adicao com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd2;     // ADD -> adicao com a memoria
 					end
 			18  : begin
-						ula_op  <= 6'd2;     // S_ADD -> adicao com a pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd2;     // S_ADD -> adicao com a pilha
 					end
 			19  : begin
-						ula_op  <= 6'd3;     // F_ADD -> adicao em ponto flutuante com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd3;     // F_ADD -> adicao em ponto flutuante com a memoria
 					end
 			20  : begin
-						ula_op  <= 6'd3;     // SF_ADD -> adicao em ponto flutuante com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd3;     // SF_ADD -> adicao em ponto flutuante com pilha
 					end
 			21  : begin
-						ula_op  <= 6'd4;     // MLT -> multiplica dado da memoria com o acumulador
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd4;     // MLT -> multiplica dado da memoria com o acumulador
 					end
 			22  : begin
-						ula_op  <= 6'd4;     // S_MLT -> multiplicacao com a pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd4;     // S_MLT -> multiplicacao com a pilha
 					end
 			23  : begin
-						ula_op  <= 6'd5;     // F_MLT -> multiplicacao em ponto flutuante com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd5;     // F_MLT -> multiplicacao em ponto flutuante com a memoria
 					end
 			24  : begin
-						ula_op  <= 6'd5;     // SF_MLT -> multiplicacao em ponto flutuante com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd5;     // SF_MLT -> multiplicacao em ponto flutuante com pilha
 					end
 			25  : begin
-						ula_op  <= 6'd6;     // DIV -> divide com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd6;     // DIV -> divide com memoria
 					end
 			26  : begin
-						ula_op  <= 6'd6;     // S_DIV -> divide com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd6;     // S_DIV -> divide com pilha
 					end
 			27  : begin
-						ula_op  <= 6'd7;     // F_DIV -> divisao em ponto flutuante com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd7;     // F_DIV -> divisao em ponto flutuante com a memoria
 					end
 			28  : begin
-						ula_op  <= 6'd7;     // SF_DIV -> divisao em ponto flutuante com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd7;     // SF_DIV -> divisao em ponto flutuante com pilha
 					end
 			29  : begin
-						ula_op  <= 6'd8;     // MOD -> modulo da divisao com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd8;     // MOD -> modulo da divisao com memoria
 					end
 			30  : begin
-						ula_op  <= 6'd8;     // S_MOD -> modulo da divisao com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd8;     // S_MOD -> modulo da divisao com pilha
 					end
 			31  : begin
-						ula_op  <= 6'd9;     // SGN -> pega o sinal de in1 e coloca en in2
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd9;     // SGN -> pega o sinal de in1 e coloca en in2
 					end
 			32  : begin
-						ula_op  <= 6'd9;     // S_SGN -> SGN com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd9;     // S_SGN -> SGN com pilha
 					end
 			33  : begin
-						ula_op  <= 6'd10;    // F_SGN -> SGN em ponto flutuante com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd10;    // F_SGN -> SGN em ponto flutuante com a memoria
 					end
 			34  : begin
-						ula_op  <= 6'd10;    // SF_SGN -> SGN em ponto flutuante com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd10;    // SF_SGN -> SGN em ponto flutuante com pilha
 					end
 			35  : begin
-						ula_op  <= 6'd11;    // NEG -> Complemento a 2
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd11;    // NEG -> Complemento a 2
 					end
 			36  : begin
-						ula_op  <= 6'd12;    // NEG_M -> negativo com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd12;    // NEG_M -> negativo com memoria
 					end
 			37  : begin
-						ula_op  <= 6'd12;    // P_NEG_M -> negativo com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd12;    // P_NEG_M -> negativo com memoria dando push antes
 					end
 			38  : begin
-						ula_op  <= 6'd13;    // F_NEG -> negativo em ponto flutuante com acc
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd13;    // F_NEG -> negativo em ponto flutuante com acc
 					end
 			39  : begin
-						ula_op  <= 6'd14;    // F_NEG_M -> negativo em ponto flutuante com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd14;    // F_NEG_M -> negativo em ponto flutuante com memoria
 					end
 			40  : begin
-						ula_op  <= 6'd14;    // PF_NEG_M -> negativo em ponto flutuante com memoria dando um push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd14;    // PF_NEG_M -> negativo em ponto flutuante com memoria dando um push antes
 					end
 			41  : begin
-						ula_op  <= 6'd15;    // ABS -> retorna o valor absoluto do acc (exemplo: x = abs(y)) 
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd15;    // ABS -> retorna o valor absoluto do acc (exemplo: x = abs(y))
 					end
 			42  : begin
-						ula_op  <= 6'd16;    // ABS_M -> ABS com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd16;    // ABS_M -> ABS com memoria
 					end
 			43  : begin
-						ula_op  <= 6'd16;    // P_ABS_M -> ABS com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd16;    // P_ABS_M -> ABS com memoria dando push antes
 					end
 			44  : begin
-						ula_op  <= 6'd17;    // F_ABS -> ABS em ponto flutuante
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd17;    // F_ABS -> ABS em ponto flutuante
 					end
 			45  : begin
-						ula_op  <= 6'd18;    // F_ABS_M -> ABS em ponto flutuante com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd18;    // F_ABS_M -> ABS em ponto flutuante com memoria
 					end
 			46  : begin
-						ula_op  <= 6'd18;    // PF_ABS_M -> ABS em ponto flutuante com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd18;    // PF_ABS_M -> ABS em ponto flutuante com memoria dando push antes
 					end
 			47   : begin
-						ula_op  <= 6'd19;    // PST -> carrega o valor do acumulador ou zero se for negativo
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd19;    // PST -> carrega o valor do acumulador ou zero se for negativo
 					end
 			48  : begin
-						ula_op  <= 6'd20;    // PST_M -> PST com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd20;    // PST_M -> PST com memoria
 					end
 			49  : begin
-						ula_op  <= 6'd20;    // P_PST_M -> PST com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd20;    // P_PST_M -> PST com memoria dando push antes
 					end
 			50  : begin
-						ula_op  <= 6'd21;    // F_PST -> PST em ponto flutuante
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd21;    // F_PST -> PST em ponto flutuante
 					end
 			51  : begin
-						ula_op  <= 6'd22;    // F_PST_M -> PST em ponto flutuante com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd22;    // F_PST_M -> PST em ponto flutuante com memoria
 					end
 			52  : begin
-						ula_op  <= 6'd22;    // PF_PST_M -> PST em ponto flutuante com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd22;    // PF_PST_M -> PST em ponto flutuante com memoria dando push antes
 					end
 			53  : begin
-						ula_op  <= 6'd23;    // NRM -> Divisao do acc por uma constante (exemplo: />300)
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd23;    // NRM -> Divisao do acc por uma constante (exemplo: />300)
 					end
 			54  : begin
-						ula_op  <= 6'd24;    // NRM_M -> NRM com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd24;    // NRM_M -> NRM com memoria
 					end
 			55  : begin
-						ula_op  <= 6'd24;    // P_NRM_M -> NRM com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd24;    // P_NRM_M -> NRM com memoria dando push antes
 					end
 			56  : begin
-						ula_op  <= 6'd25;    // I2F -> int2float com acumulador 
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd25;    // I2F -> int2float com acumulador
 					end
 			57  : begin
-						ula_op  <= 6'd26;    // I2F_M -> int2float com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd26;    // I2F_M -> int2float com memoria
 					end
 			58  : begin
-						ula_op  <= 6'd26;    // P_I2F_M -> int2float com memoria, dando um push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd26;    // P_I2F_M -> int2float com memoria, dando um push antes
 					end
 			59  : begin
-						ula_op  <= 6'd27;    // F2I -> float2int com acumulador 
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd27;    // F2I -> float2int com acumulador
 					end
 			60  : begin
-						ula_op  <= 6'd28;    // F2I_M -> float2int com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd28;    // F2I_M -> float2int com memoria
 					end
 			61  : begin
-						ula_op  <= 6'd28;    // P_F2I_M -> float2int com memoria, dando um push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd28;    // P_F2I_M -> float2int com memoria, dando um push antes
 					end
 		    62  : begin
-						ula_op  <= 6'd29;    // AND -> and bit a bit com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd29;    // AND -> and bit a bit com memoria
 					end
 			63  : begin
-						ula_op  <= 6'd29;    // S_AND -> and bit a bit com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd29;    // S_AND -> and bit a bit com pilha
 					end
 			64  : begin
-						ula_op  <= 6'd30;    // ORR -> ou bit a bit com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd30;    // ORR -> ou bit a bit com memoria
 					end
 			65  : begin
-						ula_op  <= 6'd30;    // S_ORR -> ou bit a bit com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd30;    // S_ORR -> ou bit a bit com pilh
 					end
 			66  : begin
-						ula_op  <= 6'd31;    // XOR -> ou exclusivo bit a bit com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd31;    // XOR -> ou exclusivo bit a bit com memoria
 					end
 			67  : begin
-						ula_op  <= 6'd31;    // S_XOR -> ou exclusivo bit a bit com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd31;    // S_XOR -> ou exclusivo bit a bit com pilha
 					end
 			68  : begin
-						ula_op  <= 6'd32;    // INV -> Inverte bit a bit o acumulador
-						sti     <= 1'b0;
-						fftr    <= 1'b0; 
+						ula_op   <= 6'd32;    // INV -> Inverte bit a bit o acumulador
 					end
 			69  : begin
-						ula_op  <= 6'd33;    // INV_M -> INV com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd33;    // INV_M -> INV com memoria
 					end
 			70  : begin
-						ula_op  <= 6'd33;    // P_INV_M -> INV com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd33;    // P_INV_M -> INV com memoria dando push antes
 					end
 			71  : begin
-						ula_op  <= 6'd34;    // LAN -> and logico com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd34;    // LAN -> and logico com memoria
 					end
 			72  : begin
-						ula_op  <= 6'd34;    // S_LAN -> and logico com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd34;    // S_LAN -> and logico com pilha
 					end
 			73  : begin
-						ula_op  <= 6'd35;    // LOR -> ou logico com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd35;    // LOR -> ou logico com memoria
 					end
 			74  : begin
-						ula_op  <= 6'd35;    // S_LOR -> ou logico com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd35;    // S_LOR -> ou logico com pilha
 					end
 			75  : begin
-						ula_op  <= 6'd36;    // LIN -> Inverte bit condicional
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd36;    // LIN -> Inverte bit condicional
 					end
 			76  : begin
-						ula_op  <= 6'd37;    // LIN_M -> LIN com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd37;    // LIN_M -> LIN com memoria
 					end
 			77  : begin
-						ula_op  <= 6'd37;    // P_LIN_M -> LIN com memoria dando push antes
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd37;    // P_LIN_M -> LIN com memoria dando push antes
 					end
 			78  : begin
-						ula_op  <= 6'd38;    // LES -> Menor do que com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd38;    // LES -> Menor do que com memoria
 					end
 			79  : begin
-						ula_op  <= 6'd38;    // S_LES -> Menor do que com a pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd38;    // S_LES -> Menor do que com a pilha
 					end
 			80  : begin
-						ula_op  <= 6'd39;    // F_LES -> menor que em ponto flutuante com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd39;    // F_LES -> menor que em ponto flutuante com a memoria
 					end
 			81  : begin
-						ula_op  <= 6'd39;    // SF_LES -> menor que em ponto flutuante com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd39;    // SF_LES -> menor que em ponto flutuante com pilha
 					end
 			82  : begin
-						ula_op  <= 6'd40;    // GRE -> maior do que com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd40;    // GRE -> maior do que com memoria
 					end
 			83  : begin
-						ula_op  <= 6'd40;    // S_GRE -> maior do que com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd40;    // S_GRE -> maior do que com pilha
 					end
 			84  : begin
-						ula_op  <= 6'd41;    // F_GRE -> maior que em ponto flutuante com a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd41;    // F_GRE -> maior que em ponto flutuante com a memoria
 					end
 			85  : begin
-						ula_op  <= 6'd41;    // SF_GRE -> maior que em ponto flutuante com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd41;    // SF_GRE -> maior que em ponto flutuante com pilha
 					end
 			86  : begin
-						ula_op  <= 6'd42;    // EQU -> Igual com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd42;    // EQU -> Igual com memoria
 					end
 			87  : begin
-						ula_op  <= 6'd42;    // S_EQU -> Igual com a pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd42;    // S_EQU -> Igual com a pilha
 					end
 			88  : begin
-						ula_op  <= 6'd43;    // SHL -> shift pra esquerda com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd43;    // SHL -> shift pra esquerda com memoria
 					end
 			89  : begin
-						ula_op  <= 6'd43;    // S_SHL -> shift pra esquerda com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd43;    // S_SHL -> shift pra esquerda com pilha
 					end
 			90  : begin
-						ula_op  <= 6'd44;    // SHR -> Shift pra direita com memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd44;    // SHR -> Shift pra direita com memoria
 					end
 			91  : begin
-						ula_op  <= 6'd44;    // S_SHR -> Shift pra direita com pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd44;    // S_SHR -> Shift pra direita com pilha
 					end
 			92  : begin
-						ula_op  <= 6'd45;    // SRS -> Shift pra direita com sinal usando a memoria
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd45;    // SRS -> Shift pra direita com sinal usando a memoria
 					end
 			93  : begin
-						ula_op  <= 6'd45;    // S_SRS -> Shift pra direita com sinal usando a pilha
-						sti     <= 1'b0;
-						fftr    <= 1'b0;
+						ula_op   <= 6'd45;    // S_SRS -> Shift pra direita com sinal usando a pilha
 					end
 		default: begin
-						ula_op  <= 6'dx;
-						sti     <= 1'bx;
-						fftr    <= 1'bx;
+						ula_op   <= 6'dx;
 					end
 	endcase
 end
@@ -514,7 +319,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -523,7 +329,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -532,7 +339,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b1;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -541,7 +349,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b1;
-						fftl     <= 1'b1;
+						sti      <= 1'b0;
+						fft      <= 1'b1;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -550,7 +359,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -559,7 +369,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -568,7 +379,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b1;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -577,7 +389,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b1;
+						fft      <= 1'b1;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -586,7 +399,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -595,7 +409,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -604,7 +419,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b1;
 						out_en   <= 1'b0;
 					end
@@ -613,7 +429,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b1;
 						out_en   <= 1'b0;
 					end
@@ -622,7 +439,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b1;
 					end
@@ -631,7 +449,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -640,7 +459,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -649,7 +469,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -658,7 +479,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -667,7 +489,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -676,7 +499,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -685,7 +509,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -694,7 +519,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -703,7 +529,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -712,7 +539,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -721,7 +549,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -730,7 +559,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -739,7 +569,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -748,7 +579,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -757,7 +589,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -766,7 +599,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -775,7 +609,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -784,7 +619,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -793,7 +629,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -802,7 +639,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -811,7 +649,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -820,7 +659,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -829,7 +669,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -838,7 +679,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -847,7 +689,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -856,7 +699,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -865,7 +709,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -874,7 +719,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -883,7 +729,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -892,7 +739,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -901,7 +749,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -910,7 +759,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -919,7 +769,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -928,7 +779,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -937,7 +789,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -946,7 +799,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -955,7 +809,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -964,7 +819,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -973,7 +829,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -982,7 +839,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -991,7 +849,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1000,7 +859,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1009,7 +869,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1018,7 +879,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1027,7 +889,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1036,7 +899,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1045,7 +909,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1054,7 +919,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1063,7 +929,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1072,7 +939,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1081,7 +949,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1090,7 +959,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1099,7 +969,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1108,7 +979,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1117,7 +989,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1126,7 +999,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1135,7 +1009,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1144,7 +1019,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1153,7 +1029,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1162,7 +1039,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1171,7 +1049,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1180,7 +1059,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1189,7 +1069,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1198,7 +1079,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1207,7 +1089,8 @@ always @ (*) begin
 						push     <= 1'b1;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1216,7 +1099,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1225,7 +1109,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1234,7 +1119,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1243,7 +1129,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1252,7 +1139,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1261,7 +1149,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1270,7 +1159,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1279,7 +1169,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1288,7 +1179,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1297,7 +1189,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1306,7 +1199,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1315,7 +1209,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1324,7 +1219,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1333,7 +1229,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1343,7 +1240,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b0;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1352,7 +1250,8 @@ always @ (*) begin
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
-						fftl     <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
@@ -1361,7 +1260,8 @@ always @ (*) begin
 						push     <= 1'bx;
 						pop      <= 1'bx;
 						ldi      <= 1'bx;
-						fftl     <= 1'bx;
+						sti      <= 1'bx;
+						fft      <= 1'bx;
 						req_in   <= 1'bx;
 						out_en   <= 1'bx;
 					end
