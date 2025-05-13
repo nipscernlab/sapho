@@ -241,23 +241,6 @@ assign out = (req_inr) ? ior : (popr) ? stack : mem;
 
 endmodule
 
-// Controle do offset do enderecamento indireto -------------------------------
-
-module offset_ctrl
-#(
-	parameter MDATAW = 8,
-	parameter NBOPCO = 7
-)(
-	
-	input               ldi,
-	input  [MDATAW-1:0] ula, stack,
-	output [MDATAW-1:0] offset
-);
-
-assign offset = (ldi) ? ula : stack;
-
-endmodule
-
 // enderecamento indireto -----------------------------------------------------
 
 module rel_addr
@@ -266,7 +249,7 @@ module rel_addr
 	parameter FFTSIZ = 3,
 	parameter USEFFT = 1
 )(
-	input               sti, ldi, fft,
+	input               use_oft, fft,
 	input  [MDATAW-1:0] offset,
 	input  [MDATAW-1:0] addr,
 	output [MDATAW-1:0] out
@@ -281,9 +264,9 @@ generate
 
 		wire [MDATAW-1:0] add = (fft) ? {offset[MDATAW-1:FFTSIZ], aux} : offset;
 
-		assign out = (sti | ldi) ?     add + addr: addr;
+		assign out = (use_oft) ?    add + addr: addr;
 	end else
-		assign out = (sti | ldi) ? offset  + addr: addr;
+		assign out = (use_oft) ? offset + addr: addr;
 endgenerate
 
 endmodule
@@ -308,14 +291,8 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-wire [MDATAW-1:0] oc_out;
-wire [MDATAW-1:0] mem_addr;
-
-offset_ctrl #(.MDATAW(MDATAW))             oc(ldi, ula[MDATAW-1:0], stk_ofst, oc_out);
-rel_addr    #(.MDATAW(MDATAW), .FFTSIZ(3)) ra(sti, ldi, fft, oc_out, base_addr, mem_addr);
-
-assign mem_addr_rd = mem_addr;
-assign mem_addr_wr = mem_addr;
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_rd(ldi, fft, ula[MDATAW-1:0], base_addr, mem_addr_rd);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_wr(sti, fft, stk_ofst       , base_addr, mem_addr_wr);
 
 endmodule
 
