@@ -42,8 +42,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, "module %s (\n", prname);
     fprintf(f_veri, "input  clk, rst,\n");
 
-    fprintf(f_veri, "input  signed [%d:0] io_in ,\n", nubits-1);
-    fprintf(f_veri, "output signed [%d:0] io_out,\n", nubits-1);
+    fprintf(f_veri, "input  signed [%d:0] in ,\n", nubits-1);
+    fprintf(f_veri, "output signed [%d:0] out,\n", nubits-1);
 
     fprintf(f_veri, "output [%d:0] req_in,\n", nuioin-1);
     fprintf(f_veri, "output [%d:0] out_en,\n", nuioou-1);
@@ -105,9 +105,9 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, ".DFILE(\"%s_data.mif\"),\n"  , path);
     fprintf(f_veri, ".IFILE(\"%s_inst.mif\"))\n\n", path);
     fprintf(f_veri, "`ifdef __ICARUS__\n");
-    fprintf(f_veri, "p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr,pc_sim_val);\n", prname);
+    fprintf(f_veri, "p_%s (clk, rst, in, out, addr_in, addr_out, proc_req_in, proc_out_en, itr, mem_wr, mem_addr_wr,pc_sim_val);\n", prname);
     fprintf(f_veri, "`else\n");
-    fprintf(f_veri, "p_%s (clk, rst, io_in, io_out, addr_in, addr_out, proc_req_in, proc_out_en, itr);\n", prname);
+    fprintf(f_veri, "p_%s (clk, rst, in, out, addr_in, addr_out, proc_req_in, proc_out_en, itr);\n", prname);
     fprintf(f_veri, "`endif\n\n");
 
     // ------------------------------------------------------------------------
@@ -161,8 +161,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, "\nalways @ (*) begin\n");
     for(int i=0;i<nuioin;i++)
     {
-    fprintf(f_veri, "   if (req_in == %d) in_sim_%d = io_in;\n", (int)pow(2,i),i);
-    fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n",     i, (int)pow(2,i),i);
+    fprintf(f_veri, "   if (req_in == %d) in_sim_%d = in;\n", (int)pow(2,i),i);
+    fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n",  i, (int)pow(2,i),i);
     }
     fprintf(f_veri, "end\n");
 
@@ -170,8 +170,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, "\nalways @ (*) begin\n");
     for(int i=0;i<nuioou;i++)
     {
-    fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= io_out;\n", (int)pow(2,i), i);
-    fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n",        i, (int)pow(2,i),i);
+    fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= out;\n", (int)pow(2,i),i);
+    fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n",     i, (int)pow(2,i),i);
     }
     fprintf(f_veri, "end\n\n");
 
@@ -196,9 +196,9 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     for (int i = 0; i < sim_cnt(); i++)
     {
         if (sim_type(i) == 2)
-            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,io_out};\n", sim_addr(i), sim_name(i), nbmant, nbexpo);
+            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,out};\n", sim_addr(i), sim_name(i), nbmant, nbexpo);
         else
-            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= io_out;\n"              , sim_addr(i), sim_name(i));
+            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= out;\n"              , sim_addr(i), sim_name(i));
     }
     fprintf(f_veri, "end\n\n");
 

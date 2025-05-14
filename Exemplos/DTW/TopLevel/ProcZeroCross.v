@@ -23,8 +23,8 @@ wire signed [31:0] out_proc;
 ZeroCross ZeroCross_inst (
 .clk(clk),
 .rst(rst_geral/*|rst_proc*/),
-.io_in(in_proc),
-.io_out(out_proc),
+.in(in_proc),
+.out(out_proc),
 .req_in(req_in),
 .out_en(out_en),
 .itr(rst_proc));

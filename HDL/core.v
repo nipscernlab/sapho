@@ -279,9 +279,13 @@ module mem_ctrl
 #(
 	parameter NUBITS = 8,
 	parameter MDATAW = 8,
-	parameter FFTSIZ = 3
+	parameter FFTSIZ = 3,
+
+	parameter STI    = 0,
+	parameter LDI    = 0,
+	parameter ISI	 = 0,
+	parameter ILI    = 0
 )(
-	input			    clk,
 	input               sti, ldi, fft, wr,
 	input  [NUBITS-1:0] ula,
 	input  [MDATAW-1:0] base_addr, stk_ofst,
@@ -294,8 +298,8 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_rd(ldi, fft, ula[MDATAW-1:0], base_addr, mem_addr_rd);
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_wr(sti, fft, stk_ofst       , base_addr, mem_addr_wr);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3), .USEFFT(ISI)) ra_rd(ldi, fft, ula[MDATAW-1:0], base_addr, mem_addr_rd);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst       , base_addr, mem_addr_wr);
 
 endmodule
 
@@ -375,6 +379,7 @@ module core
 	parameter   LDI   = 0,
 	parameter   ILI   = 0,
 	parameter   STI   = 0,
+	parameter   ISI   = 0,
 	
 	// implementa pilha de subrotinas
 	parameter   CAL   = 0,
@@ -604,12 +609,15 @@ assign  if_acc = ula_out[0];
 wire [MDATAW-1:0] rf;
 
 generate
-	if (STI | LDI) begin
+	if (STI | LDI | ILI | ISI) begin
 		mem_ctrl #(.NUBITS(NUBITS),
 			       .MDATAW(MDATAW),
-		           .FFTSIZ(FFTSIZ)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
-				                       ula_out,
-			    	                   if_operand[MDATAW-1:0], stack_ofst[MDATAW-1:0], mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
+		           .FFTSIZ(FFTSIZ),
+				   .STI(STI),.LDI(LDI),
+				   .ILI(ILI),.ISI(ISI)) ac(id_sti, id_ldi, id_fft, id_wr,
+				                           ula_out,
+			    	                       if_operand[MDATAW-1:0], stack_ofst[MDATAW-1:0],
+										   mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin
 		assign mem_wr      = id_wr;
 		assign mem_addr_rd = if_operand[MDATAW-1:0];

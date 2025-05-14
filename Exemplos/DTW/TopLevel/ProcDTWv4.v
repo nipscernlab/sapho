@@ -26,8 +26,8 @@ wire signed [31:0] out_proc;
 ProcDTW DTWv4_inst(
 								 .clk(clk),
 								 .rst(rst_geral),
-								 .io_in(in_proc),
-								 .io_out(out_proc),
+								 .in(in_proc),
+								 .out(out_proc),
 								 .req_in(req_in),
 								 .out_en(out_en),
 								 .itr(rst_proc)

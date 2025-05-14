@@ -115,6 +115,7 @@ module processor
 	parameter   LDI   = 0,
 	parameter   ILI   = 0,
 	parameter   STI   = 0,
+	parameter   ISI   = 0,
 	
 	// implementa pilha de subrotinas
 	parameter   CAL   = 0,
@@ -243,6 +244,7 @@ core #(.NBOPCO (NBOPCO ),
          .LDI  (  LDI  ),
          .ILI  (  ILI  ),
          .STI  (  STI  ),
+		 .ISI  (  ISI  ),
          .CAL  (  CAL  ),
          .ADD  (  ADD  ),
        .F_ADD  (F_ADD  ),
