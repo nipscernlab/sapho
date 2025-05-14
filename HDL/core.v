@@ -207,7 +207,8 @@ module stack_data
 	input                   clk, rst,
 	input                  push, pop,
 	input      [NBITS-1:0] in,
-	output reg [NBITS-1:0] out
+	output reg [NBITS-1:0] out_sync,
+	output     [NBITS-1:0] out
 );
 
 wire [NBITS-1:0] stack_out;
@@ -216,7 +217,8 @@ stack #(.NADDR (NADDR),
         .DEPTH (DEPTH),
         .NBITS (NBITS)) stack (clk, rst, push, pop, in, stack_out);
 
-always @ (posedge clk) out <= stack_out;
+always @ (posedge clk) out_sync <= stack_out;
+assign                 out       = stack_out;
 
 endmodule
 
@@ -292,11 +294,8 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-reg fftr; always @ (posedge clk) fftr <= fft;
-reg stir; always @ (posedge clk) stir <= sti;
-
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_rd(ldi , fft , ula[MDATAW-1:0], base_addr, mem_addr_rd);
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_wr(stir, fftr, stk_ofst       , base_addr, mem_addr_wr);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_rd(ldi, fft, ula[MDATAW-1:0], base_addr, mem_addr_rd);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3)) ra_wr(sti, fft, stk_ofst       , base_addr, mem_addr_wr);
 
 endmodule
 
@@ -523,11 +522,11 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
 
 wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
-wire [NUBITS-1:0] sp_in, sp_data_out;
+wire [NUBITS-1:0] sp_in, sp_data_out, stack_ofst;
 
 stack_data #(.NADDR($clog2(DDEPTH)),
              .DEPTH(DDEPTH),
-			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, sp_data_out);
+			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, sp_data_out, stack_ofst);
 
 // Controle da entrada in1 da ULA ---------------------------------------------
 
@@ -610,7 +609,7 @@ generate
 			       .MDATAW(MDATAW),
 		           .FFTSIZ(FFTSIZ)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
 				                       ula_out,
-			    	                   if_operand[MDATAW-1:0], sp_data_out[MDATAW-1:0], mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
+			    	                   if_operand[MDATAW-1:0], stack_ofst[MDATAW-1:0], mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin
 		assign mem_wr      = id_wr;
 		assign mem_addr_rd = if_operand[MDATAW-1:0];

@@ -92,7 +92,7 @@ always @ (*) begin
 					end
 			6 : begin
 						wula_op  <= 6'd0;     // STI -> Set com enderecamento indireto
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;
@@ -103,7 +103,7 @@ always @ (*) begin
 					end
 			7 : begin
 						wula_op  <= 6'd0;     // ISI -> STI com bits invertidos
-						mem_wr   <= 1'b0;
+						mem_wr   <= 1'b1;
 						push     <= 1'b0;
 						pop      <= 1'b1;
 						ldi      <= 1'b0;

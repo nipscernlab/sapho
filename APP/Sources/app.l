@@ -38,8 +38,8 @@ LINHA          \n
 
    "SET"   eval_opcode(17); // salva dado na memoria
    "SET_P" eval_opcode(17); // SET + POP
-   "STI"   eval_opcode( 0); // SET com enderecamento indireto (indice na pilha)
-   "ISI"   eval_opcode( 0); // SET com enderecamento indireto invertido (FFT)
+   "STI"   eval_opcode(17); // SET com enderecamento indireto (indice na pilha)
+   "ISI"   eval_opcode(17); // SET com enderecamento indireto invertido (FFT)
 
    "PSH"   eval_opcode( 0); // xuxa dado na pilha
    "POP"   eval_opcode( 0); // retira dado da pilha

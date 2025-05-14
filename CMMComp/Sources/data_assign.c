@@ -292,17 +292,15 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST != 0))
     {
-        add_instr("P_LOD %s\n", v_name[et%OFST]);
-        add_instr("%s\n"      ,   set_type);
-        add_instr("SET %s\n"  , v_name[id]);
+        add_instr("P_LOD %s\n",   v_name[et%OFST]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left int e right int no acc --------------------------------------------
 
     if ((v_type[id] == 1) && (get_type(et) == 1) && (et % OFST == 0))
     {
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left int e right float na memoria --------------------------------------
@@ -312,8 +310,7 @@ void ass_array(int id, int et, int fft)
         fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("P_F2I_M %s\n", v_name[et%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET %s\n"    , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left int e right float no acc ------------------------------------------
@@ -323,8 +320,7 @@ void ass_array(int id, int et, int fft)
         fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("F2I\n");
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left int e right comp const --------------------------------------------
@@ -336,8 +332,7 @@ void ass_array(int id, int et, int fft)
         get_cmp_cst(et,&etr,&eti);
         
         add_instr("P_F2I_M %s\n", v_name[etr%OFST]);
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type,  v_name[id]);
     }
 
     // left int e right comp na memoria ---------------------------------------
@@ -349,8 +344,7 @@ void ass_array(int id, int et, int fft)
         get_cmp_ets(et,&etr,&eti);
         
         add_instr("P_F2I_M %s\n", v_name[etr%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET %s\n"    , v_name[id]);
+        add_instr("%s %s\n", set_type,  v_name[id]);
     }
 
     // left int e right comp no acc -------------------------------------------
@@ -361,8 +355,7 @@ void ass_array(int id, int et, int fft)
 
         add_instr("POP\n");
         add_instr("F2I\n");
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right int na memoria --------------------------------------
@@ -372,8 +365,7 @@ void ass_array(int id, int et, int fft)
         fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("P_I2F_M %s\n", v_name[et%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET %s\n"    , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right int no acc ------------------------------------------
@@ -383,25 +375,22 @@ void ass_array(int id, int et, int fft)
         fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("I2F\n");
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right float na memoria ------------------------------------
 
     if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST != 0))
     {
-        add_instr("P_LOD %s\n", v_name[et%OFST]);
-        add_instr("%s\n"      ,   set_type);
-        add_instr("SET %s\n"  , v_name[id]);
+        add_instr("P_LOD %s\n",   v_name[et%OFST]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right float no acc ----------------------------------------
 
     if ((v_type[id] == 2) && (get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right comp const ------------------------------------------
@@ -412,9 +401,8 @@ void ass_array(int id, int et, int fft)
 
         get_cmp_cst(et,&etr,&eti);
         
-        add_instr("P_LOD %s\n", v_name[etr%OFST]);
-        add_instr("%s\n"      ,   set_type);
-        add_instr("SET %s\n"  , v_name[id]);
+        add_instr("P_LOD %s\n",  v_name[etr%OFST]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right comp na memoria -------------------------------------
@@ -425,9 +413,8 @@ void ass_array(int id, int et, int fft)
 
         get_cmp_ets(et,&etr,&eti);
         
-        add_instr("P_LOD %s\n", v_name[etr%OFST]);
-        add_instr("%s\n"      ,   set_type);
-        add_instr("SET %s\n"  , v_name[id]);
+        add_instr("P_LOD %s\n",  v_name[etr%OFST]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left float e right comp no acc -----------------------------------------
@@ -437,8 +424,7 @@ void ass_array(int id, int et, int fft)
         fprintf (stdout, "Atenção na linha %d: nessa conversão, eu vou pegar só a parte real hein!\n", line_num+1);
 
         add_instr("POP\n");
-        add_instr("%s\n"    ,   set_type);
-        add_instr("SET %s\n", v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
     }
 
     // left comp e right int na memoria ---------------------------------------
@@ -449,13 +435,11 @@ void ass_array(int id, int et, int fft)
 
         add_instr("SET aux_var\n");
         add_instr("P_I2F_M %s\n", v_name[et%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET %s\n"    , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD aux_var\n");
         add_instr("P_LOD 0.0\n"  );
-        add_instr("%s\n"       ,   set_type);
-        add_instr("SET %s_i\n" , v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     // left comp e right int no acc -------------------------------------------
@@ -468,13 +452,11 @@ void ass_array(int id, int et, int fft)
         add_instr("SET_P aux_var\n"         );
         add_instr("SET   aux_var2\n"        );
         add_instr("P_LOD aux_var\n"         );
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s\n"  , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD   aux_var2\n"        );
         add_instr("P_LOD 0.0\n"             );
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s_i\n", v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     // left comp e right float na memoria -------------------------------------
@@ -485,13 +467,11 @@ void ass_array(int id, int et, int fft)
 
         add_instr("SET   aux_var\n"         );
         add_instr("P_LOD %s\n"  , v_name[et%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s\n"  , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD   aux_var\n"         );
         add_instr("P_LOD 0.0\n"             );
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s_i\n", v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     // left comp e right float no acc -----------------------------------------
@@ -503,13 +483,11 @@ void ass_array(int id, int et, int fft)
         add_instr("SET_P aux_var\n"         );
         add_instr("SET   aux_var2\n"        );
         add_instr("P_LOD aux_var\n"         );
-        add_instr("%s\n"       ,  set_type  );
-        add_instr("SET   %s\n" ,  v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD   aux_var2\n"        );
         add_instr("P_LOD 0.0\n"             );
-        add_instr("%s\n"        , set_type  );
-        add_instr("SET   %s_i\n", v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     // left comp e right comp const -------------------------------------------
@@ -520,13 +498,11 @@ void ass_array(int id, int et, int fft)
         
         add_instr("SET   aux_var\n");
         add_instr("P_LOD %s\n"  , v_name[etr%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s\n"  , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD   aux_var\n");
         add_instr("P_LOD %s\n"  , v_name[eti%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s_i\n", v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     // left comp e right comp na memoria ----------------------------------
@@ -537,13 +513,11 @@ void ass_array(int id, int et, int fft)
         
         add_instr("SET   aux_var\n");
         add_instr("P_LOD %s\n"  , v_name[etr%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s\n"  , v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD   aux_var\n");
         add_instr("P_LOD %s\n"  , v_name[eti%OFST]);
-        add_instr("%s\n"        ,   set_type);
-        add_instr("SET   %s_i\n", v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     // left comp e right comp no acc --------------------------------------
@@ -555,13 +529,11 @@ void ass_array(int id, int et, int fft)
         add_instr("SET   aux_var3\n");
 
         add_instr("P_LOD aux_var2\n");
-        add_instr("%s\n"        ,    set_type);
-        add_instr("SET   %s\n"  ,  v_name[id]);
+        add_instr("%s %s\n", set_type, v_name[id]);
 
         add_instr("LOD   aux_var3\n");
         add_instr("P_LOD aux_var\n" );
-        add_instr("%s\n"        ,    set_type);
-        add_instr("SET   %s_i\n",  v_name[id]);
+        add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
     acc_ok     = 0;  // liberou o acc
