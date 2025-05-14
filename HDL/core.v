@@ -27,7 +27,7 @@ always @ (posedge clk or posedge rst) begin
 end
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-assign sim  = val;
+assign sim = val;
 `endif // ---------------------------------------------------------------------
 
 endmodule
@@ -42,17 +42,17 @@ module prefetch
 	parameter              NBOPER = 9,
 	parameter [MINSTW-1:0] ITRADD = 0)
 (
-	 input                        clk, rst  ,
+	 input                        rst       ,
 	 input    [MINSTW       -1:0] pc_instr  ,
 	output    [NBOPCO       -1:0] opcode    ,
 	output    [NBOPER       -1:0] operand   ,
 	 input    [NBOPCO+NBOPER-1:0] mem_instr ,
 	output    [MINSTW       -1:0] instr_addr,
 	output                        pc_l      ,
-	 input                        is_zero   ,
+	 input                        is_um     ,
 	output                        isp_push  ,
 	output                        isp_pop   ,
-	input                         itr
+	 input                        itr
 );
 
 wire JMP = (opcode == 13);
@@ -60,7 +60,7 @@ wire JIZ = (opcode == 14);
 wire CAL = (opcode == 15);
 wire RET = (opcode == 16);
 
-wire pc_load = JMP | (JIZ & ~is_zero) | CAL | RET;
+wire pc_load = JMP | (JIZ & ~is_um) | CAL | RET;
 
 assign opcode     =  mem_instr[NBOPCO+NBOPER-1:NBOPER];
 assign operand    =  mem_instr[NBOPER       -1:     0];
@@ -75,14 +75,14 @@ endmodule
 
 module stack
 #(
-	parameter              NADDR = 7,
-	parameter  [NADDR-1:0] DEPTH = 3,
-	parameter              NBITS = 8
+	parameter NADDR = 7,
+	parameter DEPTH = 3,
+	parameter NBITS = 8
 )(
-	input                   clk, rst,
-	input                  push, pop,
-	input      [NBITS-1:0] in,
-	output     [NBITS-1:0] out
+	 input              clk, rst,
+	 input             push, pop,
+	 input [NBITS-1:0] in,
+	output [NBITS-1:0] out
 );
 
 // Constantes
@@ -96,7 +96,7 @@ reg [NBITS-1:0] mem [DEPTH-1:0];
 
 // Stack Pointer
 
-reg signed [NADDR-1:0] pointer = 0;
+reg [NADDR-1:0] pointer = 0;
 
 always @ (posedge clk or posedge rst) begin
 	if      (rst ) pointer <= zero;
@@ -167,11 +167,11 @@ wire [MINSTW-1:0] pf_addr;
 prefetch #(.MINSTW(MINSTW),
            .NBOPCO(NBOPCO),
            .NBOPER(NBOPER),
-           .ITRADD(ITRADD)) pf(clk, rst, pc_addr, opcode, operand,
-                            pf_instr, pf_addr,
-                            pc_load , acc,
-                            pf_isp_push, pf_isp_pop,
-                            itr);
+           .ITRADD(ITRADD)) pf(rst, pc_addr, opcode, operand,
+                               pf_instr, pf_addr,
+                               pc_load , acc,
+                               pf_isp_push, pf_isp_pop,
+                               itr);
 
 // Pilha de instrucao
 
