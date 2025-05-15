@@ -21,8 +21,9 @@
 
 int using_macro = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
 
-int fatani = 0;      // se vai precisar de macro pra arco tangente
-int fsqrti = 0;      // se vai precisar de macro pra raiz quadrada
+int fatan  = 0;      // se vai precisar de macro pra arco tangente
+int fsqrt  = 0;      // se vai precisar de macro pra raiz quadrada
+int fsin   = 0;      // se vai precisar de macro pra seno
 
 // ----------------------------------------------------------------------------
 // gerenciamento de macros criadas pelo usuario -------------------------------
@@ -173,7 +174,7 @@ void header_int(char *fasm, char *pc_sim_mem)
 void mac_geni(char *fasm)
 {
     // se nao tiver nada pra fazer, sai!
-    if (!(fsqrti || fatani)) return;
+    if (!(fsqrt || fatan || fsin)) return;
 
     char tasm[1024]; // arquivo temporario para o asm
     char tmem[1024]; // arquivo temporario para a tabela de memoria
@@ -194,15 +195,21 @@ void mac_geni(char *fasm)
 
     // coloca o resto que precisa no final do asm -----------------------------
 
-    if (fsqrti)
+    if (fsqrt)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "float_sqrt_i.asm");
+         sprintf(tasm, "%s/%s", dir_macro, "float_sqrt.asm");
         fcat2end(tasm,fasm);
     }
 
-    if (fatani)
+    if (fatan)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "float_atan_i.asm");
+         sprintf(tasm, "%s/%s", dir_macro, "float_atan.asm");
+        fcat2end(tasm,fasm);
+    }
+
+    if (fsin)
+    {
+         sprintf(tasm, "%s/%s", dir_macro, "float_sin.asm");
         fcat2end(tasm,fasm);
     }
 }

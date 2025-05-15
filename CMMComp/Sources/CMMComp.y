@@ -51,13 +51,13 @@ void  yyerror(char const *s);
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
-%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH          // diretivas
-%token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD   // diretivas
-%token INN OUT NRM PST ABS SGN SQRT REAL IMAG ATAN FASE   // std lib
-%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK   // saltos
-%token SHIFTL SHIFTR SSHIFTR                              // deslocamento de bits
-%token GREQU LESEQ EQU DIF LAN LOR                        // operadores logicos de dois simbolos
-%token PPLUS                                              // operador ++. pode ser usado pra reduzir exp e tb pra assignments
+%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH                  // diretivas
+%token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD           // diretivas
+%token INN OUT NRM PST ABS SGN SQRT REAL IMAG ATAN FASE SIN COS   // std lib
+%token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK           // saltos
+%token SHIFTL SHIFTR SSHIFTR                                      // deslocamento de bits
+%token GREQU LESEQ EQU DIF LAN LOR                                // operadores logicos de dois simbolos
+%token PPLUS                                                      // operador ++. pode ser usado pra reduzir exp e tb pra assignments
 
 // tokens terminais -----------------------------------------------------------
 
@@ -86,7 +86,7 @@ void  yyerror(char const *s);
 
 %type <ival> par_list
 %type <ival> func_call
-%type <ival> std_in std_pst std_abs std_sign std_nrm std_sqrt std_real std_imag std_atan std_fase
+%type <ival> std_in std_pst std_abs std_sign std_nrm std_sqrt std_real std_imag std_atan std_fase std_sin std_cos
 %type <ival> exp terminal
 
 %%
@@ -201,6 +201,8 @@ std_real : REAL '(' exp  ')'                {$$ = exec_real($3   );} // funcao r
 std_imag : IMAG '(' exp  ')'                {$$ = exec_imag($3   );} // funcao imag(x)   -> pega a parte imag de um comp
 std_atan : ATAN '(' exp  ')'                {$$ = exec_atan($3   );} // funcao atan(x)   -> arctg
 std_fase : FASE '(' exp  ')'                {$$ = exec_fase($3   );} // funcao fase(x)   -> pega a fase de um comp
+std_sin  : SIN  '(' exp  ')'                {$$ = exec_sin ($3   );} // funcao sin(x)    -> seno de x
+std_cos  : COS  '(' exp  ')'                {$$ = exec_cos ($3   );} // funcao cos(x)    -> seno de x
 
 // if/else --------------------------------------------------------------------
 
@@ -272,6 +274,8 @@ exp:       terminal                           {$$ = $1;}
          | std_imag                           {$$ = $1;}
          | std_atan                           {$$ = $1;}
          | std_fase                           {$$ = $1;}
+         | std_sin                            {$$ = $1;}
+         | std_cos                            {$$ = $1;}
          // chamada de funcao
          | func_call                          {$$ = $1;}
          // operadores nulos

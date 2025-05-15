@@ -303,8 +303,7 @@ int exec_norm(int et)
 // ----------------------------------------------------------------------------
 
 // codigo em C+- para calcular raiz quadrada para float
-// deixar aqui pra lembrar de onde vieram as macros
-// float_sqrt.asm e float_sqrti.asm
+// macro float_sqrt.asm
 /*double my_sqrt(float num)
 {
     float x = num;
@@ -334,34 +333,27 @@ int exec_sqrt(int et)
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
-        add_instr("CAL float_sqrti\n"); fsqrti=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1;
     }
 
     // int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
         add_instr("I2F\n");
-        add_instr("CAL float_sqrti\n"); fsqrti=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1;
     }
 
-    // float var na memoria
-    if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+    // float na memoria
+    if ((get_type(et) == 2) && (et % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_sqrti\n"); fsqrti=1;
-    }
-        
-    // float const na memoria
-    if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
-    {
-        add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_sqrti\n"); fsqrti=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1;
     }
 
     // float no acc
     if ((get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("CAL float_sqrti\n"); fsqrti=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1;
     }
 
     acc_ok = 1;
@@ -370,8 +362,7 @@ int exec_sqrt(int et)
 }
 
 // codigo em C+- para calcular arco-tg para float
-// deixar aqui pra lembrar de onde vieram as macros
-// float_atan.asm e float_atani.asm
+// macro float_atan.asm
 /*float atan(float x)
 {
     float pi2 = 3.1415/2.0;
@@ -406,34 +397,137 @@ int exec_atan(int et)
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
-        add_instr("CAL float_atani\n"); fatani=1;
+        add_instr("CAL float_atan\n"); fatan=1;
     }
 
     // int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
         add_instr("I2F\n");
-        add_instr("CAL float_atani\n"); fatani=1;
+        add_instr("CAL float_atan\n"); fatan=1;
     }
 
-    // float var na memoria
-    if ((get_type(et) == 2) && (v_isco[et % OFST] == 0) && (et % OFST != 0))
+    // float na memoria
+    if ((get_type(et) == 2) && (et % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_atani\n"); fatani=1;
-    }
-        
-    // float const na memoria
-    if ((get_type(et) == 2) && (v_isco[et % OFST] == 1) && (et % OFST != 0))
-    {
-        add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_atani\n"); fatani=1;
+        add_instr("CAL float_atan\n"); fatan=1;
     }
 
     // float no acc
     if ((get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("CAL float_atani\n"); fatani=1;
+        add_instr("CAL float_atan\n"); fatan=1;
+    }
+
+    acc_ok = 1;
+
+    return 2*OFST;
+}
+
+// codigo em C+- para calcular seno para float
+// macro float_atan.asm
+/*float sin(float x)
+{
+    if (x == 0) return 0.0;
+    
+    while (abs(x) > 3.141592654) x = x - sign(x, 6.283185307);
+
+    float termo      = x;
+    float x2         = x * x;
+    float resultado  = termo;
+    float tolerancia = 0.000008/x2;
+
+    int indiceX = 3;
+
+    while (abs(termo) > tolerancia) {
+        termo = termo * (- x2) / ((indiceX - 1) * indiceX);
+        resultado = resultado + termo;
+        indiceX = indiceX + 2;
+    }
+
+    return resultado;
+}*/
+
+int exec_sin(int et)
+{
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei seno pra número complexo ainda. Se vira!\n", line_num+1);
+
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // int na memoria
+    if ((get_type(et) == 1) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", i2f, v_name[et%OFST]);
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    // int no acc
+    if ((get_type(et) == 1) && (et % OFST == 0))
+    {
+        add_instr("I2F\n");
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    // float na memoria
+    if ((get_type(et) == 2) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et%OFST]);
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    // float no acc
+    if ((get_type(et) == 2) && (et % OFST == 0))
+    {
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    acc_ok = 1;
+
+    return 2*OFST;
+}
+
+int exec_cos(int et)
+{
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei cosseno pra número complexo ainda. Se vira!\n", line_num+1);
+
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // int na memoria
+    if ((get_type(et) == 1) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", i2f, v_name[et%OFST]);
+        add_instr("F_NEG\n");
+        add_instr("F_ADD 1.570796327");
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    // int no acc
+    if ((get_type(et) == 1) && (et % OFST == 0))
+    {
+        add_instr("I2F\n");
+        add_instr("F_NEG\n");
+        add_instr("F_ADD 1.570796327");
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    // float na memoria
+    if ((get_type(et) == 2) && (et % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et%OFST]);
+        add_instr("F_NEG\n");
+        add_instr("F_ADD 1.570796327");
+        add_instr("CAL float_sin\n"); fsin=1;
+    }
+
+    // float no acc
+    if ((get_type(et) == 2) && (et % OFST == 0))
+    {
+        add_instr("F_NEG\n");
+        add_instr("F_ADD 1.570796327");
+        add_instr("CAL float_sin\n"); fsin=1;
     }
 
     acc_ok = 1;

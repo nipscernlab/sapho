@@ -48,6 +48,8 @@ COMEN  "//"[^\n]*
 "sign"        return SGN;
 "sqrt"        return SQRT;
 "atan"        return ATAN;
+"sin"         return SIN;
+"cos"         return COS;
 
 "real"        return REAL;
 "imag"        return IMAG;

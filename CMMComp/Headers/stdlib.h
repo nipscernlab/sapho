@@ -24,6 +24,8 @@ int  exec_norm(int et);           // divisao por constante
 
 int  exec_sqrt(int et);           // raiz quadrada
 int  exec_atan(int et);           // arco tangente
+int  exec_sin (int et);           // seno
+int  exec_cos (int et);           // cosseno
 
 // ----------------------------------------------------------------------------
 // funcoes especiais para numeros complexos -----------------------------------
