@@ -591,7 +591,7 @@ ula #(.NUBITS (NUBITS ),
         .EQU  (  EQU  ),
         .SHL  (  SHL  ),
         .SHR  (  SHR  ),
-        .SRS  (  SRS  )) ula (id_ula_op, uic_ula_data, ula_acc, ula_out);
+        .SRS  (  SRS  )) ula (clk, id_ula_op, uic_ula_data, ula_acc, ula_out);
 
 assign sp_in = ula_out;
 

@@ -435,7 +435,7 @@ void ass_array(int id, int et, int fft)
 
         add_instr("SET aux_var\n");
         add_instr("P_I2F_M %s\n", v_name[et%OFST]);
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("%s %s\n"  , set_type, v_name[id]);
 
         add_instr("LOD aux_var\n");
         add_instr("P_LOD 0.0\n"  );
@@ -452,7 +452,7 @@ void ass_array(int id, int et, int fft)
         add_instr("SET_P aux_var\n"         );
         add_instr("SET   aux_var2\n"        );
         add_instr("P_LOD aux_var\n"         );
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("%s %s\n"  , set_type, v_name[id]);
 
         add_instr("LOD   aux_var2\n"        );
         add_instr("P_LOD 0.0\n"             );
@@ -467,7 +467,7 @@ void ass_array(int id, int et, int fft)
 
         add_instr("SET   aux_var\n"         );
         add_instr("P_LOD %s\n"  , v_name[et%OFST]);
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("%s %s\n"  , set_type, v_name[id]);
 
         add_instr("LOD   aux_var\n"         );
         add_instr("P_LOD 0.0\n"             );
@@ -483,7 +483,7 @@ void ass_array(int id, int et, int fft)
         add_instr("SET_P aux_var\n"         );
         add_instr("SET   aux_var2\n"        );
         add_instr("P_LOD aux_var\n"         );
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("%s %s\n"  , set_type, v_name[id]);
 
         add_instr("LOD   aux_var2\n"        );
         add_instr("P_LOD 0.0\n"             );
@@ -498,10 +498,10 @@ void ass_array(int id, int et, int fft)
         
         add_instr("SET   aux_var\n");
         add_instr("P_LOD %s\n"  , v_name[etr%OFST]);
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("%s %s\n" , set_type, v_name[id]);
 
         add_instr("LOD   aux_var\n");
-        add_instr("P_LOD %s\n"  , v_name[eti%OFST]);
+        add_instr("P_LOD %s\n"   , v_name[eti%OFST]);
         add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
@@ -512,11 +512,11 @@ void ass_array(int id, int et, int fft)
         get_cmp_ets(et,&etr,&eti);
         
         add_instr("SET   aux_var\n");
-        add_instr("P_LOD %s\n"  , v_name[etr%OFST]);
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("P_LOD %s\n"   , v_name[etr%OFST]);
+        add_instr("%s %s\n"  , set_type, v_name[id]);
 
         add_instr("LOD   aux_var\n");
-        add_instr("P_LOD %s\n"  , v_name[eti%OFST]);
+        add_instr("P_LOD %s\n"   , v_name[eti%OFST]);
         add_instr("%s %s_i\n", set_type, v_name[id]);
     }
 
@@ -529,7 +529,7 @@ void ass_array(int id, int et, int fft)
         add_instr("SET   aux_var3\n");
 
         add_instr("P_LOD aux_var2\n");
-        add_instr("%s %s\n", set_type, v_name[id]);
+        add_instr("%s %s\n"  , set_type, v_name[id]);
 
         add_instr("LOD   aux_var3\n");
         add_instr("P_LOD aux_var\n" );

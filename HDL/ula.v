@@ -220,19 +220,21 @@ module ula_out
 	parameter NUBITS = 32,
 	parameter NBMANT = 23,
 	parameter NBEXPO =  8
-)
-(
+)(
+	 input              clk,
 	 input [       5:0] op,
 	 input [NUBITS-1:0] in,
 	output [NUBITS-1:0] out
 );
 
 wire [NUBITS-1:0] fn_out;
+reg  [NUBITS-1:0] inr; always @ (posedge clk) inr = in;
 
-ula_norm #(NBMANT,NBEXPO) ula_norm(in, fn_out);
+ula_norm #(NBMANT,NBEXPO) ula_norm(inr, fn_out);
+//                                        I2F             I2F_M           F_ADD          F_MLT          F_DIV
+reg norm; always @ (posedge clk) norm <= (op == 6'd25) | (op == 6'd26) | (op == 6'd3) | (op == 6'd5) | (op == 6'd7);
 
-//             I2F              I2F_M            F_ADD           F_MLT           F_DIV
-assign out = ((op == 6'd25) || (op == 6'd26) || (op == 6'd3) || (op == 6'd5) || (op == 6'd7)) ? fn_out : in;
+assign out = (norm) ? fn_out : in;
 
 endmodule
 
@@ -879,6 +881,7 @@ module ula
 	parameter   SHR   = 0,
 	parameter   SRS   = 0)
 (
+	input		               clk,
 	input         [       5:0] op,
 	input  signed [NUBITS-1:0] in1, in2,
 	output signed [NUBITS-1:0] out
@@ -889,7 +892,7 @@ module ula
 wire signed [NBEXPO-1:0] e_out;             // expoente  normalizado
 wire signed [NBMANT  :0] sm1_out, sm2_out;  // mantissas normalizadas
 
-generate if (F_ADD || F_GRE || F_LES) ula_denorm #(NBMANT,NBEXPO) denorm(in1, in2, e_out, sm1_out, sm2_out); endgenerate
+generate if (F_ADD | F_GRE | F_LES) ula_denorm #(NBMANT,NBEXPO) denorm(in1, in2, e_out, sm1_out, sm2_out); endgenerate
 
 // ADD ------------------------------------------------------------------------
 
@@ -1189,6 +1192,6 @@ ula_mux #(NUBITS) ula_mux (.op (op ),
 
 // mux de saida (se necessario) -----------------------------------------------
 
-generate if (I2F || I2F_M || F_ADD || F_MLT || F_DIV) ula_out #(NUBITS,NBMANT,NBEXPO) ula_out(op, mux_out, out); else assign out = mux_out; endgenerate
+generate if (I2F | I2F_M | F_ADD | F_MLT | F_DIV) ula_out #(NUBITS,NBMANT,NBEXPO) ula_out(clk, op, mux_out, out); else assign out = mux_out; endgenerate
 
 endmodule

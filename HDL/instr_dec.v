@@ -1059,6 +1059,17 @@ always @ (*) begin
 						req_in   <= 1'b0;
 						out_en   <= 1'b0;
 					end
+			94: begin
+						wula_op  <= 6'd0;     // NOP -> No Operation
+						mem_wr   <= 1'b0;
+						push     <= 1'b0;
+						pop      <= 1'b0;
+						ldi      <= 1'b0;
+						sti      <= 1'b0;
+						fft      <= 1'b0;
+						req_in   <= 1'b0;
+						out_en   <= 1'b0;
+					end
 		default: begin
 						wula_op  <= 6'dx;
 						mem_wr   <= 1'bx;

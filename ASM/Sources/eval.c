@@ -172,9 +172,10 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     strcpy(opc_name,text); // guarda nome do opcode atual para arquivo de traducao
 
     // proximo estado depende do tipo de opcode:
-    // 0: nao tem operando
-    // 1: operando eh endereco da memoria de daddos
-    // 2: operando eh endereco da memoria de instrucao
+    // 0 : nao tem operando
+    // 17: operando eh endereco da memoria de dados
+    // 18: operando eh endereco da memoria de instrucao
+    // 19: operando eh endereco de I/O
     state = next_state;
 
     // nao tem operando, ja pode escrever a instrucao

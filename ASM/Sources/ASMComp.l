@@ -155,6 +155,8 @@ LINHA          \n
    "SRS"   eval_opcode(92,17, yytext,   "SRS"  ); // shift right aritmetico com memoria
  "S_SRS"   eval_opcode(93, 0, yytext,   "SRS"  ); // shift right aritmetico com pilha
 
+   "NOP"   eval_opcode(94, 0, yytext,   ""     ); // no operation
+
 {VARIA}    eval_opernd(yytext,0); // usado em instrucoes da ula com variaveis (IDs)
 {INNUM}    eval_opernd(yytext,1); // usado em instrucoes da ula com constante int
 {FLNUM}    eval_opernd(yytext,2); // usado em instrucoes da ula com constante float

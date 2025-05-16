@@ -110,6 +110,10 @@ void parse_end(char *prname, char *d_proc)
     fclose(output);
 }
 
+// ----------------------------------------------------------------------------
+// funcoes para cadastro de instrucoes ----------------------------------------
+// ----------------------------------------------------------------------------
+
 // adiciona instrucao no arquivo asm
 void add_instr(char *inst, ...)
 {
@@ -120,10 +124,20 @@ void add_instr(char *inst, ...)
     if (using_macro == 0) vfprintf(f_asm, inst, args);
     va_end  (args);
 
-    // tabela para tradutor asselbly do gtkwave -------------------------------
+    // tabela para tradutor assembly do gtkwave -------------------------------
 
     if (using_macro == 0) num_ins++;
     if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
+
+    // verifica se instrucao precisa de NOP -----------------------------------
+
+    char     str[100];
+    vsprintf(str, inst, args);
+
+    if (strstr(str,   "I2F") != NULL) add_instr("NOP\n");
+    if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n");
+    if (strstr(str, "F_MLT") != NULL) add_instr("NOP\n");
+    if (strstr(str, "F_DIV") != NULL) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais
