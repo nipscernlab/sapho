@@ -196,32 +196,6 @@ endgenerate
 
 endmodule
 
-// pilha de dados -------------------------------------------------------------
-
-module stack_data
-#(
-	parameter              NADDR = 7,
-	parameter  [NADDR-1:0] DEPTH = 3,
-	parameter              NBITS = 8
-)(
-	input                   clk, rst,
-	input                  push, pop,
-	input      [NBITS-1:0] in,
-	output reg [NBITS-1:0] out_sync,
-	output     [NBITS-1:0] out
-);
-
-wire [NBITS-1:0] stack_out;
-
-stack #(.NADDR (NADDR),
-        .DEPTH (DEPTH),
-        .NBITS (NBITS)) stack (clk, rst, push, pop, in, stack_out);
-
-always @ (posedge clk) out_sync <= stack_out;
-assign                 out       = stack_out;
-
-endmodule
-
 // Controle da entrada in1 da ULA ---------------------------------------------
 
 module ula_in1_ctrl
@@ -229,17 +203,35 @@ module ula_in1_ctrl
 	parameter NUBITS = 8,
 	parameter NBOPCO = 7
 )(
+	input               clk, pop,
+	input  [NUBITS-1:0] mem, stack,
+	output [NUBITS-1:0] out
+);
+
+reg popr;              always @ (posedge clk) popr <= pop;
+reg [NUBITS-1:0] stkr; always @ (posedge clk) stkr <= stack;
+
+assign out = (popr) ? stkr : mem;
+
+endmodule
+
+// Controle da entrada in2 da ULA ---------------------------------------------
+
+module ula_in2_ctrl
+#(
+	parameter NUBITS = 8,
+	parameter NBOPCO = 7
+)(
 	input               clk,
-	input               req_in, pop,
-	input  [NUBITS-1:0] mem, io, stack,
+	input               req_in,
+	input  [NUBITS-1:0] acc, io_in,
 	output [NUBITS-1:0] out
 );
 
 reg               req_inr; always @ (posedge clk) req_inr <= req_in;
-reg               popr   ; always @ (posedge clk) popr    <= pop   ;
-reg  [NUBITS-1:0] ior    ; always @ (posedge clk) ior     <= io    ;
+reg  [NUBITS-1:0] ior    ; always @ (posedge clk) ior     <=  io_in;
 
-assign out = (req_inr) ? ior : (popr) ? stack : mem;
+assign out = (req_inr) ? ior : acc;
 
 endmodule
 
@@ -527,22 +519,23 @@ instr_dec #(NUBITS, NBOPCO, NBOPER, MDATAW) id(clk, rst,
 
 wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
-wire [NUBITS-1:0] sp_in, sp_data_out, stack_ofst;
+wire [NUBITS-1:0] sp_in, stack_data;
 
-stack_data #(.NADDR($clog2(DDEPTH)),
-             .DEPTH(DDEPTH),
-			 .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, sp_data_out, stack_ofst);
+stack #(.NADDR($clog2(DDEPTH)),
+        .DEPTH(DDEPTH),
+	    .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, stack_data);
 
-// Controle da entrada in1 da ULA ---------------------------------------------
+// Controles de entrada da ULA ------------------------------------------------
 
-wire [NUBITS-1:0] uic_ula_data;
+wire [NUBITS-1:0] ula_data_in1;
+wire [NUBITS-1:0] ula_data_in2;
 
-ula_in1_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic (clk, id_req_in, id_dsp_pop, mem_data_rd, io_in, sp_data_out, uic_ula_data);
+ula_in1_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic1 (clk, id_dsp_pop, mem_data_rd, stack_data, ula_data_in1);
+ula_in2_ctrl #(.NUBITS(NUBITS), .NBOPCO(NBOPCO)) uic2 (clk, id_req_in ,     ula_acc, io_in     , ula_data_in2);
 
 // Unidade Logico-Aritmetica --------------------------------------------------
 
 wire signed [NUBITS-1:0] ula_out;
-wire signed [NUBITS-1:0] ula_acc;
 
 ula #(.NUBITS (NUBITS ),
       .NBMANT (NBMANT ),
@@ -591,7 +584,7 @@ ula #(.NUBITS (NUBITS ),
         .EQU  (  EQU  ),
         .SHL  (  SHL  ),
         .SHR  (  SHR  ),
-        .SRS  (  SRS  )) ula (clk, id_ula_op, uic_ula_data, ula_acc, ula_out);
+        .SRS  (  SRS  )) ula (clk, id_ula_op, ula_data_in1, ula_data_in2, ula_out);
 
 assign sp_in = ula_out;
 
@@ -601,8 +594,8 @@ reg signed [NUBITS-1:0] racc;
 
 always @ (posedge clk or posedge rst) if (rst) racc <= 0; else racc <= ula_out;
 
-assign ula_acc = racc;
-assign  if_acc = ula_out[0];
+wire signed [NUBITS-1:0] ula_acc = racc;
+assign                    if_acc = ula_out[0];
 
 // Enderecamento Indireto -----------------------------------------------------
 
@@ -616,7 +609,7 @@ generate
 				   .STI(STI),.LDI(LDI),
 				   .ILI(ILI),.ISI(ISI)) ac(id_sti, id_ldi, id_fft, id_wr,
 				                           ula_out,
-			    	                       if_operand[MDATAW-1:0], stack_ofst[MDATAW-1:0],
+			    	                       if_operand[MDATAW-1:0], stack_data[MDATAW-1:0],
 										   mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin
 		assign mem_wr      = id_wr;

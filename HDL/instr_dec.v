@@ -135,7 +135,7 @@ always @ (*) begin
 						out_en   <= 1'b0;
 					end
 			10: begin
-						wula_op  <= 6'd1;     // INN -> Input de dados
+						wula_op  <= 6'd0;     // INN -> Input de dados
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
@@ -146,7 +146,7 @@ always @ (*) begin
 						out_en   <= 1'b0;
 					end
 			11: begin
-						wula_op  <= 6'd1;     // P_INN -> PUSH + INN
+						wula_op  <= 6'd0;     // P_INN -> PUSH + INN
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
