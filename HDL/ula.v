@@ -7,8 +7,7 @@
 module ula_mux
 #(
 	 parameter NUBITS = 32
- )
-(
+ )(
 	 // indexador da operacao
 	 input     [       5:0] op  ,
 	 // sai uma das entradas (in1 -> pega da memoria, in2 -> pega do acumulador)
@@ -127,8 +126,7 @@ module ula_denorm
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input        [MAN+EXP:0] in1, in2,
 	output signed [EXP-1  :0] e_out,
 	output signed [MAN    :0] sm1_out, sm2_out
@@ -163,8 +161,7 @@ module ula_nmux
 #(
 	parameter NCOMP = 2,
 	parameter NBITS = 8
-)
-(
+)(
 	input  [NCOMP-1:0]   A,   B,
 	input  [NBITS-1:0] in1, in2,
 	output [NBITS-1:0] out
@@ -181,8 +178,7 @@ module ula_norm
 #(
 	parameter MAN = 23,
     parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in,
 	output [MAN+EXP:0] out
 );
@@ -231,8 +227,8 @@ wire [NUBITS-1:0] fn_out;
 reg  [NUBITS-1:0] inr; always @ (posedge clk) inr = in;
 
 ula_norm #(NBMANT,NBEXPO) ula_norm(inr, fn_out);
-//                                        I2F             I2F_M           F_ADD          F_MLT          F_DIV
-reg norm; always @ (posedge clk) norm <= (op == 6'd25) | (op == 6'd26) | (op == 6'd3) | (op == 6'd5) | (op == 6'd7);
+//           I2F             I2F_M           F_ADD          F_MLT          F_DIV
+wire norm = (op == 6'd25) | (op == 6'd26) | (op == 6'd3) | (op == 6'd5) | (op == 6'd7);
 
 assign out = (norm) ? fn_out : in;
 
@@ -247,8 +243,7 @@ endmodule
 module ula_add
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -263,8 +258,7 @@ module ula_fadd
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	input  signed [EXP-1  :0] e_in,
 	input  signed [MAN    :0] sm1_in, sm2_in,
 	output        [MAN+EXP:0] out
@@ -286,8 +280,7 @@ endmodule
 module ula_mlt
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -302,8 +295,7 @@ module ula_fmlt
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in1, in2,
 	output [MAN+EXP:0] out
 );
@@ -332,8 +324,7 @@ endmodule
 module ula_div
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -348,8 +339,7 @@ module ula_fdiv
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in1, in2,
 	output [MAN+EXP:0] out
 );
@@ -377,8 +367,7 @@ endmodule
 module ula_mod
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -392,8 +381,7 @@ endmodule
 module ula_sgn
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input signed [NUBITS-1:0] in1, in2,
 	output signed [NUBITS-1:0] out 
 );
@@ -408,8 +396,7 @@ module ula_fsgn
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in1, in2,
 	output [MAN+EXP:0] out 
 );
@@ -431,8 +418,7 @@ endmodule
 module ula_neg
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input signed [NUBITS-1:0] in,
 	output signed [NUBITS-1:0] out 
 );
@@ -447,8 +433,7 @@ module ula_fneg
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in,
 	output [MAN+EXP:0] out
 );
@@ -470,8 +455,7 @@ endmodule
 module ula_abs
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in,
 	output [NUBITS-1:0] out 
 );
@@ -486,8 +470,7 @@ module ula_fabs
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in,
 	output [MAN+EXP:0] out
 );
@@ -505,8 +488,7 @@ endmodule
 module ula_pst
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in,
 	output [NUBITS-1:0] out 
 );
@@ -521,8 +503,7 @@ module ula_fpst
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	 input [MAN+EXP:0] in,
 	output [MAN+EXP:0] out
 );
@@ -538,8 +519,7 @@ module ula_nrm
 #(
 	parameter        NUBITS = 32,
 	parameter signed NUGAIN = 1
-)
-(
+)(
 	 input signed [NUBITS-1:0] in,
 	output signed [NUBITS-1:0] out 
 );
@@ -554,8 +534,7 @@ module ula_i2f
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	input         [MAN+EXP:0] in,
 	output signed [MAN+EXP:0] out
 );
@@ -574,8 +553,7 @@ module ula_f2i
 #(
 	parameter MAN = 23,
 	parameter EXP = 8
-)
-(
+)(
 	input         [MAN+EXP:0] in,
 	output signed [MAN+EXP:0] out
 );
@@ -599,8 +577,7 @@ endmodule
 module ula_and
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -614,8 +591,7 @@ endmodule
 module ula_or
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -629,8 +605,7 @@ endmodule
 module ula_xor
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -648,8 +623,7 @@ endmodule
 module ula_inv
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input signed [NUBITS-1:0] in,
 	output signed [NUBITS-1:0] out 
 );
@@ -667,8 +641,7 @@ endmodule
 module ula_lan
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -682,8 +655,7 @@ endmodule
 module ula_lor
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -701,8 +673,7 @@ endmodule
 module ula_lin
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in,
 	output [NUBITS-1:0] out 
 );
@@ -720,8 +691,7 @@ endmodule
 module ula_les
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -735,8 +705,7 @@ endmodule
 module ula_gre
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -750,8 +719,7 @@ endmodule
 module ula_equ
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -769,8 +737,7 @@ endmodule
 module ula_shl
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -784,8 +751,7 @@ endmodule
 module ula_shr
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );
@@ -794,13 +760,12 @@ assign out = (in1 >> in2);
 
 endmodule
 
-// SRS - deslocamento aritmetico pra direta -----------------------------------
+// SRS - deslocamento aritmetico pra direita ----------------------------------
 
 module ula_srs
 #(
 	parameter NUBITS = 32
-)
-(
+)(
 	 input [NUBITS-1:0] in1, in2,
 	output [NUBITS-1:0] out 
 );

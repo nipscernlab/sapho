@@ -19,8 +19,8 @@ module instr_dec
 	output reg              sti, ldi,
 	output reg              fft
 );
-
-reg [5:0] wula_op; always @ (posedge clk) ula_op <= wula_op;
+                                              // NOP
+reg [5:0] wula_op; always @ (posedge clk) if (opcode != 94) ula_op <= wula_op;
 
 always @ (*) begin
 	case (opcode)
@@ -1060,7 +1060,7 @@ always @ (*) begin
 						out_en   <= 1'b0;
 					end
 			94: begin
-						wula_op  <= 6'd0;     // NOP -> No Operation
+						wula_op  <= 6'dx;     // NOP -> No Operation
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
