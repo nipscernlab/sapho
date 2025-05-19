@@ -146,6 +146,7 @@ void add_instr(char *inst, ...)
     if (strstr(str, "F_LES") != NULL) add_instr("NOP\n");
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
+    if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n"); // soma ponto flutuante
     if (strstr(str,   "MLT") != NULL) add_instr("NOP\n"); // multiplicacao ponto fixo e flutuante
     if (strstr(str,   "F2I") != NULL) add_instr("NOP\n"); // float to int
 }

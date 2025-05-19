@@ -141,17 +141,27 @@ wire        [MAN-1:0] m1_in = in1[MAN    -1:0  ];
 wire        [MAN-1:0] m2_in = in2[MAN    -1:0  ];
 
 wire signed [EXP:0] eme    =  e1_in-e2_in;
-wire                ege    =  eme           [EXP];
+wire                ege    =          eme   [EXP];
 wire        [EXP:0] shift2 = (ege) ?        {EXP+1{1'b0}} : eme;
 wire        [EXP:0] shift1 = (ege) ? -eme : {EXP+1{1'b0}};
 
-always @ (posedge clk) e_out <= (ege) ? e2_in : e1_in;
+reg                  eger  ; always @ (posedge clk) eger   <=   ege;
+reg signed [EXP-1:0] e1_inr; always @ (posedge clk) e1_inr <= e1_in;
+reg signed [EXP-1:0] e2_inr; always @ (posedge clk) e2_inr <= e2_in;
+
+always @ (*) e_out <= (eger) ? e2_inr : e1_inr;
 
 wire [MAN-1:0] m1_out = m1_in >> shift1;
 wire [MAN-1:0] m2_out = m2_in >> shift2;
 
-always @ (posedge clk) sm1_out <= (s1_in) ? -m1_out : m1_out;
-always @ (posedge clk) sm2_out <= (s2_in) ? -m2_out : m2_out;
+reg s1_inr; always @ (posedge clk) s1_inr <= s1_in;
+reg s2_inr; always @ (posedge clk) s2_inr <= s2_in;
+
+reg [MAN-1:0] m1_outr; always @ (posedge clk) m1_outr <= m1_out;
+reg [MAN-1:0] m2_outr; always @ (posedge clk) m2_outr <= m2_out;
+
+always @ (*) sm1_out <= (s1_inr) ? -m1_outr : m1_outr;
+always @ (*) sm2_out <= (s2_inr) ? -m2_outr : m2_outr;
 
 endmodule
 
@@ -260,9 +270,10 @@ module ula_fadd
 	parameter MAN = 23,
 	parameter EXP = 8
 )(
+	input                     clk,
 	input  signed [EXP-1  :0] e_in,
 	input  signed [MAN    :0] sm1_in, sm2_in,
-	output        [MAN+EXP:0] out
+	output reg    [MAN+EXP:0] out
 );
 
 wire signed [MAN+1:0] soma = sm1_in + sm2_in;
@@ -272,7 +283,7 @@ wire                  s_out = soma    [MAN+1];
 wire signed [EXP-1:0] e_out = e_in + {{EXP-1{1'b0}}, {1'b1}}; // colocar limite para +inf?
 wire        [MAN-1:0] m_out = m       [MAN:1];
 
-assign out = {s_out, e_out, m_out};
+always @ (posedge clk) out <= {s_out, e_out, m_out};
 
 endmodule
 
@@ -310,15 +321,16 @@ wire signed [EXP-1:0] e2 = in2[MAN+EXP-1:MAN];
 wire        [MAN-1:0] m1 = in1[MAN    -1:0  ];
 wire        [MAN-1:0] m2 = in2[MAN    -1:0  ];
 
-wire        [2*MAN-1:0] mult = m1 * m2;
-wire signed [  EXP  :0] e    = e1 + e2 + MAN[EXP-1:0]; // colocar limite para +inf
+reg [2*MAN-1:0] mult; always @ (posedge clk) mult <= m1 * m2;
+reg             unf ; always @ (posedge clk) unf <= (e[EXP:EXP-1] == 2'b10); // underflow
 
-wire                  s_out = (s1 != s2);
-wire                  unf   = (e[EXP:EXP-1] == 2'b10); // underflow
-wire signed [EXP-1:0] e_out =  e[EXP-1:  0];
-wire        [MAN-1:0] m_out = (unf) ? {{MAN{1'b0}}} : mult[2*MAN-1:MAN];
+wire signed [EXP:0] e = e1 + e2 + MAN[EXP-1:0]; // colocar limite para +inf
 
-always @ (posedge clk) out <= {s_out, e_out, m_out};
+reg                  s_out; always @ (posedge clk) s_out <= (s1 != s2);
+reg signed [EXP-1:0] e_out; always @ (posedge clk) e_out <= e[EXP-1:0];
+wire       [MAN-1:0] m_out = (unf) ? {{MAN{1'b0}}} : mult[2*MAN-1:MAN];
+
+always @ (*) out <= {s_out, e_out, m_out};
 
 endmodule
 
@@ -873,7 +885,7 @@ generate if (ADD) ula_add #(NUBITS) my_add(in1, in2, add); else assign add = {NU
 
 wire signed [NUBITS-1:0] fadd;
 
-generate if (F_ADD) ula_fadd #(NBMANT,NBEXPO) my_fadd(e_out, sm1_out, sm2_out, fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
+generate if (F_ADD) ula_fadd #(NBMANT,NBEXPO) my_fadd(clk, e_out, sm1_out, sm2_out, fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
 
 // MLT ------------------------------------------------------------------------
 
