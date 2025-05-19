@@ -134,10 +134,20 @@ void add_instr(char *inst, ...)
     char     str[100];
     vsprintf(str, inst, args);
 
+    // espera mais um clock para terminar o processo de    normalizacao em ponto flutuante
     if (strstr(str,   "I2F") != NULL) add_instr("NOP\n");
     if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n");
     if (strstr(str, "F_MLT") != NULL) add_instr("NOP\n");
     if (strstr(str, "F_DIV") != NULL) add_instr("NOP\n");
+
+    // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
+    if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n");
+    if (strstr(str, "F_GRE") != NULL) add_instr("NOP\n");
+    if (strstr(str, "F_LES") != NULL) add_instr("NOP\n");
+
+    // espera mais um clock para terminar algumas operacoes aritmeticas
+    if (strstr(str,   "MLT") != NULL) add_instr("NOP\n"); // multiplicacao ponto fixo e flutuante
+    if (strstr(str,   "F2I") != NULL) add_instr("NOP\n"); // float to int
 }
 
 // adiciona instrucoes especiais
