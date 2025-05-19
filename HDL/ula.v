@@ -13,9 +13,9 @@ module ula_mux
 	 // sai uma das entradas (in1 -> pega da memoria, in2 -> pega do acumulador)
 	 input     [NUBITS-1:0] in1 , in2,
 	 // operacoes aritmeticas de dois parametros
-	 input     [NUBITS-1:0] add , fadd,
-	 input     [NUBITS-1:0] mlt , fmlt,
-	 input     [NUBITS-1:0] div , fdiv,
+	 input     [NUBITS-1:0] add ,
+	 input     [NUBITS-1:0] mlt ,
+	 input     [NUBITS-1:0] div ,
 	 input     [NUBITS-1:0] mod ,                    // soh pra int
 	 input     [NUBITS-1:0] sgn , fsgn,
 	 // operacoes aritmeticas de um parametro
@@ -23,7 +23,6 @@ module ula_mux
 	 input     [NUBITS-1:0] abs , absm, fabs, fabsm,
 	 input     [NUBITS-1:0] pst , pstm, fpst, fpstm,
 	 input     [NUBITS-1:0] nrm , nrmm,              // soh pra int
-	 input     [NUBITS-1:0] i2f , i2fm,
 	 input     [NUBITS-1:0] f2i , f2im,
 	 // operacoes logicas de dois parametros
 	 input     [NUBITS-1:0] ann , orr , cor ,        // and, or, xor
@@ -39,6 +38,8 @@ module ula_mux
 	 input     [NUBITS-1:0] equ ,                    // serve pra int e float
 	 // operacoes de deslocamento de bits
 	 input     [NUBITS-1:0] shl , shr , srs ,        // <<, >> e >>>
+	 // operacoes vindas do circuito de normalizacao
+	 input     [NUBITS-1:0] smx ,
 	 // saida
 	output reg [NUBITS-1:0] out
 );
@@ -48,13 +49,13 @@ always @ (*) case (op)
 	6'd1   : out <=   in1 ;   //   LOD
 
 	6'd2   : out <=   add ;   //   ADD
-	6'd3   : out <=  fadd ;   // F_ADD
+	6'd3   : out <=   smx ;   // F_ADD
 
 	6'd4   : out <=   mlt ;   //   MLT
-	6'd5   : out <=  fmlt ;   // F_MLT
+	6'd5   : out <=   smx ;   // F_MLT
 
 	6'd6   : out <=   div ;   //   DIV
-	6'd7   : out <=  fdiv ;   // F_DIV
+	6'd7   : out <=   smx ;   // F_DIV
 
 	6'd8   : out <=   mod ;   //   MOD
 
@@ -79,8 +80,8 @@ always @ (*) case (op)
 	6'd23  : out <=   nrm ;   //   NRM
 	6'd24  : out <=   nrmm;   //   NRM_M
 
-	6'd25  : out <=   i2f ;   //   I2F
-	6'd26  : out <=   i2fm;   //   I2F_M
+	6'd25  : out <=   smx ;   //   I2F
+	6'd26  : out <=   smx ;   //   I2F_M
 
 	6'd27  : out <=   f2i ;   //   F2I
 	6'd28  : out <=   f2im;   //   F2I_M
@@ -216,6 +217,38 @@ generate
 endgenerate
 
 assign out = {out_s, out_e, out_m};
+
+endmodule
+
+// multiplexador das operacoes com normalizacao -------------------------------
+
+module norm_mux
+#(
+	parameter NUBITS = 32,
+	parameter NBMANT = 23,
+	parameter NBEXPO =  8
+)(
+	 input                  clk ,
+	 input     [       5:0] op  ,
+	 input     [NUBITS-1:0] fadd,
+	 input     [NUBITS-1:0] fmlt,
+	 input     [NUBITS-1:0] fdiv,
+	 input     [NUBITS-1:0] i2f , i2fm,
+	output     [NUBITS-1:0] out
+);
+
+reg [NUBITS-1:0] mux_out;
+
+always @ (posedge clk) case (op)
+	6'd3   : mux_out <=  fadd ;   // F_ADD
+	6'd5   : mux_out <=  fmlt ;   // F_MLT
+	6'd7   : mux_out <=  fdiv ;   // F_DIV
+	6'd25  : mux_out <=   i2f ;   //   I2F
+	6'd26  : mux_out <=   i2fm;   //   I2F_M
+	default: mux_out <= {NUBITS{1'bx}};
+endcase
+
+ula_norm #(NBMANT, NBEXPO) ula_norm (mux_out, out);
 
 endmodule
 
@@ -1173,22 +1206,25 @@ wire signed [NUBITS-1:0] srs;
 
 generate if (SRS) ula_srs #(NUBITS) my_srs(in1, in2, srs); else assign srs = {NUBITS{1'bx}}; endgenerate
 
-// mux principal --------------------------------------------------------------
+// mux de desnormalizacao -----------------------------------------------------
 
-wire [NUBITS-1:0] mux_out; // saida da ula
+wire signed [NUBITS-1:0] smx;
+
+generate if (I2F | I2F_M | F_ADD | F_MLT | F_DIV) norm_mux #(NUBITS,NBMANT,NBEXPO) norm_mux(clk, op, fadd, fmlt, fdiv, i2f, i2fm, smx); else assign smx = {NUBITS{1'bx}}; endgenerate
+
+// mux principal --------------------------------------------------------------
 
 ula_mux #(NUBITS) ula_mux (.op (op ),
                            .in1(in1),.in2 (in2 ),
-                           .add(add),.fadd(fadd),
-                           .mlt(mlt),.fmlt(fmlt),
-                           .div(div),.fdiv(fdiv),
+                           .add(add),
+                           .mlt(mlt),
+                           .div(div),
                            .mod(mod),
                            .sgn(sgn),.fsgn(fsgn),
                            .neg(neg),.negm(negm),.fneg(fneg),.fnegm(fnegm),
                            .abs(abs),.absm(absm),.fabs(fabs),.fabsm(fabsm),
                            .pst(pst),.pstm(pstm),.fpst(fpst),.fpstm(fpstm),
                            .nrm(nrm),.nrmm(nrmm),
-                           .i2f(i2f),.i2fm(i2fm), 
                            .f2i(f2i),.f2im(f2im),
                            .ann(ann),
                            .orr(orr),
@@ -1203,10 +1239,7 @@ ula_mux #(NUBITS) ula_mux (.op (op ),
                            .shl(shl),
                            .shr(shr),
                            .srs(srs),
-                           .out(mux_out));
-
-// mux de saida (se necessario) -----------------------------------------------
-
-generate if (I2F | I2F_M | F_ADD | F_MLT | F_DIV) ula_out #(NUBITS,NBMANT,NBEXPO) ula_out(clk, op, mux_out, out); else assign out = mux_out; endgenerate
+						   .smx(smx),
+                           .out(out));
 
 endmodule
