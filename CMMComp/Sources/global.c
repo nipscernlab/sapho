@@ -5,6 +5,7 @@
 // includes globais
 #include <stdarg.h>
 #include <string.h>
+#include  <ctype.h>
 
 // includes locais
 #include "..\Headers\t2t.h"
@@ -28,6 +29,33 @@ char dir_soft [1024]; // diretorio Software
 int  acc_ok   = 0;    // 0 -> acc vazio (use LOD)  , 1 -> acc carregado (use P_LOD)
 int  line_num = 0;    // numero da linha sendo parseada
 int  num_ins  = 0;    // numero de instrucoes do parse
+
+// ----------------------------------------------------------------------------
+// funcoes auxiliares ---------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+// funcoes para achar a instrucao correta na funcao add_instr
+// ainda nao usei
+int is_delimiter(char c)
+{
+    return c == '\0' || isspace(c) || ispunct(c);
+}
+
+int contemPalavraNEG(const char *str)
+{
+    const char *p = str;
+
+    while ((p = strstr(p, "NEG")) != NULL) {
+        // Verifica se antes de "NEG" tem início da string ou delimitador
+        if ((p == str || is_delimiter(*(p - 1))) &&
+            is_delimiter(*(p + 3))) {
+            return 1; // Encontrou "NEG" isolado
+        }
+        p += 3; // Avança para procurar a próxima ocorrência
+    }
+
+    return 0; // Não encontrou "NEG" isolado
+}
 
 // ----------------------------------------------------------------------------
 // funcoes de inicio e termino do parse ---------------------------------------
@@ -148,6 +176,8 @@ void add_instr(char *inst, ...)
     // espera mais um clock para terminar algumas operacoes aritmeticas
     if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n"); // soma ponto flutuante
     if (strstr(str,   "MLT") != NULL) add_instr("NOP\n"); // multiplicacao ponto fixo e flutuante
+    if (strstr(str,   "LES") != NULL) add_instr("NOP\n"); // menor que em  ponto fixo e flutuante
+    if (strstr(str,   "GRE") != NULL) add_instr("NOP\n"); // maior que em  ponto fixo e flutuante
     if (strstr(str,   "F2I") != NULL) add_instr("NOP\n"); // float to int
 }
 

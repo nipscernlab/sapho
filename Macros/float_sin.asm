@@ -11,6 +11,7 @@
 @L1_sin     F_ABS_M sin_x          // while (abs(x) > 3.141592654) x = x - sign(x, 6.283185307);
             F_LES   3.141592654
               NOP
+              NOP
               JIZ   L1end_sin
               LOD   6.283185307
             F_SGN   sin_x
@@ -44,6 +45,7 @@
 
 @L2_sin     F_ABS_M sin_termo      // while (abs(termo) > tolerancia) {
             F_LES   sin_tolerancia
+              NOP
               NOP
               JIZ   L2end_sin
 

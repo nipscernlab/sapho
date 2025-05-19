@@ -101,6 +101,9 @@ void epsilon_taylor(char *fnum)
 {
     // acha o dobro do menor valor possivel em float
     double numf = 2.0*pow(2, nbmant-1)*pow(2,-pow(2,nbexpo-1));
+    // multiplica o resultado por por um fator para garatir a estab. da funcao sin(x)
+    // mudar para que isso soh use se a funcao sin(x) estiver presente
+    numf = numf * 3.1415926535897932 * 3.1415926535897932 * 3.0;
     // se a precisao for grande, usa o padrao
     if     (numf < 0.0000001) numf = 0.0000001;
     sprintf(fnum, "%.7f",     numf);
