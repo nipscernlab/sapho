@@ -741,12 +741,11 @@ module ula_les
 #(
 	parameter NUBITS = 32
 )(
-	 input                     clk,
 	 input signed [NUBITS-1:0] in1, in2,
 	output reg    [NUBITS-1:0] out 
 );
 
-always @ (posedge clk) out <= (in1 < in2);
+always @ (*) out <= (in1 < in2);
 
 endmodule
 
@@ -757,12 +756,11 @@ module ula_fles
 	parameter NUBITS = 32,
 	parameter NBMANT = 23
 )(
-	 input                     clk,
 	 input signed [NBMANT  :0] in1, in2,
 	output reg    [NUBITS-1:0] out 
 );
 
-always @ (posedge clk) out <= (in1 < in2);
+always @ (*) out <= (in1 < in2);
 
 endmodule
 
@@ -772,12 +770,11 @@ module ula_gre
 #(
 	parameter NUBITS = 32
 )(
-	 input                     clk,
 	 input signed [NUBITS-1:0] in1, in2,
 	output reg    [NUBITS-1:0] out 
 );
 
-always @ (posedge clk) out <= (in1 > in2);
+always @ (*) out <= (in1 > in2);
 
 endmodule
 
@@ -788,12 +785,11 @@ module ula_fgre
 	parameter NUBITS = 32,
 	parameter NBMANT = 23
 )(
-	 input                     clk,
 	 input signed [NBMANT  :0] in1, in2,
 	output reg    [NUBITS-1:0] out 
 );
 
-always @ (posedge clk) out <= (in1 > in2);
+always @ (*) out <= (in1 > in2);
 
 endmodule
 
@@ -849,8 +845,8 @@ module ula_srs
 #(
 	parameter NUBITS = 32
 )(
-	 input [NUBITS-1:0] in1, in2,
-	output [NUBITS-1:0] out 
+	 input signed [NUBITS-1:0] in1, in2,
+	output signed [NUBITS-1:0] out 
 );
 
 assign out = (in1 >>> in2);
@@ -1162,25 +1158,25 @@ generate if (LIN_M) ula_lin #(NUBITS) my_linm(in1, linm); else assign linm = {NU
 
 wire signed [NUBITS-1:0] les;
 
-generate if (LES) ula_les #(NUBITS) my_les(clk, in1, in2, les); else assign les = {NUBITS{1'bx}}; endgenerate
+generate if (LES) ula_les #(NUBITS) my_les(in1, in2, les); else assign les = {NUBITS{1'bx}}; endgenerate
 
 // F_LES ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] fles;
 
-generate if (F_LES) ula_fles #(NUBITS,NBMANT) my_fles(clk, sm1_out, sm2_out, fles); else assign fles = {NUBITS{1'bx}}; endgenerate
+generate if (F_LES) ula_fles #(NUBITS,NBMANT) my_fles(sm1_out, sm2_out, fles); else assign fles = {NUBITS{1'bx}}; endgenerate
 
 // GRE ------------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] gre;
 
-generate if (GRE) ula_gre #(NUBITS) my_gre(clk, in1, in2, gre); else assign gre = {NUBITS{1'bx}}; endgenerate
+generate if (GRE) ula_gre #(NUBITS) my_gre(in1, in2, gre); else assign gre = {NUBITS{1'bx}}; endgenerate
 
 // F_GRE ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] fgre;
 
-generate if (F_GRE) ula_fgre #(NUBITS,NBMANT) my_fgre(clk, sm1_out, sm2_out, fgre); else assign fgre = {NUBITS{1'bx}}; endgenerate
+generate if (F_GRE) ula_fgre #(NUBITS,NBMANT) my_fgre(sm1_out, sm2_out, fgre); else assign fgre = {NUBITS{1'bx}}; endgenerate
 
 // EQU ------------------------------------------------------------------------
 

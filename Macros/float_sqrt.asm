@@ -23,7 +23,6 @@
 
               F_GRE epsilon_taylor // checa tolerancia
                 NOP
-                NOP
                 JIZ L2else_sqrt 
 
                 LOD sqrt_raiz      // se eh, retorna o resultado
