@@ -14,9 +14,11 @@
     - StdLib   sqrt(.): retorna raiz quadrada. Gera um float
     - StdLib   atan(.): retorna o arco-tg. Gera um float
     - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
-    - StdLib   real(.): retorna a parte real de um número complexo
-    - StdLib   imag(.): retorna a parte imag de um número complexo
-    - StdLib   fase(.): retorna a fase de um número complexo
+    - StdLib   real(.): retorna a parte real de um numero complexo
+    - StdLib   imag(.): retorna a parte imag de um numero complexo
+    - StdLib   fase(.): retorna a fase       de um numero complexo
+    - StdLib    sin(.): retorna o seno       de um numero
+    - StdLib    cos(.): retorna o cosseno    de um numero
 
     - Operador   >>>  : deslocamento é direta com complemento a dois (desloca mantendo o sinal)
 
@@ -327,12 +329,12 @@ terminal : INUM                               {$$ = num2exp($1,1);}
 void main(int argc, char *argv[])
 {
     parse_init(argv[1], argv[2], argv[3], argv[4]); // inicializa o parser e as variaveis globais
-	  yyparse   ();                                   // aqui a magica acontece!!
+    yyparse   ();                                   // aqui a magica acontece!!
     parse_end (argv[1], argv[2]);                   // finaliza o parser
 }
 
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-	  fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
+    fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
 }

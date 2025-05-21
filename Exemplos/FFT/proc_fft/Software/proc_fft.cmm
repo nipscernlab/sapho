@@ -45,6 +45,38 @@ void fft(int n)
     }
 }
 
+int divide(int num, int den)
+{
+    int sig = sign(num,1)*den;
+
+    num = abs(num);
+    den = abs(den);
+
+    int result = 0;
+
+    int shift  = 0;
+    int dens   = den;
+    while ((dens > 0) && (dens <= num))
+    {
+        shift++;
+        dens = den << shift;
+    }
+
+    shift = shift -  1;
+    while  (shift >= 0)
+    {
+        dens = den << shift;
+        if (dens <= num)
+        {
+            num = num - dens;
+            result = result + (1 << shift);
+        }
+        shift = shift-1;
+    }
+
+    return sign(sig, result);
+}
+
 void main()
 {
     wpv[0] = -1.0 + 0.0i;
@@ -78,4 +110,6 @@ void main()
     out(1,1000.0*imag(data[6)));
     out(0,1000.0*real(data[7)));
     out(1,1000.0*imag(data[7)));
+
+    int a = divide(-100,3);
 }
