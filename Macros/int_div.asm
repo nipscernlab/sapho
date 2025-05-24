@@ -1,3 +1,6 @@
+
+// Funcao divisao por inteiro -------------------------------------------------
+
 @int_div         SET_P divide_den    // int int_div(int num, int den)
                  SET   divide_num
 

@@ -22,6 +22,7 @@ int  exec_norm(int et);           // divisao por constante
 // funcoes aritmeticas --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+int  exec_idiv(int et1, int et2); // divisao entre inteiros
 int  exec_sqrt(int et);           // raiz quadrada
 int  exec_atan(int et);           // arco tangente
 int  exec_sin (int et);           // seno

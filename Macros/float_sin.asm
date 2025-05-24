@@ -35,7 +35,9 @@
               SET   sin_resultado
 
               LOD   sin_x2         // float tolerancia = epslon/x2;
-            F_DIV   epsilon_taylor
+              CAL   float_inv
+            F_MLT   epsilon_taylor
+              NOP
               NOP
               SET   sin_tolerancia
 
@@ -57,7 +59,9 @@
               NOP
               I2F
               NOP
-           SF_DIV
+              CAL   float_inv
+           SF_MLT
+              NOP
               NOP
               SET   sin_termo
 

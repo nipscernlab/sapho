@@ -4,6 +4,13 @@ read_verilog core.v
 read_verilog instr_dec.v
 read_verilog processor.v
 read_verilog ula.v
+
+
+hierarchy -check -top proc_fft
+proc
+write_json hierarchy.json
+
+
 prep -top @PROC@
 
 cd @PROC@

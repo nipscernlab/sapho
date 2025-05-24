@@ -26,7 +26,9 @@
                             LOD   1.57079632679489661923 // pi/2
                           F_SGN   my_atan_x
                           P_LOD   my_atan_x
-                          F_DIV   1.0
+                            CAL   float_inv
+                          F_MLT   1.0
+                            NOP
                             NOP
                             CAL   float_atan
                           F_NEG
@@ -49,7 +51,9 @@
                             SET   my_atan_resultado
 
                             LOD   my_atan_x2             // float tolerancia = epslon/x2;
-                          F_DIV   epsilon_taylor
+                            CAL   float_inv
+                          F_MLT   epsilon_taylor
+                            NOP
                             NOP
                             SET   my_atan_tolerancia
 
@@ -74,7 +78,9 @@
                             NOP
                           P_I2F_M my_atan_indiceX
                             NOP
-                         SF_DIV
+                            CAL   float_inv
+                         SF_MLT
+                            NOP
                             NOP
                             SET   my_atan_termo
 

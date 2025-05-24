@@ -21,6 +21,8 @@
 
 int using_macro = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
 
+int idiv   = 0;      // se vai precisar de macro de divisao entre inteiros
+int finv   = 0;      // se vai precisar de macro para inerter um float
 int fatan  = 0;      // se vai precisar de macro pra arco tangente
 int fsqrt  = 0;      // se vai precisar de macro pra raiz quadrada
 int fsin   = 0;      // se vai precisar de macro pra seno
@@ -177,7 +179,7 @@ void header_int(char *fasm, char *pc_sim_mem)
 void mac_geni(char *fasm)
 {
     // se nao tiver nada pra fazer, sai!
-    if (!(fsqrt || fatan || fsin)) return;
+    if (!(idiv || finv || fsqrt || fatan || fsin)) return;
 
     char tasm[1024]; // arquivo temporario para o asm
     char tmem[1024]; // arquivo temporario para a tabela de memoria
@@ -197,6 +199,18 @@ void mac_geni(char *fasm)
     fcat2begin(fmem,tmem);
 
     // coloca o resto que precisa no final do asm -----------------------------
+
+    if (idiv)
+    {
+         sprintf(tasm, "%s/%s", dir_macro, "int_div.asm");
+        fcat2end(tasm,fasm);
+    }
+
+    if (finv)
+    {
+         sprintf(tasm, "%s/%s", dir_macro, "float_inv.asm");
+        fcat2end(tasm,fasm);
+    }
 
     if (fsqrt)
     {

@@ -302,6 +302,123 @@ int exec_norm(int et)
 // funcoes aritmeticas --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+// codigo em C+- para calcular divisao para int
+// macro float_sqrt.asm
+/*int divide(int num, int den)
+{
+    int sig = sign(num,1)*den;
+
+    num = abs(num);
+    den = abs(den);
+
+    int result = 0;
+
+    int shift  = 0;
+    int dens   = den;
+    while ((dens > 0) && (dens <= num))
+    {
+        shift++;
+        dens = den << shift;
+    }
+
+    shift = shift -  1;
+    while  (shift >= 0)
+    {
+        dens = den << shift;
+        if (dens <= num)
+        {
+            num = num - dens;
+            result = result + (1 << shift);
+        }
+        shift = shift-1;
+    }
+
+    return sign(sig, result);
+}*/
+
+int exec_idiv(int et1, int et2)
+{
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"P_LOD");
+
+    // int na memoria e int na memoria
+    if ((et1 % OFST != 0) && (et2 % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[et1%OFST]);
+        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
+        add_instr("CAL int_div\n"); idiv=1;
+    }
+
+    // int no acc e int na memoria
+    if ((et1 % OFST == 0) && (et2 % OFST != 0))
+    {
+        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
+        add_instr("CAL int_div\n"); idiv=1;
+    }
+
+    // int na memoria e int no acc
+    if ((et1 % OFST != 0) && (et2 % OFST == 0))
+    {
+        add_instr("SET aux_var\n");
+        add_instr("LOD %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_var\n");
+        add_instr("CAL int_div\n"); idiv=1;
+    }
+
+    // int no acc e int no acc
+    if ((et1 % OFST == 0) && (et2 % OFST == 0))
+    {
+        add_instr("CAL int_div\n"); idiv=1;
+    }
+
+    acc_ok = 1;
+
+    return OFST;
+}
+
+// codigo em C+- para calcular o inverso de um float
+// macro float_sqrt.asm
+/*float float_inv(float x)
+{
+    float s = sign(x, 1.0);
+    x = abs(x);
+
+    int k = 0;
+    while (x > 1.5)
+    {
+        x = x * 0.5;
+        k++;
+    }
+
+    while (x < 0.5)
+    {
+        x = x * 2.0;
+        k = k-1;
+    }
+
+    float y = 1.0;
+
+    int m = 0;
+    while (m < 6)
+    {
+        y = y*(2.0 - x*y);
+        m++;
+    }
+
+    while (k > 0)
+    {
+        y = y*0.5;
+        k = k-1;
+    }
+
+    while (k < 0)
+    {
+        y = y*2.0;
+        k++;
+    }
+
+    return y*s;
+}*/
+
 // codigo em C+- para calcular raiz quadrada para float
 // macro float_sqrt.asm
 /*double my_sqrt(float num)
@@ -318,7 +435,6 @@ int exec_norm(int et)
 
     return raiz;
 }*/
-
 int exec_sqrt(int et)
 {
     if (get_type(et) > 2)
@@ -333,27 +449,27 @@ int exec_sqrt(int et)
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
-        add_instr("CAL float_sqrt\n"); fsqrt=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1; finv=1;
     }
 
     // int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
         add_instr("I2F\n");
-        add_instr("CAL float_sqrt\n"); fsqrt=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1; finv=1;
     }
 
     // float na memoria
     if ((get_type(et) == 2) && (et % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_sqrt\n"); fsqrt=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1; finv=1;
     }
 
     // float no acc
     if ((get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("CAL float_sqrt\n"); fsqrt=1;
+        add_instr("CAL float_sqrt\n"); fsqrt=1; finv=1;
     }
 
     acc_ok = 1;
@@ -397,27 +513,27 @@ int exec_atan(int et)
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
-        add_instr("CAL float_atan\n"); fatan=1;
+        add_instr("CAL float_atan\n"); fatan=1; finv=1;
     }
 
     // int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
         add_instr("I2F\n");
-        add_instr("CAL float_atan\n"); fatan=1;
+        add_instr("CAL float_atan\n"); fatan=1; finv=1;
     }
 
     // float na memoria
     if ((get_type(et) == 2) && (et % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_atan\n"); fatan=1;
+        add_instr("CAL float_atan\n"); fatan=1; finv=1;
     }
 
     // float no acc
     if ((get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("CAL float_atan\n"); fatan=1;
+        add_instr("CAL float_atan\n"); fatan=1; finv=1;
     }
 
     acc_ok = 1;
@@ -460,27 +576,27 @@ int exec_sin(int et)
     if ((get_type(et) == 1) && (et % OFST != 0))
     {
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     // int no acc
     if ((get_type(et) == 1) && (et % OFST == 0))
     {
         add_instr("I2F\n");
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     // float na memoria
     if ((get_type(et) == 2) && (et % OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et%OFST]);
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     // float no acc
     if ((get_type(et) == 2) && (et % OFST == 0))
     {
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     acc_ok = 1;
@@ -501,7 +617,7 @@ int exec_cos(int et)
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
         add_instr("F_NEG\n");
         add_instr("F_ADD 1.570796327");
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     // int no acc
@@ -510,7 +626,7 @@ int exec_cos(int et)
         add_instr("I2F\n");
         add_instr("F_NEG\n");
         add_instr("F_ADD 1.570796327");
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     // float na memoria
@@ -519,7 +635,7 @@ int exec_cos(int et)
         add_instr("%s %s\n", ld, v_name[et%OFST]);
         add_instr("F_NEG\n");
         add_instr("F_ADD 1.570796327");
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     // float no acc
@@ -527,7 +643,7 @@ int exec_cos(int et)
     {
         add_instr("F_NEG\n");
         add_instr("F_ADD 1.570796327");
-        add_instr("CAL float_sin\n"); fsin=1;
+        add_instr("CAL float_sin\n"); fsin=1; finv=1;
     }
 
     acc_ok = 1;

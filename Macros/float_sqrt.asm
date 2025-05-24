@@ -4,7 +4,9 @@
 @float_sqrt     SET sqrt_num       // pega parametro
 @L1_sqrt        SET sqrt_x         // atualiza x
 
-              F_DIV sqrt_num       // iteracao
+                CAL float_inv      // iteracao
+              F_MLT sqrt_num
+                NOP
                 NOP
               F_ADD sqrt_x
                 NOP
@@ -29,4 +31,4 @@
                 RET
 
 @L2else_sqrt    LOD sqrt_raiz      // se nao eh, volta
-                JMP L1_sqrt 
+                JMP L1_sqrt

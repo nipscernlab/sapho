@@ -8,6 +8,7 @@
 // includes locais
 #include "..\Headers\t2t.h"
 #include "..\Headers\oper.h"
+#include "..\Headers\macros.h"
 #include "..\Headers\stdlib.h"
 #include "..\Headers\global.h"
 #include "..\Headers\data_use.h"
@@ -1120,14 +1121,16 @@ int oper_divi(int et1, int et2)
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-        add_instr("DIV %s\n",     v_name[et1%OFST]);
+        //add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+        //add_instr("DIV %s\n",     v_name[et1%OFST]);
+        exec_idiv(et1,et2);
     }
 
     // int var com int acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("DIV %s\n", v_name[et1%OFST]);
+        //add_instr("DIV %s\n", v_name[et1%OFST]);
+        exec_idiv(et1,et2);
     }
 
     // int var com float var
@@ -1135,7 +1138,10 @@ int oper_divi(int et1, int et2)
     {
         add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
         add_instr("P_LOD %s\n"   , v_name[et2%OFST]);
-        add_instr("SF_DIV\n");
+
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // int var com float acc
@@ -1144,7 +1150,10 @@ int oper_divi(int et1, int et2)
         add_instr("SET   aux_var\n");
         add_instr("I2F_M %s\n", v_name[et1%OFST]);
         add_instr("P_LOD aux_var\n");
-        add_instr("SF_DIV\n");
+
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // int var com comp const
@@ -1204,26 +1213,32 @@ int oper_divi(int et1, int et2)
         add_instr("SET   aux_var3\n"); // salva o float
         add_instr("F_MLT aux_var1\n");
         add_instr("P_LOD aux_var2\n"); // pega o modulo ao quadrado
-        add_instr("SF_DIV \n");        // faz a divisao
+        //add_instr("SF_DIV \n");        // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
 
         add_instr("P_LOD aux_var3\n"); // pega o float
         add_instr("F_MLT aux_var \n");
         add_instr("P_LOD aux_var2\n"); // pega o modulo ao quadrado
-        add_instr("SF_DIV \n");        // faz a divisao
+        //add_instr("SF_DIV \n");        // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         oper_neg (2*OFST);
     }
 
     // int acc com int var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        add_instr("%s %s\n", ld, v_name[et2%OFST]);
-        add_instr("S_DIV\n");
+        //add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        //add_instr("S_DIV\n");
+        exec_idiv(et1,et2);
     }
 
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        add_instr("S_DIV\n");
+        //add_instr("S_DIV\n");
+        exec_idiv(et1,et2);
     }
 
     // int acc com float var
@@ -1231,7 +1246,9 @@ int oper_divi(int et1, int et2)
     {
         add_instr("I2F\n");
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // int acc com float acc
@@ -1240,7 +1257,9 @@ int oper_divi(int et1, int et2)
         add_instr("SET_P aux_soma\n");
         add_instr("I2F\n");
         add_instr("P_LOD aux_soma\n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // int acc com comp const
@@ -1313,12 +1332,16 @@ int oper_divi(int et1, int et2)
         add_instr("LOD   aux_var2\n"); // carrega o float
         add_instr("F_MLT aux_var1\n");
         add_instr("P_LOD aux_var3\n"); // pega o modulo ao quadrado
-        add_instr("SF_DIV        \n"); // faz a divisao
+        //add_instr("SF_DIV        \n"); // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
 
         add_instr("P_LOD aux_var2\n"); // pega o float
         add_instr("F_MLT aux_var \n");
         add_instr("P_LOD aux_var3\n"); // pega o modulo ao quadrado
-        add_instr("SF_DIV        \n"); // faz a divisao
+        //add_instr("SF_DIV        \n"); // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         oper_neg (2*OFST);
     }
 
@@ -1326,20 +1349,26 @@ int oper_divi(int et1, int et2)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("%s %s\n", i2f, v_name[et2%OFST]);
-        add_instr("F_DIV %s\n"   , v_name[et1%OFST]);
+        //add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("F_MLT %s\n", v_name[et1%OFST]);
     }
 
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
         add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-        add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
+        //add_instr("F_DIV %s\n", v_name[et1%OFST]);
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("F_MLT %s\n", v_name[et1%OFST]);
     }
 
     // float var com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("F_DIV %s\n", v_name[et1%OFST]);
+        //add_instr("F_DIV %s\n", v_name[et1%OFST]);
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("F_MLT %s\n", v_name[et1%OFST]);
     }
 
     // float var com comp const
@@ -1398,12 +1427,16 @@ int oper_divi(int et1, int et2)
         add_instr("LOD %s\n"  , v_name[et1%OFST]); // carrega o float
         add_instr("F_MLT aux_var1\n");
         add_instr("P_LOD aux_var2\n");             // pega o modulo ao quadrado
-        add_instr("SF_DIV\n");                     // faz a divisao
+        //add_instr("SF_DIV\n");                     // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
 
         add_instr("P_LOD %s\n", v_name[et1%OFST]); // carrega o float
         add_instr("F_MLT aux_var \n");
         add_instr("P_LOD aux_var2\n");             // pega o modulo ao quadrado
-        add_instr("SF_DIV\n");                     // faz a divisao
+        //add_instr("SF_DIV\n");                     // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         oper_neg (2*OFST);
     }
 
@@ -1411,27 +1444,35 @@ int oper_divi(int et1, int et2)
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
         add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
         add_instr("I2F\n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // float acc com comp const
@@ -1501,12 +1542,16 @@ int oper_divi(int et1, int et2)
         add_instr("LOD   aux_var2\n"); // carrega o float
         add_instr("F_MLT aux_var1\n");
         add_instr("P_LOD aux_var3\n"); // pega o modulo ao quadrado
-        add_instr("SF_DIV        \n"); // faz a divisao
+        //add_instr("SF_DIV        \n"); // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
 
         add_instr("P_LOD aux_var2\n"); // pega o float
         add_instr("F_MLT aux_var \n");
         add_instr("P_LOD aux_var3\n"); // pega o modulo ao quadrado
-        add_instr("SF_DIV        \n"); // faz a divisao
+        //add_instr("SF_DIV        \n"); // faz a divisao
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         oper_neg (2*OFST);
     }
 
@@ -1770,10 +1815,14 @@ int oper_divi(int et1, int et2)
         add_instr("SET_P aux_var \n");
         add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
         add_instr("SET   aux_var1\n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         add_instr("P_LOD aux_var \n");
         add_instr("P_LOD aux_var1\n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // comp acc com int acc
@@ -1783,10 +1832,14 @@ int oper_divi(int et1, int et2)
         add_instr("SET_P aux_var \n");
         add_instr("SET_P aux_var1\n");
         add_instr("P_LOD aux_var \n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         add_instr("P_LOD aux_var1\n");
         add_instr("P_LOD aux_var \n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // comp acc com float var
@@ -1794,10 +1847,14 @@ int oper_divi(int et1, int et2)
     {
         add_instr("SET_P aux_var\n");
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         add_instr("P_LOD aux_var\n");
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // comp acc com float acc
@@ -1806,10 +1863,14 @@ int oper_divi(int et1, int et2)
         add_instr("SET_P aux_var \n");
         add_instr("SET_P aux_var1\n");
         add_instr("P_LOD aux_var \n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
         add_instr("P_LOD aux_var1\n");
         add_instr("P_LOD aux_var \n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
     }
 
     // comp acc com comp const
@@ -1841,6 +1902,7 @@ int oper_divi(int et1, int et2)
         oper_subt(2*OFST,2*OFST);
         add_instr("P_LOD aux_var2\n");
         oper_divi(2*OFST,2*OFST);
+        oper_neg (2*OFST);
     }
 
     // comp acc com comp var
@@ -1872,6 +1934,7 @@ int oper_divi(int et1, int et2)
         oper_subt(2*OFST,2*OFST);
         add_instr("P_LOD aux_var2\n");
         oper_divi(2*OFST,2*OFST);
+        oper_neg (2*OFST);
     }
 
     // comp acc com comp acc
@@ -1895,7 +1958,9 @@ int oper_divi(int et1, int et2)
         add_instr("F_MLT aux_var \n");
         add_instr("SF_ADD        \n");
         add_instr("P_LOD aux_var4\n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
 
         add_instr("P_LOD aux_var3\n");
         add_instr("F_MLT aux_var \n");
@@ -1903,7 +1968,10 @@ int oper_divi(int et1, int et2)
         add_instr("F_MLT aux_var1\n");
         oper_subt(2*OFST,2*OFST);
         add_instr("P_LOD aux_var4\n");
-        add_instr("SF_DIV\n");
+        //add_instr("SF_DIV\n");
+        add_instr("CAL float_inv\n"); finv = 1;
+        add_instr("SF_MLT\n");
+        oper_neg (2*OFST);
     }
 
     acc_ok = 1;
@@ -1961,7 +2029,9 @@ int oper_mod(int et1, int et2)
 // operacoes de comparacao ----------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// compara maior, menor e igual (separar o igual pra economizar clock)
+// compara maior, menor e igual
+// - separar o igual pra economizar clock
+// - rever para evitar uso de pilha a toa!
 int oper_cmp(int et1, int et2, int type)
 {
     int  etr, eti;
