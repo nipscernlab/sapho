@@ -57,6 +57,7 @@
 
 @L3_finv                LOD   6          // while (m < 6)
                         LES   finv_m
+                        NOP
                         JIZ   L3end_finv
 
                         LOD   finv_x     y = y*(2.0 - x*y);
@@ -97,6 +98,7 @@
 
 @L4end @L5_finv         LOD   0          // while (k < 0)
                         LES   finv_k
+                        NOP
                         JIZ   L5end_finv
 
                         LOD   finv_y     // y = y*2.0;

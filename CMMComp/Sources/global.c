@@ -190,6 +190,10 @@ void add_instr(char *inst, ...)
     if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
     if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
     if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
+    if (find_opc(   "LES"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_LES"  , str)) add_instr("NOP\n");
+    if (find_opc(   "EQU"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_EQU"  , str)) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais

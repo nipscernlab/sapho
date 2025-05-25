@@ -741,11 +741,12 @@ module ula_les
 #(
 	parameter NUBITS = 32
 )(
+	 input                     clk,
 	 input signed [NUBITS-1:0] in1, in2,
 	output reg    [NUBITS-1:0] out 
 );
 
-always @ (*) out <= (in1 < in2);
+always @ (posedge clk) out <= (in1 < in2);
 
 endmodule
 
@@ -799,11 +800,12 @@ module ula_equ
 #(
 	parameter NUBITS = 32
 )(
-	 input [NUBITS-1:0] in1, in2,
-	output [NUBITS-1:0] out 
+	 input                  clk,
+	 input     [NUBITS-1:0] in1, in2,
+	output reg [NUBITS-1:0] out 
 );
 
-assign out = (in1 == in2);
+always @ (posedge clk) out <= (in1 == in2);
 
 endmodule
 
@@ -1158,7 +1160,7 @@ generate if (LIN_M) ula_lin #(NUBITS) my_linm(in1, linm); else assign linm = {NU
 
 wire signed [NUBITS-1:0] les;
 
-generate if (LES) ula_les #(NUBITS) my_les(in1, in2, les); else assign les = {NUBITS{1'bx}}; endgenerate
+generate if (LES) ula_les #(NUBITS) my_les(clk, in1, in2, les); else assign les = {NUBITS{1'bx}}; endgenerate
 
 // F_LES ----------------------------------------------------------------------
 
@@ -1182,7 +1184,7 @@ generate if (F_GRE) ula_fgre #(NUBITS,NBMANT) my_fgre(sm1_out, sm2_out, fgre); e
 
 wire signed [NUBITS-1:0] equ;
 
-generate if (EQU) ula_equ #(NUBITS) my_equ(in1, in2, equ); else assign equ = {NUBITS{1'bx}}; endgenerate
+generate if (EQU) ula_equ #(NUBITS) my_equ(clk, in1, in2, equ); else assign equ = {NUBITS{1'bx}}; endgenerate
 
 // SHR ------------------------------------------------------------------------
 

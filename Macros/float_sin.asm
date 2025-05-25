@@ -4,6 +4,7 @@
 @float_sin    SET   sin_x          // pega parametro x
 
               EQU    0.0           // if (x == 0) return 0.0;
+              NOP
               JIZ    L1_sin
               LOD    0.0
               RET

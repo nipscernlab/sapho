@@ -4,12 +4,14 @@
 @float_atan                 SET   my_atan_x              // pega parametro x
 
                             EQU   0.0                    // if (x == 0) return 0.0;
+                            NOP
                             JIZ   L1else_atan
                             LOD   0.0
                             RET
 
 @L1else_atan              F_ABS_M my_atan_x              // if (abs(x) == 1.0) return sign(x,pi2*0.5);
                             EQU   1.0
+                            NOP
                             JIZ   L2else_atan
                             LOD   1.57079632679489661923 // pi/2
                           F_MLT   0.5

@@ -78,4 +78,37 @@ void main()
     out(1,1000.0*imag(data[6)));
     out(0,1000.0*real(data[7)));
     out(1,1000.0*imag(data[7)));
+
+    int int_abs  =       abs(-5); //   5
+    int int_absm =       abs( 3); //   3
+    int     ann  =       15 & 5;  //   5
+    int     cor  =       10 ^ 5;  //  15
+    float   i2f  =       -13   ;  // -13
+    float   i2fm =        13   ;  //  13
+    int     equ  =       3 == 3;  //   1
+    float  fabs  =    abs(-4.6);  // 4.6
+    float  fabsm =    abs( 4.7);  // 4.7
+    int     gre  =        4 > 3;  //   1
+    int     inv  =       ~(1-1);  //  -1
+    int    fgre  =      4.0 > 3;  //   1
+    int    fles  =      3.0 < 4;  //   1
+    float  fpst  = pset(  -8.0);  //   0
+    float  fpstm = pset(   8.0);  //   8
+    float  fsgn  = sign(1,-8.0);  //   8
+    int    f2im  =       2.0   ;  //   2
+    int     invm =           ~0;  //  -1
+    int     lan  =       3 && 0;  //   0
+    int     linm =           !0;  //   1
+    int     lin  =        !(-1);  //   0
+    int     lor  =       4 || 0;  //   1
+    int     neg  =       -(1+2);  //  -3
+    int     nrm  = norm(  -256);  //  -2
+    int     nrmm = norm(   256);  //   2
+    int     orr  =       31 | 0;  //  31
+    int     pst  = pset(   4-9);  //   0
+    int     pstm = pset(     7);  //   7
+    int     sgn  = sign(1,  -8);  //   8
+    int     shr  =       8 >> 2;  //   2
+    int     shl  =       2 << 2;  //   8
+    int     srs  =     -8 >>> 2;  //  -2
 }

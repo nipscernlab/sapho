@@ -49,6 +49,7 @@
 
 @L5_int_div      LOD   0             // while (shift >= 0)
                  LES   divide_shift
+                 NOP
                  LIN
                  JIZ   L5end_int_div
 
