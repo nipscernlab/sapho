@@ -156,8 +156,8 @@ void header_int(char *fasm, char *pc_sim_mem)
 
     add_sinst(0, "// Gera variaveis auxiliares --------------------------------------------------\n\n");
 
-    // LOD NULL deve ser a primeira instrucao sempre, pra evitar problemas de reset
-    add_sinst(-1, "LOD NULL              // evita problema da primeira instrucao com o reset ascincrono\n");
+    // NOP deve ser a primeira instrucao no endereco zero da memoria
+    add_sinst(-1,"NOP\n");
 
     // epsilon para convergencia de funcoes iterativas
     char numf[64];

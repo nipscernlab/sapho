@@ -34,27 +34,26 @@ int  num_ins  = 0;    // numero de instrucoes do parse
 // funcoes auxiliares ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// funcoes para achar a instrucao correta na funcao add_instr
-// ainda nao usei
-int is_delimiter(char c)
+// funcao para achar a instrucao correta na funcao add_instr
+int find_opc(const char *opc, const char *str)
 {
-    return c == '\0' || isspace(c) || ispunct(c);
-}
-
-int contemPalavraNEG(const char *str)
-{
+    size_t len = strlen(opc);
     const char *p = str;
 
-    while ((p = strstr(p, "NEG")) != NULL) {
-        // Verifica se antes de "NEG" tem início da string ou delimitador
-        if ((p == str || is_delimiter(*(p - 1))) &&
-            is_delimiter(*(p + 3))) {
-            return 1; // Encontrou "NEG" isolado
-        }
-        p += 3; // Avança para procurar a próxima ocorrência
+    while ((p = strstr(p, opc)) != NULL)
+    {
+        char before = (p == str) ? '\0' : *(p - 1);
+        char after = *(p + len);
+
+        int before_ok = (p == str) || before == '\0' || isspace((unsigned char)before);
+        int  after_ok =                after == '\0' || isspace((unsigned char) after);
+
+        if (before_ok && after_ok) return 1;
+
+        p += len;
     }
 
-    return 0; // Não encontrou "NEG" isolado
+    return 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -85,9 +84,9 @@ void parse_init(char *prname, char *d_proc, char *d_macro, char *d_tmp)
     sprintf(path,   "%s/cmm_log.txt", dir_tmp        ); f_log = fopen(path,"w"); // log com infos pro assembler e gtkwave
     sprintf(path, "%s/pc_%s_mem.txt", dir_tmp, prname); f_lin = fopen(path,"w"); // memoria no pc.v que passa de asm para cmm
 
-    // gera uma instrucao LOD NULL no inicio (tentar tirar isso) ----------------
+    // gera uma instrucao NOP no inicio (tentar tirar isso) -------------------
 
-    add_sinst(-1,"LOD NULL\n");
+    add_sinst(-1,"NOP\n");
 }
 
 void parse_end(char *prname, char *d_proc)
@@ -163,20 +162,34 @@ void add_instr(char *inst, ...)
     vsprintf(str, inst, args);
 
     // espera mais um clock para terminar o processo de    normalizacao em ponto flutuante
-    if (strstr(str,   "I2F") != NULL) add_instr("NOP\n");
-    if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n");
-    if (strstr(str, "F_MLT") != NULL) add_instr("NOP\n");
-    if (strstr(str, "F_DIV") != NULL) add_instr("NOP\n");
+    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
+    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
-    if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n");
-    if (strstr(str, "F_GRE") != NULL) add_instr("NOP\n");
-    if (strstr(str, "F_LES") != NULL) add_instr("NOP\n");
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
-    if (strstr(str, "F_ADD") != NULL) add_instr("NOP\n"); // soma ponto flutuante
-    if (strstr(str,   "MLT") != NULL) add_instr("NOP\n"); // multiplicacao ponto fixo e flutuante
-    if (strstr(str,   "F2I") != NULL) add_instr("NOP\n"); // float to int
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc(   "MLT"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
+    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais
