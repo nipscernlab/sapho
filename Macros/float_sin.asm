@@ -23,6 +23,7 @@
               NOP
               NOP
               NOP
+              NOP
               SET   sin_x
               JMP   L1_sin
 
@@ -33,6 +34,7 @@
             F_MLT   sin_x
               NOP
               NOP
+              NOP
               SET   sin_x2
 
               LOD   sin_termo      // float resultado = termo;
@@ -41,6 +43,7 @@
               LOD   sin_x2         // float tolerancia = epslon/x2;
               CAL   float_inv
             F_MLT   epsilon_taylor
+              NOP
               NOP
               NOP
               SET   sin_tolerancia
@@ -59,6 +62,7 @@
             F_MLT   sin_termo
               NOP
               NOP
+              NOP
             P_NEG_M 1
               ADD   sin_indiceX
               NOP
@@ -66,14 +70,17 @@
               NOP
               I2F
               NOP
+              NOP
               CAL   float_inv
            SF_MLT
+              NOP
               NOP
               NOP
               SET   sin_termo
 
               LOD   sin_resultado  // resultado = resultado + termo;
             F_ADD   sin_termo
+              NOP
               NOP
               NOP
               NOP

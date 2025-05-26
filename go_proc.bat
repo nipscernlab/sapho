@@ -39,7 +39,7 @@ set GTKW=teste.gtkw
 :: frequencia de operacao do processador em MHz
 set FRE_CLK=100
 :: numero de clocks a ser simulado
-set NUM_CLK=20000
+set NUM_CLK=40000
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
 

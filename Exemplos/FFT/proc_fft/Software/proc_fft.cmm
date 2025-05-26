@@ -111,4 +111,9 @@ void main()
     int     shr  =       8 >> 2;  //   2
     int     shl  =       2 << 2;  //   8
     int     srs  =     -8 >>> 2;  //  -2
+
+    float fdiv =  10.0/3.0; // 3.333...
+    float sen  =  sin(1.0); // 0.8415
+    float raiz = sqrt(4.0); // 2.000
+    float ata  = atan(1.1); // 0.8328
 }

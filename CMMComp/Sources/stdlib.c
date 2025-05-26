@@ -303,7 +303,7 @@ int exec_norm(int et)
 // ----------------------------------------------------------------------------
 
 // codigo em C+- para calcular divisao para int
-// macro float_sqrt.asm
+// macro int_div.asm
 /*int divide(int num, int den)
 {
     int sig = sign(num,1)*den;
@@ -376,7 +376,7 @@ int exec_idiv(int et1, int et2)
 }
 
 // codigo em C+- para calcular o inverso de um float
-// macro float_sqrt.asm
+// macro float_inv.asm
 /*float float_inv(float x)
 {
     float s = sign(x, 1.0);

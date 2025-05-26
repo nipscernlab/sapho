@@ -237,10 +237,11 @@ module norm_mux
 	 input     [NUBITS-1:0] fmlt,
 	 input     [NUBITS-1:0] fdiv,
 	 input     [NUBITS-1:0] i2f , i2fm,
-	output     [NUBITS-1:0] out
+	output reg [NUBITS-1:0] out
 );
 
-reg [NUBITS-1:0] mux_out;
+reg  [NUBITS-1:0] mux_out;
+wire [NUBITS-1:0]  un_out;
 
 always @ (posedge clk) case (op)
 	6'd3   : mux_out <=  fadd ;   // F_ADD
@@ -251,7 +252,9 @@ always @ (posedge clk) case (op)
 	default: mux_out <= {NUBITS{1'bx}};
 endcase
 
-ula_norm #(NBMANT, NBEXPO) ula_norm (mux_out, out);
+ula_norm #(NBMANT, NBEXPO) ula_norm (mux_out, un_out);
+
+always @ (posedge clk) out <= un_out;
 
 endmodule
 
@@ -714,11 +717,12 @@ module ula_lor
 #(
 	parameter NUBITS = 32
 )(
-	 input [NUBITS-1:0] in1, in2,
-	output [NUBITS-1:0] out 
+	 input 		            clk,
+	 input     [NUBITS-1:0] in1, in2,
+	output reg [NUBITS-1:0] out 
 );
 
-assign out = ((in1 == {NUBITS{1'b0}}) && (in2 == {NUBITS{1'b0}})) ? {NUBITS{1'b0}} : {{NUBITS-1{1'b0}}, 1'b1};
+always @ (posedge clk) out <= ((in1 == {NUBITS{1'b0}}) && (in2 == {NUBITS{1'b0}})) ? {NUBITS{1'b0}} : {{NUBITS-1{1'b0}}, 1'b1};
 
 endmodule
 
@@ -737,7 +741,9 @@ module ula_lin
 	output reg [NUBITS-1:0] out 
 );
 
-always @ (posedge clk) out <= (in == {NUBITS{1'b0}}) ? {{NUBITS-1{1'b0}}, 1'b1} : {NUBITS{1'b0}};
+reg [NUBITS-1:0] inr; always @ (posedge clk) inr <= in;
+
+always @ (posedge clk) out <= (inr == {NUBITS{1'b0}}) ? {{NUBITS-1{1'b0}}, 1'b1} : {NUBITS{1'b0}};
 
 endmodule
 
@@ -1158,7 +1164,7 @@ generate if (LAN) ula_lan #(NUBITS) my_lan(clk, in1, in2, lan); else assign lan 
 
 wire signed [NUBITS-1:0] lor;
 
-generate if (LOR) ula_lor #(NUBITS) my_lor(in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
+generate if (LOR) ula_lor #(NUBITS) my_lor(clk, in1, in2, lor); else assign lor = {NUBITS{1'bx}}; endgenerate
 
 // LIN ------------------------------------------------------------------------
 

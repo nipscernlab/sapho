@@ -18,10 +18,12 @@
                      SF_GRE
                         NOP
                         NOP
+                        NOP
                         JIZ   L1end_finv
                         
                         LOD   finv_x     // x = x * 0.5;
                       F_MLT   0.5
+                        NOP
                         NOP
                         NOP
                         SET   finv_x
@@ -43,6 +45,7 @@
 
                         LOD   finv_x     // x = x * 2.0;
                       F_MLT   2.0
+                        NOP
                         NOP
                         NOP
                         SET   finv_x
@@ -69,13 +72,16 @@
                       F_MLT   finv_y
                         NOP
                         NOP
+                        NOP
                       F_NEG
                       F_ADD   2.0
                         NOP
                         NOP
                         NOP
                         NOP
+                        NOP
                       F_MLT   finv_y
+                        NOP
                         NOP
                         NOP
                         SET   finv_y
@@ -90,10 +96,11 @@
 @L3end_finv @L4_finv    LOD   0          // while (k > 0)
                         GRE   finv_k
                         NOP
-                        JIZ   L4end
+                        JIZ   L4end_finv
 
                         LOD   finv_y     // y = y*0.5;
                       F_MLT   0.5
+                        NOP
                         NOP
                         NOP
                         SET   finv_y
@@ -105,13 +112,14 @@
 
                         JMP   L4_finv    // } (while)
 
-@L4end @L5_finv         LOD   0          // while (k < 0)
+@L4end_finv @L5_finv    LOD   0          // while (k < 0)
                         LES   finv_k
                         NOP
                         JIZ   L5end_finv
 
                         LOD   finv_y     // y = y*2.0;
                       F_MLT   2.0
+                        NOP
                         NOP
                         NOP
                         SET   finv_y
@@ -125,6 +133,7 @@
 
 @L5end_finv             LOD   finv_y     // return y*s;
                       F_MLT   finv_s
+                        NOP
                         NOP
                         NOP
                         RET

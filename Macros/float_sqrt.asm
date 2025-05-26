@@ -8,12 +8,15 @@
               F_MLT sqrt_num
                 NOP
                 NOP
+                NOP
               F_ADD sqrt_x
                 NOP
                 NOP
                 NOP
                 NOP
+                NOP
               F_MLT 0.5
+                NOP
                 NOP
                 NOP
                 SET sqrt_raiz
@@ -24,8 +27,10 @@
                 NOP
                 NOP
                 NOP
+                NOP
 
               F_GRE epsilon_taylor // checa tolerancia
+                NOP
                 NOP
                 NOP
                 JIZ L2else_sqrt 

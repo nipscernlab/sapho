@@ -181,13 +181,6 @@ void add_instr(char *inst, ...)
     if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
     if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
 
-    // coloca mais um clock internamente em algumas operacoes aritmeticas
-    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
-    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
-    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
-
     // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
     if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
@@ -195,6 +188,38 @@ void add_instr(char *inst, ...)
     if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
     if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
     if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
+
+    // coloca mais um clock no inicio da normalizacao em ponto flutuante
+    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
+    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+
+    // coloca mais um clock no final da normalizacao em ponto flutuante
+    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
+    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+
+    // coloca mais um clock internamente em algumas operacoes aritmeticas
+    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
+    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
+    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
+    if (find_opc(   "LIN"  , str)) add_instr("NOP\n");
+    if (find_opc(   "LIN_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_LIN_M", str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
@@ -232,17 +257,8 @@ void add_instr(char *inst, ...)
     if (find_opc( "S_ADD"  , str)) add_instr("NOP\n");
     if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
     if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
-
-    // coloca mais um clock no inicio da normalizacao em ponto flutuante
-    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
-    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+    if (find_opc(   "LOR"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_LOR"  , str)) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais
