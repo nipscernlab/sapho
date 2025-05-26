@@ -798,11 +798,12 @@ module ula_fgre
 	parameter NUBITS = 32,
 	parameter NBMANT = 23
 )(
+	 input                     clk,
 	 input signed [NBMANT  :0] in1, in2,
 	output reg    [NUBITS-1:0] out 
 );
 
-always @ (*) out <= (in1 > in2);
+always @ (posedge clk) out <= (in1 > in2);
 
 endmodule
 
@@ -1193,7 +1194,7 @@ generate if (GRE) ula_gre #(NUBITS) my_gre(clk, in1, in2, gre); else assign gre 
 
 wire signed [NUBITS-1:0] fgre;
 
-generate if (F_GRE) ula_fgre #(NUBITS,NBMANT) my_fgre(sm1_out, sm2_out, fgre); else assign fgre = {NUBITS{1'bx}}; endgenerate
+generate if (F_GRE) ula_fgre #(NUBITS,NBMANT) my_fgre(clk, sm1_out, sm2_out, fgre); else assign fgre = {NUBITS{1'bx}}; endgenerate
 
 // EQU ------------------------------------------------------------------------
 

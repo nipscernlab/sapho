@@ -144,33 +144,27 @@ void parse_end(char *prname, char *d_proc)
 // adiciona instrucao no arquivo asm
 void add_instr(char *inst, ...)
 {
-    // adiciona instrucao -----------------------------------------------------
-
     va_list  args;
     va_start(args , inst);
-    if (using_macro == 0) vfprintf(f_asm, inst, args);
-    va_end  (args);
+
+    char     str[100];
+    vsprintf(str, inst, args);
+
+    // ------------------------------------------------------------------------
+    // adiciona instrucao -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (using_macro == 0) fprintf(f_asm, "%s", str);
+    va_end(args);
 
     // tabela para tradutor assembly do gtkwave -------------------------------
 
     if (using_macro == 0) num_ins++;
     if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
 
-    // verifica se instrucao precisa de NOP -----------------------------------
-
-    char     str[100];
-    vsprintf(str, inst, args);
-
-    // espera mais um clock para terminar o processo de normalizacao em ponto flutuante
-    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
-    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+    // ------------------------------------------------------------------------
+    // verifica se instrucao precisa de NOP depois ----------------------------
+    // ------------------------------------------------------------------------
 
     // coloca mais um clock internamente na de-normalizacao em ponto flutuante
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
@@ -179,6 +173,13 @@ void add_instr(char *inst, ...)
     if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
     if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
     if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
+
+    // coloca mais um clock internamente em algumas operacoes aritmeticas
+    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
+    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
+    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
@@ -222,13 +223,19 @@ void add_instr(char *inst, ...)
     if (find_opc( "P_NRM_M", str)) add_instr("NOP\n");
     if (find_opc(   "ADD"  , str)) add_instr("NOP\n");
     if (find_opc( "S_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
 
-    // coloca mais um clock internamente em algumas operacoes aritmeticas
-    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
-    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
-    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
+    // espera mais um clock para terminar o processo de normalizacao em ponto flutuante
+    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
+    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais
