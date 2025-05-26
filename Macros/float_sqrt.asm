@@ -12,6 +12,7 @@
                 NOP
                 NOP
                 NOP
+                NOP
               F_MLT 0.5
                 NOP
                 NOP
@@ -22,8 +23,10 @@
                 NOP
                 NOP
                 NOP
+                NOP
 
               F_GRE epsilon_taylor // checa tolerancia
+                NOP
                 NOP
                 JIZ L2else_sqrt 
 

@@ -13,11 +13,13 @@
             F_LES   3.141592654
               NOP
               NOP
+              NOP
               JIZ   L1end_sin
               LOD   6.283185307
             F_SGN   sin_x
             F_NEG
             F_ADD   sin_x
+              NOP
               NOP
               NOP
               NOP
@@ -50,6 +52,7 @@
             F_LES   sin_tolerancia
               NOP
               NOP
+              NOP
               JIZ   L2end_sin
 
             F_NEG_M sin_x2         // termo = termo * (- x2) / ((indiceX - 1) * indiceX);
@@ -58,6 +61,7 @@
               NOP
             P_NEG_M 1
               ADD   sin_indiceX
+              NOP
               MLT   sin_indiceX
               NOP
               I2F
@@ -73,10 +77,12 @@
               NOP
               NOP
               NOP
+              NOP
               SET   sin_resultado
 
               LOD   sin_indiceX    // indiceX = indiceX + 2;
               ADD   2
+              NOP
               SET   sin_indiceX
 
               JMP   L2_sin         // }

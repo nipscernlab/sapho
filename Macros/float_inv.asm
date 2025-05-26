@@ -17,6 +17,7 @@
                       P_LOD   1.5
                      SF_GRE
                         NOP
+                        NOP
                         JIZ   L1end_finv
                         
                         LOD   finv_x     // x = x * 0.5;
@@ -27,6 +28,7 @@
 
                         LOD   finv_k     // k++;
                         ADD   1
+                        NOP
                         SET   finv_k
 
                         JMP   L1_finv    // } (while)
@@ -34,6 +36,7 @@
 @L1end_finv @L2_finv    LOD   finv_x     // while (x < 0.5)
                       P_LOD   0.5
                      SF_LES
+                        NOP
                         NOP
                         NOP
                         JIZ   L2end_finv
@@ -46,6 +49,7 @@
 
                         NEG_M 1          // k = k-1;
                         ADD   finv_k
+                        NOP
                         SET   finv_k
 
                         JMP   L2_finv    // } (while)
@@ -70,6 +74,7 @@
                         NOP
                         NOP
                         NOP
+                        NOP
                       F_MLT   finv_y
                         NOP
                         NOP
@@ -77,6 +82,7 @@
 
                         LOD   finv_m     // m++;
                         ADD   1
+                        NOP
                         SET   finv_m
 
                         JMP   L3_finv    // } (while)
@@ -94,6 +100,7 @@
 
                         NEG_M 1          // k = k-1;
                         ADD   finv_k
+                        NOP
                         SET   finv_k
 
                         JMP   L4_finv    // } (while)
@@ -111,6 +118,7 @@
 
                         LOD   finv_k     // k++;
                         ADD   1
+                        NOP
                         SET   finv_k
 
                         JMP   L5_finv    // } (while)

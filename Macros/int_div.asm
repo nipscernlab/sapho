@@ -40,6 +40,7 @@
 
                  LOD   divide_shift  // shift++;
                  ADD   1
+                 NOP
 
                  SET   divide_shift  // dens = den << shift;
                  LOD   divide_shift
@@ -51,6 +52,7 @@
 
 @L4end_int_div   NEG_M 1             // shift = shift - 1;
                  ADD   divide_shift
+                 NOP
                  SET   divide_shift
 
 @L5_int_div      LOD   0             // while (shift >= 0)
@@ -74,16 +76,19 @@
 
                  NEG_M divide_dens   // num = num - dens;
                  ADD   divide_num
+                 NOP
                  SET   divide_num
 
                  LOD   divide_shift  // result = result + (1 << shift);
                  SHL   1
                  NOP
                  ADD   divide_result
+                 NOP
                  SET   divide_result
 
 @L6else_int_div  NEG_M 1             // shift = shift-1;
                  ADD   divide_shift
+                 NOP
                  SET   divide_shift
 
                  JMP   L5_int_div    // } (while)

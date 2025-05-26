@@ -134,12 +134,15 @@ module ula_denorm
 	output reg signed [MAN    :0] sm1_out, sm2_out
 );
 
-wire                  s1_in = in1[MAN+EXP      ]; 
-wire                  s2_in = in2[MAN+EXP      ]; 
-wire signed [EXP-1:0] e1_in = in1[MAN+EXP-1:MAN];
-wire signed [EXP-1:0] e2_in = in2[MAN+EXP-1:MAN];
-wire        [MAN-1:0] m1_in = in1[MAN    -1:0  ];
-wire        [MAN-1:0] m2_in = in2[MAN    -1:0  ];
+reg [MAN+EXP:0] in1r; always @ (posedge clk) in1r <= in1;
+reg [MAN+EXP:0] in2r; always @ (posedge clk) in2r <= in2;
+
+wire                  s1_in = in1r[MAN+EXP      ]; 
+wire                  s2_in = in2r[MAN+EXP      ]; 
+wire signed [EXP-1:0] e1_in = in1r[MAN+EXP-1:MAN];
+wire signed [EXP-1:0] e2_in = in2r[MAN+EXP-1:MAN];
+wire        [MAN-1:0] m1_in = in1r[MAN    -1:0  ];
+wire        [MAN-1:0] m2_in = in2r[MAN    -1:0  ];
 
 wire signed [EXP:0] eme    =  e1_in-e2_in;
 wire                ege    =          eme   [EXP];
@@ -288,11 +291,12 @@ module ula_add
 #(
 	parameter NUBITS = 32
 )(
-	 input [NUBITS-1:0] in1, in2,
-	output [NUBITS-1:0] out 
+	 input                  clk,
+	 input     [NUBITS-1:0] in1, in2,
+	output reg [NUBITS-1:0] out 
 );
 
-assign out = in1 + in2;
+always @ (posedge clk) out <= in1 + in2;
 
 endmodule
 
@@ -955,7 +959,7 @@ generate if (F_ADD | F_GRE | F_LES) ula_denorm #(NBMANT,NBEXPO) denorm(clk, in1,
 
 wire signed [NUBITS-1:0] add;
 
-generate if (ADD) ula_add #(NUBITS) my_add(in1, in2, add); else assign add = {NUBITS{1'bx}}; endgenerate
+generate if (ADD) ula_add #(NUBITS) my_add(clk, in1, in2, add); else assign add = {NUBITS{1'bx}}; endgenerate
 
 // F_ADD ----------------------------------------------------------------------
 

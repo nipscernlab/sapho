@@ -161,7 +161,7 @@ void add_instr(char *inst, ...)
     char     str[100];
     vsprintf(str, inst, args);
 
-    // espera mais um clock para terminar o processo de    normalizacao em ponto flutuante
+    // espera mais um clock para terminar o processo de normalizacao em ponto flutuante
     if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
     if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
     if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
@@ -171,6 +171,14 @@ void add_instr(char *inst, ...)
     if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
     if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
     if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+
+    // coloca mais um clock internamente na de-normalizacao em ponto flutuante
+    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
+    if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
@@ -212,6 +220,8 @@ void add_instr(char *inst, ...)
     if (find_opc(   "NRM"  , str)) add_instr("NOP\n");
     if (find_opc(   "NRM_M", str)) add_instr("NOP\n");
     if (find_opc( "P_NRM_M", str)) add_instr("NOP\n");
+    if (find_opc(   "ADD"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_ADD"  , str)) add_instr("NOP\n");
 
     // coloca mais um clock internamente em algumas operacoes aritmeticas
     if (find_opc(   "F2I"  , str)) add_instr("NOP\n");

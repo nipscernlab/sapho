@@ -25,6 +25,7 @@
                           F_LES   1.0
                             NOP
                             NOP
+                            NOP
                             JIZ   L3else_atan
                             LOD   1.57079632679489661923 // pi/2
                           F_SGN   my_atan_x
@@ -36,6 +37,7 @@
                             CAL   float_atan
                           F_NEG
                          SF_ADD
+                            NOP
                             NOP
                             NOP
                             NOP
@@ -67,10 +69,12 @@
                           F_LES   my_atan_tolerancia
                             NOP
                             NOP
+                            NOP
                             JIZ   L4end_atan
 
                             LOD   -2                     // termo = termo * (- x2 * (indiceX - 2)) / indiceX;
                             ADD   my_atan_indiceX
+                            NOP
                             I2F
                             NOP
                           F_MLT   my_atan_x2
@@ -93,10 +97,12 @@
                             NOP
                             NOP
                             NOP
+                            NOP
                             SET   my_atan_resultado
 
                             LOD   2                      // indiceX = indiceX + 2;
                             ADD   my_atan_indiceX
+                            NOP
                             SET   my_atan_indiceX
 
                             JMP   L4_atan                // }
