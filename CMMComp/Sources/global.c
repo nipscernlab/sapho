@@ -220,6 +220,8 @@ void add_instr(char *inst, ...)
     if (find_opc(   "LIN"  , str)) add_instr("NOP\n");
     if (find_opc(   "LIN_M", str)) add_instr("NOP\n");
     if (find_opc( "P_LIN_M", str)) add_instr("NOP\n");
+    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");

@@ -9,6 +9,7 @@
                 NOP
                 NOP
                 NOP
+                NOP
               F_ADD sqrt_x
                 NOP
                 NOP
@@ -16,6 +17,7 @@
                 NOP
                 NOP
               F_MLT 0.5
+                NOP
                 NOP
                 NOP
                 NOP

@@ -78,7 +78,7 @@ void main()
     out(1,1000.0*imag(data[6)));
     out(0,1000.0*real(data[7)));
     out(1,1000.0*imag(data[7)));
-
+/*
     int int_abs  =       abs(-5); //   5
     int int_absm =       abs( 3); //   3
     int     ann  =       15 & 5;  //   5
@@ -115,5 +115,5 @@ void main()
     float fdiv =  10.0/3.0; // 3.333...
     float sen  =  sin(1.0); // 0.8415
     float raiz = sqrt(4.0); // 2.000
-    float ata  = atan(1.1); // 0.8328
+    float ata  = atan(1.1); // 0.8328 */
 }

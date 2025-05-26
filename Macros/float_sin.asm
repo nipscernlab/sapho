@@ -35,6 +35,7 @@
               NOP
               NOP
               NOP
+              NOP
               SET   sin_x2
 
               LOD   sin_termo      // float resultado = termo;
@@ -43,6 +44,7 @@
               LOD   sin_x2         // float tolerancia = epslon/x2;
               CAL   float_inv
             F_MLT   epsilon_taylor
+              NOP
               NOP
               NOP
               NOP
@@ -63,6 +65,7 @@
               NOP
               NOP
               NOP
+              NOP
             P_NEG_M 1
               ADD   sin_indiceX
               NOP
@@ -73,6 +76,7 @@
               NOP
               CAL   float_inv
            SF_MLT
+              NOP
               NOP
               NOP
               NOP

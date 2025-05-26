@@ -26,6 +26,7 @@
                         NOP
                         NOP
                         NOP
+                        NOP
                         SET   finv_x
 
                         LOD   finv_k     // k++;
@@ -45,6 +46,7 @@
 
                         LOD   finv_x     // x = x * 2.0;
                       F_MLT   2.0
+                        NOP
                         NOP
                         NOP
                         NOP
@@ -73,6 +75,7 @@
                         NOP
                         NOP
                         NOP
+                        NOP
                       F_NEG
                       F_ADD   2.0
                         NOP
@@ -81,6 +84,7 @@
                         NOP
                         NOP
                       F_MLT   finv_y
+                        NOP
                         NOP
                         NOP
                         NOP
@@ -103,6 +107,7 @@
                         NOP
                         NOP
                         NOP
+                        NOP
                         SET   finv_y
 
                         NEG_M 1          // k = k-1;
@@ -122,6 +127,7 @@
                         NOP
                         NOP
                         NOP
+                        NOP
                         SET   finv_y
 
                         LOD   finv_k     // k++;
@@ -133,6 +139,7 @@
 
 @L5end_finv             LOD   finv_y     // return y*s;
                       F_MLT   finv_s
+                        NOP
                         NOP
                         NOP
                         NOP

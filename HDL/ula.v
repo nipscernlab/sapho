@@ -354,12 +354,15 @@ module ula_fmlt
 	output reg  [MAN+EXP:0] out
 );
 
-wire                  s1 = in1[MAN+EXP      ]; 
-wire                  s2 = in2[MAN+EXP      ]; 
-wire signed [EXP-1:0] e1 = in1[MAN+EXP-1:MAN];
-wire signed [EXP-1:0] e2 = in2[MAN+EXP-1:MAN];
-wire        [MAN-1:0] m1 = in1[MAN    -1:0  ];
-wire        [MAN-1:0] m2 = in2[MAN    -1:0  ];
+reg [MAN+EXP:0] in1r; always @ (posedge clk) in1r <= in1;
+reg [MAN+EXP:0] in2r; always @ (posedge clk) in2r <= in2;
+
+wire                  s1 = in1r[MAN+EXP      ]; 
+wire                  s2 = in2r[MAN+EXP      ]; 
+wire signed [EXP-1:0] e1 = in1r[MAN+EXP-1:MAN];
+wire signed [EXP-1:0] e2 = in2r[MAN+EXP-1:MAN];
+wire        [MAN-1:0] m1 = in1r[MAN    -1:0  ];
+wire        [MAN-1:0] m2 = in2r[MAN    -1:0  ];
 
 reg [2*MAN-1:0] mult; always @ (posedge clk) mult <= m1 * m2;
 reg             unf ; always @ (posedge clk) unf <= (e[EXP:EXP-1] == 2'b10); // underflow

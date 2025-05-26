@@ -18,6 +18,7 @@
                             NOP
                             NOP
                             NOP
+                            NOP
                           F_SGN   my_atan_x
                             RET
                             JMP   L2end_atan
@@ -33,6 +34,7 @@
                           P_LOD   my_atan_x
                             CAL   float_inv
                           F_MLT   1.0
+                            NOP
                             NOP
                             NOP
                             NOP
@@ -54,6 +56,7 @@
                             NOP
                             NOP
                             NOP
+                            NOP
                             SET   my_atan_x2
 
                             LOD   my_atan_termo          // float resultado = termo;
@@ -62,6 +65,7 @@
                             LOD   my_atan_x2             // float tolerancia = epslon/x2;
                             CAL   float_inv
                           F_MLT   epsilon_taylor
+                            NOP
                             NOP
                             NOP
                             NOP
@@ -87,8 +91,10 @@
                             NOP
                             NOP
                             NOP
+                            NOP
                           F_NEG
                           F_MLT   my_atan_termo
+                            NOP
                             NOP
                             NOP
                             NOP
@@ -97,6 +103,7 @@
                             NOP
                             CAL   float_inv
                          SF_MLT
+                            NOP
                             NOP
                             NOP
                             NOP

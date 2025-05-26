@@ -22,6 +22,7 @@
 int using_macro = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
 
 int idiv   = 0;      // se vai precisar de macro de divisao entre inteiros
+int imod   = 0;      // se vai precisar de macro para resto da divisao
 int finv   = 0;      // se vai precisar de macro para inerter um float
 int fatan  = 0;      // se vai precisar de macro pra arco tangente
 int fsqrt  = 0;      // se vai precisar de macro pra raiz quadrada
@@ -179,7 +180,7 @@ void header_int(char *fasm, char *pc_sim_mem)
 void mac_geni(char *fasm)
 {
     // se nao tiver nada pra fazer, sai!
-    if (!(idiv || finv || fsqrt || fatan || fsin)) return;
+    if (!(idiv || imod || finv || fsqrt || fatan || fsin)) return;
 
     char tasm[1024]; // arquivo temporario para o asm
     char tmem[1024]; // arquivo temporario para a tabela de memoria
@@ -191,7 +192,7 @@ void mac_geni(char *fasm)
 
     // cria os cabecalhos -----------------------------------------------------
 
-    header_int(tasm,tmem);
+    if (finv || fsqrt || fatan || fsin) header_int(tasm,tmem);
 
     // coloca os cabecalhos no inicio dos arquivos ----------------------------
 
@@ -203,6 +204,12 @@ void mac_geni(char *fasm)
     if (idiv)
     {
          sprintf(tasm, "%s/%s", dir_macro, "int_div.asm");
+        fcat2end(tasm,fasm);
+    }
+
+    if (imod)
+    {
+         sprintf(tasm, "%s/%s", dir_macro, "int_mod.asm");
         fcat2end(tasm,fasm);
     }
 

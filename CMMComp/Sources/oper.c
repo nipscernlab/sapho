@@ -1997,27 +1997,37 @@ int oper_mod(int et1, int et2)
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-        add_instr("MOD %s\n",     v_name[et1%OFST]);
+        //add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+        //add_instr("MOD %s\n",     v_name[et1%OFST]);
+        add_instr("%s %s\n" , ld, v_name[et1%OFST]);
+        add_instr("P_LOD %s\n"  , v_name[et2%OFST]);
+        add_instr("CAL int_mod\n"); imod=1; idiv=1;
     }
 
     // int var com int acc
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        add_instr("MOD %s\n", v_name[et1%OFST]);
+        //add_instr("MOD %s\n", v_name[et1%OFST]);
+        add_instr("SET aux_var\n");
+        add_instr("LOD %d\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_var\n");
+        add_instr("CAL int_mod\n"); imod=1; idiv=1;
     }
 
     // int acc com int var
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
+        //add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        //add_instr("S_MOD\n");
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
-        add_instr("SMOD\n");
+        add_instr("CAL int_mod\n"); imod=1; idiv=1;
     }
 
     // int acc com int acc
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        add_instr("SMOD\n");
+        //add_instr("S_MOD\n");
+        add_instr("CAL int_mod\n"); imod=1; idiv=1;
     }
 
     acc_ok = 1;

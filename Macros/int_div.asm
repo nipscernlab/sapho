@@ -33,6 +33,7 @@
                  NOP
                  LIN
                  NOP
+                 NOP
                S_LAN
                  NOP
                  NOP
@@ -60,6 +61,7 @@
                  NOP
                  LIN
                  NOP
+                 NOP
                  JIZ   L5end_int_div
 
                  LOD   divide_shift  // dens = den << shift;
@@ -71,6 +73,7 @@
                  GRE   divide_dens
                  NOP
                  LIN
+                 NOP
                  NOP
                  JIZ   L6else_int_div
 
