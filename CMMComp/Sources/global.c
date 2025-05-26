@@ -151,6 +151,13 @@ void add_instr(char *inst, ...)
     vsprintf(str, inst, args);
 
     // ------------------------------------------------------------------------
+    // verifica se instrucao precisa de NOP antes -----------------------------
+    // ------------------------------------------------------------------------
+
+    if (find_opc(   "LDI"  , str)) add_instr("NOP\n");
+    if (find_opc(   "ILI"  , str)) add_instr("NOP\n");
+
+    // ------------------------------------------------------------------------
     // adiciona instrucao -----------------------------------------------------
     // ------------------------------------------------------------------------
 
@@ -226,7 +233,7 @@ void add_instr(char *inst, ...)
     if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
     if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
 
-    // espera mais um clock para terminar o processo de normalizacao em ponto flutuante
+    // coloca mais um clock no inicio da normalizacao em ponto flutuante
     if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
     if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
     if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
