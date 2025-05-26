@@ -24,6 +24,7 @@
 @L2else_atan              F_ABS_M my_atan_x              // else if (abs(x) > 1.0) return sign(x,pi2) - atan(1.0/x);
                           F_LES   1.0
                             NOP
+                            NOP
                             JIZ   L3else_atan
                             LOD   1.57079632679489661923 // pi/2
                           F_SGN   my_atan_x
@@ -64,6 +65,7 @@
 
 @L4_atan                  F_ABS_M my_atan_termo          // while (abs(termo) > tolerancia)
                           F_LES   my_atan_tolerancia
+                            NOP
                             NOP
                             JIZ   L4end_atan
 

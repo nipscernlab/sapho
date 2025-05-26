@@ -27,10 +27,15 @@
 
 @L4_int_div      LOD   0             // while ((dens > 0) && (dens <= num))
                  GRE   divide_dens
+                 NOP
                P_LOD   divide_num
                  GRE   divide_dens
+                 NOP
                  LIN
+                 NOP
                S_LAN
+                 NOP
+                 NOP
                  JIZ   L4end_int_div
 
                  LOD   divide_shift  // shift++;
@@ -39,6 +44,7 @@
                  SET   divide_shift  // dens = den << shift;
                  LOD   divide_shift
                  SHL   divide_den
+                 NOP
                  SET   divide_dens
 
                  JMP   L4_int_div    // } (while)
@@ -51,15 +57,19 @@
                  LES   divide_shift
                  NOP
                  LIN
+                 NOP
                  JIZ   L5end_int_div
 
                  LOD   divide_shift  // dens = den << shift;
                  SHL   divide_den
+                 NOP
                  SET   divide_dens
 
                  LOD   divide_num    // if (dens <= num)
                  GRE   divide_dens
+                 NOP
                  LIN
+                 NOP
                  JIZ   L6else_int_div
 
                  NEG_M divide_dens   // num = num - dens;
@@ -68,6 +78,7 @@
 
                  LOD   divide_shift  // result = result + (1 << shift);
                  SHL   1
+                 NOP
                  ADD   divide_result
                  SET   divide_result
 

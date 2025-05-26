@@ -194,6 +194,31 @@ void add_instr(char *inst, ...)
     if (find_opc( "S_LES"  , str)) add_instr("NOP\n");
     if (find_opc(   "EQU"  , str)) add_instr("NOP\n");
     if (find_opc( "S_EQU"  , str)) add_instr("NOP\n");
+    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
+    if (find_opc(   "GRE"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_GRE"  , str)) add_instr("NOP\n");
+    if (find_opc(   "SHL"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_SHL"  , str)) add_instr("NOP\n");
+    if (find_opc(   "LIN"  , str)) add_instr("NOP\n");
+    if (find_opc(   "LIN_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_LIN_M", str)) add_instr("NOP\n");
+    if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
+    if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
+    if (find_opc(   "SRS"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_SRS"  , str)) add_instr("NOP\n");
+    if (find_opc(   "SHR"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_SHR"  , str)) add_instr("NOP\n");
+    if (find_opc(   "NRM"  , str)) add_instr("NOP\n");
+    if (find_opc(   "NRM_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_NRM_M", str)) add_instr("NOP\n");
+
+    // coloca mais um clock internamente em algumas operacoes aritmeticas
+    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
+    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
+    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
+    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
+    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais

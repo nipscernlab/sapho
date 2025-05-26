@@ -35,6 +35,7 @@
                       P_LOD   0.5
                      SF_LES
                         NOP
+                        NOP
                         JIZ   L2end_finv
 
                         LOD   finv_x     // x = x * 2.0;
@@ -82,6 +83,7 @@
 
 @L3end_finv @L4_finv    LOD   0          // while (k > 0)
                         GRE   finv_k
+                        NOP
                         JIZ   L4end
 
                         LOD   finv_y     // y = y*0.5;

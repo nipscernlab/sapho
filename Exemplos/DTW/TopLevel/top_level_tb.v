@@ -35,7 +35,7 @@ initial begin
 	$dumpfile("top_level_tb.vcd");
 	$dumpvars(0,top_level_tb);
     for (i = 10; i <= 100; i = i + 10) begin
-		#400000;  // Simulate delay
+		#450000;  // Simulate delay
         $display("Progress: %0d%% complete", i);
     end
     $display("Simulation Complete!");
