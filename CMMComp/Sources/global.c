@@ -100,7 +100,7 @@ void parse_end(char *prname, char *d_proc)
 
     char asm_file[1024]; sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname);
 
-	mac_geni(asm_file);
+	mac_gera(asm_file);
 
 	// checa consistencia de todas as variaveis e funcoes -----------------------
   
@@ -149,6 +149,7 @@ void add_instr(char *inst, ...)
 
     char     str[100];
     vsprintf(str, inst, args);
+    va_end  (args);
 
     // ------------------------------------------------------------------------
     // verifica se instrucao precisa de NOP antes -----------------------------
@@ -161,13 +162,12 @@ void add_instr(char *inst, ...)
     // adiciona instrucao -----------------------------------------------------
     // ------------------------------------------------------------------------
 
-    if (using_macro == 0) fprintf(f_asm, "%s", str);
-    va_end(args);
+    if (mac_using == 0) fprintf(f_asm, "%s", str);
 
     // tabela para tradutor assembly do gtkwave -------------------------------
 
-    if (using_macro == 0) num_ins++;
-    if (using_macro == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
+    if (mac_using == 0) num_ins++;
+    if (mac_using == 0) fprintf(f_lin, "%s\n", itob(line_num+1,20));
 
     // ------------------------------------------------------------------------
     // verifica se instrucao precisa de NOP depois ----------------------------
@@ -261,6 +261,17 @@ void add_instr(char *inst, ...)
     if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
     if (find_opc(   "LOR"  , str)) add_instr("NOP\n");
     if (find_opc( "S_LOR"  , str)) add_instr("NOP\n");
+
+    // ------------------------------------------------------------------------
+    // verifica se a instrucao precisa de alguma macro especial ---------------
+    // ------------------------------------------------------------------------
+
+    if (find_opc("int_div"   , str)) mac_add("idiv" ); // divisao inteira
+    if (find_opc("int_mod"   , str)) mac_add("imod" ); // resto da divisao inteira
+    if (find_opc("float_inv" , str)) mac_add("finv" ); // inverso de float
+    if (find_opc("float_sqrt", str)) mac_add("fsqrt"); // raiz quadrada de float
+    if (find_opc("float_atan", str)) mac_add("fatan"); // arco tangente de float
+    if (find_opc("float_sin" , str)) mac_add("fsin" ); // seno de float
 }
 
 // adiciona instrucoes especiais
@@ -274,14 +285,14 @@ void add_sinst(int type, char *inst, ...)
 
     va_list  args;
     va_start(args , inst);
-    if (using_macro == 0) vfprintf(f_asm, inst, args);
+    if (mac_using == 0) vfprintf(f_asm, inst, args);
     va_end  (args);
 
     // tabela para tradutor asselbly do gtkwave -------------------------------
 
     if (type != 0)
     {
-        if (using_macro == 0) num_ins++;
-        if (using_macro == 0) fprintf(f_lin, "%s\n", itob(type,20));
+        if (mac_using == 0) num_ins++;
+        if (mac_using == 0) fprintf(f_lin, "%s\n", itob(type,20));
     }
 }

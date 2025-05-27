@@ -16,27 +16,18 @@
 #include "..\Headers\variaveis.h"
 
 // ----------------------------------------------------------------------------
-// redeclaracao de variaveis globais ------------------------------------------
-// ----------------------------------------------------------------------------
-
-int using_macro = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
-
-int idiv   = 0;      // se vai precisar de macro de divisao entre inteiros
-int imod   = 0;      // se vai precisar de macro para resto da divisao
-int finv   = 0;      // se vai precisar de macro para inerter um float
-int fatan  = 0;      // se vai precisar de macro pra arco tangente
-int fsqrt  = 0;      // se vai precisar de macro pra raiz quadrada
-int fsin   = 0;      // se vai precisar de macro pra seno
-
-// ----------------------------------------------------------------------------
 // gerenciamento de macros criadas pelo usuario -------------------------------
 // ----------------------------------------------------------------------------
 
-// nao deixa o parser escrever no arquivo assembler
+// redeclaracao de variaveis globais ------------------------------------------
+
+int mac_using = 0; // se estiver lendo uma macro, nao deve escrever o assembler durante o parse
+
+// nao deixa o parser escrever no arquivo assembler ---------------------------
 // ao inves disso, copia o codigo de uma macro
-void dire_macro(int ids, int global, int id_num)
+void mac_use(int ids, int global, int id_num)
 {
-    if (using_macro == 1)
+    if (mac_using == 1)
         fprintf(stderr, "Erro na linha %d: tá chamando uma macro dentro da outra. você é uma pessoa confusa!\n", line_num+1);
 
     // se for global, tem q ver se tem que chamar a funcao main ainda ---------
@@ -83,18 +74,19 @@ void dire_macro(int ids, int global, int id_num)
         fprintf(f_lin, "%s\n", itob(-4,20));
     }
 
-    using_macro = 1;
+    mac_using = 1;
 }
 
-// libera o parser pra salvar no arquivo assembler
-void dire_maend()
+// libera o parser pra salvar no arquivo assembler ----------------------------
+
+void mac_end()
 {
-    if (using_macro == 0) fprintf(stderr, "Erro na linha %d: não estou achando o começo da macro\n", line_num+1);
-        using_macro  = 0;
+    if (mac_using == 0) fprintf(stderr, "Erro na linha %d: não estou achando o começo da macro\n", line_num+1);
+        mac_using  = 0;
 }
 
 // ----------------------------------------------------------------------------
-// funcoes auxiliares para geracao de macros ----------------------------------
+// funcoes auxiliares para geracao de macros pre-definidas --------------------
 // ----------------------------------------------------------------------------
 
 // valor a ser usado na convergencia dos funcoes aritmeticas iterativas
@@ -104,7 +96,7 @@ void epsilon_taylor(char *fnum)
 {
     // acha o dobro do menor valor possivel em float
     double numf = 2.0*pow(2, nbmant-1)*pow(2,-pow(2,nbexpo-1));
-    // multiplica o resultado por por um fator para garatir a estab. da funcao sin(x)
+    // multiplica o resultado por um fator para garatir a estab. da funcao sin(x)
     // mudar para que isso soh use se a funcao sin(x) estiver presente
     numf = numf * 3.1415926535897932 * 3.1415926535897932 * 3.0;
     // se a precisao for grande, usa o padrao
@@ -149,8 +141,8 @@ void fcat2begin(char *n_orig, char *n_app)
     fcat2end (swap  ,n_orig);
 }
 
-// deve ser incluido no comeco do arquivo asm (para proc ponto fixo)
-void header_int(char *fasm, char *pc_sim_mem)
+// deve ser incluido no comeco do arquivo asm (para contas em ponto flutuante)
+void header_float(char *fasm, char *pc_sim_mem)
 {
     f_asm = fopen(fasm      , "w");
     f_lin = fopen(pc_sim_mem, "w");
@@ -173,11 +165,33 @@ void header_int(char *fasm, char *pc_sim_mem)
 }
 
 // ----------------------------------------------------------------------------
-// geracao do codigo em assembly para as operacoes encontradas ----------------
+// gerenciamento de macros pre-definidas --------------------------------------
 // ----------------------------------------------------------------------------
 
-// gera macros pra ponto fixo
-void mac_geni(char *fasm)
+// variaveis locais -----------------------------------------------------------
+
+int idiv  = 0; // se vai precisar de macro de divisao entre inteiros
+int imod  = 0; // se vai precisar de macro para resto da divisao
+int finv  = 0; // se vai precisar de macro para inerter um float
+int fatan = 0; // se vai precisar de macro pra arco tangente
+int fsqrt = 0; // se vai precisar de macro pra raiz quadrada
+int fsin  = 0; // se vai precisar de macro pra seno
+
+// adiciona uma macro pre-definida --------------------------------------------
+
+void mac_add (char *name)
+{
+         if (strcmp(name, "idiv" ) == 0) idiv  = 1; // divisao inteira
+    else if (strcmp(name, "imod" ) == 0) imod  = 1; // resto da divisao inteira
+    else if (strcmp(name, "finv" ) == 0) finv  = 1; // inverso de float
+    else if (strcmp(name, "fsqrt") == 0) fsqrt = 1; // raiz quadrada de float
+    else if (strcmp(name, "fatan") == 0) fatan = 1; // arco tangente de float
+    else if (strcmp(name, "fsin" ) == 0) fsin  = 1; // seno de float
+}
+
+// gera as macros pre-definidas no arquivo assembler --------------------------
+
+void mac_gera(char *fasm)
 {
     // se nao tiver nada pra fazer, sai!
     if (!(idiv || imod || finv || fsqrt || fatan || fsin)) return;
@@ -190,9 +204,9 @@ void mac_geni(char *fasm)
     sprintf(tmem, "%s/%s", dir_tmp, "tmem.txt");
     sprintf(fmem, "%s/pc_%s_mem.txt", dir_tmp, prname);
 
-    // cria os cabecalhos -----------------------------------------------------
+    // cria os cabecalhos pra float -------------------------------------------
 
-    if (finv || fsqrt || fatan || fsin) header_int(tasm,tmem);
+    if (finv || fsqrt || fatan || fsin) header_float(tasm,tmem);
 
     // coloca os cabecalhos no inicio dos arquivos ----------------------------
 

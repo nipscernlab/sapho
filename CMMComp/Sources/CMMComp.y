@@ -112,14 +112,14 @@ direct : PRNAME  ID    {dire_exec("#PRNAME",$2,1);} // nome do processador
        | NUGAIN INUM   {dire_exec("#NUGAIN",$2,0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
 
-       | USEMAC STRING INUM {dire_macro($2,1,$3);}  // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
-       | ENDMAC             {dire_maend();}         // ponto de termino do uso da macro
+       | USEMAC STRING INUM {mac_use($2,1,$3);}     // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
+       | ENDMAC             {mac_end();}            // ponto de termino do uso da macro
 
 // Diretivas comportamentais --------------------------------------------------
 
-dire_macro : USEMAC STRING INUM {dire_macro($2,0,$3);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
-dire_maend : ENDMAC             {dire_maend();}        // ponto final de uso de uma macro
-dire_inter : ITRADD             {dire_inter();}        // ponto de inicio da interrupcao (usado com o pino itr)
+mac_use    : USEMAC STRING INUM {mac_use($2,0,$3);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
+mac_end    : ENDMAC             {mac_end();}        // ponto final de uso de uma macro
+dire_inter : ITRADD             {dire_inter();}     // ponto de inicio da interrupcao (usado com o pino itr)
 
 // Declaracao de variaveis ----------------------------------------------------
 
@@ -170,8 +170,8 @@ stmt_case:   declar_full     // declaracoes de variaveis
          |       std_out     // std lib de output de dados
          |     void_call     // chamada de subrotina
          |   return_call     // retorno de funcao
-         |    dire_macro     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
-         |    dire_maend     // termina uma chamada de macro assembler
+         |    mac_use        // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
+         |    mac_end        // termina uma chamada de macro assembler
 
 // chamadas de funcoes --------------------------------------------------------
 

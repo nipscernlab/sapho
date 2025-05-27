@@ -11,14 +11,14 @@
 // variaveis locais -----------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-int  m_count;             // contador de opcodes
-char m_name[NMNEMAX][64]; // nome     do opcode
+int  m_count;             // contador de opcodes (parameter)
+char m_name[NMNEMAX][64]; // nome     do opcode  (parameter)
 
 // ----------------------------------------------------------------------------
 // funcoes auxiliares ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// ve se um opcode ja foi usado
+// ve se um opcode ja foi parametrizado
 // se sim, pega o indice na tabela
 // se nao, retorna -1
 int find_opc(char *val)
@@ -40,8 +40,8 @@ int find_opc(char *val)
 // funcoes de interface -------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-char* opc_get(int i){return m_name[i];}
-int   opc_cnt(     ){return m_count  ;}
+char* opc_get(int i){return m_name[i];} // pega parameter
+int   opc_cnt(     ){return m_count  ;} // pega numero de parameters cadastrados
 
 // addiciona um novo opcode na tabela
 void opc_add(char *mne)
