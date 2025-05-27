@@ -1122,14 +1122,19 @@ int oper_divi(int et1, int et2)
     {
         //add_instr("%s %s\n" , ld, v_name[et2%OFST]);
         //add_instr("DIV %s\n",     v_name[et1%OFST]);
-        exec_idiv(et1,et2);
+        add_instr("%s %s\n", ld, v_name[et1%OFST]);
+        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
+        add_instr("CAL int_div\n");
     }
 
     // int var com int acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
     {
         //add_instr("DIV %s\n", v_name[et1%OFST]);
-        exec_idiv(et1,et2);
+        add_instr("SET aux_var\n");
+        add_instr("LOD %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_var\n");
+        add_instr("CAL int_div\n");
     }
 
     // int var com float var
@@ -1230,14 +1235,15 @@ int oper_divi(int et1, int et2)
     {
         //add_instr("%s %s\n", ld, v_name[et2%OFST]);
         //add_instr("S_DIV\n");
-        exec_idiv(et1,et2);
+        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
+        add_instr("CAL int_div\n");
     }
 
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
         //add_instr("S_DIV\n");
-        exec_idiv(et1,et2);
+        add_instr("CAL int_div\n");
     }
 
     // int acc com float var

@@ -24,7 +24,6 @@ int  exec_norm(int et);           // divisao por constante
 // funcoes aritmeticas --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-int  exec_idiv(int et1, int et2); // divisao entre inteiros
 int  exec_sqrt(int et);           // raiz quadrada
 int  exec_atan(int et);           // arco tangente
 int  exec_sin (int et);           // seno
@@ -36,6 +35,5 @@ int  exec_cos (int et);           // cosseno
 
 int  exec_real(int et);           // pega parte real
 int  exec_imag(int et);           // pega parte imaginaria
-int  exec_sqr2(int et);           // modulo ao quadrado (interna)
-int  exec_absc(int et);           // valor absoluto de um numero complexo (interna)
+int  exec_sqr2(int et);           // modulo ao quadrado (colocar no parser)
 int  exec_fase(int et);           // fase em radianos

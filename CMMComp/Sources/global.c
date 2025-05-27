@@ -266,12 +266,12 @@ void add_instr(char *inst, ...)
     // verifica se a instrucao precisa de alguma macro especial ---------------
     // ------------------------------------------------------------------------
 
-    if (find_opc("int_div"   , str)) mac_add("idiv" ); // divisao inteira
-    if (find_opc("int_mod"   , str)) mac_add("imod" ); // resto da divisao inteira
-    if (find_opc("float_inv" , str)) mac_add("finv" ); // inverso de float
-    if (find_opc("float_sqrt", str)) mac_add("fsqrt"); // raiz quadrada de float
-    if (find_opc("float_atan", str)) mac_add("fatan"); // arco tangente de float
-    if (find_opc("float_sin" , str)) mac_add("fsin" ); // seno de float
+    if (find_opc("int_div"   , str)) mac_add("idiv" );                   // divisao inteira
+    if (find_opc("int_mod"   , str)) mac_add("imod" ); mac_add("idiv" ); // resto da divisao inteira
+    if (find_opc("float_inv" , str)) mac_add("finv" );                   // inverso de float
+    if (find_opc("float_sqrt", str)) mac_add("fsqrt"); mac_add("finv" ); // raiz quadrada de float
+    if (find_opc("float_atan", str)) mac_add("fatan"); mac_add("finv" ); // arco tangente de float
+    if (find_opc("float_sin" , str)) mac_add("fsin" ); mac_add("finv" ); // seno de float
 }
 
 // adiciona instrucoes especiais

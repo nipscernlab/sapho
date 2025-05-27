@@ -28,6 +28,7 @@ int exec_in(int id)
     return OFST;
 }
 
+// output
 void exec_out(int id, int et)
 {
     if (get_type(et) > 2)
@@ -223,7 +224,7 @@ int exec_abs(int et)
     // comp const, na memoria e no acc
     if ((get_type(et) == 3) || (get_type(et) == 5))
     {
-        et = exec_absc(et);
+        et = exec_sqrt(exec_sqr2(et));
     }
 
     acc_ok = 1;
@@ -302,139 +303,7 @@ int exec_norm(int et)
 // funcoes aritmeticas --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// codigo em C+- para calcular divisao para int
-// macro int_div.asm
-/*int divide(int num, int den)
-{
-    int sig = sign(num,1)*den;
-
-    num = abs(num);
-    den = abs(den);
-
-    int result = 0;
-
-    int shift  = 0;
-    int dens   = den;
-    while ((dens > 0) && (dens <= num))
-    {
-        shift++;
-        dens = den << shift;
-    }
-
-    shift = shift -  1;
-    while  (shift >= 0)
-    {
-        dens = den << shift;
-        if (dens <= num)
-        {
-            num = num - dens;
-            result = result + (1 << shift);
-        }
-        shift = shift-1;
-    }
-
-    return sign(sig, result);
-}*/
-
-int exec_idiv(int et1, int et2)
-{
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"P_LOD");
-
-    // int na memoria e int na memoria
-    if ((et1 % OFST != 0) && (et2 % OFST != 0))
-    {
-        add_instr("%s %s\n", ld, v_name[et1%OFST]);
-        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
-        add_instr("CAL int_div\n");
-    }
-
-    // int no acc e int na memoria
-    if ((et1 % OFST == 0) && (et2 % OFST != 0))
-    {
-        add_instr("P_LOD %s\n" , v_name[et2%OFST]);
-        add_instr("CAL int_div\n");
-    }
-
-    // int na memoria e int no acc
-    if ((et1 % OFST != 0) && (et2 % OFST == 0))
-    {
-        add_instr("SET aux_var\n");
-        add_instr("LOD %s\n", v_name[et1%OFST]);
-        add_instr("P_LOD aux_var\n");
-        add_instr("CAL int_div\n");
-    }
-
-    // int no acc e int no acc
-    if ((et1 % OFST == 0) && (et2 % OFST == 0))
-    {
-        add_instr("CAL int_div\n");
-    }
-
-    acc_ok = 1;
-
-    return OFST;
-}
-
-// codigo em C+- para calcular o inverso de um float
-// macro float_inv.asm
-/*float float_inv(float x)
-{
-    float s = sign(x, 1.0);
-    x = abs(x);
-
-    int k = 0;
-    while (x > 1.5)
-    {
-        x = x * 0.5;
-        k++;
-    }
-
-    while (x < 0.5)
-    {
-        x = x * 2.0;
-        k = k-1;
-    }
-
-    float y = 1.0;
-
-    int m = 0;
-    while (m < 6)
-    {
-        y = y*(2.0 - x*y);
-        m++;
-    }
-
-    while (k > 0)
-    {
-        y = y*0.5;
-        k = k-1;
-    }
-
-    while (k < 0)
-    {
-        y = y*2.0;
-        k++;
-    }
-
-    return y*s;
-}*/
-
-// codigo em C+- para calcular raiz quadrada para float
-// macro float_sqrt.asm
-/*double my_sqrt(float num)
-{
-    float x = num;
-    float epslon = 0.000008;  // menor numero possivel = 2^(m-1)*2^(-(2^(e-1)))
-                              // para m = 16 e = 6, o num eh: 0.000007629...
-    while (1)
-    {
-        float raiz = 0.5 * (x+num/x);
-        if (fabs(x - raiz) < epslon) break;
-        x = raiz;
-    }
-
-    return raiz;
-}*/
+// raiz quadrada
 int exec_sqrt(int et)
 {
     if (get_type(et) > 2)
@@ -477,31 +346,7 @@ int exec_sqrt(int et)
     return 2*OFST;
 }
 
-// codigo em C+- para calcular arco-tg para float
-// macro float_atan.asm
-/*float atan(float x)
-{
-    float pi2 = 3.1415/2.0;
-
-    if (abs(x) > 1.0) return sign(x,pi2) - atan(1.0/x);
-
-    float termo      = x;
-    float x2         = x*x;
-    float resultado  = termo;
-    float tolerancia = 0.000008/x2;
-
-    int indiceX = 3;
-
-    while (abs(termo) > tolerancia) {
-        termo = termo * (- x2 * (indiceX - 2)) / indiceX;
-
-        resultado = resultado + termo;
-        indiceX = indiceX + 2;
-    }
-
-    return resultado;
-}*/
-
+// arco-tangente
 int exec_atan(int et)
 {
     if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei arco-tangente de número complexo ainda. Se vira!\n", line_num+1);
@@ -541,30 +386,7 @@ int exec_atan(int et)
     return 2*OFST;
 }
 
-// codigo em C+- para calcular seno para float
-// macro float_atan.asm
-/*float sin(float x)
-{
-    if (x == 0) return 0.0;
-    
-    while (abs(x) > 3.141592654) x = x - sign(x, 6.283185307);
-
-    float termo      = x;
-    float x2         = x * x;
-    float resultado  = termo;
-    float tolerancia = 0.000008/x2;
-
-    int indiceX = 3;
-
-    while (abs(termo) > tolerancia) {
-        termo = termo * (- x2) / ((indiceX - 1) * indiceX);
-        resultado = resultado + termo;
-        indiceX = indiceX + 2;
-    }
-
-    return resultado;
-}*/
-
+// seno
 int exec_sin(int et)
 {
     if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei seno pra número complexo ainda. Se vira!\n", line_num+1);
@@ -604,6 +426,7 @@ int exec_sin(int et)
     return 2*OFST;
 }
 
+// cosseno
 int exec_cos(int et)
 {
     if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei cosseno pra número complexo ainda. Se vira!\n", line_num+1);
@@ -729,6 +552,8 @@ int exec_imag(int et)
 }
 
 // modulo ao quadrado de um num complexo
+// ainda nao tem um equivalente no parser (colocar)
+// mas é usado internamente em oper.c
 int exec_sqr2(int et)
 {
     int type = get_type(et);
@@ -773,12 +598,6 @@ int exec_sqr2(int et)
     }
 
     return etr; // 2*OFST?
-}
-
-// valor absoluto de um num complexo
-int exec_absc(int et)
-{
-    return exec_sqrt(exec_sqr2(et));    // computa a raiz quadrada do modulo ao quadrdo
 }
 
 // calcula a fase (em radianos) de um num complexo

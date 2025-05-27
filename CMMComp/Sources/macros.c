@@ -251,3 +251,152 @@ void mac_gera(char *fasm)
         fcat2end(tasm,fasm);
     }
 }
+
+// ----------------------------------------------------------------------------
+// backup do codigo em c+- das macros pre-definidas ---------------------------
+// ----------------------------------------------------------------------------
+
+// divisao para int (int_div.asm)
+/*int divide(int num, int den)
+{
+    int sig = sign(num,1)*den;
+
+    num = abs(num);
+    den = abs(den);
+
+    int result = 0;
+
+    int shift  = 0;
+    int dens   = den;
+    while ((dens > 0) && (dens <= num))
+    {
+        shift++;
+        dens = den << shift;
+    }
+
+    shift = shift -  1;
+    while  (shift >= 0)
+    {
+        dens = den << shift;
+        if (dens <= num)
+        {
+            num = num - dens;
+            result = result + (1 << shift);
+        }
+        shift = shift-1;
+    }
+
+    return sign(sig, result);
+}*/
+
+// resto da divisao por inteiros (int_mod.asm)
+/*int int_mod(int a, int b)
+{
+    return a-(a/b)*b;
+}*/
+
+// inverso de um float (float_inv.asm)
+/*float float_inv(float x)
+{
+    float s = sign(x, 1.0);
+    x = abs(x);
+
+    int k = 0;
+    while (x > 1.5)
+    {
+        x = x * 0.5;
+        k++;
+    }
+
+    while (x < 0.5)
+    {
+        x = x * 2.0;
+        k = k-1;
+    }
+
+    float y = 1.0;
+
+    int m = 0;
+    while (m < 6)
+    {
+        y = y*(2.0 - x*y);
+        m++;
+    }
+
+    while (k > 0)
+    {
+        y = y*0.5;
+        k = k-1;
+    }
+
+    while (k < 0)
+    {
+        y = y*2.0;
+        k++;
+    }
+
+    return y*s;
+}*/
+
+// raiz quadrada para float (macro float_sqrt.asm)
+/*float my_sqrt(float num)
+{
+    float x = num;
+    float epslon = 0.000008;  // menor numero possivel = 2^(m-1)*2^(-(2^(e-1)))
+                              // para m = 16 e = 6, o num eh: 0.000007629...
+    while (1)
+    {
+        float raiz = 0.5 * (x+num/x);
+        if (fabs(x - raiz) < epslon) break;
+        x = raiz;
+    }
+
+    return raiz;
+}*/
+
+// arco-tg para float (float_atan.asm)
+/*float atan(float x)
+{
+    float pi2 = 3.1415/2.0;
+
+    if (abs(x) > 1.0) return sign(x,pi2) - atan(1.0/x);
+
+    float termo      = x;
+    float x2         = x*x;
+    float resultado  = termo;
+    float tolerancia = 0.000008/x2;
+
+    int indiceX = 3;
+
+    while (abs(termo) > tolerancia) {
+        termo = termo * (- x2 * (indiceX - 2)) / indiceX;
+
+        resultado = resultado + termo;
+        indiceX = indiceX + 2;
+    }
+
+    return resultado;
+}*/
+
+// seno para float (float_sin.asm)
+/*float sin(float x)
+{
+    if (x == 0) return 0.0;
+    
+    while (abs(x) > 3.141592654) x = x - sign(x, 6.283185307);
+
+    float termo      = x;
+    float x2         = x * x;
+    float resultado  = termo;
+    float tolerancia = 0.000008/x2;
+
+    int indiceX = 3;
+
+    while (abs(termo) > tolerancia) {
+        termo = termo * (- x2) / ((indiceX - 1) * indiceX);
+        resultado = resultado + termo;
+        indiceX = indiceX + 2;
+    }
+
+    return resultado;
+}*/
