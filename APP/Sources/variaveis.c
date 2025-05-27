@@ -12,6 +12,8 @@
 int  v_count = 0;
 char v_name[NVARMAX][512];
 
+// funcoes auxiliares ---------------------------------------------------------
+
 // ve se uma variavel ja foi usada
 // se sim, pega o indice na tabela
 // se nao, retorna -1
@@ -26,6 +28,8 @@ int var_find(char *val)
 		}
 	return ind;
 }
+
+// funcoes de interface global ------------------------------------------------
 
 // addiciona uma nova variavel na tabela
 // pode ser um vetor com size > 1

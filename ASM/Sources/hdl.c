@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// rotinas para geracao dos arquivos .v do processador e test-bench -----------
+// rotinas para geracao dos arquivos .v ---------------------------------------
 // ----------------------------------------------------------------------------
 
 // includes globais
@@ -17,7 +17,7 @@
 // funcoes auxiliares ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// troca \ por / no em um path
+// troca \ por / em um path
 void force_rightbar(char *str){while (*str) {if (*str == '\\') *str = '/'; str++;}}
 
 // ----------------------------------------------------------------------------
@@ -237,7 +237,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     }
     fprintf(f_veri, "\n");
 
-    char aux[256]; eval_get("cmm_log.txt","num_ins", aux); int num_ins = atoi(aux);
+    int num_ins = get_n_ins();
 
     // cria memoria que vai guardar a tabela de instrucoes
     fprintf(f_veri, "reg [19:0] min [0:%d-1];\n\n", num_ins);

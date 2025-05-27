@@ -22,9 +22,12 @@ extern int  nuioou;            // numero de portas de saida
 extern int  nugain;            // constante de divisao
 extern int  fftsiz;            // tamanho da fft (em bits)
 
+// funcoes globais ------------------------------------------------------------
+
+int get_n_ins();               // numero de instrucoes (usar soh depois do eval_init())
+
 // funcoes usadas no lexer (.l) -----------------------------------------------
 
-int  eval_get   (char *fname, char *var, char *val);
 void eval_init  (int   clk  , int clk_n, int s_typ);
 void eval_direct(int   next_state);
 void eval_opcode(int   op   , int next_state, char *text, char *nome);

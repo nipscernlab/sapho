@@ -43,14 +43,6 @@ void add_label(char *la, int val)
 // funcoes de interface -------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// pega o indice da label
-int lab_find(char *la)
-{
-	for (int i = 0; i < l_count; i++) if (strcmp(la, l_name[i]) == 0) return l_val[i];
-
-	return -1;
-}
-
 // pega todos os labels no arquivo de log
 void lab_reg()
 {
@@ -73,4 +65,14 @@ void lab_reg()
     }
 
     fclose(input);
+}
+
+// pega o indice da label
+int lab_find(char *la)
+{
+	for (int i = 0; i < l_count; i++) 
+        if (strcmp(la, l_name[i]) == 0)
+            return l_val[i];
+
+	return -1;
 }
