@@ -14,7 +14,7 @@ module pc
 	output reg [NBITS-1:0] addr = 0
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-  , output     [NBITS-1:0] sim
+ , output     [NBITS-1:0] sim
 `endif // ---------------------------------------------------------------------
 );
 
@@ -60,7 +60,7 @@ wire JIZ = (opcode == 14);
 wire CAL = (opcode == 15);
 wire RET = (opcode == 16);
 
-wire pc_load = JMP | (JIZ & ~is_um) | CAL | RET;
+wire   pc_load    =  JMP | (JIZ & ~is_um) | CAL | RET;
 
 assign opcode     =  mem_instr[NBOPCO+NBOPER-1:NBOPER];
 assign operand    =  mem_instr[NBOPER       -1:     0];
@@ -132,10 +132,10 @@ module instr_fetch
 
 	input               acc,
 	output [NBOPCO-1:0] opcode,
-    output [NBOPER-1:0] operand
+	output [NBOPER-1:0] operand
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-  , output [MINSTW-1:0] pc_sim_val
+ , output [MINSTW-1:0] pc_sim_val
 `endif // ---------------------------------------------------------------------
 );
 
@@ -275,10 +275,10 @@ module mem_ctrl
 
 	parameter STI    = 0,
 	parameter LDI    = 0,
-	parameter ISI	 = 0,
+	parameter ISI    = 0,
 	parameter ILI    = 0
 )(
-	input			    clk,
+	input               clk,
 	input               sti, ldi, fft, wr,
 	input  [NUBITS-1:0] ula,
 	input  [MDATAW-1:0] base_addr, stk_ofst,
@@ -291,7 +291,7 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-reg [MDATAW-1:0] ular; always @ (posedge clk) ular <= ula;
+reg [MDATAW-1:0] ular; always @ (posedge clk) ular <= ula[MDATAW-1:0];
 
 rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3), .USEFFT(ISI)) ra_rd(ldi, fft, ular    , base_addr, mem_addr_rd);
 rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst, base_addr, mem_addr_wr);
@@ -469,7 +469,7 @@ module core
 	input                           itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
-  , output     [MINSTW        -1:0] pc_sim_val
+ , output     [MINSTW        -1:0] pc_sim_val
 `endif // ---------------------------------------------------------------------
 );
 
@@ -496,7 +496,7 @@ instr_fetch #(
 	                                .operand(if_operand)
 	
 `ifdef __ICARUS__ // ----------------------------------------------------------
-                                  , .pc_sim_val(pc_sim_val)
+                                 , .pc_sim_val(pc_sim_val)
 `endif // ---------------------------------------------------------------------
 );
 
@@ -526,7 +526,7 @@ wire [NUBITS-1:0] sp_in, stack_data;
 
 stack #(.NADDR($clog2(DDEPTH)),
         .DEPTH(DDEPTH),
-	    .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, stack_data);
+        .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, stack_data);
 
 // Controles de entrada da ULA ------------------------------------------------
 
@@ -607,13 +607,13 @@ wire [MDATAW-1:0] rf;
 generate
 	if (STI | LDI | ILI | ISI) begin
 		mem_ctrl #(.NUBITS(NUBITS),
-			       .MDATAW(MDATAW),
+		           .MDATAW(MDATAW),
 		           .FFTSIZ(FFTSIZ),
-				   .STI(STI),.LDI(LDI),
-				   .ILI(ILI),.ISI(ISI)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
-				                           ula_out,
-			    	                       if_operand[MDATAW-1:0], stack_data[MDATAW-1:0],
-										   mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
+		           .STI(STI),.LDI(LDI),
+		           .ILI(ILI),.ISI(ISI)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
+		                                   ula_out,
+		                                   if_operand[MDATAW-1:0], stack_data[MDATAW-1:0],
+		                                   mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin
 		assign mem_wr      = id_wr;
 		assign mem_addr_rd = if_operand[MDATAW-1:0];
@@ -627,7 +627,7 @@ endgenerate
 io_ctrl #(.MDATAW(MDATAW),
           .NBIOIN($clog2(NUIOIN)),
           .NBIOOU($clog2(NUIOOU))) io(clk, id_req_in, id_out_en,
-								      id_operand[MDATAW-1:0],
-								      req_in, addr_in, out_en, addr_out);
+                                      id_operand[MDATAW-1:0],
+                                      req_in, addr_in, out_en, addr_out);
 
 endmodule

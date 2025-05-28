@@ -127,7 +127,12 @@ void instr_io(char *va)
 // ----------------------------------------------------------------------------
 
 // numero de instrucoes
-int get_n_ins() {return n_ins;}
+int get_n_ins()
+{
+    char aux[256]; eval_get("cmm_log.txt","num_ins", aux);
+
+    return atoi(aux);
+}
 
 // ----------------------------------------------------------------------------
 // funcoes de evolucao do lexer -----------------------------------------------

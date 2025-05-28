@@ -192,7 +192,7 @@ endmodule
 module ula_norm
 #(
 	parameter MAN = 23,
-    parameter EXP = 8
+	parameter EXP = 8
 )(
 	 input [MAN+EXP:0] in,
 	output [MAN+EXP:0] out
@@ -1262,7 +1262,7 @@ ula_mux #(NUBITS) ula_mux (.op (op ),
                            .shl(shl),
                            .shr(shr),
                            .srs(srs),
-						   .smx(smx),
+                           .smx(smx),
                            .out(out));
 
 endmodule
