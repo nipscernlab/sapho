@@ -70,11 +70,16 @@ endmodule
 module processor
 #(
 	// -------------------------------------------------------------------------
-	// Parametros de configuracao internos -------------------------------------
+	// Parametrso pre-fixados --------------------------------------------------
+	// -------------------------------------------------------------------------
+
+	parameter NBOPCO = 7,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
+
+	// -------------------------------------------------------------------------
+	// Parametros configurados dinamicamente -----------------------------------
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
-	parameter NBOPCO = 7,               // Numero de bits de opcode (mudar o comp. assembler de acordo, em eval.c)
 	parameter ITRADD = 0,               // Endereco da interrupcao
 
 	// memorias
@@ -108,7 +113,7 @@ module processor
 	parameter FFTSIZ =  3,              // Tamanho da ILI na inversao de bits
 
 	// -------------------------------------------------------------------------
-	// Parametros configurados dinamicamente -----------------------------------
+	// Parametros para alocacao de recursos ------------------------------------
 	// -------------------------------------------------------------------------
 
 	// implementa enderecamento indireto
@@ -116,8 +121,14 @@ module processor
 	parameter   ILI   = 0,
 	parameter   STI   = 0,
 	parameter   ISI   = 0,
+
+	// implementa portas de I/O
+	parameter   INN   = 0,
+	parameter P_INN   = 0,
+	parameter   OUT   = 0,
 	
-	// implementa pilha de subrotinas
+	// implementa saltos
+	parameter   JIZ   = 0,
 	parameter   CAL   = 0,
 
 	// operacoes aritmeticas de dois parametros
@@ -245,6 +256,10 @@ core #(.NBOPCO (NBOPCO ),
          .ILI  (  ILI  ),
          .STI  (  STI  ),
          .ISI  (  ISI  ),
+		 .INN  (  INN  ),
+       .P_INN  (P_INN  ),
+	     .OUT  (  OUT  ),
+		 .JIZ  (  JIZ  ),
          .CAL  (  CAL  ),
          .ADD  (  ADD  ),
        .F_ADD  (F_ADD  ),

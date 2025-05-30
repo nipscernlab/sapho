@@ -226,14 +226,25 @@ void eval_opernd(char *va, int is_const)
 // executado depois do lexer
 void eval_finish()
 {
-    // ja pode fechar os arquivos .mif
+    // ja pode fechar os arquivos .mif ----------------------------------------
+
     fclose(f_instr);
     fclose(f_data );
 
-    // finaliza simulacao
+    // checa consistencia do ponto flutuante ----------------------------------
+
+    if (nubits != nbmant+nbexpo+1) fprintf(stderr, "Erro: inconsistência no ponto flutuante. Tem que ser NUBITS = NBMANT + NBEXPO + 1.\n");
+
+    // checa consistencia de numero de portas de I/O --------------------------
+
+    if (nuioin < 2 || nuioou < 2)  fprintf(stderr, "Erro: número de portas de I/O tem que ser >= 2.\n");
+
+    // finaliza simulacao -----------------------------------------------------
+
     sim_finish();
 
-    // gera arquivos hdl
+    // gera arquivos hdl ------------------------------------------------------
+
     hdl_vv_file(n_ins,n_dat,nbopr,itr_addr); // arquivo verilog top level do processador   
     hdl_tb_file();                           // arquivo verilog de test bench
 }

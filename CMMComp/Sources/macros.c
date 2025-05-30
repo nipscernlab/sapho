@@ -179,7 +179,7 @@ int fsin  = 0; // se vai precisar de macro pra seno
 
 // adiciona uma macro pre-definida --------------------------------------------
 
-void mac_add (char *name)
+void mac_add(char *name)
 {
          if (strcmp(name, "idiv" ) == 0) idiv  = 1; // divisao inteira
     else if (strcmp(name, "imod" ) == 0) imod  = 1; // resto da divisao inteira

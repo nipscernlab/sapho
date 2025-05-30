@@ -97,4 +97,7 @@ void eval_finish()
     fprintf(f_log, "n_ins %d\n", n_ins    );
     fprintf(f_log, "n_dat %d\n", var_cnt());
     fclose (f_log);
+
+    // checa se da pra criar a memoria de dados
+    if (var_cnt() <= 2) fprintf(stderr, "Erro: esse processador não serve pra nada. Você não tem nada útil pra fazer não?\n");
 }

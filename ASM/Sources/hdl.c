@@ -67,7 +67,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, "wire mem_wr;\n");
     fprintf(f_veri, "wire [%d:0] mem_addr_wr;\n" , (int)ceil(log2(n_dat)-1));
     // acesso ao indice da instrucao no program counter
-    fprintf(f_veri, "wire [%d:0] pc_sim_val;\n", (int)ceil(log2(n_ins)-1));
+    fprintf(f_veri, "wire [%d:0] pc_sim_val;\n"  , (int)ceil(log2(n_ins)-1));
     fprintf(f_veri, "`endif\n\n");
 
     // ------------------------------------------------------------------------
@@ -115,16 +115,16 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // ------------------------------------------------------------------------
 
     // portas de entrada
-    if (nuioin == 1)
-    fprintf(f_veri, "assign req_in = proc_req_in;\n");
-    else
+    if (opc_inn())
     fprintf(f_veri, "addr_dec #(%d) dec_in (proc_req_in, addr_in , req_in);\n"  , nuioin);
-
-    // portas de saida
-    if (nuioou == 1)
-    fprintf(f_veri, "assign out_en = proc_out_en;\n\n");
     else
+    fprintf(f_veri, "assign req_in = {%d{1'b0}};\n", nuioin);
+    
+    // portas de saida
+    if (opc_out())
     fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou);
+    else
+    fprintf(f_veri, "assign out_en = {%d{1'b0}};\n", nuioou);
 
     // ------------------------------------------------------------------------
     // inicio de interface com simulacao (iverilog+gtkwave) -------------------
@@ -374,7 +374,7 @@ void hdl_tb_file()
     {
     fprintf(f_veri, "    #1;\n");
     fprintf(f_veri, "    if (proc_req_in == %d) begin\n"  ,             (int)pow(2,i)  );
-    fprintf(f_veri, "        scan_result = $fscanf(data_in_%d, \"%%d\", in_%d);\n", i,i);
+    fprintf(f_veri, "        if (data_in_%d != 0) scan_result = $fscanf(data_in_%d, \"%%d\", in_%d);\n", i,i,i);
     fprintf(f_veri, "        proc_io_in  = in_%d;\n"                                 ,i);
     fprintf(f_veri, "    end\n"                                                        );
     fprintf(f_veri, "    req_in_%d = proc_req_in == %d;\n",          i, (int)pow(2,i),i);

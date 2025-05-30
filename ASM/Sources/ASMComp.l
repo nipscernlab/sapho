@@ -49,12 +49,12 @@ LINHA          \n
    "PSH"   eval_opcode( 8, 0, yytext,   ""     ); // xuxa dado na pilha
    "POP"   eval_opcode( 9, 0, yytext,   ""     ); // retira dado da pilha
 
-   "INN"   eval_opcode(10,19, yytext,   ""     ); // entrada de dados
- "P_INN"   eval_opcode(11,19, yytext,   ""     ); // PUSH + INN
-   "OUT"   eval_opcode(12,19, yytext,   ""     ); // saida   de dados
+   "INN"   eval_opcode(10,19, yytext,   "INN"  ); // entrada de dados
+ "P_INN"   eval_opcode(11,19, yytext, "P_INN"  ); // PUSH + INN
+   "OUT"   eval_opcode(12,19, yytext,   "OUT"  ); // saida   de dados
 
    "JMP"   eval_opcode(13,18, yytext,   ""     ); // salto incondicional
-   "JIZ"   eval_opcode(14,18, yytext,   ""     ); // salta se acc for zero
+   "JIZ"   eval_opcode(14,18, yytext,   "JIZ"  ); // salta se acc for zero
 
    "CAL"   eval_opcode(15,18, yytext,   "CAL"  ); // chamada de subrotina
    "RET"   eval_opcode(16, 0, yytext,   ""     ); // retorno de subrotina

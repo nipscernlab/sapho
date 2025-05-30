@@ -51,3 +51,15 @@ void opc_add(char *mne)
     strcpy(m_name[m_count], mne);
     m_count++;
 }
+
+// verifica se tem instrucao INN
+int opc_inn()
+{
+	return (find_opc("INN") != -1) | (find_opc("P_INN") != -1);
+}
+
+// verifica se tem instrucao OUT
+int opc_out()
+{
+	return find_opc("OUT") != -1;
+}
