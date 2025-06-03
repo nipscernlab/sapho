@@ -399,8 +399,8 @@ module core
 	parameter DDEPTH = 10,              // Tamanho da pilha de dados
 
 	// entradas e Saidas
-	parameter NUIOIN =  8,              // Numero de enderecos de IO - entrada
-	parameter NUIOOU =  8,              // Numero de enderecos de IO - saida
+	parameter NBIOIN =  2,              // Numero de bits de enderecos de IO - entrada
+	parameter NBIOOU =  2,              // Numero de bits de enderecos de IO - saida
 
 	// constantes aritmeticas
 	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
@@ -496,23 +496,23 @@ module core
 	parameter   SHR   = 0,
 	parameter   SRS   = 0
 )(
-	input                           clk, rst,
+	input                   clk, rst,
 
-	input      [NBINST        -1:0] instr,
-	output     [MINSTW        -1:0] instr_addr,
+	input      [NBINST-1:0] instr,
+	output     [MINSTW-1:0] instr_addr,
 
-	output                          mem_wr,
-	output     [MDATAW        -1:0] mem_addr_rd, mem_addr_wr,
-	input      [NUBITS        -1:0] mem_data_rd,
-	output     [NUBITS        -1:0] mem_data_wr,
+	output                  mem_wr,
+	output     [MDATAW-1:0] mem_addr_rd, mem_addr_wr,
+	input      [NUBITS-1:0] mem_data_rd,
+	output     [NUBITS-1:0] mem_data_wr,
 
-	input      [NUBITS        -1:0] io_in,
-	output     [$clog2(NUIOIN)-1:0] addr_in,
-	output     [$clog2(NUIOOU)-1:0] addr_out,
-	output                          req_in,
-	output                          out_en,
+	input      [NUBITS-1:0] io_in,
+	output     [NBIOIN-1:0] addr_in,
+	output     [NBIOOU-1:0] addr_out,
+	output                  req_in,
+	output                  out_en,
 
-	input                           itr
+	input                   itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
  , output     [MINSTW        -1:0] pc_sim_val
@@ -587,7 +587,7 @@ wire [NUBITS-1:0] uic_acc;
 ula_in1_ctrl #(.NUBITS(NUBITS),.NBOPCO(NBOPCO)) uic1 (clk, id_dsp_pop, mem_data_rd, stack_data, ula_data_in1);
 generate if (INN | P_INN)
 ula_in2_ctrl #(.NUBITS(NUBITS),.NBOPCO(NBOPCO)) uic2 (clk, id_req_in ,     uic_acc, io_in     , ula_data_in2);
-else assign ula_data_in2 = ula_acc;
+else assign ula_data_in2 = racc;
 endgenerate
 
 // Unidade Logico-Aritmetica --------------------------------------------------
@@ -651,7 +651,6 @@ reg signed [NUBITS-1:0] racc;
 
 always @ (posedge clk or posedge rst) if (rst) racc <= 0; else racc <= ula_out;
 
-wire signed [NUBITS-1:0] ula_acc = racc;
 assign                   uic_acc = racc;
 assign                    if_acc = ula_out[0];
 
@@ -680,18 +679,18 @@ endgenerate
 // Controle de I/O ------------------------------------------------------------
 
 generate if (INN | P_INN | OUT)
-io_ctrl #(.MDATAW(MDATAW        ),
-          .NBIOIN($clog2(NUIOIN)),
-          .NBIOOU($clog2(NUIOOU)),
-		     .INN(  INN         ),
-		   .P_INN(P_INN         )) io(clk, id_req_in, id_out_en,
-                                      if_operand[MDATAW-1:0],
-                                      req_in, addr_in, out_en, addr_out);
+io_ctrl #(.MDATAW(MDATAW),
+          .NBIOIN(NBIOIN),
+          .NBIOOU(NBIOOU),
+		     .INN(  INN ),
+		   .P_INN(P_INN )) io(clk, id_req_in, id_out_en,
+                              if_operand[MDATAW-1:0],
+                              req_in, addr_in, out_en, addr_out);
 else begin
 assign req_in = 1'b0;
 assign out_en = 1'b0;
-assign addr_in  = {$clog2(NUIOIN){1'b0}};
-assign addr_out = {$clog2(NUIOOU){1'b0}};
+assign addr_in  = {NBIOIN{1'b0}};
+assign addr_out = {NBIOOU{1'b0}};
 end endgenerate
 
 endmodule

@@ -594,8 +594,8 @@ module ula_i2f
 	parameter MAN = 23,
 	parameter EXP = 8
 )(
-	input         [MAN+EXP:0] in,
-	output signed [MAN+EXP:0] out
+	input  signed [MAN-1  :0] in,
+	output        [MAN+EXP:0] out
 );
 
 wire                  i2f_s = in[MAN-1];
@@ -872,7 +872,8 @@ module ula_srs
 	parameter NUBITS = 32
 )(
 	 input                         clk,
-	 input     signed [NUBITS-1:0] in1, in2,
+	 input     signed [NUBITS-1:0] in1,
+	 input            [NUBITS-1:0] in2,
 	output reg signed [NUBITS-1:0] out 
 );
 
@@ -1107,13 +1108,13 @@ generate if (NRM_M) ula_nrm #(NUBITS,NUGAIN) my_nrmm(clk, in1, nrmm); else assig
 
 wire signed [NUBITS-1:0] i2f;
 
-generate if (I2F) ula_i2f #(NBMANT,NBEXPO) my_i2f (in2, i2f); else assign i2f = {NUBITS{1'bx}}; endgenerate
+generate if (I2F) ula_i2f #(NBMANT,NBEXPO) my_i2f (in2[NBMANT-1:0], i2f); else assign i2f = {NUBITS{1'bx}}; endgenerate
 
 // I2F_M ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] i2fm;
 
-generate if (I2F_M) ula_i2f #(NBMANT,NBEXPO) my_i2fm(in1, i2fm); else assign i2fm = {NUBITS{1'bx}}; endgenerate
+generate if (I2F_M) ula_i2f #(NBMANT,NBEXPO) my_i2fm(in1[NBMANT-1:0], i2fm); else assign i2fm = {NUBITS{1'bx}}; endgenerate
 
 // F2I ------------------------------------------------------------------------
 

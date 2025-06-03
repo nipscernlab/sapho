@@ -27,7 +27,7 @@ void force_rightbar(char *str){while (*str) {if (*str == '\\') *str = '/'; str++
 void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 {
     // ------------------------------------------------------------------------
-    // cria o arquivo .v do processador ---------------------------------------
+    // cria o arquivo .v para escrita -----------------------------------------
     // ------------------------------------------------------------------------
 
     char    tmp[512];
@@ -39,24 +39,53 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // cria cabecalho e portas do modulo --------------------------------------
     // ------------------------------------------------------------------------
 
+    int comma;
+    int nbioin = (nuioin > 1) ? (int)ceil(log2(nuioin)) : 1;
+    int nbioou = (nuioou > 1) ? (int)ceil(log2(nuioou)) : 1;
+
+    // o comeco eh padrao ....
     fprintf(f_veri, "module %s (\n", prname);
     fprintf(f_veri, "input  clk, rst,\n");
 
-    fprintf(f_veri, "input  signed [%d:0] in ,\n", nubits-1);
-    fprintf(f_veri, "output signed [%d:0] out,\n", nubits-1);
+    // verifica se precisa adicionar barramento de entrada in
+    if (nuioin > 0 && opc_inn()) fprintf(f_veri, "input  signed [%d:0] in ,\n", nubits-1);
+    // sempre adiciona o barramento de saida out
+    /*tem que ter alguma saida*/ fprintf(f_veri, "output signed [%d:0] out"   , nubits-1); comma = 0;
 
-    fprintf(f_veri, "output [%d:0] req_in,\n", nuioin-1);
-    fprintf(f_veri, "output [%d:0] out_en,\n", nuioou-1);
-    fprintf(f_veri, "input  itr);\n\n");
+    // verifica se pode ter mais alguma coisa depois pra colocar uma virgula
+    if ((nuioin > 0 && opc_inn()) || (nuioou > 0 && opc_out()) || (itr_addr != 0)) {fprintf(f_veri, ",\n"); comma = 1;}
+
+    // verifica se vai ter que adicionar controle pra porta de entrada
+    if (nuioin > 0 && opc_inn()) {fprintf(f_veri, "output [%d:0] req_in", nuioin-1); comma = 0;}
+
+    // verifica se pode ter mais alguma coisa depois pra colocar uma virgula
+    if ((nuioou > 0 && opc_out()) || (itr_addr != 0)) if (comma == 0) {fprintf(f_veri, ",\n"); comma = 1;}
+
+    // verifica se vai ter que adicionar controle pra porta de saida
+    if (nuioou > 0 && opc_out()) {fprintf(f_veri, "output [%d:0] out_en", nuioou-1); comma = 0;}
+
+    // verifica se pode ter mais alguma coisa depois pra colocar uma virgula
+    if ((itr_addr != 0)) if (comma == 0) {fprintf(f_veri, ",\n"); comma = 1;}
+
+    // verifica se vai ter que adicionar pino de interrupcao
+    if (itr_addr != 0) fprintf(f_veri, "input  itr);\n\n"); else fprintf(f_veri, ");\n\n");
 
     // ------------------------------------------------------------------------
     // wires de interface com I/O ---------------------------------------------
     // ------------------------------------------------------------------------
 
+    // se nao tem barramento de entrada, precisa criar um wire pra ligar a toa no processador
+    if (nuioin == 0 || !opc_inn()) fprintf(f_veri, "wire [%d:0] in;\n", nubits-1);
+
+    // se nao tem pino de interrupcao, precisa criar um wire pra ligar no processador
+    if (itr_addr == 0) fprintf(f_veri, "wire itr = 1'b0;\n");
+
+    // sempre precisa pra ligar no processador
     fprintf(f_veri, "wire proc_req_in, proc_out_en;\n");
 
-    fprintf(f_veri, "wire [%d:0] addr_in;\n"   ,  (int)ceil(log2(nuioin)-1));
-    fprintf(f_veri, "wire [%d:0] addr_out;\n\n",  (int)ceil(log2(nuioou)-1));
+    // sempre precisa pra ligar no processador
+    fprintf(f_veri, "wire [%d:0] addr_in;\n"   , nbioin-1);
+    fprintf(f_veri, "wire [%d:0] addr_out;\n\n", nbioou-1);
 
     // ------------------------------------------------------------------------
     // wires de interface com simulacao ---------------------------------------
@@ -83,8 +112,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri,            ".MINSTS(%d),\n", n_ins );
     fprintf(f_veri,            ".SDEPTH(%d),\n", sdepth);
     fprintf(f_veri,            ".DDEPTH(%d),\n", ddepth);
-    fprintf(f_veri,            ".NUIOIN(%d),\n", nuioin);
-    fprintf(f_veri,            ".NUIOOU(%d),\n", nuioou);
+    fprintf(f_veri,            ".NBIOIN(%d),\n", nbioin);
+    fprintf(f_veri,            ".NBIOOU(%d),\n", nbioou);
     fprintf(f_veri,            ".FFTSIZ(%d),\n", fftsiz);
 
     // se tem interrupcao, coloca o endereco dela no processador
@@ -97,7 +126,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     for (int i = 0; i < opc_cnt(); i++) fprintf(f_veri, ".%s(1),\n", opc_get(i));
 
     // ------------------------------------------------------------------------
-    // finaizacao da instancia do processador ---------------------------------
+    // finalizacao da instancia do processador --------------------------------
     // ------------------------------------------------------------------------
 
     char path[1024]; sprintf(path, "%s/Hardware/%s", proc_dir, prname); force_rightbar(path);
@@ -114,17 +143,21 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // decodificadores de endereco de I/O -------------------------------------
     // ------------------------------------------------------------------------
 
-    // portas de entrada
+    // verifica se precisa de decodificador de endereco pra portas de entrada
     if (opc_inn())
-    fprintf(f_veri, "addr_dec #(%d) dec_in (proc_req_in, addr_in , req_in);\n"  , nuioin);
-    else
-    fprintf(f_veri, "assign req_in = {%d{1'b0}};\n", nuioin);
+    {
+        // se for soh uma porta, liga direto no proc_req_in
+        if (nuioin == 1) fprintf(f_veri, "assign req_in = proc_req_in;\n"                            , nuioin);
+        else             fprintf(f_veri, "addr_dec #(%d) dec_in (proc_req_in, addr_in , req_in);\n"  , nuioin);
+    }
     
-    // portas de saida
+    // verifica se precisa de decodificador de endereco pra portas de saida
     if (opc_out())
-    fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou);
-    else
-    fprintf(f_veri, "assign out_en = {%d{1'b0}};\n", nuioou);
+    {
+        // se for soh uma porta, liga direto no proc_out_en
+        if (nuioou == 1) fprintf(f_veri, "assign out_en = proc_out_en;\n\n"                          , nuioou);
+        else             fprintf(f_veri, "addr_dec #(%d) dec_out(proc_out_en, addr_out, out_en);\n\n", nuioou);
+    }
 
     // ------------------------------------------------------------------------
     // inicio de interface com simulacao (iverilog+gtkwave) -------------------
@@ -142,38 +175,53 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
     fprintf(f_veri, "// I/O ------------------------------------------------------------------------\n\n");
 
-    // cadastra portas de entrada
-    for(int i=0;i<nuioin;i++)
+    // cadastra portas de entrada pra simulacao
+    for(int i=0; i<nuioin; i++)
     {
-    fprintf(f_veri, "reg signed [%d:0] in_sim_%d = 0;\n", nubits-1, i);
-    fprintf(f_veri, "reg req_in_sim_%d = 0;\n", i);
+        if (inn_used(i))
+        {
+            fprintf(f_veri, "reg signed [%d:0] in_sim_%d = 0;\n", nubits-1, i);
+            fprintf(f_veri, "reg req_in_sim_%d = 0;\n", i);
+        }
     }
-    fprintf(f_veri,"\n");
+    if (opc_inn()) fprintf(f_veri,"\n");
 
-    // cadastra portas de saida
+    // cadastra portas de saida pra simulacao
     for(int i=0;i<nuioou;i++)
     {
-    fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", nubits-1, i);
-    fprintf(f_veri, "reg out_en_sim_%d = 0;\n", i);
+        if (out_used(i))
+        {
+            fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", nubits-1, i);
+            fprintf(f_veri, "reg out_en_sim_%d = 0;\n", i);
+        }
     }
 
     // decodifica porta de entrada
-    fprintf(f_veri, "\nalways @ (*) begin\n");
-    for(int i=0;i<nuioin;i++)
+    if (opc_inn())
     {
-    fprintf(f_veri, "   if (req_in == %d) in_sim_%d = in;\n", (int)pow(2,i),i);
-    fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n",  i, (int)pow(2,i),i);
+        if (nuioin > 0) fprintf(f_veri, "\nalways @ (*) begin\n");
+        for(int i=0; i<nuioin; i++)
+        {
+            if (inn_used(i))
+            {
+                fprintf(f_veri, "   if (req_in == %d) in_sim_%d = in;\n", (int)pow(2,i),i);
+                fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n",  i, (int)pow(2,i),i);
+            }
+        }
+        if (nuioin > 0) fprintf(f_veri, "end\n");
     }
-    fprintf(f_veri, "end\n");
 
     // decodifica portas de saida
-    fprintf(f_veri, "\nalways @ (*) begin\n");
+    if (opc_out())
+    {
+    if (nuioou > 0) fprintf(f_veri, "\nalways @ (*) begin\n");
     for(int i=0;i<nuioou;i++)
     {
     fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= out;\n", (int)pow(2,i),i);
     fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n",     i, (int)pow(2,i),i);
     }
-    fprintf(f_veri, "end\n\n");
+    if (nuioou > 0) fprintf(f_veri, "end\n\n");
+    }
 
     // ------------------------------------------------------------------------
     // cadastra variaveis do usuario para simulacao ---------------------------
@@ -287,19 +335,20 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 // gera arquivo verilog com o test-bench do processador -----------------------
 // ----------------------------------------------------------------------------
 
-void hdl_tb_file()
+void hdl_tb_file(int itr_addr)
 {
     // ------------------------------------------------------------------------
     // cria o arquivo .v ------------------------------------------------------
     // ------------------------------------------------------------------------
 
+    int     aux;
     char    tmp[512];
     sprintf(tmp, "%s/%s_tb.v", temp_dir, prname);
 
     FILE *f_veri = fopen(tmp,"w");
 
     // ------------------------------------------------------------------------
-    // cria cabecalho do modulo -----------------------------------------------
+    // cria cabecalho do testbench --------------------------------------------
     // ------------------------------------------------------------------------
 
     double T = 1000.0/sim_clk(); // periodo do clock em ns (clk frq em MHz)
@@ -334,52 +383,85 @@ void hdl_tb_file()
     fprintf(f_veri, "always #%f clk = ~clk;\n\n", T/2.0);
 
     // ------------------------------------------------------------------------
-    // portas de interface e instancia do processador -------------------------
+    // portas de interface com o processador ----------------------------------
     // ------------------------------------------------------------------------
 
-    fprintf(f_veri, "reg  signed [%d:0] proc_io_in = 0;\n", nubits-1);
-    fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n"   , nubits-1);
-    fprintf(f_veri, "wire [%d:0] proc_req_in;\n"          , nuioin-1);
-    fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n"        , nuioou-1);
+    // verifica se precisa adicionar barramento de entrada in
+    if (nuioin > 0 && opc_inn()) fprintf(f_veri, "reg  signed [%d:0] proc_io_in = 0;\n", nubits-1);
+    // sempre adiciona o barramento de saida out
+    /*tem que ter alguma saida*/ fprintf(f_veri, "wire signed [%d:0] proc_io_out;\n"   , nubits-1);
+    // verifica se vai ter que adicionar controle pra porta de entrada
+    if (nuioin > 0 && opc_inn()) fprintf(f_veri, "wire [%d:0] proc_req_in;\n"          , nuioin-1);
+    // verifica se vai ter que adicionar controle pra porta de saida
+    if (nuioou > 0 && opc_out()) fprintf(f_veri, "wire [%d:0] proc_out_en;\n\n"        , nuioou-1);
 
-    fprintf(f_veri, "%s proc(clk,rst,proc_io_in,proc_io_out,proc_req_in,proc_out_en,1'b0);\n\n", prname);
+    // ------------------------------------------------------------------------
+    // instancia do processador -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // o comeco eh padrao
+    fprintf(f_veri, "%s proc(clk,rst", prname);
+    // verifica se precisa adicionar barramento de entrada in
+    if (nuioin > 0 && opc_inn()) fprintf(f_veri, ",proc_io_in" );
+    // sempre adiciona o barramento de saida out
+    /*tem que ter alguma saida*/ fprintf(f_veri, ",proc_io_out");
+    // verifica se vai ter que adicionar controle pra porta de entrada
+    if (nuioin > 0 && opc_inn()) fprintf(f_veri, ",proc_req_in");
+    // verifica se vai ter que adicionar controle pra porta de saida
+    if (nuioou > 0 && opc_out()) fprintf(f_veri, ",proc_out_en");
+    // verifica se vai ter que adicionar pino de interrupcao
+    if (itr_addr != 0)           fprintf(f_veri, ",1'b0"       );
+    // finaliza instancia
+                                 fprintf(f_veri, ");\n\n"      );
 
     // ------------------------------------------------------------------------
     // interface com portas de entrada ----------------------------------------
     // ------------------------------------------------------------------------
 
-    // cadastra portas de entrada
+    // cadastra portas de entrada pra simulacao
     for(int i=0;i<nuioin;i++)
     {
-    fprintf(f_veri, "integer data_in_%d;\n", i);
-    fprintf(f_veri, "reg signed [%d:0] in_%d = 0;\n", nubits-1, i);
-    fprintf(f_veri, "reg req_in_%d = 0;\n\n", i);
+        if (inn_used(i))
+        {
+            fprintf(f_veri, "integer data_in_%d;\n", i);
+            fprintf(f_veri, "reg signed [%d:0] in_%d = 0;\n", nubits-1, i);
+            fprintf(f_veri, "reg req_in_%d = 0;\n\n", i);
+        }
     }
-    fprintf(f_veri,"\n");
+    if (opc_inn()) fprintf(f_veri,"\n");
 
     // inicializa portas de entrada
-    fprintf(f_veri, "initial begin\n");
+    if (opc_inn()) fprintf(f_veri, "initial begin\n");
     for(int i=0;i<nuioin;i++)
     {
-    force_rightbar(proc_dir);
-    fprintf(f_veri, "    data_in_%d = $fopen(\"%s/Simulation/input_%d.txt\", \"r\"); // write your input data into this file\n",i,proc_dir,i); 
+        if (inn_used(i))
+        {
+            force_rightbar(proc_dir);
+            fprintf(f_veri, "    data_in_%d = $fopen(\"%s/Simulation/input_%d.txt\", \"r\"); // write your input data into this file\n",i,proc_dir,i); 
+        }
     }
-    fprintf(f_veri, "end\n\n");
+    if (opc_inn()) fprintf(f_veri, "end\n\n");
 
     // decodifica porta de entrada
-    fprintf(f_veri, "integer scan_result;\n");
-    fprintf(f_veri, "always @ (*) begin  \n");
-    fprintf(f_veri, "    proc_io_in = 0; \n");
+    if (opc_inn())
+    {
+        fprintf(f_veri, "integer scan_result;\n");
+        fprintf(f_veri, "always @ (*) begin  \n");
+        fprintf(f_veri, "    proc_io_in = 0; \n");
+    }
     for(int i=0;i<nuioin;i++)
     {
-    fprintf(f_veri, "    #1;\n");
-    fprintf(f_veri, "    if (proc_req_in == %d) begin\n"  ,             (int)pow(2,i)  );
-    fprintf(f_veri, "        if (data_in_%d != 0) scan_result = $fscanf(data_in_%d, \"%%d\", in_%d);\n", i,i,i);
-    fprintf(f_veri, "        proc_io_in  = in_%d;\n"                                 ,i);
-    fprintf(f_veri, "    end\n"                                                        );
-    fprintf(f_veri, "    req_in_%d = proc_req_in == %d;\n",          i, (int)pow(2,i),i);
+        if (inn_used(i))
+        {
+            fprintf(f_veri, "    #1;\n");
+            fprintf(f_veri, "    if (proc_req_in == %d) begin\n"  ,             (int)pow(2,i)  );
+            fprintf(f_veri, "        if (data_in_%d != 0) scan_result = $fscanf(data_in_%d, \"%%d\", in_%d);\n", i,i,i);
+            fprintf(f_veri, "        proc_io_in  = in_%d;\n"                                 ,i);
+            fprintf(f_veri, "    end\n"                                                        );
+            fprintf(f_veri, "    req_in_%d = proc_req_in == %d;\n",          i, (int)pow(2,i),i);
+        }
     }
-    fprintf(f_veri, "end\n\n");
+    if (opc_inn()) fprintf(f_veri, "end\n\n");
 
     // ------------------------------------------------------------------------
     // interface com portas de saida ------------------------------------------
@@ -388,18 +470,25 @@ void hdl_tb_file()
     // cadastra portas de saida
     for(int i=0;i<nuioou;i++)
     {
-    fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", nubits-1, i);
-    fprintf(f_veri, "reg out_en_%d = 0;\n", i);
+        if (out_used(i))
+        {
+            fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", nubits-1, i);
+            fprintf(f_veri, "reg out_en_%d = 0;\n", i);
+        }
     }
+    if (opc_out()) fprintf(f_veri, "\n");
 
     // decodifica portas de saida
-    fprintf(f_veri, "\nalways @ (*) begin\n");
+    if (opc_out()) fprintf(f_veri, "always @ (*) begin\n");
     for(int i=0;i<nuioou;i++)
     {
-    fprintf(f_veri, "    if (proc_out_en == %d) out_sig_%d <= proc_io_out;\n", (int)pow(2,i),i);
-    fprintf(f_veri, "    out_en_%d = proc_out_en == %d;\n",                 i, (int)pow(2,i),i);
+        if (out_used(i))
+        {
+            fprintf(f_veri, "    if (proc_out_en == %d) out_sig_%d <= proc_io_out;\n", (int)pow(2,i),i);
+            fprintf(f_veri, "    out_en_%d = proc_out_en == %d;\n",                 i, (int)pow(2,i),i);
+        }
     }
-    fprintf(f_veri, "end\n\n");
+    if (opc_out()) fprintf(f_veri, "end\n\n");
 
     // ------------------------------------------------------------------------
     // finaliza arquivo -------------------------------------------------------

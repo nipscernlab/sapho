@@ -16,8 +16,8 @@ module instr_dec
 	output reg [       5:0] ula_op,
 
 	output reg              mem_wr,
-	output                  req_in,
-	output                  out_en,
+	output                  req_in, out_en,
+	
 	output reg              sti, ldi,
 	output reg              fft
 );

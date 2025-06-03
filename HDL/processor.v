@@ -105,8 +105,8 @@ module processor
 	parameter DDEPTH = 10,              // Tamanho da pilha de dados
 
 	// entrada e Saida
-	parameter NUIOIN =  2,              // Numero de portas de entrada
-	parameter NUIOOU =  2,              // Numero de portas de saida
+	parameter NBIOIN =  2,              // Numero de bits de portas de entrada
+	parameter NBIOOU =  2,              // Numero de bits de portas de saida
 
 	// constantes aritmeticas
 	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
@@ -202,13 +202,13 @@ module processor
 	parameter   SHR   = 0,
 	parameter   SRS   = 0)
 (
-	input                       clk     , rst,
-	input  [NUBITS        -1:0] io_in   ,
-	output [NUBITS        -1:0] io_out  ,
-	output [$clog2(NUIOIN)-1:0] addr_in ,
-	output [$clog2(NUIOOU)-1:0] addr_out,
-	output                      req_in  , out_en,
-	input                       itr
+	input               clk     , rst,
+	input  [NUBITS-1:0] io_in   ,
+	output [NUBITS-1:0] io_out  ,
+	output [NBIOIN-1:0] addr_in ,
+	output [NBIOOU-1:0] addr_out,
+	output              req_in  , out_en,
+	input               itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
 
@@ -248,8 +248,8 @@ core #(.NBOPCO (NBOPCO ),
        .NBEXPO (NBEXPO ),
        .SDEPTH (SDEPTH ),
        .DDEPTH (DDEPTH ),
-       .NUIOIN (NUIOIN ),
-       .NUIOOU (NUIOOU ),
+       .NBIOIN (NBIOIN ),
+       .NBIOOU (NBIOOU ),
        .NUGAIN (NUGAIN ),
        .FFTSIZ (FFTSIZ ),
          .LDI  (  LDI  ),

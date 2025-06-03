@@ -58,6 +58,8 @@ int  arr_tam;           // guarda tamanho do array
 // variaveis auxiliares
 int  n_ins	  = 0;      // numero de instrucoes adicionadas
 int  n_dat    = 0;      // numero de variaveis  adicionadas
+int  i_used[256];       // indica qual entrada foi usada
+int  o_used[256];       // indica qual saida   foi usada
 int  itr_addr = 0;      // endereco de interrupcao
 int  nbopr;             // num de bits de operando
 
@@ -71,7 +73,8 @@ int eval_get(char *fname, char *var, char *val)
     // abre o arquivo de log
     char path[1024];
     sprintf(path, "%s/%s", temp_dir, fname);
-    FILE *input = fopen(path, "r");
+    FILE *input =          fopen(path  , "r");
+    if   (input == NULL) fprintf(stderr, "Erro: cadê o arquivo %s?\n", path);
     
     char linha[1001];
     char nome [128 ];
@@ -113,13 +116,26 @@ void instr_salto(char *va)
     sim_add(opc_name,va);
 }
 
-// cadastra instrucoes de I/O
-void instr_io(char *va)
+// cadastra instrucoes de entrada
+void instr_inn(char *va)
+{
+    // escreve a nova instrucao
+    fprintf(f_instr, "%s%s\n" , itob(opc_idx,NBITS_OPC), itob(atoi(va),nbopr));
+    // cadastra no tradutor da simulacao
+    sim_add(opc_name,va);
+    // cadastra o indice da entrada usada
+    i_used[atoi(va)] = 1;
+}
+
+// cadastra instrucoes de saida
+void instr_out(char *va)
 {
     // escreve a nova instrucao
     fprintf(f_instr, "%s%s\n" , itob(opc_idx,NBITS_OPC), itob(atoi(va),nbopr));
     // cadastra, tambem, no tradutor da simulacao
     sim_add(opc_name,va);
+    // cadastra o indice da saida usada
+    o_used[atoi(va)] = 1;
 }
 
 // ----------------------------------------------------------------------------
@@ -134,6 +150,18 @@ int get_n_ins()
     return atoi(aux);
 }
 
+// diz se a porta de entrada i foi usada
+int inn_used(int i)
+{
+    return i_used[i];
+}
+
+// diz se a porta de saida i foi usada
+int out_used(int i)
+{
+    return o_used[i];
+}
+
 // ----------------------------------------------------------------------------
 // funcoes de evolucao do lexer -----------------------------------------------
 // ----------------------------------------------------------------------------
@@ -142,6 +170,10 @@ int get_n_ins()
 void eval_init(int clk, int clk_n, int s_typ)
 {
     char aux[256];
+
+    // reseta indices de I/O usados -------------------------------------------
+
+    for (int i = 0; i < 256; i++) {i_used[i] = 0; o_used[i] = 0;}
 
     // pega parametros no arquivo app_log.txt ---------------------------------
 
@@ -219,7 +251,8 @@ void eval_opernd(char *va, int is_const)
         case 16: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
         case 17: instr_ula     (va,is_const);          state =  0; break; // operacoes com a ULA
         case 18: instr_salto   (va);                   state =  0; break; // operacoes de salto
-        case 19: instr_io      (va);                   state =  0; break; // operacoes de I/O
+        case 19: instr_inn     (va);                   state =  0; break; // operacoes de entrada
+        case 20: instr_out     (va);                   state =  0; break; // operacoes de saida
     }
 }
 
@@ -235,10 +268,6 @@ void eval_finish()
 
     if (nubits != nbmant+nbexpo+1) fprintf(stderr, "Erro: inconsistência no ponto flutuante. Tem que ser NUBITS = NBMANT + NBEXPO + 1.\n");
 
-    // checa consistencia de numero de portas de I/O --------------------------
-
-    if (nuioin < 2 || nuioou < 2)  fprintf(stderr, "Erro: número de portas de I/O tem que ser >= 2.\n");
-
     // finaliza simulacao -----------------------------------------------------
 
     sim_finish();
@@ -246,5 +275,5 @@ void eval_finish()
     // gera arquivos hdl ------------------------------------------------------
 
     hdl_vv_file(n_ins,n_dat,nbopr,itr_addr); // arquivo verilog top level do processador   
-    hdl_tb_file();                           // arquivo verilog de test bench
+    hdl_tb_file(itr_addr);                   // arquivo verilog de test bench
 }

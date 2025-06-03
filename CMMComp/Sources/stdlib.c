@@ -4,6 +4,7 @@
 
 // includes globais
 #include <string.h>
+#include <stdlib.h>
 
 // includes locais
 #include "..\Headers\t2t.h"
@@ -13,6 +14,7 @@
 #include "..\Headers\macros.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\variaveis.h"
+#include "..\Headers\diretivas.h"
 
 // ----------------------------------------------------------------------------
 // entrada e saida ------------------------------------------------------------
@@ -21,6 +23,7 @@
 // input
 int exec_in(int id)
 {
+    if (atoi(v_name[id]) >= nuioin) fprintf(stderr, "Erro na linha %d: não tem porta de entrada %s não!\n", line_num+1, v_name[id]);
     if (acc_ok == 0) add_instr("INN %s\n", v_name[id]); else add_instr("P_INN %s\n", v_name[id]);
 
     acc_ok = 1;  // diz que o acc agora tem um valor carregado
@@ -31,8 +34,8 @@ int exec_in(int id)
 // output
 void exec_out(int id, int et)
 {
-    if (get_type(et) > 2)
-        fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1);
+    if (atoi(v_name[id]) >= nuioou) fprintf(stderr, "Erro na linha %d: não tem porta de saída %s não!\n", line_num+1, v_name[id]);
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1);
 
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))

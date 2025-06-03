@@ -2,7 +2,7 @@
 #NUBITS 23
 #NDSTAC 5
 #SDEPTH 5
-#NUIOIN 2
+#NUIOIN 1
 #NUIOOU 2
 #NBMANT 16
 #NBEXPO 6
@@ -117,5 +117,7 @@ void main()
     float fdiv =  10.0/3.0; // 3.333...
     float raiz = sqrt(4.0); // 2.000
     float ata  = atan(1.1); // 0.8328
-    float sen  =  sin(1.0); // 0.8415 */
+    float sen  =  sin(1.0); // 0.8415
+
+    int   inn  = in(0); */
 }

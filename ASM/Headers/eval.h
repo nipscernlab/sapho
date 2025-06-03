@@ -25,6 +25,8 @@ extern int  fftsiz;            // tamanho da fft (em bits)
 // funcoes globais ------------------------------------------------------------
 
 int get_n_ins();               // numero de instrucoes (usar soh depois do eval_init())
+int inn_used(int i);           // diz se a porta de entrada i foi usada
+int out_used(int i);           // diz se a porta de saida   i foi usada
 
 // funcoes usadas no lexer (.l) -----------------------------------------------
 

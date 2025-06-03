@@ -51,7 +51,7 @@ LINHA          \n
 
    "INN"   eval_opcode(10,19, yytext,   "INN"  ); // entrada de dados
  "P_INN"   eval_opcode(11,19, yytext, "P_INN"  ); // PUSH + INN
-   "OUT"   eval_opcode(12,19, yytext,   "OUT"  ); // saida   de dados
+   "OUT"   eval_opcode(12,20, yytext,   "OUT"  ); // saida   de dados
 
    "JMP"   eval_opcode(13,18, yytext,   ""     ); // salto incondicional
    "JIZ"   eval_opcode(14,18, yytext,   "JIZ"  ); // salta se acc for zero
@@ -171,7 +171,7 @@ LINHA          \n
 .;
 %%
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	strcpy(proc_dir,argv[2]);                             // path da pasta do projeto
 	strcpy( hdl_dir,argv[3]);                             // path da pasta HDL
@@ -182,6 +182,8 @@ void main(int argc, char *argv[])
   yylex();                                              // executa o lexer
 	fclose(yyin);                                         // fecha o arquivo .asm
 	eval_finish();                                        // executa finalizacao do assembler
+
+  return 0;
 }
 
 int yywrap(void) {return 1;}

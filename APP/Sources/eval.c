@@ -35,6 +35,8 @@ void eval_init(char *path)
     sprintf(file, "%s/app_log.txt", path);
 
     f_log = fopen(file, "w");
+
+    if (f_log == NULL) fprintf(stderr, "Erro: não deu pra criar o arquivo %s/app_log.txt.\n", path);
 }
 
 // executado quando uma diretiva eh encontrada
@@ -81,7 +83,8 @@ void eval_opernd(char *va)
         case 16: var_add(name_arr,         tam_arr); state =  0; break; // preenche memoria com valor do arquivo
         case 17: var_add(va,1);             n_ins++; state =  0; break; // operacoes com a ULA
         case 18:                            n_ins++; state =  0; break; // operacoes de salto
-        case 19:                            n_ins++; state =  0; break; // operacoes de I/O
+        case 19:                            n_ins++; state =  0; break; // operacoes de entrada
+        case 20:                            n_ins++; state =  0; break; // operacoes de saida
     }
 }
 

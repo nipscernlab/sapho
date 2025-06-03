@@ -326,11 +326,13 @@ terminal : INUM                               {$$ = num2exp($1,1);}
 %%
 
 // ponto de inicio do programa
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     parse_init(argv[1], argv[2], argv[3], argv[4]); // inicializa o parser e as variaveis globais
     yyparse   ();                                   // aqui a magica acontece!!
     parse_end (argv[1], argv[2]);                   // finaliza o parser
+
+    return 0;
 }
 
 // erro de sintaxes do bison

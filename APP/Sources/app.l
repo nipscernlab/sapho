@@ -46,7 +46,7 @@ LINHA          \n
 
    "INN"   eval_opcode(19); // entrada de dados
  "P_INN"   eval_opcode(19); // PUSH + INN
-   "OUT"   eval_opcode(19); // saida de dados
+   "OUT"   eval_opcode(20); // saida de dados
 
    "JMP"   eval_opcode(18); // salto incondicional
    "JIZ"   eval_opcode(18); // salta se acc for zero
@@ -166,13 +166,15 @@ LINHA          \n
 .;
 %%
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	  yyin = fopen(argv[1], "r"); // primeiro argumento eh o arquivo .asm de entrada
-    eval_init(argv[2]);         // segundo  argumento eh o arquivo de log
+    eval_init(argv[2]);         // segundo  argumento eh o caminho pro arquivo de log
     yylex();                    // executa o lexer
 	  fclose(yyin);               // fecha o arquivo .asm
     eval_finish();              // finaliza o arquivo de log
+
+    return 0;
 }
 
 int yywrap(void) {return 1;}

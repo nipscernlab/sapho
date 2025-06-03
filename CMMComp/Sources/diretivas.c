@@ -19,6 +19,8 @@
 char prname[128] ; // nome do processador
 int  nbmant  = 16; // numero de bits de mantissa
 int  nbexpo  =  6; // numero de bits de expoente
+int  nuioin  =  1; // numero de portas de entrada
+int  nuioou  =  1; // numero de portas de saida
 
 // ----------------------------------------------------------------------------
 // Controle de diretivas ------------------------------------------------------
@@ -38,8 +40,7 @@ void dire_exec(char *dir, int id, int t)
         case 1: strcpy (prname,v_name[id]); break;
         case 3: nbmant = ival; break;
         case 4: nbexpo = ival; break;
-        // rever essa questao do num de i/o
-        case 7: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem entrada de dados?\n", line_num+1); break;
-        case 8: if (ival < 1) fprintf(stderr, "Erro na linha %d: pra que você quer um processador sem saída de dados?\n"  , line_num+1); break;
+        case 7: nuioin = ival; break;
+        case 8: nuioou = ival; break;
     }
 }
