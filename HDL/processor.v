@@ -116,9 +116,11 @@ module processor
 	// Parametros para alocacao de recursos ------------------------------------
 	// -------------------------------------------------------------------------
 
-	// implementa enderecamento indireto
+	// implementa leitura/escrita na memoria
 	parameter   LDI   = 0,
 	parameter   ILI   = 0,
+	parameter   SET   = 0,
+	parameter   SET_P = 0,
 	parameter   STI   = 0,
 	parameter   ISI   = 0,
 
@@ -254,6 +256,8 @@ core #(.NBOPCO (NBOPCO ),
        .FFTSIZ (FFTSIZ ),
          .LDI  (  LDI  ),
          .ILI  (  ILI  ),
+		 .SET  (  SET  ),
+		 .SET_P(  SET_P),
          .STI  (  STI  ),
          .ISI  (  ISI  ),
 		 .INN  (  INN  ),

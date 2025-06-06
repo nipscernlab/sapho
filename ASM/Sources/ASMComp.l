@@ -41,8 +41,8 @@ LINHA          \n
    "LDI"   eval_opcode( 2,17, yytext,   "LDI"  ); // LOD com enderecamento indireto (indice no acc)
    "ILI"   eval_opcode( 3,17, yytext,   "ILI"  ); // LOD com enderecamento indireto invertido (FFT)
 
-   "SET"   eval_opcode( 4,17, yytext,   ""     ); // salva dado na memoria
-   "SET_P" eval_opcode( 5,17, yytext,   ""     ); // SET + POP
+   "SET"   eval_opcode( 4,17, yytext,   "SET"  ); // salva dado na memoria
+   "SET_P" eval_opcode( 5,17, yytext,   "SET_P"); // SET + POP
    "STI"   eval_opcode( 6,17, yytext,   "STI"  ); // SET com enderecamento indireto (indice na pilha)
    "ISI"   eval_opcode( 7,17, yytext,   "ISI"  ); // SET com enderecamento indireto invertido (FFT)
 

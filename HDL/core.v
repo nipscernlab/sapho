@@ -311,8 +311,6 @@ module mem_ctrl
 	parameter MDATAW = 8,
 	parameter FFTSIZ = 3,
 
-	parameter STI    = 0,
-	parameter LDI    = 0,
 	parameter ISI    = 0,
 	parameter ILI    = 0
 )(
@@ -331,8 +329,8 @@ assign mem_wr      = wr;
 
 reg [MDATAW-1:0] ular; always @ (posedge clk) ular <= ula[MDATAW-1:0];
 
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3), .USEFFT(ISI)) ra_rd(ldi, fft, ular    , base_addr, mem_addr_rd);
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(3), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst, base_addr, mem_addr_wr);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ISI)) ra_rd(ldi, fft, ular    , base_addr, mem_addr_rd);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst, base_addr, mem_addr_wr);
 
 endmodule
 
@@ -410,9 +408,11 @@ module core
 	// Parametros configurados dinamicamente -----------------------------------
 	// -------------------------------------------------------------------------
 
-	// implementa enderecamento indireto
+	// implementa leitura/escrita na memoria
 	parameter   LDI   = 0,
 	parameter   ILI   = 0,
+	parameter   SET   = 0,
+	parameter   SET_P = 0,
 	parameter   STI   = 0,
 	parameter   ISI   = 0,
 
@@ -558,17 +558,21 @@ wire              id_req_in, id_out_en;
 
 instr_dec #(.NBOPCO(NBOPCO),
             .MDATAW(MDATAW),
-			  .LDI(  LDI  ),
-			  .ILI(  ILI  ),
-			  .INN(  INN  ),
-			.P_INN(P_INN  ),
-			  .OUT(  OUT  )) id(clk, rst,
-                                id_opcode,
-                                id_dsp_push, id_dsp_pop,
-                                id_ula_op,
-                                id_wr,
-                                id_req_in, id_out_en,
-                                id_sti, id_ldi, id_fft);
+			  .LDI  (  LDI  ),
+			  .ILI  (  ILI  ),
+			  .SET  (  SET  ),
+			  .SET_P(  SET_P),
+			  .STI  (  STI  ),
+			  .ISI  (  ISI  ),
+			  .INN  (  INN  ),
+			.P_INN  (P_INN  ),
+			  .OUT  (  OUT  )) id(clk, rst,
+                                  id_opcode,
+                                  id_dsp_push, id_dsp_pop,
+                                  id_ula_op,
+                                  id_wr,
+                                  id_req_in, id_out_en,
+                                  id_ldi, id_sti, id_fft);
 
 // Pilha de dados -------------------------------------------------------------
 
@@ -665,7 +669,6 @@ generate
 		mem_ctrl #(.NUBITS(NUBITS),
 		           .MDATAW(MDATAW),
 		           .FFTSIZ(FFTSIZ),
-		           .STI(STI),.LDI(LDI),
 		           .ILI(ILI),.ISI(ISI)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
 		                                   ula_out,
 		                                   if_operand[MDATAW-1:0], stack_data[MDATAW-1:0],
