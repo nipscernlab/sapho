@@ -54,6 +54,7 @@ COMEN  "//"[^\n]*
 "real"        return REAL;
 "imag"        return IMAG;
 "fase"        return FASE;
+"complex"     return COMP;
 
 "while"       return WHILE;
 "break"       return BREAK;

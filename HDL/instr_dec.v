@@ -3,6 +3,10 @@ module instr_dec
 	parameter NBOPCO  = 7,  // Numero de bits de  opcode
 	parameter MDATAW  = 8,   // Numero de bits de  endereco da memoria de dados
 
+	// implementa enderecamento indireto
+	parameter   LDI   = 0,
+	parameter   ILI   = 0,
+
 	// implementa portas de I/O
 	parameter   INN   = 0,
 	parameter P_INN   = 0,
@@ -18,14 +22,18 @@ module instr_dec
 	output reg              mem_wr,
 	output                  req_in, out_en,
 	
-	output reg              sti, ldi,
+	output reg              sti,
+	output                  ldi,
 	output reg              fft
 );
 
+wire   wLDI; generate if (  LDI) assign   wLDI = opcode == 7'd02; else assign   wLDI = 1'b0; endgenerate
+wire   wILI; generate if (  ILI) assign   wILI = opcode == 7'd03; else assign   wILI = 1'b0; endgenerate
 wire   wINN; generate if (  INN) assign   wINN = opcode == 7'd10; else assign   wINN = 1'b0; endgenerate
 wire wP_INN; generate if (P_INN) assign wP_INN = opcode == 7'd11; else assign wP_INN = 1'b0; endgenerate
 wire   wOUT; generate if (  OUT) assign   wOUT = opcode == 7'd12; else assign   wOUT = 1'b0; endgenerate
 
+generate if (LDI |   ILI) assign ldi    = wLDI |   wILI; else assign ldi    = 1'b0; endgenerate
 generate if (INN | P_INN) assign req_in = wINN | wP_INN; else assign req_in = 1'b0; endgenerate
 generate if (OUT        ) assign out_en = wOUT         ; else assign out_en = 1'b0; endgenerate
                                               // NOP
@@ -37,7 +45,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -46,7 +53,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -55,7 +61,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b1;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -64,7 +69,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b1;
 						sti      <= 1'b0;
 						fft      <= 1'b1;
 					end
@@ -73,7 +77,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b1;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -82,7 +85,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b1;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -91,7 +93,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b1;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b1;
 						fft      <= 1'b0;
 					end
@@ -100,7 +101,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b1;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b1;
 						fft      <= 1'b1;
 					end
@@ -109,7 +109,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -118,7 +117,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -127,7 +125,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -136,7 +133,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -145,7 +141,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -154,7 +149,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -163,7 +157,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -172,7 +165,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -181,7 +173,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -190,7 +181,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -199,7 +189,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -208,7 +197,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -217,7 +205,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -226,7 +213,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -235,7 +221,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -244,7 +229,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -253,7 +237,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -262,7 +245,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -271,7 +253,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -280,7 +261,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -289,7 +269,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -298,7 +277,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -307,7 +285,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -316,7 +293,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -325,7 +301,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -334,7 +309,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -343,7 +317,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -352,7 +325,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -361,7 +333,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -370,7 +341,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -379,7 +349,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -388,7 +357,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -397,7 +365,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -406,7 +373,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -415,7 +381,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -424,7 +389,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -433,7 +397,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -442,7 +405,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -451,7 +413,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -460,7 +421,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -469,7 +429,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -478,7 +437,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -487,7 +445,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -496,7 +453,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -505,7 +461,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -514,7 +469,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -523,7 +477,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -532,7 +485,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -541,7 +493,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -550,7 +501,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -559,7 +509,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -568,7 +517,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -577,7 +525,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -586,7 +533,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -595,7 +541,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -604,7 +549,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -613,7 +557,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -622,7 +565,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -631,7 +573,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -640,7 +581,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -649,7 +589,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -658,7 +597,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -667,7 +605,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -676,7 +613,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -685,7 +621,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -694,7 +629,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -703,7 +637,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -712,7 +645,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -721,7 +653,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -730,7 +661,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b1;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -739,7 +669,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -748,7 +677,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -757,7 +685,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -766,7 +693,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -775,7 +701,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -784,7 +709,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -793,7 +717,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -802,7 +725,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -811,7 +733,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -820,7 +741,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -829,7 +749,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -838,7 +757,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -847,7 +765,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -856,7 +773,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -865,7 +781,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -874,7 +789,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b1;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -883,7 +797,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'b0;
 						push     <= 1'b0;
 						pop      <= 1'b0;
-						ldi      <= 1'b0;
 						sti      <= 1'b0;
 						fft      <= 1'b0;
 					end
@@ -892,7 +805,6 @@ always @ (*) begin case (opcode)
 						mem_wr   <= 1'bx;
 						push     <= 1'bx;
 						pop      <= 1'bx;
-						ldi      <= 1'bx;
 						sti      <= 1'bx;
 						fft      <= 1'bx;
 					end

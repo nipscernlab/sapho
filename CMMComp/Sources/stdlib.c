@@ -640,3 +640,129 @@ int exec_fase(int et)
     acc_ok = 1;
     return 2*OFST;
 }
+
+// junta doi numeros reais pra fazer um complexo
+int exec_comp(int etr, int eti)
+{
+    if (get_type(etr) > 2 || get_type(eti > 2)) fprintf (stderr, "Erro na linha %d: argumentos da função complex(.,.) não podem ser complexos!\n", line_num+1);
+
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // int na memoria e int na memoria
+    if ((get_type(etr) == 1) && (etr % OFST != 0) && (get_type(eti) == 1) && (eti % OFST != 0))
+    {
+        add_instr("%s %s\n", i2f, v_name[etr%OFST]);
+        add_instr("P_I2F_M %s\n", v_name[eti%OFST]);
+    }
+
+    // int na memoria e int no acc
+    if ((get_type(etr) == 1) && (etr % OFST != 0) && (get_type(eti) == 1) && (eti % OFST == 0))
+    {
+        add_instr("SET aux_var\n");
+        add_instr("I2F_M %s\n", v_name[etr%OFST]);
+        add_instr("P_I2F_M aux_var\n");
+    }
+
+    // int na memoria e float na memoria
+    if ((get_type(etr) == 1) && (etr % OFST != 0) && (get_type(eti) == 2) && (eti % OFST != 0))
+    {
+        add_instr("%s %s\n", i2f, v_name[etr%OFST]);
+        add_instr("P_LOD %s\n"  , v_name[eti%OFST]);
+    }
+
+    // int na memoria e float no acc
+    if ((get_type(etr) == 1) && (etr % OFST != 0) && (get_type(eti) == 2) && (eti % OFST == 0))
+    {
+        add_instr("SET aux_var\n");
+        add_instr("I2F_M %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD aux_var\n");
+    }
+
+    // int no acc e int na memoria
+    if ((get_type(etr) == 1) && (etr % OFST == 0) && (get_type(eti) == 1) && (eti % OFST != 0))
+    {
+        add_instr("I2F\n");
+        add_instr("P_I2F_M %s\n", v_name[eti%OFST]);
+    }
+
+    // int no acc e int no acc
+    if ((get_type(etr) == 1) && (etr % OFST == 0) && (get_type(eti) == 1) && (eti % OFST == 0))
+    {
+        add_instr("SET_P aux_var\n");
+        add_instr("I2F\n");
+        add_instr("P_I2F_M aux_var\n");
+    }
+
+    // int no acc e float na memoria
+    if ((get_type(etr) == 1) && (etr % OFST == 0) && (get_type(eti) == 2) && (eti % OFST != 0))
+    {
+        add_instr("I2F\n");
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // int no acc e float no acc
+    if ((get_type(etr) == 1) && (etr % OFST == 0) && (get_type(eti) == 2) && (eti % OFST == 0))
+    {
+        add_instr("SET_P aux_var\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD aux_var\n");
+    }
+
+    // float na memoria e int na memoria
+    if ((get_type(etr) == 2) && (etr % OFST != 0) && (get_type(eti) == 1) && (eti % OFST != 0))
+    {
+        add_instr("%s %s\n",  ld, v_name[etr%OFST]);
+        add_instr("P_I2F_M %s\n", v_name[eti%OFST]);
+    }
+
+    // float na memoria e int no acc
+    if ((get_type(etr) == 2) && (etr % OFST != 0) && (get_type(eti) == 1) && (eti % OFST == 0))
+    {
+        add_instr("SET aux_var\n");
+        add_instr("LOD %s\n", v_name[etr%OFST]);
+        add_instr("P_I2F_M aux_var\n");
+    }
+
+    // float na memoria e float na memoria
+    if ((get_type(etr) == 2) && (etr % OFST != 0) && (get_type(eti) == 2) && (eti % OFST != 0))
+    {
+        add_instr("%s %s\n", ld, v_name[etr%OFST]);
+        add_instr("P_LOD %s\n" , v_name[eti%OFST]);
+    }
+
+    // float na memoria e float no acc
+    if ((get_type(etr) == 2) && (etr % OFST != 0) && (get_type(eti) == 2) && (eti % OFST == 0))
+    {
+        add_instr("SET aux_var\n");
+        add_instr("LOD %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD aux_var\n");
+    }
+
+    // float no acc e int na memoria
+    if ((get_type(etr) == 2) && (etr % OFST == 0) && (get_type(eti) == 1) && (eti % OFST != 0))
+    {
+        add_instr("P_I2F_M %s\n", v_name[eti%OFST]);
+    }
+
+    // float no acc e int no acc
+    if ((get_type(etr) == 2) && (etr % OFST == 0) && (get_type(eti) == 1) && (eti % OFST == 0))
+    {
+        add_instr("I2F\n");
+    }
+
+    // float no acc e float na memoria
+    if ((get_type(etr) == 2) && (etr % OFST == 0) && (get_type(eti) == 2) && (eti % OFST != 0))
+    {
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // float no acc e float no acc
+    if ((get_type(etr) == 1) && (etr % OFST == 0) && (get_type(eti) == 2) && (eti % OFST == 0))
+    {
+        // nao faz nada
+    }
+
+    acc_ok = 1;
+    return 3*OFST;
+}

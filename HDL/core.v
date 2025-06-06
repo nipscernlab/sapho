@@ -558,6 +558,8 @@ wire              id_req_in, id_out_en;
 
 instr_dec #(.NBOPCO(NBOPCO),
             .MDATAW(MDATAW),
+			  .LDI(  LDI  ),
+			  .ILI(  ILI  ),
 			  .INN(  INN  ),
 			.P_INN(P_INN  ),
 			  .OUT(  OUT  )) id(clk, rst,
