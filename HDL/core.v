@@ -374,148 +374,163 @@ module core
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
-	parameter NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
-	parameter NBOPER = 9,               // Numero de bits de operando
-	parameter ITRADD = 0,               // Endereco da interrupcao
+	parameter  NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
+	parameter  NBOPER = 9,               // Numero de bits de operando
+	parameter  ITRADD = 0,               // Endereco da interrupcao
 
 	// memorias
-	parameter MDATAW = 9,               // Numero de bits de endereco da memoria de dados
-	parameter MINSTW = 9,               // Numero de bits de endereco da memoria de instrucao
-	parameter NBINST = NBOPCO + NBOPER, // Numero de bits da memoria de instrucao
+	parameter  MDATAW = 9,               // Numero de bits de endereco da memoria de dados
+	parameter  MINSTW = 9,               // Numero de bits de endereco da memoria de instrucao
+	parameter  NBINST = NBOPCO + NBOPER, // Numero de bits da memoria de instrucao
 
 	// -------------------------------------------------------------------------
 	// Parametros configurados pelo usuario ------------------------------------
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
-	parameter NUBITS = 32,              // Numero de bits de dados
-	parameter NBMANT = 23,              // Numero de bits da mantissa
-	parameter NBEXPO =  8,              // Numero de bits do expoente
+	parameter  NUBITS = 32,              // Numero de bits de dados
+	parameter  NBMANT = 23,              // Numero de bits da mantissa
+	parameter  NBEXPO =  8,              // Numero de bits do expoente
 
 	// memorias
-	parameter SDEPTH = 10,              // Tamanho da pilha de instrucao
-	parameter DDEPTH = 10,              // Tamanho da pilha de dados
+	parameter  SDEPTH = 10,              // Tamanho da pilha de instrucao
+	parameter  DDEPTH = 10,              // Tamanho da pilha de dados
 
 	// entradas e Saidas
-	parameter NBIOIN =  2,              // Numero de bits de enderecos de IO - entrada
-	parameter NBIOOU =  2,              // Numero de bits de enderecos de IO - saida
+	parameter  NBIOIN =  2,              // Numero de bits de enderecos de IO - entrada
+	parameter  NBIOOU =  2,              // Numero de bits de enderecos de IO - saida
 
 	// constantes aritmeticas
-	parameter NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
-	parameter FFTSIZ =  3,              // Tamanho da ILI na inversao de bits
+	parameter  NUGAIN = 64,              // Valor usado na divisao por um numero fixo (NRM e NORMS)
+	parameter  FFTSIZ =  3,              // Tamanho da ILI na inversao de bits
 
 	// -------------------------------------------------------------------------
 	// Parametros configurados dinamicamente -----------------------------------
 	// -------------------------------------------------------------------------
 
 	// implementa leitura/escrita na memoria
-	parameter   LDI   = 0,
-	parameter   ILI   = 0,
-	parameter   SET   = 0,
-	parameter   SET_P = 0,
-	parameter   STI   = 0,
-	parameter   ISI   = 0,
+	parameter  P_LOD   = 0,
+	parameter    LDI   = 0,
+	parameter    ILI   = 0,
+	parameter    SET   = 0,
+	parameter    SET_P = 0,
+	parameter    STI   = 0,
+	parameter    ISI   = 0,
+
+	// implementa interface com a pilha de dados
+	parameter    PSH   = 0,
 
 	// implementa portas de I/O
-	parameter   INN   = 0,
-	parameter P_INN   = 0,
-	parameter   OUT   = 0,
+	parameter    INN   = 0,
+	parameter  P_INN   = 0,
+	parameter    OUT   = 0,
 	
 	// implementa saltos
-	parameter   JIZ   = 0,
-	parameter   CAL   = 0,
+	parameter    JIZ   = 0,
+	parameter    CAL   = 0,
 
 	// operacoes aritmeticas de dois parametros
-	parameter   ADD   = 0,
+	parameter    ADD   = 0,
 	parameter F_ADD   = 0,
 
-	parameter   MLT   = 0,
-	parameter F_MLT   = 0,
+	parameter    MLT   = 0,
+	parameter  F_MLT   = 0,
 
-	parameter   DIV   = 0,
-	parameter F_DIV   = 0,
+	parameter    DIV   = 0,
+	parameter  F_DIV   = 0,
 
-	parameter   MOD   = 0,
+	parameter    MOD   = 0,
 
-	parameter   SGN   = 0,
-	parameter F_SGN   = 0,
+	parameter    SGN   = 0,
+	parameter  F_SGN   = 0,
 
 	// operacoes aritmeticas de um parametro
-	parameter   NEG   = 0,
-	parameter   NEG_M = 0,
-	parameter F_NEG   = 0,
-	parameter F_NEG_M = 0,
+	parameter    NEG   = 0,
+	parameter    NEG_M = 0,
+	parameter  P_NEG_M = 0,
+	parameter  F_NEG   = 0,
+	parameter  F_NEG_M = 0,
+	parameter PF_NEG_M = 0,
 
-	parameter   ABS   = 0,
-	parameter   ABS_M = 0,
-	parameter F_ABS   = 0,
-	parameter F_ABS_M = 0,
+	parameter    ABS   = 0,
+	parameter    ABS_M = 0,
+	parameter  P_ABS_M = 0,
+	parameter  F_ABS   = 0,
+	parameter  F_ABS_M = 0,
+	parameter PF_ABS_M = 0,
 
-	parameter   PST   = 0,
-	parameter   PST_M = 0,
-	parameter F_PST   = 0,
-	parameter F_PST_M = 0,
+	parameter    PST   = 0,
+	parameter    PST_M = 0,
+	parameter  P_PST_M = 0,
+	parameter  F_PST   = 0,
+	parameter  F_PST_M = 0,
+	parameter PF_PST_M = 0,
 
-	parameter   NRM   = 0,
-	parameter   NRM_M = 0,
+	parameter    NRM   = 0,
+	parameter    NRM_M = 0,
+	parameter  P_NRM_M = 0,
 
-	parameter   I2F   = 0,
-	parameter   I2F_M = 0,
+	parameter    I2F   = 0,
+	parameter    I2F_M = 0,
+	parameter  P_I2F_M = 0,
 
-	parameter   F2I   = 0,
-	parameter   F2I_M = 0,
+	parameter    F2I   = 0,
+	parameter    F2I_M = 0,
+	parameter  P_F2I_M = 0,
 
 	// operacoes logicas de dois parametros
-	parameter   AND   = 0,
-	parameter   ORR   = 0,
-	parameter   XOR   = 0,
+	parameter    AND   = 0,
+	parameter    ORR   = 0,
+	parameter    XOR   = 0,
 
 	// operacoes logicas de um parametro
-	parameter   INV   = 0,
-	parameter   INV_M = 0,
+	parameter    INV   = 0,
+	parameter    INV_M = 0,
+	parameter  P_INV_M = 0,
 
 	// operacoes condicionais de dois parametros
-	parameter   LAN   = 0,
-	parameter   LOR   = 0,
+	parameter    LAN   = 0,
+	parameter    LOR   = 0,
 	
 	// operacoes condicionais de um parametro
-	parameter   LIN   = 0,
-	parameter   LIN_M = 0,
+	parameter    LIN   = 0,
+	parameter    LIN_M = 0,
+	parameter  P_LIN_M = 0,
 
 	// operacoes de comparacao
-	parameter   LES   = 0,
-	parameter F_LES   = 0,
+	parameter    LES   = 0,
+	parameter  F_LES   = 0,
 
-	parameter   GRE   = 0,
-	parameter F_GRE   = 0,
+	parameter    GRE   = 0,
+	parameter  F_GRE   = 0,
 
-	parameter   EQU   = 0,
+	parameter    EQU   = 0,
 
 	// operacoes de deslocamento de bits
-	parameter   SHL   = 0,
-	parameter   SHR   = 0,
-	parameter   SRS   = 0
+	parameter    SHL   = 0,
+	parameter    SHR   = 0,
+	parameter    SRS   = 0
 )(
-	input                   clk, rst,
+	input               clk, rst,
 
-	input      [NBINST-1:0] instr,
-	output     [MINSTW-1:0] instr_addr,
+	input  [NBINST-1:0] instr,
+	output [MINSTW-1:0] instr_addr,
 
-	output                  mem_wr,
-	output     [MDATAW-1:0] mem_addr_rd, mem_addr_wr,
-	input      [NUBITS-1:0] mem_data_rd,
-	output     [NUBITS-1:0] mem_data_wr,
+	output              mem_wr,
+	output [MDATAW-1:0] mem_addr_rd, mem_addr_wr,
+	input  [NUBITS-1:0] mem_data_rd,
+	output [NUBITS-1:0] mem_data_wr,
 
-	input      [NUBITS-1:0] io_in,
-	output     [NBIOIN-1:0] addr_in,
-	output     [NBIOOU-1:0] addr_out,
-	output                  req_in,
-	output                  out_en,
+	input  [NUBITS-1:0] io_in,
+	output [NBIOIN-1:0] addr_in,
+	output [NBIOOU-1:0] addr_out,
+	output              req_in,
+	output              out_en,
 
-	input                   itr
+	input               itr
 
 `ifdef __ICARUS__ // ----------------------------------------------------------
- , output     [MINSTW        -1:0] pc_sim_val
+ , output [MINSTW-1:0] pc_sim_val
 `endif // ---------------------------------------------------------------------
 );
 
@@ -543,7 +558,7 @@ instr_fetch #(
 	                                .operand(if_operand)
 	
 `ifdef __ICARUS__ // ----------------------------------------------------------
-                                 , .pc_sim_val(pc_sim_val)
+                               , .pc_sim_val(pc_sim_val)
 `endif // ---------------------------------------------------------------------
 );
 
@@ -556,23 +571,34 @@ wire              id_dsp_push, id_dsp_pop;
 wire              id_sti, id_ldi, id_fft, id_wr;
 wire              id_req_in, id_out_en;
 
-instr_dec #(.NBOPCO(NBOPCO),
-            .MDATAW(MDATAW),
-			  .LDI  (  LDI  ),
-			  .ILI  (  ILI  ),
-			  .SET  (  SET  ),
-			  .SET_P(  SET_P),
-			  .STI  (  STI  ),
-			  .ISI  (  ISI  ),
-			  .INN  (  INN  ),
-			.P_INN  (P_INN  ),
-			  .OUT  (  OUT  )) id(clk, rst,
-                                  id_opcode,
-                                  id_dsp_push, id_dsp_pop,
-                                  id_ula_op,
-                                  id_wr,
-                                  id_req_in, id_out_en,
-                                  id_ldi, id_sti, id_fft);
+instr_dec #(.NBOPCO  ( NBOPCO ),
+            .MDATAW  ( MDATAW ),
+			 .P_LOD  ( P_LOD  ),
+			   .LDI  (   LDI  ),
+			   .ILI  (   ILI  ),
+			   .SET  (   SET  ),
+			   .SET_P(   SET_P),
+			   .STI  (   STI  ),
+			   .ISI  (   ISI  ),
+			   .PSH  (   PSH  ),
+			   .INN  (   INN  ),
+			 .P_INN  ( P_INN  ),
+			   .OUT  (   OUT  ),
+			 .P_NEG_M( P_NEG_M),
+			.PF_NEG_M(PF_NEG_M),
+			 .P_ABS_M( P_ABS_M),
+			.PF_ABS_M(PF_ABS_M),
+			 .P_PST_M( P_PST_M),
+			.PF_PST_M(PF_PST_M),
+			 .P_NRM_M( P_NRM_M),
+			 .P_I2F_M( P_I2F_M),
+			 .P_F2I_M( P_F2I_M)) id(clk, rst,
+                                    id_opcode,
+                                    id_dsp_push, id_dsp_pop,
+                                    id_ula_op,
+                                    id_wr,
+                                    id_req_in, id_out_en,
+                                    id_ldi, id_sti, id_fft);
 
 // Pilha de dados -------------------------------------------------------------
 
@@ -614,32 +640,32 @@ ula #(.NUBITS (NUBITS ),
         .SGN  (  SGN  ),
       .F_SGN  (F_SGN  ),
         .NEG  (  NEG  ),
-        .NEG_M(  NEG_M),
+        .NEG_M(  NEG_M |  P_NEG_M),
       .F_NEG  (F_NEG  ),
-      .F_NEG_M(F_NEG_M),
+      .F_NEG_M(F_NEG_M | PF_NEG_M),
         .ABS  (  ABS  ),
-        .ABS_M(  ABS_M),
+        .ABS_M(  ABS_M |  P_ABS_M),
       .F_ABS  (F_ABS  ),
-      .F_ABS_M(F_ABS_M),
+      .F_ABS_M(F_ABS_M | PF_ABS_M),
         .PST  (  PST  ),
-        .PST_M(  PST_M),
+        .PST_M(  PST_M |  P_PST_M),
       .F_PST  (F_PST  ),
-      .F_PST_M(F_PST_M),
+      .F_PST_M(F_PST_M | PF_PST_M),
         .NRM  (  NRM  ),
-        .NRM_M(  NRM_M),
+        .NRM_M(  NRM_M |  P_NRM_M),
         .I2F  (  I2F  ),
-        .I2F_M(  I2F_M),
+        .I2F_M(  I2F_M |  P_I2F_M),
         .F2I  (  F2I  ),
-        .F2I_M(  F2I_M),
+        .F2I_M(  F2I_M |  P_F2I_M),
         .AND  (  AND  ),
         .ORR  (  ORR  ),
         .XOR  (  XOR  ),
         .INV  (  INV  ),
-        .INV_M(  INV_M),
+        .INV_M(  INV_M |  P_INV_M),
         .LAN  (  LAN  ),
         .LOR  (  LOR  ),
         .LIN  (  LIN  ),
-        .LIN_M(  LIN_M),
+        .LIN_M(  LIN_M |  P_LIN_M),
         .LES  (  LES  ),
       .F_LES  (F_LES  ),
         .GRE  (  GRE  ),
@@ -657,8 +683,8 @@ reg signed [NUBITS-1:0] racc;
 
 always @ (posedge clk or posedge rst) if (rst) racc <= 0; else racc <= ula_out;
 
-assign                   uic_acc = racc;
-assign                    if_acc = ula_out[0];
+assign uic_acc = racc;
+assign  if_acc = ula_out[0];
 
 // Enderecamento Indireto -----------------------------------------------------
 
@@ -692,8 +718,8 @@ io_ctrl #(.MDATAW(MDATAW),
                               if_operand[MDATAW-1:0],
                               req_in, addr_in, out_en, addr_out);
 else begin
-assign req_in = 1'b0;
-assign out_en = 1'b0;
+assign req_in   = 1'b0;
+assign out_en   = 1'b0;
 assign addr_in  = {NBIOIN{1'b0}};
 assign addr_out = {NBIOOU{1'b0}};
 end endgenerate
