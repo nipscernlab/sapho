@@ -410,19 +410,24 @@ module core
 
 	// implementa leitura/escrita na memoria
 	parameter  P_LOD   = 0,
+	
 	parameter    LDI   = 0,
 	parameter    ILI   = 0,
+	
 	parameter    SET   = 0,
 	parameter    SET_P = 0,
+	
 	parameter    STI   = 0,
 	parameter    ISI   = 0,
 
 	// implementa interface com a pilha de dados
 	parameter    PSH   = 0,
+	parameter    POP   = 0,
 
 	// implementa portas de I/O
 	parameter    INN   = 0,
 	parameter  P_INN   = 0,
+
 	parameter    OUT   = 0,
 	
 	// implementa saltos
@@ -431,18 +436,27 @@ module core
 
 	// operacoes aritmeticas de dois parametros
 	parameter    ADD   = 0,
-	parameter F_ADD   = 0,
+	parameter  S_ADD   = 0,
+	parameter  F_ADD   = 0,
+	parameter SF_ADD   = 0,
 
 	parameter    MLT   = 0,
+	parameter  S_MLT   = 0,
 	parameter  F_MLT   = 0,
+	parameter SF_MLT   = 0,
 
 	parameter    DIV   = 0,
+	parameter  S_DIV   = 0,
 	parameter  F_DIV   = 0,
+	parameter SF_DIV   = 0,
 
 	parameter    MOD   = 0,
+	parameter  S_MOD   = 0,
 
 	parameter    SGN   = 0,
+	parameter  S_SGN   = 0,
 	parameter  F_SGN   = 0,
+	parameter SF_SGN   = 0,
 
 	// operacoes aritmeticas de um parametro
 	parameter    NEG   = 0,
@@ -480,8 +494,11 @@ module core
 
 	// operacoes logicas de dois parametros
 	parameter    AND   = 0,
+	parameter  S_AND   = 0,
 	parameter    ORR   = 0,
+	parameter  S_ORR   = 0,
 	parameter    XOR   = 0,
+	parameter  S_XOR   = 0,
 
 	// operacoes logicas de um parametro
 	parameter    INV   = 0,
@@ -490,7 +507,9 @@ module core
 
 	// operacoes condicionais de dois parametros
 	parameter    LAN   = 0,
+	parameter  S_LAN   = 0,
 	parameter    LOR   = 0,
+	parameter  S_LOR   = 0,
 	
 	// operacoes condicionais de um parametro
 	parameter    LIN   = 0,
@@ -499,17 +518,25 @@ module core
 
 	// operacoes de comparacao
 	parameter    LES   = 0,
+	parameter  S_LES   = 0,
 	parameter  F_LES   = 0,
+	parameter SF_LES   = 0,
 
 	parameter    GRE   = 0,
+	parameter  S_GRE   = 0,
 	parameter  F_GRE   = 0,
+	parameter SF_GRE   = 0,
 
 	parameter    EQU   = 0,
+	parameter  S_EQU   = 0,
 
 	// operacoes de deslocamento de bits
 	parameter    SHL   = 0,
+	parameter  S_SHL   = 0,
 	parameter    SHR   = 0,
-	parameter    SRS   = 0
+	parameter  S_SHR   = 0,
+	parameter    SRS   = 0,
+	parameter  S_SRS   = 0
 )(
 	input               clk, rst,
 
@@ -581,9 +608,19 @@ instr_dec #(.NBOPCO  ( NBOPCO ),
 			   .STI  (   STI  ),
 			   .ISI  (   ISI  ),
 			   .PSH  (   PSH  ),
+			   .POP  (   POP  ),
 			   .INN  (   INN  ),
 			 .P_INN  ( P_INN  ),
 			   .OUT  (   OUT  ),
+			 .S_ADD  ( S_ADD  ),
+			.SF_ADD  (SF_ADD  ),
+			 .S_MLT  ( S_MLT  ),
+			.SF_MLT  (SF_MLT  ),
+			 .S_DIV  ( S_DIV  ),
+			.SF_DIV  (SF_DIV  ),
+			 .S_MOD  ( S_MOD  ),
+			 .S_SGN  ( S_SGN  ),
+			.SF_SGN  (SF_SGN  ),
 			 .P_NEG_M( P_NEG_M),
 			.PF_NEG_M(PF_NEG_M),
 			 .P_ABS_M( P_ABS_M),
@@ -592,7 +629,22 @@ instr_dec #(.NBOPCO  ( NBOPCO ),
 			.PF_PST_M(PF_PST_M),
 			 .P_NRM_M( P_NRM_M),
 			 .P_I2F_M( P_I2F_M),
-			 .P_F2I_M( P_F2I_M)) id(clk, rst,
+			 .P_F2I_M( P_F2I_M),
+			 .S_AND  ( S_AND  ),
+			 .S_ORR  ( S_ORR  ),
+			 .S_XOR  ( S_XOR  ),
+			 .P_INV_M( P_INV_M),
+			 .S_LAN  ( S_LAN  ),
+			 .S_LOR  ( S_LOR  ),
+			 .P_LIN_M( P_LIN_M),
+			 .S_LES  ( S_LES  ),
+			.SF_LES  (SF_LES  ),
+			 .S_GRE  ( S_GRE  ),
+			.SF_GRE  (SF_GRE  ),
+			 .S_EQU  ( S_EQU  ),
+			 .S_SHL  ( S_SHL  ),
+			 .S_SHR  ( S_SHR  ),
+			 .S_SRS  ( S_SRS  )) id(clk, rst,
                                     id_opcode,
                                     id_dsp_push, id_dsp_pop,
                                     id_ula_op,
@@ -630,50 +682,50 @@ ula #(.NUBITS (NUBITS ),
       .NBMANT (NBMANT ),
       .NBEXPO (NBEXPO ),
       .NUGAIN (NUGAIN ),
-        .ADD  (  ADD  ),
-      .F_ADD  (F_ADD  ),
-        .MLT  (  MLT  ),
-      .F_MLT  (F_MLT  ),
-        .DIV  (  DIV  ),
-      .F_DIV  (F_DIV  ),
-        .MOD  (  MOD  ),
-        .SGN  (  SGN  ),
-      .F_SGN  (F_SGN  ),
-        .NEG  (  NEG  ),
+        .ADD  (  ADD   |  S_ADD  ),
+	  .F_ADD  (F_ADD   | SF_ADD  ),
+        .MLT  (  MLT   |  S_MLT  ),
+      .F_MLT  (F_MLT   | SF_MLT  ),
+        .DIV  (  DIV   |  S_DIV  ),
+      .F_DIV  (F_DIV   | SF_DIV  ),
+        .MOD  (  MOD   |  S_MOD  ),
+        .SGN  (  SGN   |  S_SGN  ),
+      .F_SGN  (F_SGN   | SF_SGN  ),
+        .NEG  (  NEG             ),
         .NEG_M(  NEG_M |  P_NEG_M),
-      .F_NEG  (F_NEG  ),
+      .F_NEG  (F_NEG             ),
       .F_NEG_M(F_NEG_M | PF_NEG_M),
-        .ABS  (  ABS  ),
+        .ABS  (  ABS             ),
         .ABS_M(  ABS_M |  P_ABS_M),
-      .F_ABS  (F_ABS  ),
+      .F_ABS  (F_ABS             ),
       .F_ABS_M(F_ABS_M | PF_ABS_M),
-        .PST  (  PST  ),
+        .PST  (  PST             ),
         .PST_M(  PST_M |  P_PST_M),
-      .F_PST  (F_PST  ),
+      .F_PST  (F_PST             ),
       .F_PST_M(F_PST_M | PF_PST_M),
-        .NRM  (  NRM  ),
+        .NRM  (  NRM             ),
         .NRM_M(  NRM_M |  P_NRM_M),
-        .I2F  (  I2F  ),
+        .I2F  (  I2F             ),
         .I2F_M(  I2F_M |  P_I2F_M),
-        .F2I  (  F2I  ),
+        .F2I  (  F2I             ),
         .F2I_M(  F2I_M |  P_F2I_M),
-        .AND  (  AND  ),
-        .ORR  (  ORR  ),
-        .XOR  (  XOR  ),
-        .INV  (  INV  ),
+        .AND  (  AND   |  S_AND  ),
+        .ORR  (  ORR   |  S_ORR  ),
+        .XOR  (  XOR   |  S_XOR  ),
+        .INV  (  INV             ),
         .INV_M(  INV_M |  P_INV_M),
-        .LAN  (  LAN  ),
-        .LOR  (  LOR  ),
-        .LIN  (  LIN  ),
+        .LAN  (  LAN   |  S_LAN  ),
+        .LOR  (  LOR   |  S_LOR  ),
+        .LIN  (  LIN             ),
         .LIN_M(  LIN_M |  P_LIN_M),
-        .LES  (  LES  ),
-      .F_LES  (F_LES  ),
-        .GRE  (  GRE  ),
-      .F_GRE  (F_GRE  ),
-        .EQU  (  EQU  ),
-        .SHL  (  SHL  ),
-        .SHR  (  SHR  ),
-        .SRS  (  SRS  )) ula (clk, id_ula_op, ula_data_in1, ula_data_in2, ula_out);
+        .LES  (  LES   |  S_LES  ),
+      .F_LES  (F_LES   | SF_LES  ),
+        .GRE  (  GRE   |  S_GRE  ),
+      .F_GRE  (F_GRE   | SF_GRE  ),
+        .EQU  (  EQU   |  S_EQU  ),
+        .SHL  (  SHL   |  S_SHL  ),
+        .SHR  (  SHR   |  S_SHR  ),
+        .SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op, ula_data_in1, ula_data_in2, ula_out);
 
 assign sp_in = ula_out;
 
