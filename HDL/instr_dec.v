@@ -30,7 +30,6 @@ module instr_dec
 	// implementa portas de I/O
 	parameter    INN   = 0,
 	parameter  P_INN   = 0,
-
 	parameter    OUT   = 0,
 
 	// operacoes aritmeticas de dois parametros
@@ -69,27 +68,44 @@ module instr_dec
 	parameter  S_XOR   = 0,
 
 	// operacoes logicas de um parametro
+    parameter    INV   = 0,
+    parameter    INV_M = 0,
 	parameter  P_INV_M = 0,
 
 	// operacoes condicionais de dois parametros
+    parameter    LAN   = 0,
 	parameter  S_LAN   = 0,
+
+    parameter    LOR   = 0,
 	parameter  S_LOR   = 0,
 
 	// operacoes condicionais de um parametro
+    parameter    LIN   = 0,
+    parameter    LIN_M = 0,
 	parameter  P_LIN_M = 0,
 
 	// operacoes de comparacao
+    parameter    LES   = 0,
 	parameter  S_LES   = 0,
+    parameter  F_LES   = 0,
 	parameter SF_LES   = 0,
 
-	parameter  S_GRE   = 0,
+    parameter    GRE   = 0,
+    parameter  S_GRE   = 0,
+    parameter  F_GRE   = 0,
 	parameter SF_GRE   = 0,
 
+    parameter    EQU   = 0,
 	parameter  S_EQU   = 0,
 
 	// operacoes de deslocamento de bits
+    parameter    SHL   = 0,
 	parameter  S_SHL   = 0,
+
+    parameter    SHR   = 0,
 	parameter  S_SHR   = 0,
+
+    parameter    SRS   = 0,
 	parameter  S_SRS   = 0
 )(
 	input                   clk, rst,
@@ -172,31 +188,48 @@ wire  wS_XOR  ; generate if ( S_XOR  ) assign  wS_XOR   = opcode == 7'd67; else 
 
 // operacoes logicas de um parametro ------------------------------------------
 
+wire    wINV  ; generate if (   INV  ) assign    wINV   = opcode == 7'd68; else assign    wINV   = 1'b0; endgenerate
+wire    wINV_M; generate if (   INV_M) assign    wINV_M = opcode == 7'd69; else assign    wINV_M = 1'b0; endgenerate
 wire  wP_INV_M; generate if ( P_INV_M) assign  wP_INV_M = opcode == 7'd70; else assign  wP_INV_M = 1'b0; endgenerate
 
 // operacoes condicionais de dois parametros ----------------------------------
 
+wire    wLAN  ; generate if (   LAN  ) assign    wLAN   = opcode == 7'd71; else assign    wLAN   = 1'b0; endgenerate
 wire  wS_LAN  ; generate if ( S_LAN  ) assign  wS_LAN   = opcode == 7'd72; else assign  wS_LAN   = 1'b0; endgenerate
+
+wire    wLOR  ; generate if (   LOR  ) assign    wLOR   = opcode == 7'd73; else assign    wLOR   = 1'b0; endgenerate
 wire  wS_LOR  ; generate if ( S_LOR  ) assign  wS_LOR   = opcode == 7'd74; else assign  wS_LOR   = 1'b0; endgenerate
 
 // operacoes condicionais de um parametro -------------------------------------
 
+wire    wLIN  ; generate if (   LIN  ) assign    wLIN   = opcode == 7'd75; else assign    wLIN   = 1'b0; endgenerate
+wire    wLIN_M; generate if (   LIN_M) assign    wLIN_M = opcode == 7'd76; else assign    wLIN_M = 1'b0; endgenerate
 wire  wP_LIN_M; generate if ( P_LIN_M) assign  wP_LIN_M = opcode == 7'd77; else assign  wP_LIN_M = 1'b0; endgenerate
 
 // operacoes de comparacao ----------------------------------------------------
 
+wire    wLES  ; generate if (   LES  ) assign    wLES   = opcode == 7'd78; else assign    wLES   = 1'b0; endgenerate
 wire  wS_LES  ; generate if ( S_LES  ) assign  wS_LES   = opcode == 7'd79; else assign  wS_LES   = 1'b0; endgenerate
+wire  wF_LES  ; generate if ( F_LES  ) assign  wF_LES   = opcode == 7'd80; else assign  wF_LES   = 1'b0; endgenerate
 wire wSF_LES  ; generate if (SF_LES  ) assign wSF_LES   = opcode == 7'd81; else assign wSF_LES   = 1'b0; endgenerate
 
+wire    wGRE  ; generate if (   GRE  ) assign    wGRE   = opcode == 7'd82; else assign    wGRE   = 1'b0; endgenerate
 wire  wS_GRE  ; generate if ( S_GRE  ) assign  wS_GRE   = opcode == 7'd83; else assign  wS_GRE   = 1'b0; endgenerate
+wire  wF_GRE  ; generate if ( F_GRE  ) assign  wF_GRE   = opcode == 7'd84; else assign  wF_GRE   = 1'b0; endgenerate
 wire wSF_GRE  ; generate if (SF_GRE  ) assign wSF_GRE   = opcode == 7'd85; else assign wSF_GRE   = 1'b0; endgenerate
 
+wire    wEQU  ; generate if (   EQU  ) assign    wEQU   = opcode == 7'd86; else assign    wEQU   = 1'b0; endgenerate
 wire  wS_EQU  ; generate if ( S_EQU  ) assign  wS_EQU   = opcode == 7'd87; else assign  wS_EQU   = 1'b0; endgenerate
 
 // operacoes de deslocamento de bits ------------------------------------------
 
+wire    wSHL  ; generate if (   SHL  ) assign    wSHL   = opcode == 7'd88; else assign    wSHL   = 1'b0; endgenerate
 wire  wS_SHL  ; generate if ( S_SHL  ) assign  wS_SHL   = opcode == 7'd89; else assign  wS_SHL   = 1'b0; endgenerate
+
+wire    wSHR  ; generate if (   SHR  ) assign    wSHR   = opcode == 7'd90; else assign    wSHR   = 1'b0; endgenerate
 wire  wS_SHR  ; generate if ( S_SHR  ) assign  wS_SHR   = opcode == 7'd91; else assign  wS_SHR   = 1'b0; endgenerate
+
+wire    wSRS  ; generate if (   SRS  ) assign    wSRS   = opcode == 7'd92; else assign    wSRS   = 1'b0; endgenerate
 wire  wS_SRS  ; generate if ( S_SRS  ) assign  wS_SRS   = opcode == 7'd93; else assign  wS_SRS   = 1'b0; endgenerate
 
 // ----------------------------------------------------------------------------
@@ -239,109 +272,120 @@ if (               SET_P |    STI |     ISI |    POP |  S_ADD |  SF_ADD |  S_MLT
 	           wSF_MLT   | wS_DIV | wSF_DIV | wS_MOD | wS_SGN | wSF_SGN | wS_AND |
 				wS_ORR   | wS_XOR |  wS_LAN | wS_LOR | wS_LES | wSF_LES | wS_GRE |
 			   wSF_GRE   | wS_EQU |  wS_SHL | wS_SHR | wS_SRS ;
-else assign pop = 1'b0;
+else assign pop = 1'b0   ;
 endgenerate
 
 // circuito de controle de operacoes da ULA -----------------------------------
+
+wire b5;
+
+generate
+if (              INV |    INV_M |  P_INV_M |     LAN |  S_LAN |    LOR |  S_LOR |     LIN |  LIN_M |  P_LIN_M |
+                  LES |  S_LES   |  F_LES   |  SF_LES |    GRE |  S_GRE |  F_GRE |  SF_GRE |  EQU   |  S_EQU   |
+                  SHL |  S_SHL   |    SHR   |   S_SHR |    SRS |  S_SRS )
+     assign b5 = wINV |   wINV_M | wP_INV_M |    wLAN | wS_LAN |   wLOR | wS_LOR |    wLIN | wLIN_M | wP_LIN_M |
+                 wLES | wS_LES   | wF_LES   | wSF_LES |   wGRE | wS_GRE | wF_GRE | wSF_GRE | wEQU   | wS_EQU   |
+                 wSHL | wS_SHL   |   wSHR   |  wS_SHR |   wSRS | wS_SRS ;
+else assign b5 = 1'b0 ;
+endgenerate
                                               // NOP
-reg [5:0] wula_op; always @ (posedge clk) if (opcode != 7'd94) ula_op <= wula_op;
+reg [4:0] wula_op; always @ (posedge clk) if (opcode != 7'd94) ula_op <= {b5,wula_op};
 
 always @ (*) case (opcode)
-     0 : wula_op  <= 6'd1;     //    LOD   -> carrega accumulador com dado da memoria
-     1 : wula_op  <= 6'd1;     //  P_LOD   -> PSH e LOD
-     2 : wula_op  <= 6'd1;     //    LDI   -> Load com enderecamentto indireto
-     3 : wula_op  <= 6'd1;     //    ILI   -> Load com enderecamento indireto invertido
-     4 : wula_op  <= 6'd0;     //    SET   -> carrega memoria com valor do acumulador
-     5 : wula_op  <= 6'd1;     //    SET_P -> SET e POP
-     6 : wula_op  <= 6'd0;     //    STI   -> Set com enderecamento indireto
-     7 : wula_op  <= 6'd0;     //    ISI   -> STI com bits invertidos
-     8 : wula_op  <= 6'd0;     //    PSH
-     9 : wula_op  <= 6'd1;     //    POP
-     10: wula_op  <= 6'd0;     //    INN   -> Input de dados
-     11: wula_op  <= 6'd0;     //  P_INN   -> PUSH + INN
-     12: wula_op  <= 6'd0;     //    OUT   -> Output de Dados
-     13: wula_op  <= 6'd0;     //    JMP      (ver prefetch)
-     14: wula_op  <= 6'd0;     //    JIZ      (ver prefetch)
-     15: wula_op  <= 6'd0;     //    CAL      (ver prefetch)
-     16: wula_op  <= 6'd0;     //    RET      (ver prefetch)
-     17: wula_op  <= 6'd2;     //    ADD   -> adicao com a memoria
-     18: wula_op  <= 6'd2;     //  S_ADD   -> adicao com a pilha
-     19: wula_op  <= 6'd3;     //  F_ADD   -> adicao em ponto flutuante com a memoria
-     20: wula_op  <= 6'd3;     // SF_ADD   -> adicao em ponto flutuante com pilha
-     21: wula_op  <= 6'd4;     //    MLT   -> multiplica dado da memoria com o acumulador
-     22: wula_op  <= 6'd4;     //  S_MLT   -> multiplicacao com a pilha
-     23: wula_op  <= 6'd5;     //  F_MLT   -> multiplicacao em ponto flutuante com a memoria
-     24: wula_op  <= 6'd5;     // SF_MLT   -> multiplicacao em ponto flutuante com pilha
-     25: wula_op  <= 6'd6;     //    DIV   -> divide com memoria
-     26: wula_op  <= 6'd6;     //  S_DIV   -> divide com pilha
-     27: wula_op  <= 6'd7;     //  F_DIV   -> divisao em ponto flutuante com a memoria
-     28: wula_op  <= 6'd7;     // SF_DIV   -> divisao em ponto flutuante com pilha
-     29: wula_op  <= 6'd8;     //    MOD   -> modulo da divisao com memoria
-     30: wula_op  <= 6'd8;     //  S_MOD   -> modulo da divisao com pilha
-     31: wula_op  <= 6'd9;     //    SGN   -> pega o sinal de in1 e coloca en in2
-     32: wula_op  <= 6'd9;     //  S_SGN   -> SGN com pilha
-     33: wula_op  <= 6'd10;    //  F_SGN   -> SGN em ponto flutuante com a memoria
-     34: wula_op  <= 6'd10;    // SF_SGN   -> SGN em ponto flutuante com pilha
-     35: wula_op  <= 6'd11;    //    NEG   -> Complemento a 2
-     36: wula_op  <= 6'd12;    //    NEG_M -> negativo com memoria
-     37: wula_op  <= 6'd12;    //  P_NEG_M -> negativo com memoria dando push antes
-     38: wula_op  <= 6'd13;    //  F_NEG   -> negativo em ponto flutuante com acc
-     39: wula_op  <= 6'd14;    //  F_NEG_M -> negativo em ponto flutuante com memoria
-     40: wula_op  <= 6'd14;    // PF_NEG_M -> negativo em ponto flutuante com memoria dando um push antes
-     41: wula_op  <= 6'd15;    //    ABS   -> retorna o valor absoluto do acc (exemplo: x = abs(y))
-     42: wula_op  <= 6'd16;    //    ABS_M -> ABS com memoria
-     43: wula_op  <= 6'd16;    //  P_ABS_M -> ABS com memoria dando push antes
-     44: wula_op  <= 6'd17;    //  F_ABS   -> ABS em ponto flutuante
-     45: wula_op  <= 6'd18;    //  F_ABS_M -> ABS em ponto flutuante com memoria
-     46: wula_op  <= 6'd18;    // PF_ABS_M -> ABS em ponto flutuante com memoria dando push antes
-     47: wula_op  <= 6'd19;    //    PST   -> carrega o valor do acumulador ou zero se for negativo
-     48: wula_op  <= 6'd20;    //    PST_M -> PST com memoria
-     49: wula_op  <= 6'd20;    //  P_PST_M -> PST com memoria dando push antes
-     50: wula_op  <= 6'd21;    //  F_PST   -> PST em ponto flutuante
-     51: wula_op  <= 6'd22;    //  F_PST_M -> PST em ponto flutuante com memoria
-     52: wula_op  <= 6'd22;    // PF_PST_M -> PST em ponto flutuante com memoria dando push antes
-     53: wula_op  <= 6'd23;    //    NRM   -> Divisao do acc por uma constante (exemplo: />300)
-     54: wula_op  <= 6'd24;    //    NRM_M -> NRM com memoria
-     55: wula_op  <= 6'd24;    //  P_NRM_M -> NRM com memoria dando push antes
-     56: wula_op  <= 6'd25;    //    I2F   -> int2float com acumulador
-     57: wula_op  <= 6'd26;    //    I2F_M -> int2float com memoria
-     58: wula_op  <= 6'd26;    //  P_I2F_M -> int2float com memoria, dando um push antes
-     59: wula_op  <= 6'd27;    //    F2I   -> float2int com acumulador
-     60: wula_op  <= 6'd28;    //    F2I_M -> float2int com memoria
-     61: wula_op  <= 6'd28;    //  P_F2I_M -> float2int com memoria, dando um push antes
-     62: wula_op  <= 6'd29;    //    AND   -> and bit a bit com memoria
-     63: wula_op  <= 6'd29;    //  S_AND   -> and bit a bit com pilha
-     64: wula_op  <= 6'd30;    //    ORR   -> ou bit a bit com memoria
-     65: wula_op  <= 6'd30;    //  S_ORR   -> ou bit a bit com pilha
-     66: wula_op  <= 6'd31;    //    XOR   -> ou exclusivo bit a bit com memoria
-     67: wula_op  <= 6'd31;    //  S_XOR   -> ou exclusivo bit a bit com pilha
-     68: wula_op  <= 6'd32;    //    INV   -> Inverte bit a bit o acumulador
-     69: wula_op  <= 6'd33;    //    INV_M -> INV com memoria
-     70: wula_op  <= 6'd33;    //  P_INV_M -> INV com memoria dando push antes
-     71: wula_op  <= 6'd34;    //    LAN   -> and logico com memoria
-     72: wula_op  <= 6'd34;    //  S_LAN   -> and logico com pilha
-     73: wula_op  <= 6'd35;    //    LOR   -> ou logico com memoria
-     74: wula_op  <= 6'd35;    //  S_LOR   -> ou logico com pilha
-     75: wula_op  <= 6'd36;    //    LIN   -> Inverte bit condicional
-     76: wula_op  <= 6'd37;    //    LIN_M -> LIN com memoria
-     77: wula_op  <= 6'd37;    //  P_LIN_M -> LIN com memoria dando push antes
-     78: wula_op  <= 6'd38;    //    LES   -> Menor do que com memoria
-     79: wula_op  <= 6'd38;    //  S_LES   -> Menor do que com a pilha
-     80: wula_op  <= 6'd39;    //  F_LES   -> menor que em ponto flutuante com a memoria
-     81: wula_op  <= 6'd39;    // SF_LES   -> menor que em ponto flutuante com pilha
-     82: wula_op  <= 6'd40;    //    GRE   -> maior do que com memoria
-     83: wula_op  <= 6'd40;    //  S_GRE   -> maior do que com pilha
-     84: wula_op  <= 6'd41;    //  F_GRE   -> maior que em ponto flutuante com a memoria
-     85: wula_op  <= 6'd41;    // SF_GRE   -> maior que em ponto flutuante com pilha
-     86: wula_op  <= 6'd42;    //    EQU   -> Igual com memoria
-     87: wula_op  <= 6'd42;    //  S_EQU   -> Igual com a pilha
-     88: wula_op  <= 6'd43;    //    SHL   -> shift pra esquerda com memoria
-     89: wula_op  <= 6'd43;    //  S_SHL   -> shift pra esquerda com pilha
-     90: wula_op  <= 6'd44;    //    SHR   -> Shift pra direita com memoria
-     91: wula_op  <= 6'd44;    //  S_SHR   -> Shift pra direita com pilha
-     92: wula_op  <= 6'd45;    //    SRS   -> Shift pra direita com sinal usando a memoria
-     93: wula_op  <= 6'd45;    //  S_SRS   -> Shift pra direita com sinal usando a pilha
-     94: wula_op  <= 6'dx;     //    NOP   -> No Operation
-default: wula_op  <= 6'dx; endcase
+     0 : wula_op  <= 5'b00001;     //    LOD   -> carrega accumulador com dado da memoria
+     1 : wula_op  <= 5'b00001;     //  P_LOD   -> PSH e LOD
+     2 : wula_op  <= 5'b00001;     //    LDI   -> Load com enderecamentto indireto
+     3 : wula_op  <= 5'b00001;     //    ILI   -> Load com enderecamento indireto invertido
+     4 : wula_op  <= 5'b00000;     //    SET   -> carrega memoria com valor do acumulador
+     5 : wula_op  <= 5'b00001;     //    SET_P -> SET e POP
+     6 : wula_op  <= 5'b00000;     //    STI   -> Set com enderecamento indireto
+     7 : wula_op  <= 5'b00000;     //    ISI   -> STI com bits invertidos
+     8 : wula_op  <= 5'b00000;     //    PSH
+     9 : wula_op  <= 5'b00001;     //    POP
+    10 : wula_op  <= 5'b00000;     //    INN   -> Input de dados
+    11 : wula_op  <= 5'b00000;     //  P_INN   -> PUSH + INN
+    12 : wula_op  <= 5'b00000;     //    OUT   -> Output de Dados
+    13 : wula_op  <= 5'b00000;     //    JMP      (ver prefetch)
+    14 : wula_op  <= 5'b00000;     //    JIZ      (ver prefetch)
+    15 : wula_op  <= 5'b00000;     //    CAL      (ver prefetch)
+    16 : wula_op  <= 5'b00000;     //    RET      (ver prefetch)
+    17 : wula_op  <= 5'b00010;     //    ADD   -> adicao com a memoria
+    18 : wula_op  <= 5'b00010;     //  S_ADD   -> adicao com a pilha
+    19 : wula_op  <= 5'b00011;     //  F_ADD   -> adicao em ponto flutuante com a memoria
+    20 : wula_op  <= 5'b00011;     // SF_ADD   -> adicao em ponto flutuante com pilha
+    21 : wula_op  <= 5'b00100;     //    MLT   -> multiplica dado da memoria com o acumulador
+    22 : wula_op  <= 5'b00100;     //  S_MLT   -> multiplicacao com a pilha
+    23 : wula_op  <= 5'b00101;     //  F_MLT   -> multiplicacao em ponto flutuante com a memoria
+    24 : wula_op  <= 5'b00101;     // SF_MLT   -> multiplicacao em ponto flutuante com pilha
+    25 : wula_op  <= 5'b00110;     //    DIV   -> divide com memoria
+    26 : wula_op  <= 5'b00110;     //  S_DIV   -> divide com pilha
+    27 : wula_op  <= 5'b00111;     //  F_DIV   -> divisao em ponto flutuante com a memoria
+    28 : wula_op  <= 5'b00111;     // SF_DIV   -> divisao em ponto flutuante com pilha
+    29 : wula_op  <= 5'b01000;     //    MOD   -> modulo da divisao com memoria
+    30 : wula_op  <= 5'b01000;     //  S_MOD   -> modulo da divisao com pilha
+    31 : wula_op  <= 5'b01001;     //    SGN   -> pega o sinal de in1 e coloca en in2
+    32 : wula_op  <= 5'b01001;     //  S_SGN   -> SGN com pilha
+    33 : wula_op  <= 5'b01010;     //  F_SGN   -> SGN em ponto flutuante com a memoria
+    34 : wula_op  <= 5'b01010;     // SF_SGN   -> SGN em ponto flutuante com pilha
+    35 : wula_op  <= 5'b01011;     //    NEG   -> Complemento a 2
+    36 : wula_op  <= 5'b01100;     //    NEG_M -> negativo com memoria
+    37 : wula_op  <= 5'b01100;     //  P_NEG_M -> negativo com memoria dando push antes
+    38 : wula_op  <= 5'b01101;     //  F_NEG   -> negativo em ponto flutuante com acc
+    39 : wula_op  <= 5'b01110;     //  F_NEG_M -> negativo em ponto flutuante com memoria
+    40 : wula_op  <= 5'b01110;     // PF_NEG_M -> negativo em ponto flutuante com memoria dando um push antes
+    41 : wula_op  <= 5'b01111;     //    ABS   -> retorna o valor absoluto do acc (exemplo: x = abs(y))
+    42 : wula_op  <= 5'b10000;     //    ABS_M -> ABS com memoria
+    43 : wula_op  <= 5'b10000;     //  P_ABS_M -> ABS com memoria dando push antes
+    44 : wula_op  <= 5'b10001;     //  F_ABS   -> ABS em ponto flutuante
+    45 : wula_op  <= 5'b10010;     //  F_ABS_M -> ABS em ponto flutuante com memoria
+    46 : wula_op  <= 5'b10010;     // PF_ABS_M -> ABS em ponto flutuante com memoria dando push antes
+    47 : wula_op  <= 5'b10011;     //    PST   -> carrega o valor do acumulador ou zero se for negativo
+    48 : wula_op  <= 5'b10100;     //    PST_M -> PST com memoria
+    49 : wula_op  <= 5'b10100;     //  P_PST_M -> PST com memoria dando push antes
+    50 : wula_op  <= 5'b10101;     //  F_PST   -> PST em ponto flutuante
+    51 : wula_op  <= 5'b10110;     //  F_PST_M -> PST em ponto flutuante com memoria
+    52 : wula_op  <= 5'b10110;     // PF_PST_M -> PST em ponto flutuante com memoria dando push antes
+    53 : wula_op  <= 5'b10111;     //    NRM   -> Divisao do acc por uma constante (exemplo: />300)
+    54 : wula_op  <= 5'b11000;     //    NRM_M -> NRM com memoria
+    55 : wula_op  <= 5'b11000;     //  P_NRM_M -> NRM com memoria dando push antes
+    56 : wula_op  <= 5'b11001;     //    I2F   -> int2float com acumulador
+    57 : wula_op  <= 5'b11010;     //    I2F_M -> int2float com memoria
+    58 : wula_op  <= 5'b11010;     //  P_I2F_M -> int2float com memoria, dando um push antes
+    59 : wula_op  <= 5'b11011;     //    F2I   -> float2int com acumulador
+    60 : wula_op  <= 5'b11100;     //    F2I_M -> float2int com memoria
+    61 : wula_op  <= 5'b11100;     //  P_F2I_M -> float2int com memoria, dando um push antes
+    62 : wula_op  <= 5'b11101;     //    AND   -> and bit a bit com memoria
+    63 : wula_op  <= 5'b11101;     //  S_AND   -> and bit a bit com pilha
+    64 : wula_op  <= 5'b11110;     //    ORR   -> ou bit a bit com memoria
+    65 : wula_op  <= 5'b11110;     //  S_ORR   -> ou bit a bit com pilha
+    66 : wula_op  <= 5'b11111;     //    XOR   -> ou exclusivo bit a bit com memoria
+    67 : wula_op  <= 5'b11111;     //  S_XOR   -> ou exclusivo bit a bit com pilha
+    68 : wula_op  <= 5'b00000;     //    INV   -> Inverte bit a bit o acumulador
+    69 : wula_op  <= 5'b00001;     //    INV_M -> INV com memoria
+    70 : wula_op  <= 5'b00001;     //  P_INV_M -> INV com memoria dando push antes
+    71 : wula_op  <= 5'b00010;     //    LAN   -> and logico com memoria
+    72 : wula_op  <= 5'b00010;     //  S_LAN   -> and logico com pilha
+    73 : wula_op  <= 5'b00011;     //    LOR   -> ou logico com memoria
+    74 : wula_op  <= 5'b00011;     //  S_LOR   -> ou logico com pilha
+    75 : wula_op  <= 5'b00100;     //    LIN   -> Inverte bit condicional
+    76 : wula_op  <= 5'b00101;     //    LIN_M -> LIN com memoria
+    77 : wula_op  <= 5'b00101;     //  P_LIN_M -> LIN com memoria dando push antes
+    78 : wula_op  <= 5'b00110;     //    LES   -> Menor do que com memoria
+    79 : wula_op  <= 5'b00110;     //  S_LES   -> Menor do que com a pilha
+    80 : wula_op  <= 5'b00111;     //  F_LES   -> menor que em ponto flutuante com a memoria
+    81 : wula_op  <= 5'b00111;     // SF_LES   -> menor que em ponto flutuante com pilha
+    82 : wula_op  <= 5'b01000;     //    GRE   -> maior do que com memoria
+    83 : wula_op  <= 5'b01000;     //  S_GRE   -> maior do que com pilha
+    84 : wula_op  <= 5'b01001;     //  F_GRE   -> maior que em ponto flutuante com a memoria
+    85 : wula_op  <= 5'b01001;     // SF_GRE   -> maior que em ponto flutuante com pilha
+    86 : wula_op  <= 5'b01010;     //    EQU   -> Igual com memoria
+    87 : wula_op  <= 5'b01010;     //  S_EQU   -> Igual com a pilha
+    88 : wula_op  <= 5'b01011;     //    SHL   -> shift pra esquerda com memoria
+    89 : wula_op  <= 5'b01011;     //  S_SHL   -> shift pra esquerda com pilha
+    90 : wula_op  <= 5'b01100;     //    SHR   -> Shift pra direita com memoria
+    91 : wula_op  <= 5'b01100;     //  S_SHR   -> Shift pra direita com pilha
+    92 : wula_op  <= 5'b01101;     //    SRS   -> Shift pra direita com sinal usando a memoria
+    93 : wula_op  <= 5'b01101;     //  S_SRS   -> Shift pra direita com sinal usando a pilha
+default: wula_op  <= 5'bxxxxx; endcase
 
 endmodule

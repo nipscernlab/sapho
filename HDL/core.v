@@ -427,7 +427,6 @@ module core
 	// implementa portas de I/O
 	parameter    INN   = 0,
 	parameter  P_INN   = 0,
-
 	parameter    OUT   = 0,
 	
 	// implementa saltos
@@ -533,8 +532,10 @@ module core
 	// operacoes de deslocamento de bits
 	parameter    SHL   = 0,
 	parameter  S_SHL   = 0,
+
 	parameter    SHR   = 0,
 	parameter  S_SHR   = 0,
+
 	parameter    SRS   = 0,
 	parameter  S_SRS   = 0
 )(
@@ -633,17 +634,31 @@ instr_dec #(.NBOPCO  ( NBOPCO ),
 			 .S_AND  ( S_AND  ),
 			 .S_ORR  ( S_ORR  ),
 			 .S_XOR  ( S_XOR  ),
+			   .INV  (   INV  ),
+			   .INV_M(   INV_M),
 			 .P_INV_M( P_INV_M),
+			   .LAN  (   LAN  ),
 			 .S_LAN  ( S_LAN  ),
+			   .LOR  (   LOR  ),
 			 .S_LOR  ( S_LOR  ),
+			   .LIN  (   LIN  ),
+			   .LIN_M(   LIN_M),
 			 .P_LIN_M( P_LIN_M),
+			   .LES  (   LES  ),
 			 .S_LES  ( S_LES  ),
+			 .F_LES  ( F_LES  ),
 			.SF_LES  (SF_LES  ),
+			   .GRE  (   GRE  ),
 			 .S_GRE  ( S_GRE  ),
+			 .F_GRE  ( F_GRE  ),
 			.SF_GRE  (SF_GRE  ),
+			   .EQU  (   EQU  ),
 			 .S_EQU  ( S_EQU  ),
+			   .SHL  (   SHL  ),
 			 .S_SHL  ( S_SHL  ),
+			   .SHR  (   SHR  ),
 			 .S_SHR  ( S_SHR  ),
+			   .SRS  (   SRS  ),
 			 .S_SRS  ( S_SRS  )) id(clk, rst,
                                     id_opcode,
                                     id_dsp_push, id_dsp_pop,

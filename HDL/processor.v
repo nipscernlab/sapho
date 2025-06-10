@@ -240,8 +240,10 @@ module processor
 	// operacoes de deslocamento de bits
 	parameter    SHL   = 0,
 	parameter  S_SHL   = 0,
+
 	parameter    SHR   = 0,
 	parameter  S_SHR   = 0,
+	
 	parameter    SRS   = 0,
 	parameter  S_SRS   = 0
 )(
