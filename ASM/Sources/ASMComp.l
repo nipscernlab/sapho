@@ -36,7 +36,7 @@ LINHA          \n
 
 "#ITRAD"                  ;                        // ponto de endereco da interrupcao
 
-   "LOD"   eval_opcode( 0,17, yytext,    ""     ); // carrega dado da memoria
+   "LOD"   eval_opcode( 0,17, yytext,    "LOD"  ); // carrega dado da memoria
  "P_LOD"   eval_opcode( 1,17, yytext,  "P_LOD"  ); // PUSH + LOD
    "LDI"   eval_opcode( 2,17, yytext,    "LDI"  ); // LOD com enderecamento indireto (indice no acc)
    "ILI"   eval_opcode( 3,17, yytext,    "ILI"  ); // LOD com enderecamento indireto invertido (FFT)

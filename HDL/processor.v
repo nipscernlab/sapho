@@ -117,6 +117,7 @@ module processor
 	// -------------------------------------------------------------------------
 
 	// implementa leitura/escrita na memoria
+	parameter	 LOD   = 0,
 	parameter  P_LOD   = 0,
 
 	parameter    LDI   = 0,
@@ -297,6 +298,7 @@ core #(.NBOPCO ( NBOPCO ),
        .NBIOOU ( NBIOOU ),
        .NUGAIN ( NUGAIN ),
        .FFTSIZ ( FFTSIZ ),
+	     .LOD  (   LOD  ),
 	   .P_LOD  ( P_LOD  ),
          .LDI  (   LDI  ),
          .ILI  (   ILI  ),

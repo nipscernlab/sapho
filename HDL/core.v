@@ -409,6 +409,7 @@ module core
 	// -------------------------------------------------------------------------
 
 	// implementa leitura/escrita na memoria
+	parameter    LOD   = 0,
 	parameter  P_LOD   = 0,
 	
 	parameter    LDI   = 0,
@@ -601,6 +602,7 @@ wire              id_req_in, id_out_en;
 
 instr_dec #(.NBOPCO  ( NBOPCO ),
             .MDATAW  ( MDATAW ),
+			   .LOD  (   LOD  ),
 			 .P_LOD  ( P_LOD  ),
 			   .LDI  (   LDI  ),
 			   .ILI  (   ILI  ),
