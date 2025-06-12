@@ -11,6 +11,7 @@
 #include "..\Headers\t2t.h"
 #include "..\Headers\macros.h"
 #include "..\Headers\global.h"
+#include "..\Headers\diretivas.h"
 #include "..\Headers\variaveis.h"
 
 // ----------------------------------------------------------------------------
@@ -155,8 +156,12 @@ void add_instr(char *inst, ...)
     // verifica se instrucao precisa de NOP antes -----------------------------
     // ------------------------------------------------------------------------
 
-    if (find_opc(   "LDI"  , str)) add_instr("NOP\n");
-    if (find_opc(   "ILI"  , str)) add_instr("NOP\n");
+    // se nao usa pipeline, nao precisa de NOP
+    if (pipeln == 1)
+    {
+        if (find_opc("LDI", str)) add_instr("NOP\n");
+        if (find_opc("ILI", str)) add_instr("NOP\n");
+    }
 
     // ------------------------------------------------------------------------
     // adiciona instrucao -----------------------------------------------------
@@ -173,6 +178,8 @@ void add_instr(char *inst, ...)
     // verifica se instrucao precisa de NOP depois ----------------------------
     // ------------------------------------------------------------------------
 
+    if (pipeln == 0) return; // se nao usa pipeline, nao precisa de NOP
+    
     // coloca mais um clock internamente na de-normalizacao em ponto flutuante
     if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
     if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");

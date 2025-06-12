@@ -40,7 +40,8 @@ int  sdepth    = 10;    // tamanho da pilha de subrotinas
 int  nuioin    =  1;    // numero de portas de entrada
 int  nuioou    =  1;    // numero de portas de saida
 int  nugain    = 64;    // constante de divisao
-int  fftsiz     = 8;    // tamanho da fft (em bits)
+int  fftsiz    =  8;    // tamanho da fft (em bits)
+int  pipeln    =  0;    // usa pipeline (1) ou nao (0)
 
 // ----------------------------------------------------------------------------
 // variaveis locais -----------------------------------------------------------
@@ -243,16 +244,17 @@ void eval_opernd(char *va, int is_const)
         case  8: nuioou =  atoi(va);                   state =  0; break; // numero de enderecoes de saida
         case  9: nugain =  atoi(va);                   state =  0; break; // valor da normalizacao
         case 10: fftsiz =  atoi(va);                   state =  0; break; // num de bits pra inverter na fft
-        case 11: var_add       (va ,0);                state = 12; break; // achou um array sem inicializacao
-        case 12: arr_add  (atoi(va),0     ,"",f_data); state =  0; break; // declara  array sem inicializacao
-        case 13: var_add       (va ,0);                state = 14; break; // achou um array com inicializacao
-        case 14: arr_typ = atoi(va);                   state = 15; break; // pega o tipo de array
-        case 15: arr_tam = atoi(va);                   state = 16; break; // pega o tamanho do array com arquivo
-        case 16: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
-        case 17: instr_ula     (va,is_const);          state =  0; break; // operacoes com a ULA
-        case 18: instr_salto   (va);                   state =  0; break; // operacoes de salto
-        case 19: instr_inn     (va);                   state =  0; break; // operacoes de entrada
-        case 20: instr_out     (va);                   state =  0; break; // operacoes de saida
+        case 11: pipeln =  atoi(va);                   state =  0; break; // usa pipeline (1) ou nao (0)
+        case 12: var_add       (va ,0);                state = 13; break; // achou um array sem inicializacao
+        case 13: arr_add  (atoi(va),0     ,"",f_data); state =  0; break; // declara  array sem inicializacao
+        case 14: var_add       (va ,0);                state = 15; break; // achou um array com inicializacao
+        case 15: arr_typ = atoi(va);                   state = 16; break; // pega o tipo de array
+        case 16: arr_tam = atoi(va);                   state = 17; break; // pega o tamanho do array com arquivo
+        case 17: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 18: instr_ula     (va,is_const);          state =  0; break; // operacoes com a ULA
+        case 19: instr_salto   (va);                   state =  0; break; // operacoes de salto
+        case 20: instr_inn     (va);                   state =  0; break; // operacoes de entrada
+        case 21: instr_out     (va);                   state =  0; break; // operacoes de saida
     }
 }
 

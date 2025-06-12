@@ -6,6 +6,7 @@
 #SDEPTH 5
 #NUIOIN 2
 #NUIOOU 5
+#PIPELN 0
 
 float sinal_entrada;
 

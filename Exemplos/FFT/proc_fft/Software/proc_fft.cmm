@@ -8,6 +8,7 @@
 #NBEXPO 6
 #FFTSIZ 3
 #NUGAIN 128
+#PIPELN 0
 
 comp data[8];
 comp  wpv[3];

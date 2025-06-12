@@ -103,7 +103,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // parametros do processador ----------------------------------------------
     // ------------------------------------------------------------------------
 
-    fprintf(f_veri, "processor#(.NUBITS(%d),\n", nubits);
+    fprintf(f_veri, "processor#(.PIPELN(%d),\n", pipeln);
+    fprintf(f_veri,            ".NUBITS(%d),\n", nubits);
     fprintf(f_veri,            ".NBMANT(%d),\n", nbmant);
     fprintf(f_veri,            ".NBEXPO(%d),\n", nbexpo);
     fprintf(f_veri,            ".NBOPER(%d),\n", nbopr );

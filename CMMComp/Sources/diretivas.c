@@ -21,6 +21,7 @@ int  nbmant  = 16; // numero de bits de mantissa
 int  nbexpo  =  6; // numero de bits de expoente
 int  nuioin  =  1; // numero de portas de entrada
 int  nuioou  =  1; // numero de portas de saida
+int  pipeln  =  0; // usa pipeline
 
 // ----------------------------------------------------------------------------
 // Controle de diretivas ------------------------------------------------------
@@ -37,10 +38,11 @@ void dire_exec(char *dir, int id, int t)
     // soh as diretivas 1 3 e 4 que tem efeito no compilador cmm
     switch(t)
     {
-        case 1: strcpy (prname,v_name[id]); break;
-        case 3: nbmant = ival; break;
-        case 4: nbexpo = ival; break;
-        case 7: nuioin = ival; break;
-        case 8: nuioou = ival; break;
+        case  1: strcpy (prname,v_name[id]); break;
+        case  3: nbmant = ival; break;
+        case  4: nbexpo = ival; break;
+        case  7: nuioin = ival; break;
+        case  8: nuioou = ival; break;
+        case 11: pipeln = ival; break;
     }
 }

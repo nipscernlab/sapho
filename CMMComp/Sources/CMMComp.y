@@ -6,19 +6,20 @@
 
     - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
 
-    - StdLib     in(.): leitura de dados externos
-    - StdLib  out(.,.): escrita pra fora do processador
-    - StdLib   norm(.): função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
-    - StdLib   pset(.): função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
-    - StdLib    abs(.): função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
-    - StdLib   sqrt(.): retorna raiz quadrada. Gera um float
-    - StdLib   atan(.): retorna o arco-tg. Gera um float
-    - StdLib sign(.,.): retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
-    - StdLib   real(.): retorna a parte real de um numero complexo
-    - StdLib   imag(.): retorna a parte imag de um numero complexo
-    - StdLib   fase(.): retorna a fase       de um numero complexo
-    - StdLib    sin(.): retorna o seno       de um numero
-    - StdLib    cos(.): retorna o cosseno    de um numero
+    - StdLib      in(.)  : leitura de dados externos
+    - StdLib     out(.,.): escrita pra fora do processador
+    - StdLib    norm(.)  : função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
+    - StdLib    pset(.)  : função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
+    - StdLib     abs(.)  : função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
+    - StdLib    sqrt(.)  : retorna raiz quadrada. Gera um float
+    - StdLib    atan(.)  : retorna o arco-tg. Gera um float
+    - StdLib  sign(.,.)  : retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
+    - StdLib    real(.)  : retorna a parte real de um numero complexo
+    - StdLib    imag(.)  : retorna a parte imag de um numero complexo
+    - StdLib    fase(.)  : retorna a fase       de um numero complexo
+    - StdLib     sin(.)  : retorna o seno       de um numero
+    - StdLib     cos(.)  : retorna o cosseno    de um numero
+    - StdLib complex(.,.): cria um numero complexo a partir de dois reais
 
     - Operador   >>>  : deslocamento é direta com complemento a dois (desloca mantendo o sinal)
 
@@ -53,7 +54,7 @@ void  yyerror(char const *s);
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
-%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH                       // diretivas
+%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH PIPELN                // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
 %token INN OUT NRM PST ABS SGN SQRT REAL IMAG COMP ATAN FASE SIN COS   // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK                // saltos
@@ -101,25 +102,26 @@ prog_elements : direct | declar_full | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
-direct : PRNAME  ID    {dire_exec("#PRNAME",$2,1);} // nome do processador
-       | NUBITS INUM   {dire_exec("#NUBITS",$2,0);} // tamanho da palavra da ULA
-       | NBMANT INUM   {dire_exec("#NBMANT",$2,3);} // numero de bits da mantissa
-       | NBEXPO INUM   {dire_exec("#NBEXPO",$2,4);} // numero de bits do expoente
-       | NDSTAC INUM   {dire_exec("#NDSTAC",$2,0);} // tamanho da pilha de dados
-       | SDEPTH INUM   {dire_exec("#SDEPTH",$2,0);} // tamanho da pilha de subrotina
-       | NUIOIN INUM   {dire_exec("#NUIOIN",$2,7);} // numero de portas de entrada
-       | NUIOOU INUM   {dire_exec("#NUIOOU",$2,8);} // numero de portas de saida
-       | NUGAIN INUM   {dire_exec("#NUGAIN",$2,0);} // contante de divisao (norm(.))
-       | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2,0);} // tamanho da FFT (2^FFTSIZ)
+direct : PRNAME   ID   {dire_exec("#PRNAME",$2, 1);} // nome do processador
+       | NUBITS INUM   {dire_exec("#NUBITS",$2, 0);} // tamanho da palavra da ULA
+       | NBMANT INUM   {dire_exec("#NBMANT",$2, 3);} // numero de bits da mantissa
+       | NBEXPO INUM   {dire_exec("#NBEXPO",$2, 4);} // numero de bits do expoente
+       | NDSTAC INUM   {dire_exec("#NDSTAC",$2, 0);} // tamanho da pilha de dados
+       | SDEPTH INUM   {dire_exec("#SDEPTH",$2, 0);} // tamanho da pilha de subrotina
+       | NUIOIN INUM   {dire_exec("#NUIOIN",$2, 7);} // numero de portas de entrada
+       | NUIOOU INUM   {dire_exec("#NUIOOU",$2, 8);} // numero de portas de saida
+       | NUGAIN INUM   {dire_exec("#NUGAIN",$2, 0);} // contante de divisao (norm(.))
+       | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2, 0);} // tamanho da FFT (2^FFTSIZ)
+       | PIPELN INUM   {dire_exec("#PIPELN",$2,11);} // tamanho do pipe de linha (para o compilador)
 
-       | USEMAC STRING INUM {mac_use($2,1,$3);}     // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
-       | ENDMAC             {mac_end();}            // ponto de termino do uso da macro
+       | USEMAC STRING INUM {mac_use($2,1,$3);}      // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
+       | ENDMAC             {mac_end();}             // ponto de termino do uso da macro
 
 // Diretivas comportamentais --------------------------------------------------
 
-mac_use    : USEMAC STRING INUM {mac_use($2,0,$3);} // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
-mac_end    : ENDMAC             {mac_end();}        // ponto final de uso de uma macro
-dire_inter : ITRADD             {dire_inter();}     // ponto de inicio da interrupcao (usado com o pino itr)
+mac_use    : USEMAC STRING INUM {mac_use($2,0,$3);}  // usa uma macro .asm no lugar do compilador (dentro de uma funcao)
+mac_end    : ENDMAC             {mac_end();}         // ponto final de uso de uma macro
+dire_inter : ITRADD             {dire_inter();}      // ponto de inicio da interrupcao (usado com o pino itr)
 
 // Declaracao de variaveis ----------------------------------------------------
 

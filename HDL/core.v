@@ -307,6 +307,7 @@ endmodule
 
 module mem_ctrl
 #(
+	parameter PIPELN = 0,
 	parameter NUBITS = 8,
 	parameter MDATAW = 8,
 	parameter FFTSIZ = 3,
@@ -327,7 +328,9 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-reg [MDATAW-1:0] ular; always @ (posedge clk) ular <= ula[MDATAW-1:0];
+reg [MDATAW-1:0] ular;
+
+generate if (PIPELN) always @ (posedge clk) ular <= ula[MDATAW-1:0]; else always @ (*) ular = ula[MDATAW-1:0]; endgenerate
 
 rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ISI)) ra_rd(ldi, fft, ular    , base_addr, mem_addr_rd);
 rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst, base_addr, mem_addr_wr);
@@ -374,6 +377,7 @@ module core
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
+	parameter  PIPELN = 0,               // Numero de ciclos de pipeline (0 = sem pipeline)
 	parameter  NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
 	parameter  NBOPER = 9,               // Numero de bits de operando
 	parameter  ITRADD = 0,               // Endereco da interrupcao
@@ -725,7 +729,8 @@ endgenerate
 
 wire signed [NUBITS-1:0] ula_out;
 
-ula #(.NUBITS (NUBITS ),
+ula #(.PIPELN (PIPELN ),
+	  .NUBITS (NUBITS ),
       .NBMANT (NBMANT ),
       .NBEXPO (NBEXPO ),
       .NUGAIN (NUGAIN ),
@@ -791,7 +796,8 @@ wire [MDATAW-1:0] rf;
 
 generate
 	if (STI | LDI | ILI | ISI) begin
-		mem_ctrl #(.NUBITS(NUBITS),
+		mem_ctrl #(.PIPELN(PIPELN),
+		           .NUBITS(NUBITS),
 		           .MDATAW(MDATAW),
 		           .FFTSIZ(FFTSIZ),
 		           .ILI(ILI),.ISI(ISI)) ac(clk, id_sti, id_ldi, id_fft, id_wr,

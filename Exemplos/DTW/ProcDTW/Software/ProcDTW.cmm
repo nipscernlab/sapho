@@ -6,6 +6,7 @@
 #NUIOOU 3
 #NBMANT 23
 #NBEXPO 8
+#PIPELN 0
 
 int len_ref, len_data;
 int dtw[75][75];
