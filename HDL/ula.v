@@ -424,8 +424,8 @@ module ula_div
 #(
 	parameter NUBITS = 32
 )(
-	 input [NUBITS-1:0] in1, in2,
-	output [NUBITS-1:0] out 
+	 input signed [NUBITS-1:0] in1, in2,
+	output signed [NUBITS-1:0] out 
 );
 
 assign out = in1 / in2;
@@ -467,8 +467,8 @@ module ula_mod
 #(
 	parameter NUBITS = 32
 )(
-	 input [NUBITS-1:0] in1, in2,
-	output [NUBITS-1:0] out 
+	 input signed [NUBITS-1:0] in1, in2,
+	output signed [NUBITS-1:0] out 
 );
 
 assign out = in1 % in2;
@@ -816,14 +816,12 @@ module ula_lin
 	output reg [NUBITS-1:0] out 
 );
 
-reg [NUBITS-1:0] inr;
-
 generate if (PIPELN) begin
+	reg [NUBITS-1:0] inr;
 	always @ (posedge clk) inr <=  in;
-	always @ (posedge clk) out <= (inr == {NUBITS{1'b0}}) ? {NUBITS{1'b0}} : {{NUBITS-1{1'b0}}, 1'b1};
+	always @ (posedge clk) out <= (inr == {NUBITS{1'b0}}) ? {{NUBITS-1{1'b0}}, 1'b1} : {NUBITS{1'b0}};
 end else begin
-	always @ (*)           inr  =  in;
-	always @ (*)           out  = (inr == {NUBITS{1'b0}}) ? {NUBITS{1'b0}} : {{NUBITS-1{1'b0}}, 1'b1};
+	always @ (*)           out  = (in  == {NUBITS{1'b0}}) ? {{NUBITS-1{1'b0}}, 1'b1} : {NUBITS{1'b0}};
 end endgenerate
 
 endmodule

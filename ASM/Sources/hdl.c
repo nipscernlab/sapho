@@ -215,13 +215,16 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // decodifica portas de saida
     if (opc_out())
     {
-    if (nuioou > 0) fprintf(f_veri, "\nalways @ (*) begin\n");
-    for(int i=0;i<nuioou;i++)
-    {
-    fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= out;\n", (int)pow(2,i),i);
-    fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n",     i, (int)pow(2,i),i);
-    }
-    if (nuioou > 0) fprintf(f_veri, "end\n\n");
+        if (nuioou > 0) fprintf(f_veri, "\nalways @ (*) begin\n");
+        for(int i=0;i<nuioou;i++)
+        {
+            if (out_used(i))
+            {
+                fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= out;\n", (int)pow(2,i),i);
+                fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n",     i, (int)pow(2,i),i);
+            }
+        }
+        if (nuioou > 0) fprintf(f_veri, "end\n\n");
     }
 
     // ------------------------------------------------------------------------

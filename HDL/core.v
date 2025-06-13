@@ -604,7 +604,8 @@ wire              id_dsp_push, id_dsp_pop;
 wire              id_sti, id_ldi, id_fft, id_wr;
 wire              id_req_in, id_out_en;
 
-instr_dec #(.NBOPCO  ( NBOPCO ),
+instr_dec #(.PIPELN  ( PIPELN ),
+            .NBOPCO  ( NBOPCO ),
             .MDATAW  ( MDATAW ),
 			   .LOD  (   LOD  ),
 			 .P_LOD  ( P_LOD  ),

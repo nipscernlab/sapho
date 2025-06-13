@@ -4,6 +4,7 @@ module instr_dec
 	// Parametros de configuracao internos -------------------------------------
 	// -------------------------------------------------------------------------
 
+    parameter  PIPELN  = 0,   // Numero de ciclos de pipeline (0 = sem pipeline)
 	parameter  NBOPCO  = 7,   // Numero de bits de opcode
 	parameter  MDATAW  = 8,   // Numero de bits de endereco da memoria de dados
 
@@ -455,8 +456,12 @@ if (              LOD |  P_LOD |  LDI   |    ILI   |    SET_P |     POP |  F_ADD
                  wLOR | wS_LOR | wLIN_M | wP_LIN_M | wF_LES   | wSF_LES | wF_GRE | wSF_GRE |   wSHL |  wS_SHL |   wSRS |  wS_SRS ;
 else assign b0 = 1'b0 ;
 endgenerate
-                           // NOP
+
+generate if (PIPELN) begin // NOP
 always @ (posedge clk) if (opcode != 7'd94) ula_op <= {b5,b4,b3,b2,b1,b0};
+end else begin
+always @ (posedge clk)                      ula_op <= {b5,b4,b3,b2,b1,b0};
+end endgenerate
 
 endmodule
 
