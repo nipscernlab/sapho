@@ -217,37 +217,37 @@ void mac_gera(char *fasm)
 
     if (idiv)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "int_div.asm");
+        sprintf(tasm, "%s/int_div_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (imod)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "int_mod.asm");
+        sprintf(tasm, "%s/int_mod_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (finv)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "float_inv.asm");
+        sprintf(tasm, "%s/float_inv_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (fsqrt)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "float_sqrt.asm");
+        sprintf(tasm, "%s/float_sqrt_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (fatan)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "float_atan.asm");
+        sprintf(tasm, "%s/float_atan_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (fsin)
     {
-         sprintf(tasm, "%s/%s", dir_macro, "float_sin.asm");
+        sprintf(tasm, "%s/float_sin_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 }
@@ -355,11 +355,17 @@ void mac_gera(char *fasm)
 }*/
 
 // arco-tg para float (float_atan.asm)
-/*float atan(float x)
+/*float float_atan(float x)
 {
-    float pi2 = 3.1415/2.0;
+    float ax = abs(x);
 
-    if (abs(x) > 1.0) return sign(x,pi2) - atan(1.0/x);
+    if (ax == 0.0) return 0.0;
+    if (ax > 1.02) return sign(x, 1.5707963268) - my_atan(1.0/x);
+    if (ax > 0.98)
+    {
+        float xm1 = ax-1;
+        return sign(x, 0.7853981634 + xm1*0.5 - xm1*xm1*0.25); 
+    }
 
     float termo      = x;
     float x2         = x*x;
@@ -368,7 +374,7 @@ void mac_gera(char *fasm)
 
     int indiceX = 3;
 
-    while (abs(termo) > tolerancia) {
+    while ((abs(termo) > tolerancia) && (indiceX < 100)) {
         termo = termo * (- x2 * (indiceX - 2)) / indiceX;
 
         resultado = resultado + termo;

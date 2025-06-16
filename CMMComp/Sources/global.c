@@ -157,7 +157,7 @@ void add_instr(char *inst, ...)
     // ------------------------------------------------------------------------
 
     // se nao usa pipeline, nao precisa de NOP
-    if (pipeln == 1)
+    if (pipeln > 7)
     {
         if (find_opc("LDI", str)) add_instr("NOP\n");
         if (find_opc("ILI", str)) add_instr("NOP\n");
@@ -178,107 +178,105 @@ void add_instr(char *inst, ...)
     // verifica se a instrucao precisa de alguma macro especial ---------------
     // ------------------------------------------------------------------------
 
-    if (find_opc("int_div"   , str))  mac_add("idiv" );                    // divisao inteira
-    if (find_opc("int_mod"   , str)) {mac_add("imod" ); mac_add("idiv" );} // resto da divisao inteira
-    if (find_opc("float_inv" , str))  mac_add("finv" );                    // inverso de float
-    if (find_opc("float_sqrt", str)) {mac_add("fsqrt"); mac_add("finv" );} // raiz quadrada de float
-    if (find_opc("float_atan", str)) {mac_add("fatan"); mac_add("finv" );} // arco tangente de float
-    if (find_opc("float_sin" , str)) {mac_add("fsin" ); mac_add("finv" );} // seno de float
+    if (find_opc("int_div"   , str))  mac_add("idiv" );                                    // divisao inteira
+    if (find_opc("int_mod"   , str)) {mac_add("imod" );                 mac_add("idiv" );} // resto da divisao inteira
+    if (find_opc("float_inv" , str))  mac_add("finv" );                                    // inverso de float
+    if (find_opc("float_sqrt", str)) {mac_add("fsqrt"); if (pipeln > 3) mac_add("finv" );} // raiz quadrada de float
+    if (find_opc("float_atan", str)) {mac_add("fatan"); if (pipeln > 3) mac_add("finv" );} // arco tangente de float
+    if (find_opc("float_sin" , str)) {mac_add("fsin" ); if (pipeln > 3) mac_add("finv" );} // seno de float
 
     // ------------------------------------------------------------------------
     // verifica se instrucao precisa de NOP depois ----------------------------
     // ------------------------------------------------------------------------
-
-    if (pipeln == 0) return; // se nao usa pipeline, nao precisa de NOP
     
     // coloca mais um clock internamente na de-normalizacao em ponto flutuante
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_LES"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc( "F_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc("SF_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc( "F_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc("SF_LES"  , str)) add_instr("NOP\n");
 
-    // coloca mais um clock no inicio da normalizacao em ponto flutuante
-    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
-    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+    // coloca mais um clock no meio da normalizacao em ponto flutuante
+    if (pipeln > 5 && find_opc(   "I2F"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc(   "I2F_M", str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "P_I2F_M", str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "F_DIV"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc("SF_DIV"  , str)) add_instr("NOP\n");
 
     // coloca mais um clock no final da normalizacao em ponto flutuante
-    if (find_opc(   "I2F"  , str)) add_instr("NOP\n");
-    if (find_opc(   "I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_I2F_M", str)) add_instr("NOP\n");
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_DIV"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_DIV"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "I2F"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "I2F_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "P_I2F_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_DIV"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_DIV"  , str)) add_instr("NOP\n");
 
     // coloca mais um clock internamente em algumas operacoes aritmeticas
-    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
-    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
-    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
-    if (find_opc(   "LIN"  , str)) add_instr("NOP\n");
-    if (find_opc(   "LIN_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_LIN_M", str)) add_instr("NOP\n");
-    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "F2I"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "F2I_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "P_F2I_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LAN"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_LAN"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LIN"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LIN_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "P_LIN_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
-    if (find_opc( "F_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc(   "MLT"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_MLT"  , str)) add_instr("NOP\n");
-    if (find_opc(   "F2I"  , str)) add_instr("NOP\n");
-    if (find_opc(   "F2I_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_F2I_M", str)) add_instr("NOP\n");
-    if (find_opc(   "LES"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_LES"  , str)) add_instr("NOP\n");
-    if (find_opc(   "EQU"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_EQU"  , str)) add_instr("NOP\n");
-    if (find_opc(   "LAN"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_LAN"  , str)) add_instr("NOP\n");
-    if (find_opc(   "GRE"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc(   "SHL"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_SHL"  , str)) add_instr("NOP\n");
-    if (find_opc(   "LIN"  , str)) add_instr("NOP\n");
-    if (find_opc(   "LIN_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_LIN_M", str)) add_instr("NOP\n");
-    if (find_opc( "F_LES"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_LES"  , str)) add_instr("NOP\n");
-    if (find_opc(   "SRS"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_SRS"  , str)) add_instr("NOP\n");
-    if (find_opc(   "SHR"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_SHR"  , str)) add_instr("NOP\n");
-    if (find_opc(   "NRM"  , str)) add_instr("NOP\n");
-    if (find_opc(   "NRM_M", str)) add_instr("NOP\n");
-    if (find_opc( "P_NRM_M", str)) add_instr("NOP\n");
-    if (find_opc(   "ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_ADD"  , str)) add_instr("NOP\n");
-    if (find_opc( "F_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc("SF_GRE"  , str)) add_instr("NOP\n");
-    if (find_opc(   "LOR"  , str)) add_instr("NOP\n");
-    if (find_opc( "S_LOR"  , str)) add_instr("NOP\n");
+    if (pipeln > 3 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 3 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 6 && find_opc(   "MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 6 && find_opc( "S_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc(   "F2I"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc(   "F2I_M", str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "P_F2I_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "EQU"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_EQU"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LAN"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_LAN"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "SHL"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_SHL"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LIN"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LIN_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "P_LIN_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_LES"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "SRS"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_SRS"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "SHR"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_SHR"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "NRM"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "NRM_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "P_NRM_M", str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc("SF_GRE"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "LOR"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "S_LOR"  , str)) add_instr("NOP\n");
 }
 
 // adiciona instrucoes especiais

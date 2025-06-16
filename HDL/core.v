@@ -307,7 +307,7 @@ endmodule
 
 module mem_ctrl
 #(
-	parameter PIPELN = 0,
+	parameter PIPELN = 3,
 	parameter NUBITS = 8,
 	parameter MDATAW = 8,
 	parameter FFTSIZ = 3,
@@ -330,7 +330,7 @@ assign mem_wr      = wr;
 
 reg [MDATAW-1:0] ular;
 
-generate if (PIPELN) always @ (posedge clk) ular <= ula[MDATAW-1:0]; else always @ (*) ular = ula[MDATAW-1:0]; endgenerate
+generate if (PIPELN>7) always @ (posedge clk) ular <= ula[MDATAW-1:0]; else always @ (*) ular = ula[MDATAW-1:0]; endgenerate
 
 rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ISI)) ra_rd(ldi, fft, ular    , base_addr, mem_addr_rd);
 rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst, base_addr, mem_addr_wr);
@@ -377,7 +377,7 @@ module core
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
-	parameter  PIPELN = 0,               // Numero de ciclos de pipeline (0 = sem pipeline)
+	parameter  PIPELN = 3,               // Numero de ciclos de pipeline (0 = sem pipeline)
 	parameter  NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
 	parameter  NBOPER = 9,               // Numero de bits de operando
 	parameter  ITRADD = 0,               // Endereco da interrupcao

@@ -95,7 +95,7 @@ module processor
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
-	parameter PIPELN =  0,              // Implementa pipeline (0 = sem pipeline, 1 = com pipeline)
+	parameter PIPELN =  3,              // Implementa pipeline (0 = sem pipeline, 1 = com pipeline)
 	parameter NUBITS = 16,              // Tamanho da palavra do processador
 	parameter NBMANT = 23,              // Numero de bits da mantissa
 	parameter NBEXPO =  8,              // Numero de bits do expoente

@@ -1121,7 +1121,7 @@ int oper_divi(int et1, int et2)
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("DIV %s\n",     v_name[et1%OFST]);
@@ -1137,7 +1137,7 @@ int oper_divi(int et1, int et2)
     // int var com int acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("DIV %s\n", v_name[et1%OFST]);
         }
@@ -1153,7 +1153,7 @@ int oper_divi(int et1, int et2)
     // int var com float var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
             add_instr("P_LOD %s\n"   , v_name[et2%OFST]);
@@ -1171,7 +1171,7 @@ int oper_divi(int et1, int et2)
     // int var com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("SET   aux_var\n");
             add_instr("I2F_M %s\n", v_name[et1%OFST]);
@@ -1257,7 +1257,7 @@ int oper_divi(int et1, int et2)
     // int acc com int var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("%s %s\n", ld, v_name[et2%OFST]);
             add_instr("S_DIV\n");
@@ -1272,7 +1272,7 @@ int oper_divi(int et1, int et2)
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("S_DIV\n");
         }
@@ -1285,7 +1285,7 @@ int oper_divi(int et1, int et2)
     // int acc com float var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("I2F\n");
             add_instr("P_LOD %s\n", v_name[et2%OFST]);
@@ -1303,7 +1303,7 @@ int oper_divi(int et1, int et2)
     // int acc com float acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("SET_P aux_soma\n");
             add_instr("I2F\n");
@@ -1402,7 +1402,7 @@ int oper_divi(int et1, int et2)
     // float var com int var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("%s %s\n", i2f, v_name[et2%OFST]);
             add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
@@ -1418,7 +1418,7 @@ int oper_divi(int et1, int et2)
     // float var com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("I2F\n");
             add_instr("F_DIV %s\n", v_name[et1%OFST]);
@@ -1434,7 +1434,7 @@ int oper_divi(int et1, int et2)
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
@@ -1450,7 +1450,7 @@ int oper_divi(int et1, int et2)
     // float var com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("F_DIV %s\n", v_name[et1%OFST]);
         }
@@ -1529,7 +1529,7 @@ int oper_divi(int et1, int et2)
     // float acc com int var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
             add_instr("SF_DIV\n");
@@ -1545,7 +1545,7 @@ int oper_divi(int et1, int et2)
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {printf("entrei aqui\n");
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("I2F\n");
             add_instr("SF_DIV\n");
@@ -1561,7 +1561,7 @@ int oper_divi(int et1, int et2)
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("P_LOD %s\n", v_name[et2%OFST]);
             add_instr("SF_DIV\n");
@@ -1577,7 +1577,7 @@ int oper_divi(int et1, int et2)
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("SF_DIV\n");
         }
@@ -2086,7 +2086,7 @@ int oper_mod(int et1, int et2)
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("%s %s\n" , ld, v_name[et2%OFST]);
             add_instr("MOD %s\n",     v_name[et1%OFST]);
@@ -2102,7 +2102,7 @@ int oper_mod(int et1, int et2)
     // int var com int acc
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("MOD %s\n", v_name[et1%OFST]);
         }
@@ -2118,7 +2118,7 @@ int oper_mod(int et1, int et2)
     // int acc com int var
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("P_LOD %s\n", v_name[et2%OFST]);
             add_instr("S_MOD\n");
@@ -2133,7 +2133,7 @@ int oper_mod(int et1, int et2)
     // int acc com int acc
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        if (pipeln == 0)
+        if (pipeln == 3)
         {
             add_instr("S_MOD\n");
         }
