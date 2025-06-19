@@ -352,32 +352,38 @@ void hdl_tb_file(int itr_addr)
     FILE *f_veri = fopen(tmp,"w");
 
     // ------------------------------------------------------------------------
-    // cria cabecalho do testbench --------------------------------------------
+    // cabecalho e sinais globais ---------------------------------------------
     // ------------------------------------------------------------------------
 
     double T = 1000.0/sim_clk(); // periodo do clock em ns (clk frq em MHz)
 
     fprintf(f_veri,          "`timescale 1ns/1ps\n\n", prname);
     fprintf(f_veri,             "module %s_tb();\n\n", prname);
-    fprintf(f_veri,               "reg clk, rst;\n\n"        );
-    fprintf(f_veri,                    "integer i;\n"        );
-    fprintf(f_veri,               "initial begin\n\n"        );
-    fprintf(f_veri, "    $dumpfile(\"%s_tb.vcd\");\n", prname);
-    fprintf(f_veri,     "    $dumpvars(0,%s_tb);\n\n", prname);
+    fprintf(f_veri,                 "reg clk, rst;\n"        );
+    fprintf(f_veri,             "integer i,prog;\n\n"        );
 
     // ------------------------------------------------------------------------
     // inicializacao (reset e $finish) ----------------------------------------
     // ------------------------------------------------------------------------
 
-    fprintf(f_veri,   "    clk = 0;\n"   );
-    fprintf(f_veri,   "    rst = 1;\n"   );
-    fprintf(f_veri,       "    #%f;\n", T);
-    fprintf(f_veri, "    rst = 0;\n\n"   );
+    fprintf(f_veri, "initial begin\n\n");
+    // necessario pro iverilog criar o .vcd
+    fprintf(f_veri, "    $dumpfile(\"%s_tb.vcd\");\n", prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb);\n\n"    , prname);
+    // inicializa clock e da um reset
+    fprintf(f_veri, "    clk = 0;\n"  );
+    fprintf(f_veri, "    rst = 1;\n"  );
+    fprintf(f_veri, "    #%f;\n",    T);
+    fprintf(f_veri, "    rst = 0;\n\n");
+    // barra de progressao
+    fprintf(f_veri, "    prog = $fopen(\"progress.txt\", \"w\");\n");
     fprintf(f_veri, "    for (i = 10; i <= 100; i = i + 10) begin\n");
     fprintf(f_veri, "        #%f;\n"  , T*sim_clk_num()/10          );
-    fprintf(f_veri, "        $display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
+    fprintf(f_veri, "         $display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
+    fprintf(f_veri, "        $fdisplay(prog,\"%%0d\",i);\n");
     fprintf(f_veri, "    end\n"          );
     fprintf(f_veri, "    $finish;\n\n"   );
+    // fim do initial
     fprintf(f_veri,          "end\n\n"   );
 
     // ------------------------------------------------------------------------
@@ -389,6 +395,8 @@ void hdl_tb_file(int itr_addr)
     // ------------------------------------------------------------------------
     // portas de interface com o processador ----------------------------------
     // ------------------------------------------------------------------------
+
+    fprintf(f_veri, "// instancia do processador ---------------------------------------------------\n\n");
 
     // verifica se precisa adicionar barramento de entrada in
     if (nuioin > 0 && opc_inn()) fprintf(f_veri, "reg  signed [%d:0] proc_io_in = 0;\n", nubits-1);
@@ -422,26 +430,32 @@ void hdl_tb_file(int itr_addr)
     // interface com portas de entrada ----------------------------------------
     // ------------------------------------------------------------------------
 
+    fprintf(f_veri, "// portas de entrada ----------------------------------------------------------\n\n");
+
     // cadastra portas de entrada pra simulacao
     for(int i=0;i<nuioin;i++)
     {
         if (inn_used(i))
         {
-            fprintf(f_veri, "integer data_in_%d;\n", i);
+            fprintf(f_veri, "// variaveis da porta %d\n", i);
+            fprintf(f_veri, "integer data_in_%d; // para ver no simulador\n", i);
             fprintf(f_veri, "reg signed [%d:0] in_%d = 0;\n", nubits-1, i);
             fprintf(f_veri, "reg req_in_%d = 0;\n\n", i);
         }
     }
-    if (opc_inn()) fprintf(f_veri,"\n");
 
-    // inicializa portas de entrada
-    if (opc_inn()) fprintf(f_veri, "initial begin\n");
+    // abre os arquivos de leitura para as portas de entrada
+    if (opc_inn())
+    {
+        fprintf(f_veri, "// abre um arquivo para leitura em cada porta\n");
+        fprintf(f_veri, "initial begin\n");
+    }
     for(int i=0;i<nuioin;i++)
     {
         if (inn_used(i))
         {
             force_rightbar(proc_dir);
-            fprintf(f_veri, "    data_in_%d = $fopen(\"%s/Simulation/input_%d.txt\", \"r\"); // write your input data into this file\n",i,proc_dir,i); 
+            fprintf(f_veri, "    data_in_%d = $fopen(\"%s/Simulation/input_%d.txt\", \"r\"); // coloque os seus dados de entrada neste arquivo\n",i,proc_dir,i); 
         }
     }
     if (opc_inn()) fprintf(f_veri, "end\n\n");
@@ -449,6 +463,7 @@ void hdl_tb_file(int itr_addr)
     // decodifica porta de entrada
     if (opc_inn())
     {
+        fprintf(f_veri, "// implementa a leitura dos dados de entrada\n");
         fprintf(f_veri, "integer scan_result;\n");
         fprintf(f_veri, "always @ (*) begin  \n");
         fprintf(f_veri, "    proc_io_in = 0; \n");
@@ -471,24 +486,65 @@ void hdl_tb_file(int itr_addr)
     // interface com portas de saida ------------------------------------------
     // ------------------------------------------------------------------------
 
+    fprintf(f_veri, "// portas de saida ------------------------------------------------------------\n\n");
+
     // cadastra portas de saida
     for(int i=0;i<nuioou;i++)
     {
         if (out_used(i))
         {
-            fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0;\n", nubits-1, i);
-            fprintf(f_veri, "reg out_en_%d = 0;\n", i);
+            fprintf(f_veri, "// variaveis da porta %d\n", i);
+            fprintf(f_veri, "integer data_out_%d;\n", i);
+            fprintf(f_veri, "reg signed [%d:0] out_sig_%d = 0; // para ver no simulador\n", nubits-1, i);
+            fprintf(f_veri, "reg out_en_%d = 0;\n\n", i);
         }
     }
-    if (opc_out()) fprintf(f_veri, "\n");
 
-    // decodifica portas de saida
-    if (opc_out()) fprintf(f_veri, "always @ (*) begin\n");
+    // abre os arquivos de escrita para as portas de saida
+    if (opc_out())
+    {
+        fprintf(f_veri, "// abre um arquivo para escrita de cada porta\n");
+        fprintf(f_veri, "initial begin\n");
+    }
     for(int i=0;i<nuioou;i++)
     {
         if (out_used(i))
         {
-            fprintf(f_veri, "    if (proc_out_en == %d) out_sig_%d <= proc_io_out;\n", (int)pow(2,i),i);
+            force_rightbar(proc_dir);
+            fprintf(f_veri, "    data_out_%d = $fopen(\"%s/Simulation/output_%d.txt\", \"w\"); // veja os dados de saida neste arquivo\n",i,proc_dir,i); 
+        }
+    }
+    if (opc_out()) fprintf(f_veri, "end\n\n");
+
+    // decodifica portas de saida
+    if (opc_out())
+    {
+        fprintf(f_veri, "// decodifica portas de saida\n");
+        fprintf(f_veri, "always @ (*) begin\n");
+    }
+    for(int i=0;i<nuioou;i++)
+    {
+        if (out_used(i))
+        {
+            fprintf(f_veri, "    // decodificacao da porta %d\n", i);
+            fprintf(f_veri, "    if (proc_out_en == %d) out_sig_%d <= proc_io_out; // dado aparece no simulador\n", (int)pow(2,i),i);
+            fprintf(f_veri, "    out_en_%d = proc_out_en == %d;\n",                 i, (int)pow(2,i),i);
+        }
+    }
+    if (opc_out()) fprintf(f_veri, "end\n\n");
+
+    // implementa escrita no arquivo
+    if (opc_out())
+    {
+        fprintf(f_veri, "// implementa escrita no arquivo\n");
+        fprintf(f_veri, "always @ (posedge clk) begin\n");
+    }
+    for(int i=0;i<nuioou;i++)
+    {
+        if (out_used(i))
+        {
+            fprintf(f_veri, "    // escreve na porta %d\n", i);
+            fprintf(f_veri, "    if (out_en_%d == 1'b1) $fdisplay(data_out_%d, \"%%0d\", out_sig_%d);\n", i,i,i);
             fprintf(f_veri, "    out_en_%d = proc_out_en == %d;\n",                 i, (int)pow(2,i),i);
         }
     }

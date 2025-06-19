@@ -19,7 +19,7 @@ set FLEX=C:\packs\msys64\usr\bin\flex.exe
 set GCC=C:\packs\msys64\mingw64\bin\x86_64-w64-mingw32-gcc.exe
 set IVERILOG=C:\nipscern\Aurora\saphoComponents\Packages\iverilog\bin\iverilog.exe
 set VVP=C:\nipscern\Aurora\saphoComponents\Packages\iverilog\bin\vvp.exe
-set GTKWAVE=C:\nipscern\Aurora\saphoComponents\Packages\iverilog\gtkwave\bin\gtkwave.exe
+set GTKWAVE=C:\packs\gtkwave_gtk3_mingw64_standalone\bin\gtkwave.exe
 set YOSYS=C:\packs\oss-cad-suite\bin\yosys.exe
 
 set    TESTE_DIR=%ROOT_DIR%\Teste
@@ -184,59 +184,5 @@ if exist %SIMU_DIR%\%GTKW% (
 ) else (
     %GTKWAVE% --rcvar "hide_sst on" --dark %TMP_PRO%\%TB_MOD%.vcd --script=%SCR_DIR%\gtk_proc_init.tcl
 )
-
-:: RTL Viewer -----------------------------------------------------------------
-
-echo #### Roda o Yosys
-
-cd %HDL_DIR%
-cp %UPROC%.v .
-cp %SCR_DIR%\proc2rtl.ys .
-
-sed -i "s/@PROC@/%PROC%/" proc2rtl.ys
-%YOSYS% -s proc2rtl.ys>%TMP_PRO%\yosys.log
-
-echo #### Roda o NetlistSvg
-
-cmd /c "netlistsvg %PROC%.json -o %PROC%.svg"
-cp %PROC%.svg %TMP_PRO%
-del %PROC%.json
-del %PROC%.svg
-
-cmd /c "netlistsvg p_proc_fft.json -o p_proc_fft.svg"
-cp p_proc_fft.svg %TMP_PRO%
-del p_proc_fft.json
-del p_proc_fft.svg
-
-cmd /c "netlistsvg core.json -o core.svg"
-cp core.svg %TMP_PRO%
-del core.json
-del core.svg
-
-cmd /c "netlistsvg ula.json -o ula.svg"
-cp ula.svg %TMP_PRO%
-del ula.json
-del ula.svg
-
-del proc2rtl.ys
-del %PROC%.v
-
-:: Limpa a pasta de arquivos temporarios --------------------------------------
-
-echo #### Limpa tudo
-
-del %TMP_PRO%\cmm_log.txt
-del %TMP_PRO%\app_log.txt
-del %TMP_PRO%\pc_%PROC%_mem.txt
-del %TMP_PRO%\%PROC%_data.mif
-del %TMP_PRO%\%PROC%_inst.mif
-del %TMP_PRO%\%PROC%_tb.v
-del %TMP_PRO%\tcl_infos.txt
-del %TMP_PRO%\%PROC%.vvp
-del %TMP_PRO%\%TB_MOD%.vcd
-del %TMP_PRO%\trad_cmm.txt
-del %TMP_PRO%\trad_opcode.txt
-del %TMP_PRO%\yosys.log
-del %TMP_PRO%\log.txt
 
 cd %ROOT_DIR%
