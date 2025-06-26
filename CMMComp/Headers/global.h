@@ -30,7 +30,7 @@ extern int  num_ins ;            // numero de instrucoes parseadas (sem macros f
 // ----------------------------------------------------------------------------
 
 // inicio e fim do parse
-void parse_init(char *prname, char *d_proc, char *d_macro, char *d_tmp);
+void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d_tmp);
 void parse_end (char *prname, char *d_proc);
 
 // cadastra as instrucoes assembly

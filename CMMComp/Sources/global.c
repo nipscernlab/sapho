@@ -61,14 +61,14 @@ int find_opc(const char *opc, const char *str)
 // funcoes de inicio e termino do parse ---------------------------------------
 // ----------------------------------------------------------------------------
 
-void parse_init(char *prname, char *d_proc, char *d_macro, char *d_tmp)
+void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d_tmp)
 {
     // pega os argumentos -----------------------------------------------------
 
     char cmm_file[1024];
     char asm_file[1024];
 
-    sprintf(cmm_file, "%s/Software/%s.cmm", d_proc, prname);
+    sprintf(cmm_file, "%s/Software/%s"    , d_proc, f_name);
     sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname);
 
     yyin  = fopen(cmm_file, "r"); // arquivo .cmm de entrada

@@ -31,6 +31,8 @@ rmdir %TESTE_DIR% /s /q
 set PROJET=FFT
 :: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
 set PROC=proc_fft
+:: nome do arquivo cmm em que o processador esta definido
+set FNAM=proc_fft.cmm
 :: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
 :: se nao achar, usa simulacao padrao
 set TB=errado
@@ -127,7 +129,7 @@ echo #### Roda o compilador CMM
 
 cd %BIN_DIR%
 
-CMMComp.exe %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
+CMMComp.exe %FNAM% %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO%
 
 :: Executa o Assembler pre-processor ------------------------------------------
 
