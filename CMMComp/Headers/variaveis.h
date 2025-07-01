@@ -14,6 +14,7 @@ extern int  v_fpar[NVARMAX];             // se ID eh uma funcao, diz a lista de 
 extern int  v_fnid[NVARMAX];             // ID da funcao a qual a variavel pertence
 extern int  v_isar[NVARMAX];             // se variavel eh um array
 extern int  v_isco[NVARMAX];             // se variavel eh uma constante
+extern int  v_size[NVARMAX];             // tamanho do array (caso seja array)
 
 // manipulacao de elementos da tabela -----------------------------------------
 

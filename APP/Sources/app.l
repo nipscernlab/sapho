@@ -146,6 +146,10 @@ LINHA          \n
 
    "NOP"   eval_opcode( 0); // no operation
 
+ "P_LOD_V" eval_opcode(22); // P_LOD com offset constante 1D
+   "MLT_V" eval_opcode(22); //   MLT com offset constante 1D
+ "F_MLT_V" eval_opcode(22); // F_MLT com offset constante 1D
+
 {VARIA}    eval_opernd(yytext); // usado em instrucoes da ula com variaveis (IDs)
 {INNUM}    eval_opernd(yytext); // usado em instrucoes da ula com constante int
 {FLNUM}    eval_opernd(yytext); // usado em instrucoes da ula com constante float

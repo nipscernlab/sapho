@@ -85,6 +85,8 @@ void eval_opernd(char *va)
         case 19:                            n_ins++; state =  0; break; // operacoes de salto
         case 20:                            n_ins++; state =  0; break; // operacoes de entrada
         case 21:                            n_ins++; state =  0; break; // operacoes de saida
+        case 22:                                     state = 23; break; // prepara   ofsset constante
+        case 23:                            n_ins++; state =  0; break; // instr com offset constante
     }
 }
 

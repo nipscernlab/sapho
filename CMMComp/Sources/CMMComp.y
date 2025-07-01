@@ -57,6 +57,7 @@ void  yyerror(char const *s);
 %token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH PIPELN                // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
 %token INN OUT NRM PST ABS SGN SQRT REAL IMAG COMP ATAN FASE SIN COS   // std lib
+%token VTV                                                             // std lib
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK                // saltos
 %token SHIFTL SHIFTR SSHIFTR                                           // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAN LOR                                     // operadores logicos de dois simbolos
@@ -90,6 +91,7 @@ void  yyerror(char const *s);
 %type <ival> par_list
 %type <ival> func_call
 %type <ival> std_in std_pst std_abs std_sign std_nrm std_sqrt std_real std_imag std_comp std_atan std_fase std_sin std_cos
+%type <ival> std_vtv
 %type <ival> exp terminal
 
 %%
@@ -208,6 +210,7 @@ std_atan : ATAN '(' exp  ')'                {$$ = exec_atan($3   );} // funcao a
 std_fase : FASE '(' exp  ')'                {$$ = exec_fase($3   );} // funcao fase(x)      -> pega a fase de um comp
 std_sin  : SIN  '(' exp  ')'                {$$ = exec_sin ($3   );} // funcao sin(x)       -> seno de x
 std_cos  : COS  '(' exp  ')'                {$$ = exec_cos ($3   );} // funcao cos(x)       -> cosseno de x
+std_vtv  : VTV  '(' ID   ',' ID  ')'        {$$ = exec_vtv ($3,$5);} // funcao vtv(x,y)     -> produto vetorial
 
 // if/else --------------------------------------------------------------------
 
@@ -282,6 +285,7 @@ exp:       terminal                           {$$ = $1;}
          | std_fase                           {$$ = $1;}
          | std_sin                            {$$ = $1;}
          | std_cos                            {$$ = $1;}
+         | std_vtv                            {$$ = $1;}
          // chamada de funcao
          | func_call                          {$$ = $1;}
          // operadores nulos
@@ -317,6 +321,8 @@ exp:       terminal                           {$$ = $1;}
          | exp  GREQU  exp                    {$$ = oper_greq ($1,$3  );}
          | exp  LESEQ  exp                    {$$ = oper_leeq ($1,$3  );}
          | exp  DIF    exp                    {$$ = oper_dife ($1,$3  );}
+         // algebra linear (notacao de Dirac)
+         | '<' ID '|' ID '>'                  {$$ = exec_vtv ($2,$4);}
 
 // terminais usados em reducao pra expressoes ---------------------------------
 
@@ -334,7 +340,7 @@ int main(int argc, char *argv[])
 {
     parse_init(argv[1], argv[2], argv[3], argv[4], argv[5]); // inicializa o parser e as variaveis globais
     yyparse   ();                                            // aqui a magica acontece!!
-    parse_end (argv[1], argv[2]);                            // finaliza o parser
+    parse_end (argv[2], argv[3]);                            // finaliza o parser
 
     return 0;
 }

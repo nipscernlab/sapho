@@ -68,11 +68,11 @@ void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d
     char cmm_file[1024];
     char asm_file[1024];
 
-    sprintf(cmm_file, "%s/Software/%s"    , d_proc, f_name);
-    sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname);
+    sprintf(cmm_file, "%s/Software/%s"    , d_proc, f_name); // arquivo .cmm de entrada
+    sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname); // arquivo .asm de saida
 
-    yyin  = fopen(cmm_file, "r"); // arquivo .cmm de entrada
-    f_asm = fopen(asm_file, "w"); // arquivo .asm de saida
+    yyin  = fopen(cmm_file, "r"); // abre arquivo .cmm
+    f_asm = fopen(asm_file, "w"); // cria arquivo .asm
 
     sprintf(dir_soft , "%s/Software", d_proc ); // pega o diretorio software
     strcpy (dir_macro,                d_macro); // pega o diretorio Macro
@@ -212,6 +212,7 @@ void add_instr(char *inst, ...)
     if (pipeln > 5 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "F_MLT_V", str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc( "F_DIV"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc("SF_DIV"  , str)) add_instr("NOP\n");
@@ -223,6 +224,7 @@ void add_instr(char *inst, ...)
     if (pipeln > 7 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_MLT_V", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_DIV"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_DIV"  , str)) add_instr("NOP\n");
@@ -237,14 +239,17 @@ void add_instr(char *inst, ...)
     if (pipeln > 7 && find_opc(   "LIN_M", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "P_LIN_M", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_MLT_V", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
     if (pipeln > 3 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 3 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 6 && find_opc(   "MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 6 && find_opc(   "MLT_V", str)) add_instr("NOP\n");
     if (pipeln > 6 && find_opc( "S_MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 4 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc( "F_MLT_V", str)) add_instr("NOP\n");
     if (pipeln > 4 && find_opc("SF_MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc(   "F2I"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc(   "F2I_M", str)) add_instr("NOP\n");

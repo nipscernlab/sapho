@@ -12,6 +12,7 @@
 #include "..\Headers\stdlib.h"
 #include "..\Headers\global.h"
 #include "..\Headers\macros.h"
+#include "..\Headers\funcoes.h"
 #include "..\Headers\data_use.h"
 #include "..\Headers\variaveis.h"
 #include "..\Headers\diretivas.h"
@@ -765,4 +766,77 @@ int exec_comp(int etr, int eti)
 
     acc_ok = 1;
     return 3*OFST;
+}
+
+// ----------------------------------------------------------------------------
+// funcoes especiais para trabalho com vetores --------------------------------
+// ----------------------------------------------------------------------------
+
+// multiplicacao entre dois vetores
+int exec_vtv(int id1, int id2)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se id1 foi declarado
+    if (v_type[id1] == 0) fprintf(stderr, "Erro na linha %d: não tem essa variável %s!\n", line_num+1, rem_fname(v_name[id1], fname));
+
+    // checa se id2 foi declarado
+    if (v_type[id2] == 0) fprintf(stderr, "Erro na linha %d: não tem essa variável %s!\n", line_num+1, rem_fname(v_name[id2], fname));
+
+    // checa se sao vetores mesmo
+    if (v_isar[id1] != 1 || v_isar[id2] != 1) fprintf(stderr, "Erro na linha %d: o nome tá dizendo, produto vetorial é entre vetores!\n", line_num+1);
+
+    // checa se tamanhos sao iguais
+    if (v_size[id1] != v_size[id2]) fprintf(stderr, "Erro na linha %d: vetores de tamanhos diferentes? Vai estudar Álgebra Linear primeiro!\n", line_num+1);
+
+    // checa se sao do mesmo tipo
+    if (v_type[id1] != v_type[id2]) fprintf(stderr, "Erro na linha %d: tipos de dados diferentes. Você é uma pessoa confusa!\n", line_num+1);
+
+    // checa se tem variavel tipo comp
+    if (v_type[id1] == 3 || v_type[id2] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra número complexo ainda. Se vira!\n", line_num+1);
+    
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"P_LOD");
+
+    int N = v_size[id1];
+
+    // ------------------------------------------------------------------------
+    // implementa o produto entre vetores -------------------------------------
+    // ------------------------------------------------------------------------
+
+    // int com int
+    if ((v_type[id1] == 1) && (v_type[id2] == 1))
+    {
+        add_instr( "%s %s\n", ld, v_name[id1]);
+        add_instr("MLT %s\n",     v_name[id2]);
+
+        for (int i = 1; i < N; i++)
+        {
+            add_instr("P_LOD_V %s %d\n", v_name[id1], i);
+            add_instr(  "MLT_V %s %d\n", v_name[id2], i);
+            add_instr("S_ADD\n");
+        }
+    }
+
+    // float com float
+    if ((v_type[id1] == 2) && (v_type[id2] == 2))
+    {
+        add_instr(   "%s %s\n", ld, v_name[id1]);
+        add_instr("F_MLT %s\n",     v_name[id2]);
+
+        for (int i = 1; i < N; i++)
+        {
+            add_instr("P_LOD_V %s %d\n", v_name[id1], i);
+            add_instr("F_MLT_V %s %d\n", v_name[id2], i);
+            add_instr("SF_ADD\n");
+        }
+    }
+
+    acc_ok = 1;
+    return v_type[id1]*OFST;
 }

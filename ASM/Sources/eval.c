@@ -52,6 +52,7 @@ FILE *f_data, *f_instr; // .mif das memorias de dado e instrucao
 // variaveis de estados
 int  state =   0 ;      // guarda estado do compilador
 char opc_name[64];      // guarda nome   do opcode atual
+char  va_name[64];      // guarda nome   da variav atual
 int  opc_idx;           // guarda indice do opcode atual
 int  arr_typ;           // guarda tipo    de array
 int  arr_tam;           // guarda tamanho do array
@@ -139,6 +140,17 @@ void instr_out(char *va)
     o_used[atoi(va)] = 1;
 }
 
+// gera instrucao com endereco va_name + va
+void instr_oft(char *va)
+{
+    // escreve a nova instrucao
+    fprintf(f_instr, "%s%s\n" , itob(opc_idx,NBITS_OPC), itob(var_find(va_name)+atoi(va),nbopr));
+    // cadastra, tambem, no tradutor da simulacao
+    strcat ( va_name, " ");
+    strcat ( va_name, va );
+    sim_add(opc_name, va_name);
+}
+
 // ----------------------------------------------------------------------------
 // funcoes globais ------------------------------------------------------------
 // ----------------------------------------------------------------------------
@@ -218,9 +230,11 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
 
     // proximo estado depende do tipo de opcode:
     // 0 : nao tem operando
-    // 17: operando eh endereco da memoria de dados
-    // 18: operando eh endereco da memoria de instrucao
-    // 19: operando eh endereco de I/O
+    // 18: operando eh endereco da memoria de dados
+    // 19: operando eh endereco da memoria de instrucao
+    // 20: operando eh endereco de entrada
+    // 21: operando eh endereco de saida
+    // 22: operando eh enderecamento indireto fixo
     state = next_state;
 
     // nao tem operando, ja pode escrever a instrucao
@@ -255,6 +269,8 @@ void eval_opernd(char *va, int is_const)
         case 19: instr_salto   (va);                   state =  0; break; // operacoes de salto
         case 20: instr_inn     (va);                   state =  0; break; // operacoes de entrada
         case 21: instr_out     (va);                   state =  0; break; // operacoes de saida
+        case 22: strcpy(va_name,va);                   state = 23; break; // prepara   ofsset constante
+        case 23: instr_oft     (va);                   state =  0; break; // instr com offset constante
     }
 }
 

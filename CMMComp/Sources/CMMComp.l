@@ -57,6 +57,8 @@ COMEN  "//"[^\n]*
 "fase"        return FASE;
 "complex"     return COMP;
 
+"vtv"         return VTV;
+
 "while"       return WHILE;
 "break"       return BREAK;
 "if"          return IF;

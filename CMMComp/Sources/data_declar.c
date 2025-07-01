@@ -71,6 +71,7 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     v_fnid[id_var] = find_var(fname);        // guarda em que funcao ela esta
     v_isar[id_var] = 1;                      // variavel eh array 1D
     v_asgn[id_var] = 1;                      // array ja comeca como assigned (pois eh dificil de checar indice a indice)
+    v_size[id_var] = atoi(v_name[id_arg]);   // guarda o tamanho do array
 
     int type = type_tmp;
 

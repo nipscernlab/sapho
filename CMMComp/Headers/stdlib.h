@@ -38,3 +38,9 @@ int  exec_imag(int et);           // pega parte imaginaria
 int  exec_sqr2(int et);           // modulo ao quadrado (colocar no parser)
 int  exec_fase(int et);           // fase em radianos
 int  exec_comp(int etr, int eti); // junta dois numeros reais pra fazer um complexo
+
+// ----------------------------------------------------------------------------
+// funcoes especiais para trabalho com vetores --------------------------------
+// ----------------------------------------------------------------------------
+
+int exec_vtv(int id1, int id2);   // multiplicacao entre dois vetores
