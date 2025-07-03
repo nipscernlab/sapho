@@ -81,6 +81,8 @@ COMEN  "//"[^\n]*
 "||"          return LOR;
 
 "++"          return PPLUS;
+"|I|"         return EYE;
+"|0>"         return VZERO;
 
 "comp"       {type_tmp = 3; yylval.ival = 3; return TYPE;}
 "float"      {type_tmp = 2; yylval.ival = 2; return TYPE;}

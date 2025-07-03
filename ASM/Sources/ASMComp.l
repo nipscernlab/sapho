@@ -154,9 +154,12 @@ LINHA          \n
 
    "NOP"   eval_opcode(94, 0, yytext,    ""     ); // no operation
 
- "P_LOD_V" eval_opcode( 1,22, yytext,  "P_LOD"  ); // P_LOD com offset constante 1D
-   "MLT_V" eval_opcode(21,22, yytext,    "MLT"  ); //   MLT com offset constante 1D
- "F_MLT_V" eval_opcode(23,22, yytext,  "F_MLT"  ); // F_MLT com offset constante 1D
+   "LOD_V" eval_opcode( 0,22, yytext,    "LOD"  ); //   LOD com offset constante
+ "P_LOD_V" eval_opcode( 1,22, yytext,  "P_LOD"  ); // P_LOD com offset constante
+   "SET_V" eval_opcode( 4,22, yytext,    "SET"  ); //   SET com offset constante
+ "F_ADD_V" eval_opcode(19,22, yytext,  "F_ADD"  ); // F_ADD com offset constante
+   "MLT_V" eval_opcode(21,22, yytext,    "MLT"  ); //   MLT com offset constante
+ "F_MLT_V" eval_opcode(23,22, yytext,  "F_MLT"  ); // F_MLT com offset constante
 
 {VARIA}    eval_opernd(yytext,0); // usado em instrucoes da ula com variaveis (IDs)
 {INNUM}    eval_opernd(yytext,1); // usado em instrucoes da ula com constante int

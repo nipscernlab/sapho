@@ -23,6 +23,7 @@ int  v_used[NVARMAX];      // se ID ja foi usado
 int  v_isco[NVARMAX];      // se variavel eh uma constante
 int  v_fpar[NVARMAX];      // se ID eh uma funcao, diz a lista de parametros
 int  v_size[NVARMAX];      // tamanho do array (caso seja array)
+int  v_siz2[NVARMAX];      // tamanho da dimensao j (caso seja matriz)
 
 // procura variavel na tabela (-1 se nao achar)
 int find_var(char *val)

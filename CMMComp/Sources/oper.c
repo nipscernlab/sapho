@@ -1162,7 +1162,7 @@ int oper_divi(int et1, int et2)
         else
         {
             add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
+            add_instr("P_LOD %s\n"  , v_name[et2%OFST]);
             add_instr("CAL float_inv\n");
             add_instr("SF_MLT\n");
         }

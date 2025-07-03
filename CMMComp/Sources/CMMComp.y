@@ -62,6 +62,7 @@ void  yyerror(char const *s);
 %token SHIFTL SHIFTR SSHIFTR                                           // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAN LOR                                     // operadores logicos de dois simbolos
 %token PPLUS                                                           // operador ++. pode ser usado pra reduzir exp e tb pra assignments
+%token EYE VZERO
 
 // tokens terminais -----------------------------------------------------------
 
@@ -128,8 +129,11 @@ dire_inter : ITRADD             {dire_inter();}      // ponto de inicio da inter
 // Declaracao de variaveis ----------------------------------------------------
 
 declar : TYPE id_list ';'
-       | TYPE ID '[' INUM ']'              STRING ';' {declar_arr_1d($2,$4,$6   );} // fazer pra complexo
-       | TYPE ID '[' INUM ']' '[' INUM ']' STRING ';' {declar_arr_2d($2,$4,$7,$9);}
+       | TYPE ID '[' INUM ']'              STRING   ';' {declar_arr_1d($2,$4,$6    );}
+       | TYPE ID '[' INUM ']' '[' INUM ']' STRING   ';' {declar_arr_2d($2,$4,$7,$9 );}
+       | TYPE ID '[' INUM ']' '=' '|' ID '|' ID '>' ';' {declar_Mv    ($2,$4,$8,$10);}
+       | TYPE ID '[' INUM ']' '='    exp '|' ID '>' ';' {declar_cv    ($2,$4,$7,$9 );}
+
 
 id_list : IID | id_list ',' IID
 
@@ -249,20 +253,29 @@ declar_full : declar
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
-assignment : ID  '=' exp ';'                       {ass_set($1,$3);}
+assignment : ID  '=' exp ';'                          {ass_set($1,$3);}
            // incremento
-           | ID                          PPLUS ';' {ass_pplus($1      );}
-           | ID  '[' exp ']'             PPLUS ';' {ass_aplus($1,$3   );}
-           | ID  '[' exp ']' '[' exp ']' PPLUS ';' {ass_apl2d($1,$3,$6);}
+           | ID                          PPLUS ';'    {ass_pplus($1      );}
+           | ID  '[' exp ']'             PPLUS ';'    {ass_aplus($1,$3   );}
+           | ID  '[' exp ']' '[' exp ']' PPLUS ';'    {ass_apl2d($1,$3,$6);}
            // array normal
-           | ID  '[' exp ']'  '='                  {arr_1d_index($1,$3);}
-                     exp ';'                       {ass_array ($1,$7,0);}
+           | ID  '[' exp ']'  '='                     {arr_1d_index($1,$3);}
+                     exp ';'                          {ass_array ($1,$7,0);}
            // array invertido
-           | ID  '[' exp ')'  '='                  {arr_1d_index($1,$3);}
-                     exp ';'                       {ass_array ($1,$7,1);}
+           | ID  '[' exp ')'  '='                     {arr_1d_index($1,$3);}
+                     exp ';'                          {ass_array ($1,$7,1);}
            // array 2D (completar)
-           | ID  '[' exp ']' '[' exp ']' '='       {arr_2d_index($1, $3,$6);}
-                     exp ';'                       {ass_array   ($1,$10, 0);}
+           | ID  '[' exp ']' '[' exp ']' '='          {arr_2d_index($1, $3,$6);}
+                     exp ';'                          {ass_array   ($1,$10, 0);}
+           // algebra linear
+           | ID '=' '|' ID '|' ID '>' ';'             {exec_Mv   ($1,$4,$6);}
+           | ID '='    exp '|' ID '>' ';'             {exec_cv   ($1,$3,$5);}
+           | ID '=' '|' ID '>' '+' exp '|' ID '>' ';' {exec_apcb ($1,$4,$7,$9);}
+           | ID '=' '|' ID '>' '<'  ID '|' ';'        {exec_vvt  ($1,$4,$7);}
+           | ID '=' '|' ID '|' '-' '|' ID '>' '<'  ID '|' ';' {exec_Mmvvt($1,$4,$8,$11);}
+           | ID '=' exp '|' ID '|' ';' {exec_cM($1,$3,$5);}
+           | ID '=' EYE ';' {exec_eye($1);}
+           | ID '=' VZERO ';' {exec_v0($1);}
 
 // expressoes -----------------------------------------------------------------
 

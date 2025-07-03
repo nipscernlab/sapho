@@ -43,4 +43,12 @@ int  exec_comp(int etr, int eti); // junta dois numeros reais pra fazer um compl
 // funcoes especiais para trabalho com vetores --------------------------------
 // ----------------------------------------------------------------------------
 
-int exec_vtv(int id1, int id2);   // multiplicacao entre dois vetores
+int  exec_vtv  (int id1, int id2);                   // multiplicacao entre dois vetores
+void exec_Mv   (int idy, int idM, int idv);          // multiplicacao de matriz por vetor
+void exec_cv   (int idy, int et , int idv);          // multiplicacao do vetor por uma constante
+void exec_apcb (int idy, int ida, int etc, int idb); // soma ponderada no segundo vetor
+void exec_vvt  (int idM, int ida, int idb);          // produto externo entre dois vetores
+void exec_Mmvvt(int idA, int idB, int ida, int idb); // subtracao de matriz com produto externo
+void exec_cM   (int idA, int etc, int idM);          // produto entre constante e matriz
+void exec_eye  (int idM);                            // gera matriz identidade
+void exec_v0   (int idv);                            // gera vetor de zeros

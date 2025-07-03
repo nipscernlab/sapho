@@ -840,3 +840,218 @@ int exec_vtv(int id1, int id2)
     acc_ok = 1;
     return v_type[id1]*OFST;
 }
+
+// multiplicacao de matriz por vetor
+void exec_Mv(int idy, int idM, int idv)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idy foi declarada
+    if (v_type[idy] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idy], fname));
+    
+    // checa se idM foi declarada
+    if (v_type[idM] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idM], fname));
+    
+    // checa se idy foi declarada
+    if (v_type[idv] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idv], fname));
+    
+    // checa se os tipos sao os mesmos
+    if (v_type[idy] != v_type[idM] || v_type[idy] != v_type[idv])
+    {
+        fprintf(stderr, "Erro na linha %d: as variáveis tem que ser do mesmo tipo!\n", line_num+1);
+    }
+
+    // checa se nao eh comp
+    if (v_type[idy] == 3 || v_type[idM] == 3 || v_type[idv] == 3)
+    {
+        fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    }
+
+    // checa se idy eh um vetor
+    if (v_isar[idy] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idy], fname));
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    v_used[idM] = 1;
+    v_used[idv] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    int N = v_size[idM];
+    int M = v_siz2[idM];
+
+    // ------------------------------------------------------------------------
+    // implementa o produto entre matriz e vetor ------------------------------
+    // ------------------------------------------------------------------------
+
+    // int com int
+    if ((v_type[idM] == 1) && (v_type[idv] == 1))
+    {
+        for (int i = 0; i < N; i++)
+        {
+            add_instr("LOD_V %s %d\n", v_name[idM], i*M);
+            add_instr("MLT %s\n"     , v_name[idv]);
+
+            for (int j = 1; j < M; j++)
+            {
+                add_instr("P_LOD_V %s %d\n", v_name[idM], i*M+j);
+                add_instr(  "MLT_V %s %d\n", v_name[idv],     j);
+                add_instr("S_ADD\n");
+            }
+
+            add_instr("SET_V %s %d\n", v_name[idy], i);
+        }
+    }
+
+    // float com float
+    if ((v_type[idM] == 2) && (v_type[idv] == 2))
+    {
+        for (int i = 0; i < N; i++)
+        {
+            add_instr("LOD_V %s %d\n", v_name[idM], i*M);
+            add_instr("F_MLT %s\n"   , v_name[idv]);
+
+            for (int j = 1; j < M; j++)
+            {
+                add_instr("P_LOD_V %s %d\n", v_name[idM], i*M+j);
+                add_instr("F_MLT_V %s %d\n", v_name[idv],     j);
+                add_instr("SF_ADD\n");
+            }
+
+            add_instr("SET_V %s %d\n", v_name[idy], i);
+        }
+    }
+}
+
+// multiplicacao do vetor por uma constante
+void exec_cv(int idy, int et, int idv)
+{
+    int N = v_size[idv];
+
+    char g[64];
+    if (et%OFST==0)
+    {
+        add_instr("SET aux_var\n");
+        strcpy(g,"aux_var");
+    }
+    else strcpy(g,v_name[et%OFST]);
+
+    for (int i = 0; i < N; i++)
+    {
+        add_instr("LOD_V %s %d\n", v_name[idv], i);
+        add_instr(   "F_MLT %s\n", g);
+        add_instr("SET_V %s %d\n", v_name[idy], i);
+    }
+}
+
+// soma ponderada no segundo vetor
+void exec_apcb(int idy, int ida, int etc, int idb)
+{
+    int N = v_size[idy];
+
+    char g[64];
+    if (etc%OFST==0)
+    {
+        add_instr("SET aux_var\n");
+         strcpy(g,"aux_var");
+    }
+    else strcpy(g,v_name[etc%OFST]);
+
+    for (int i = 0; i < N; i++)
+    {
+        add_instr(  "LOD_V %s %d\n", v_name[idb], i);
+        add_instr(     "F_MLT %s\n", g);
+        add_instr("F_ADD_V %s %d\n", v_name[ida], i);
+        add_instr(  "SET_V %s %d\n", v_name[idy], i);
+    }
+}
+
+// produto externo entre dois vetores
+void exec_vvt(int idM, int ida, int idb)
+{
+    int N = v_size[ida];
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            add_instr(  "LOD_V %s %d\n", v_name[ida],     i);
+            add_instr("F_MLT_V %s %d\n", v_name[idb],     j);
+            add_instr(  "SET_V %s %d\n", v_name[idM], N*j+i);
+        }
+    }
+}
+
+// subtracao de matriz com produto externo
+void exec_Mmvvt(int idA, int idB, int ida, int idb)
+{
+    int N = v_size[ida];
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            add_instr(  "LOD_V %s %d\n", v_name[ida],     i);
+            add_instr("F_MLT_V %s %d\n", v_name[idb],     j);
+            add_instr("F_NEG\n");
+            add_instr("F_ADD_V %s %d\n", v_name[idB], N*j+i);
+            add_instr(  "SET_V %s %d\n", v_name[idA], N*j+i);
+        }
+    }
+}
+
+// produto entre constante e matriz
+void exec_cM(int idA, int etc, int idM)
+{
+    int N = v_size[idM];
+    int M = v_siz2[idM];
+
+    char g[64];
+    if (etc%OFST==0)
+    {
+        add_instr("SET aux_var\n");
+         strcpy(g,"aux_var");
+    }
+    else strcpy(g,v_name[etc%OFST]);
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < M; j++)
+        {
+            add_instr("LOD_V %s %d\n", v_name[idM], M*i+j);
+            add_instr("F_MLT %s\n", g);
+            add_instr("SET_V %s %d\n", v_name[idA], M*i+j);
+        }
+    }
+}
+
+// gera matriz identidade
+void exec_eye(int idM)
+{
+    int N = v_size[idM];
+
+    // otimizar para nao ficar dando load toda hora
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            if (i == j) add_instr("LOD 1.0\n"); else add_instr("LOD 0.0\n");
+            add_instr("SET_V %s %d\n", v_name[idM], N*i+j);
+        }
+    }
+}
+
+// gera vetor de zeros
+void exec_v0(int idv)
+{
+    int N = v_size[idv];
+
+    add_instr("LOD 0.0\n");
+    for (int i = 0; i < N; i++) add_instr("SET_V %s %d\n", v_name[idv], i);
+}

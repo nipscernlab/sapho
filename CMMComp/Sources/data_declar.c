@@ -10,6 +10,7 @@
 // includes locais
 #include "..\Headers\t2t.h"
 #include "..\Headers\global.h"
+#include "..\Headers\stdlib.h"
 #include "..\Headers\funcoes.h"
 #include "..\Headers\variaveis.h"
 
@@ -122,6 +123,20 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     }
 }
 
+// declara array 1d como um produto entre matriz e vetor
+void declar_Mv(int id_name, int id_N, int id_M, int id_v)
+{
+    declar_arr_1d(id_name,id_N,  -1);
+    exec_Mv      (id_name,id_M,id_v);
+}
+
+// declara array 1d como um produto entre constante e vetor
+void declar_cv(int id_name, int id_N, int id_c, int id_v)
+{
+    declar_arr_1d(id_name,id_N,  -1);
+    exec_cv      (id_name,id_c,id_v);
+}
+
 // declara array 2D
 void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
 {
@@ -141,6 +156,8 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     v_fnid[id_var] = find_var(fname);        // guarda em que funcao ela esta
     v_isar[id_var] = 2;                      // variavel eh array 2D
     v_asgn[id_var] = 1;                      // array ja comeca como assigned (pois eh dificil de checar indice a indice)
+    v_size[id_var] = atoi(v_name[id_x]);     // guarda o tamanho da dimensao i
+    v_siz2[id_var] = atoi(v_name[id_y]);     // guarda o tamanho da dimensao j
 
     int type = type_tmp;
 
