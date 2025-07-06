@@ -9,22 +9,36 @@
     - StdLib      in(.)  : leitura de dados externos
     - StdLib     out(.,.): escrita pra fora do processador
     - StdLib    norm(.)  : função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
+    - StdLib  sign(.,.)  : retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
     - StdLib    pset(.)  : função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
     - StdLib     abs(.)  : função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
     - StdLib    sqrt(.)  : retorna raiz quadrada. Gera um float
     - StdLib    atan(.)  : retorna o arco-tg. Gera um float
-    - StdLib  sign(.,.)  : retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
+    - StdLib     sin(.)  : retorna o seno       de um numero
+    - StdLib     cos(.)  : retorna o cosseno    de um numero
     - StdLib    real(.)  : retorna a parte real de um numero complexo
     - StdLib    imag(.)  : retorna a parte imag de um numero complexo
     - StdLib    fase(.)  : retorna a fase       de um numero complexo
-    - StdLib     sin(.)  : retorna o seno       de um numero
-    - StdLib     cos(.)  : retorna o cosseno    de um numero
+    - StdLib    mod2(.)  : modulo ao quadrado   de um numero complexo
     - StdLib complex(.,.): cria um numero complexo a partir de dois reais
 
-    - Operador   >>>  : deslocamento é direta com complemento a dois (desloca mantendo o sinal)
+    - Operador >>> : deslocamento a direita com complemento a dois (desloca mantendo o sinal)
 
     - Array inicializável por arquivo. A memória do array já é preenchida em tempo de compilação. (ex: int x[128] "valores.txt";)
     - Array com índice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sâo invertidos.
+
+    - Statments em notacao de Dirac (algebra liear):
+      <a|b>             -> retorna o produto interno entre os vetores a e b
+      a # |M|b>;        -> vetor a recebe o produto entre a matriz M e o vetor b
+      a # c|b>;         -> vetor a recebe ganho c vezes o vetor b
+      d # |a> + c|b>;   -> vetor d recebe a soma do vetor a com o vetor b ponderado por c
+      A # |a><b|;       -> matriz A recebe o produto externo entre vetores a e b
+      A # |P| - |a><b|; -> matriz A receb a subtracao da matriz P pelo produto externo entre a e b
+      A # c|B|;         -> matriz A recebe produto entre constante c e matriz B
+      A # c|I|;         -> matriz A recebe matriz identidade ponderada por c
+      a # |0>;          -> zera todos os elementos do vetor a
+      a # c|in(x)>;     -> preenche vetor a com leitura da porta x ponderado por c
+      out(x,c|a>);      -> OUT no vetor a ponderado por c
 */
 
 %{
@@ -32,7 +46,7 @@
 #include "..\Headers\itr.h"         // tratamento de interrupcao
 #include "..\Headers\oper.h"        // operacoes da ULA
 #include "..\Headers\stdlib.h"      // biblioteca padrao do sapho
-#include "..\Headers\saltos.h"      // gerenciamento saltos (if/else while)
+#include "..\Headers\saltos.h"      // gerenciamento de saltos (if/else while)
 #include "..\Headers\global.h"      // variaveis e funcoes globais
 #include "..\Headers\macros.h"      // macros assembler
 #include "..\Headers\funcoes.h"     // criacao e uso de funcoes
@@ -56,13 +70,15 @@ void  yyerror(char const *s);
 
 %token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH PIPELN                // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
-%token INN OUT NRM PST ABS SGN SQRT REAL IMAG COMP ATAN FASE SIN COS   // std lib
-%token VTV                                                             // std lib
+%token INN OUT                                                         // stdlib (I/O)
+%token NRM PST ABS SGN                                                 // stdlib (funcoes especiais)
+%token SQRT ATAN SIN COS                                               // stdlib (funcoes nao lineares)
+%token REAL IMAG COMP FASE MOD2                                        // stdlib (num complexos)
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK                // saltos
 %token SHIFTL SHIFTR SSHIFTR                                           // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAN LOR                                     // operadores logicos de dois simbolos
 %token PPLUS                                                           // operador ++. pode ser usado pra reduzir exp e tb pra assignments
-%token EYE VZERO
+%token EYE VZERO                                                       // notacao de Dirac (algebra linear)
 
 // tokens terminais -----------------------------------------------------------
 
@@ -89,10 +105,13 @@ void  yyerror(char const *s);
 %left '*' '/' '%'
 %left '!' '~' PPLUS
 
+// reducoes que precisam gerar um exp (et)
 %type <ival> par_list
 %type <ival> func_call
-%type <ival> std_in std_pst std_abs std_sign std_nrm std_sqrt std_real std_imag std_comp std_atan std_fase std_sin std_cos
-%type <ival> std_vtv
+%type <ival> std_in
+%type <ival> std_pst std_abs std_sign std_nrm
+%type <ival> std_sqrt std_atan std_sin std_cos
+%type <ival> std_real std_imag std_comp std_fase std_mod2
 %type <ival> exp terminal
 
 %%
@@ -101,7 +120,7 @@ void  yyerror(char const *s);
 
 fim           : prog
 prog          : prog_elements | prog prog_elements
-prog_elements : direct | declar_full | funcao
+prog_elements : direct | declar | funcao
 
 // Diretivas de compilacao ----------------------------------------------------
 
@@ -115,7 +134,7 @@ direct : PRNAME   ID   {dire_exec("#PRNAME",$2, 1);} // nome do processador
        | NUIOOU INUM   {dire_exec("#NUIOOU",$2, 8);} // numero de portas de saida
        | NUGAIN INUM   {dire_exec("#NUGAIN",$2, 0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2, 0);} // tamanho da FFT (2^FFTSIZ)
-       | PIPELN INUM   {dire_exec("#PIPELN",$2,11);} // tamanho do pipe de linha (para o compilador)
+       | PIPELN INUM   {dire_exec("#PIPELN",$2,11);} // numero de pipelin do processador
 
        | USEMAC STRING INUM {mac_use($2,1,$3);}      // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
        | ENDMAC             {mac_end();}             // ponto de termino do uso da macro
@@ -127,26 +146,29 @@ mac_end    : ENDMAC             {mac_end();}         // ponto final de uso de um
 dire_inter : ITRADD             {dire_inter();}      // ponto de inicio da interrupcao (usado com o pino itr)
 
 // Declaracao de variaveis ----------------------------------------------------
-
-declar : TYPE id_list ';'
+         // declaracao em lista (pode ser uma ou mais variaveis) nao inicilizadas
+declar : TYPE id_list                               ';'
+         // declaracao de uma variavel com inicializacao
+       | TYPE ID '=' exp ';'          {declar_var($2); ass_set($2,$4);}
+         // declaracao de array com inicializacao por arquivo
        | TYPE ID '[' INUM ']'              STRING   ';' {declar_arr_1d($2,$4,$6    );}
        | TYPE ID '[' INUM ']' '[' INUM ']' STRING   ';' {declar_arr_2d($2,$4,$7,$9 );}
-       | TYPE ID '[' INUM ']' '=' '|' ID '|' ID '>' ';' {declar_Mv    ($2,$4,$8,$10);}
-       | TYPE ID '[' INUM ']' '='    exp '|' ID '>' ';' {declar_cv    ($2,$4,$7,$9 );}
-
+         // declaracao de array com inicializaco por notacao de Dirac (sob demanda)
+       | TYPE ID '[' INUM ']' '#' '|' ID '|' ID '>' ';' {declar_Mv    ($2,$4,$8,$10);}
+       | TYPE ID '[' INUM ']' '#'    exp '|' ID '>' ';' {declar_cv    ($2,$4,$7,$9 );}
 
 id_list : IID | id_list ',' IID
 
-IID    : ID                                           {declar_var   ($1         );}
-       | ID      '[' INUM ']'                         {declar_arr_1d($1,$3   ,-1);}
-       | ID      '[' INUM ']' '[' INUM ']'            {declar_arr_2d($1,$3,$6,-1);}
+IID    : ID                           {declar_var   ($1         );}
+       | ID '[' INUM ']'              {declar_arr_1d($1,$3   ,-1);}
+       | ID '[' INUM ']' '[' INUM ']' {declar_arr_2d($1,$3,$6,-1);}
 
 // Declaracao de funcoes ------------------------------------------------------
 
-funcao : TYPE ID '('                      {declar_fun($1,$2);} // inicio da declaracao de uma funcao
+funcao : TYPE ID  '('                     {declar_fun($1,$2);} // inicio da declaracao de uma funcao
          par_list ')'                     {declar_fst($5   );} // seta o primeiro parametro na variavel correspondente
          '{' stmt_list '}'                {func_ret  ($2   );} // checa se foi tudo ok
-       | TYPE ID '('   ')'                {declar_fun($1,$2);} // funcao sem parametros
+       | TYPE ID  '('  ')'                {declar_fun($1,$2);} // funcao sem parametros
          '{' stmt_list '}'                {func_ret  ($2   );}
 
 // lista de parametros na declaracao
@@ -171,15 +193,16 @@ stmt_full: '{' stmt_list '}' // bloco de statments
          |    dire_inter     // ponto de interrupcao
 
 // statments que podem ser usados dentro do case :
-stmt_case:   declar_full     // declaracoes de variaveis
-         |    assignment     // atribuicao de expressoes a uma variavel = $ @ />
+stmt_case:        declar     // declaracoes de variaveis
+         |    assignment     // atribuicao de expressoes a uma variavel
          |    while_stmt     // loop while
          |  if_else_stmt     // if/else
-         |       std_out     // std lib de output de dados
+         |       std_out     // stdlib de output de dados
+         |      sdt_vout     // output de dados com notacao de Dirac
          |     void_call     // chamada de subrotina
          |   return_call     // retorno de funcao
-         |    mac_use        // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
-         |    mac_end        // termina uma chamada de macro assembler
+         |       mac_use     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
+         |       mac_end     // termina uma chamada de macro assembler
 
 // chamadas de funcoes --------------------------------------------------------
 
@@ -200,21 +223,22 @@ exp_list :                                                           // pode ser
 
 // Standard library -----------------------------------------------------------
 
-std_out  : OUT  '(' INUM ',' exp ')' ';'    {     exec_out ($3,$5);} // saida de dados
-std_in   : INN  '(' INUM ')'                {$$ = exec_in  ($3   );} // entrada de dados
-std_pst  : PST  '(' exp  ')'                {$$ = exec_pst ($3   );} // funcao pset(x)      -> zera se negativo
-std_abs  : ABS  '(' exp  ')'                {$$ = exec_abs ($3   );} // funcao  abs(x)      -> valor absoluto de x
-std_sign : SGN  '(' exp  ',' exp ')'        {$$ = exec_sign($3,$5);} // funcao sign(x,y)    -> pega o sinal de x e coloca em y
-std_nrm  : NRM  '(' exp  ')'                {$$ = exec_norm($3   );} // funcao norm(x)      -> divide x pela constante NUGAIN
-std_sqrt : SQRT '(' exp  ')'                {$$ = exec_sqrt($3   );} // funcao sqrt(x)      -> raiz quadrada
-std_real : REAL '(' exp  ')'                {$$ = exec_real($3   );} // funcao real(x)      -> pega a parte real de um comp
-std_imag : IMAG '(' exp  ')'                {$$ = exec_imag($3   );} // funcao imag(x)      -> pega a parte imag de um comp
-std_comp : COMP '(' exp  ',' exp ')'        {$$ = exec_comp($3,$5);} // funcao complex(x,y) -> cria um comp apartir de 2 reais
-std_atan : ATAN '(' exp  ')'                {$$ = exec_atan($3   );} // funcao atan(x)      -> arctg
-std_fase : FASE '(' exp  ')'                {$$ = exec_fase($3   );} // funcao fase(x)      -> pega a fase de um comp
-std_sin  : SIN  '(' exp  ')'                {$$ = exec_sin ($3   );} // funcao sin(x)       -> seno de x
-std_cos  : COS  '(' exp  ')'                {$$ = exec_cos ($3   );} // funcao cos(x)       -> cosseno de x
-std_vtv  : VTV  '(' ID   ',' ID  ')'        {$$ = exec_vtv ($3,$5);} // funcao vtv(x,y)     -> produto vetorial
+std_out  : OUT  '(' INUM ',' exp ')' ';'            {exec_out ($3,$5   );} // saida de dados
+sdt_vout : OUT  '(' INUM ',' exp '|' ID '>' ')' ';' {exec_vout($3,$5,$7);} // saida de dados com notaaca de Dirac
+std_in   : INN  '(' INUM ')'                   {$$ = exec_in  ($3      );} // entrada de dados
+std_pst  : PST  '(' exp  ')'                   {$$ = exec_pst ($3      );} // funcao pset(x)      -> zera se negativo
+std_abs  : ABS  '(' exp  ')'                   {$$ = exec_abs ($3      );} // funcao  abs(x)      -> valor absoluto de x
+std_sign : SGN  '(' exp  ',' exp ')'           {$$ = exec_sign($3,$5   );} // funcao sign(x,y)    -> pega o sinal de x e coloca em y
+std_nrm  : NRM  '(' exp  ')'                   {$$ = exec_norm($3      );} // funcao norm(x)      -> divide x pela constante NUGAIN
+std_sqrt : SQRT '(' exp  ')'                   {$$ = exec_sqrt($3      );} // funcao sqrt(x)      -> raiz quadrada
+std_atan : ATAN '(' exp  ')'                   {$$ = exec_atan($3      );} // funcao atan(x)      -> arctg
+std_sin  : SIN  '(' exp  ')'                   {$$ = exec_sin ($3      );} // funcao  sin(x)      -> seno de x
+std_cos  : COS  '(' exp  ')'                   {$$ = exec_cos ($3      );} // funcao  cos(x)      -> cosseno de x
+std_real : REAL '(' exp  ')'                   {$$ = exec_real($3      );} // funcao real(x)      -> pega a parte real de um comp
+std_imag : IMAG '(' exp  ')'                   {$$ = exec_imag($3      );} // funcao imag(x)      -> pega a parte imag de um comp
+std_comp : COMP '(' exp  ',' exp ')'           {$$ = exec_comp($3,$5   );} // funcao complex(x,y) -> cria um comp apartir de 2 reais
+std_fase : FASE '(' exp  ')'                   {$$ = exec_fase($3      );} // funcao fase(x)      -> pega a fase de um comp
+std_mod2 : MOD2 '(' exp  ')'                   {$$ = exec_mod2($3      );} // funcao mod2(x)      -> pega o modulo ao quadrado de um comp
 
 // if/else --------------------------------------------------------------------
 
@@ -245,11 +269,6 @@ while_exp  : WHILE                         {while_expp  (  );}
             '(' exp ')'                    {while_expexp($4);}
 break      : BREAK ';'                     {exec_break  (  );}
 
-// declaracoes com assignment -------------------------------------------------
-
-declar_full : declar
-            | TYPE ID '=' exp ';'          {declar_var($2); ass_set($2,$4);}
-
 // assignments ----------------------------------------------------------------
 
            // atribuicao padrao
@@ -267,15 +286,16 @@ assignment : ID  '=' exp ';'                          {ass_set($1,$3);}
            // array 2D (completar)
            | ID  '[' exp ']' '[' exp ']' '='          {arr_2d_index($1, $3,$6);}
                      exp ';'                          {ass_array   ($1,$10, 0);}
-           // algebra linear
-           | ID '=' '|' ID '|' ID '>' ';'             {exec_Mv   ($1,$4,$6);}
-           | ID '='    exp '|' ID '>' ';'             {exec_cv   ($1,$3,$5);}
-           | ID '=' '|' ID '>' '+' exp '|' ID '>' ';' {exec_apcb ($1,$4,$7,$9);}
-           | ID '=' '|' ID '>' '<'  ID '|' ';'        {exec_vvt  ($1,$4,$7);}
-           | ID '=' '|' ID '|' '-' '|' ID '>' '<'  ID '|' ';' {exec_Mmvvt($1,$4,$8,$11);}
-           | ID '=' exp '|' ID '|' ';' {exec_cM($1,$3,$5);}
-           | ID '=' EYE ';' {exec_eye($1);}
-           | ID '=' VZERO ';' {exec_v0($1);}
+           // algebra linear com notacao de Dirac (stdlib implementado como um assign virtual)
+           | ID '#' '|' ID '|' ID '>' ';'                     {exec_Mv   ($1,$4,$6    );} // A # |B|a>
+           | ID '#' exp '|' ID '>' ';'                        {exec_cv   ($1,$3,$5    );} // a # c|b>
+           | ID '#' '|' ID '>' '+' exp '|' ID '>' ';'         {exec_apcb ($1,$4,$7,$9 );} // a # |b> + c|d>
+           | ID '#' '|' ID '>' '<'  ID '|' ';'                {exec_vvt  ($1,$4,$7    );} // A # |a><b|
+           | ID '#' '|' ID '|' '-' '|' ID '>' '<'  ID '|' ';' {exec_Mmvvt($1,$4,$8,$11);} // A # B - |a><b|
+           | ID '#' exp '|' ID '|' ';'                        {exec_cM   ($1,$3,$5    );} // A # c|B|
+           | ID '#' exp EYE ';'                               {exec_cI   ($1,$3       );} // A # c|I|
+           | ID '#' VZERO ';'                                 {exec_v0   ($1          );} // a # |0>
+           | ID '#' exp '|' INN '(' INUM ')' '>' ';'          {exec_cvin ($1,$3,$7    );} // a # |in(0)>
 
 // expressoes -----------------------------------------------------------------
 
@@ -291,14 +311,14 @@ exp:       terminal                           {$$ = $1;}
          | std_sign                           {$$ = $1;}
          | std_nrm                            {$$ = $1;}
          | std_sqrt                           {$$ = $1;}
+         | std_atan                           {$$ = $1;}
+         | std_sin                            {$$ = $1;}
+         | std_cos                            {$$ = $1;}
          | std_real                           {$$ = $1;}
          | std_imag                           {$$ = $1;}
          | std_comp                           {$$ = $1;}
-         | std_atan                           {$$ = $1;}
          | std_fase                           {$$ = $1;}
-         | std_sin                            {$$ = $1;}
-         | std_cos                            {$$ = $1;}
-         | std_vtv                            {$$ = $1;}
+         | std_mod2                           {$$ = $1;}
          // chamada de funcao
          | func_call                          {$$ = $1;}
          // operadores nulos
@@ -334,7 +354,7 @@ exp:       terminal                           {$$ = $1;}
          | exp  GREQU  exp                    {$$ = oper_greq ($1,$3  );}
          | exp  LESEQ  exp                    {$$ = oper_leeq ($1,$3  );}
          | exp  DIF    exp                    {$$ = oper_dife ($1,$3  );}
-         // algebra linear (notacao de Dirac)
+         // algebra linear com retorno exp (notacao de Dirac)
          | '<' ID '|' ID '>'                  {$$ = exec_vtv ($2,$4);}
 
 // terminais usados em reducao pra expressoes ---------------------------------

@@ -35,7 +35,7 @@ int  exec_cos (int et);           // cosseno
 
 int  exec_real(int et);           // pega parte real
 int  exec_imag(int et);           // pega parte imaginaria
-int  exec_sqr2(int et);           // modulo ao quadrado (colocar no parser)
+int  exec_mod2(int et);           // modulo ao quadrado (colocar no parser)
 int  exec_fase(int et);           // fase em radianos
 int  exec_comp(int etr, int eti); // junta dois numeros reais pra fazer um complexo
 
@@ -50,5 +50,7 @@ void exec_apcb (int idy, int ida, int etc, int idb); // soma ponderada no segund
 void exec_vvt  (int idM, int ida, int idb);          // produto externo entre dois vetores
 void exec_Mmvvt(int idA, int idB, int ida, int idb); // subtracao de matriz com produto externo
 void exec_cM   (int idA, int etc, int idM);          // produto entre constante e matriz
-void exec_eye  (int idM);                            // gera matriz identidade
+void exec_cI   (int idM, int etc);                   // gera matriz identidade
 void exec_v0   (int idv);                            // gera vetor de zeros
+void exec_cvin (int idv, int etc, int idp);          // le vetor de entrada
+void exec_vout (int idp, int etc, int idv);          // escreve vetor pra saida

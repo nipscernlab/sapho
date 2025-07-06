@@ -20,7 +20,7 @@ FLNUM  (0|[1-9]+[0-9]*)\.?[0-9]*
 CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 
 STRIN  \"(\\.|[^\\"])*\"
-CARES  [-+*()=$;:,\]\[{}<>~!%/&^|@?]
+CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 BLOCO  "/*"((\*+[^/*])|([^*]))*\**"*/"
 COMEN  "//"[^\n]*
 
@@ -35,18 +35,21 @@ COMEN  "//"[^\n]*
 "#NUIOIN"     return NUIOIN;
 "#NUIOOU"     return NUIOOU;
 "#NUGAIN"     return NUGAIN;
-"#USEMAC"     return USEMAC;
-"#ENDMAC"     return ENDMAC;
 "#FFTSIZ"     return FFTSIZ;
 "#PIPELN"     return PIPELN;
+
+"#USEMAC"     return USEMAC;
+"#ENDMAC"     return ENDMAC;
 "#INTERPOINT" return ITRADD;
 
 "in"          return INN;
 "out"         return OUT;
+
 "norm"        return NRM;
 "pset"        return PST;
 "abs"         return ABS;
 "sign"        return SGN;
+
 "sqrt"        return SQRT;
 "atan"        return ATAN;
 "sin"         return SIN;
@@ -56,8 +59,7 @@ COMEN  "//"[^\n]*
 "imag"        return IMAG;
 "fase"        return FASE;
 "complex"     return COMP;
-
-"vtv"         return VTV;
+"mod2"        return MOD2;
 
 "while"       return WHILE;
 "break"       return BREAK;
@@ -81,6 +83,7 @@ COMEN  "//"[^\n]*
 "||"          return LOR;
 
 "++"          return PPLUS;
+
 "|I|"         return EYE;
 "|0>"         return VZERO;
 

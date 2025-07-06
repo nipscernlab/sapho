@@ -21,10 +21,11 @@
 // entrada e saida ------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// input
+// input ex: x = in(0);
 int exec_in(int id)
 {
     if (atoi(v_name[id]) >= nuioin) fprintf(stderr, "Erro na linha %d: não tem porta de entrada %s não!\n", line_num+1, v_name[id]);
+    
     if (acc_ok == 0) add_instr("INN %s\n", v_name[id]); else add_instr("P_INN %s\n", v_name[id]);
 
     acc_ok = 1;  // diz que o acc agora tem um valor carregado
@@ -32,11 +33,34 @@ int exec_in(int id)
     return OFST;
 }
 
-// output
+// output ex: out(0,x);
 void exec_out(int id, int et)
 {
-    if (atoi(v_name[id]) >= nuioou) fprintf(stderr, "Erro na linha %d: não tem porta de saída %s não!\n", line_num+1, v_name[id]);
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se eh comp
     if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1);
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa range de porta
+    if (atoi(v_name[id]) >= nuioou) fprintf(stderr, "Erro na linha %d: não tem porta de saída %s não!\n", line_num+1, v_name[id]);
+    
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int var
     if ((get_type(et) == 1) && (et%OFST!=0))
@@ -78,12 +102,41 @@ void exec_out(int id, int et)
 // pega o sinal do primeiro argumento e coloca no segundo
 int exec_sign(int et1, int et2)
 {
-    if ((get_type(et1) > 2) || (get_type(et2) > 2))
-    {
-        fprintf (stderr, "Erro na linha %d: não faz sentido o uso de sign(.,.) com números complexos!\n", line_num+1);
-    }
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et1 foi declarada
+    if (et1%OFST != 0 && v_type[et1%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et1%OFST], fname));
+    
+    // checa se et2 foi declarada
+    if (et2%OFST != 0 && v_type[et2%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et2%OFST], fname));
+    
+    // checa se et1 eh uma variavel
+    if (et1%OFST != 0 && v_isar[et1%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et1%OFST], fname));
+
+    // checa se et2 eh uma variavel
+    if (et2%OFST != 0 && v_isar[et2%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et2%OFST], fname));
+
+    // checa se tem comp
+    if ((get_type(et1) > 2) || (get_type(et2) > 2)) fprintf (stderr, "Erro na linha %d: não faz sentido o uso de sign(.,.) com números complexos!\n", line_num+1);
+    
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et1%OFST != 0) v_used[et1%OFST] = 1;
+    if (et2%OFST != 0) v_used[et2%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria e int na memoria
     if ((get_type(et1) == 1) && (et1 % OFST != 0) && (get_type(et2) == 1) && (et2 % OFST != 0))
@@ -197,9 +250,33 @@ int exec_sign(int et1, int et2)
 // valor absoluto (int, float e comp)
 int exec_abs(int et)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+    
     char  ld [10]; if (acc_ok == 0) strcpy(ld  , "LOD"   ); else strcpy(ld  , "P_LOD"  );
     char  abs[10]; if (acc_ok == 0) strcpy( abs, "ABS_M" ); else strcpy( abs, "P_ABS_M");
     char fabs[10]; if (acc_ok == 0) strcpy(fabs,"F_ABS_M"); else strcpy(fabs,"PF_ABS_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -228,7 +305,7 @@ int exec_abs(int et)
     // comp const, na memoria e no acc
     if ((get_type(et) == 3) || (get_type(et) == 5))
     {
-        et = exec_sqrt(exec_sqr2(et));
+        et = exec_sqrt(exec_mod2(et));
     }
 
     acc_ok = 1;
@@ -239,9 +316,33 @@ int exec_abs(int et)
 // zera se for negativo
 int exec_pst(int et)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     char  ld [10]; if (acc_ok == 0) strcpy( ld , "LOD"   ); else strcpy( ld , "P_LOD"  );
     char  pst[10]; if (acc_ok == 0) strcpy( pst, "PST_M" ); else strcpy( pst, "P_PST_M");
     char fpst[10]; if (acc_ok == 0) strcpy(fpst,"F_PST_M"); else strcpy(fpst,"PF_PST_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -281,10 +382,34 @@ int exec_pst(int et)
 // divisao por constante
 int exec_norm(int et)
 {
-    if (get_type(et) != 1)
-        fprintf (stderr, "Erro na linha %d: nada a ver! norm(.) é só pra inteiro!\n", line_num+1);
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh int
+    if (get_type(et) != 1) fprintf (stderr, "Erro na linha %d: nada a ver! norm(.) é só pra inteiro!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char nrm[10]; if (acc_ok == 0) strcpy(nrm,"NRM_M"); else strcpy(nrm,"P_NRM_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -304,19 +429,41 @@ int exec_norm(int et)
 }
 
 // ----------------------------------------------------------------------------
-// funcoes aritmeticas --------------------------------------------------------
+// funcoes nao-lineares -------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 // raiz quadrada
 int exec_sqrt(int et)
 {
-    if (get_type(et) > 2)
-    {
-        fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
-    }
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"   ); else strcpy(ld ,"P_LOD"  );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f, "I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -353,10 +500,35 @@ int exec_sqrt(int et)
 // arco-tangente
 int exec_atan(int et)
 {
-    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei arco-tangente de número complexo ainda. Se vira!\n", line_num+1);
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -393,10 +565,35 @@ int exec_atan(int et)
 // seno
 int exec_sin(int et)
 {
-    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei seno pra número complexo ainda. Se vira!\n", line_num+1);
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -433,10 +630,35 @@ int exec_sin(int et)
 // cosseno
 int exec_cos(int et)
 {
-    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei cosseno pra número complexo ainda. Se vira!\n", line_num+1);
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
+    if (get_type(et) > 2) fprintf (stderr, "Erro na linha %d: não implementei raiz quadrada de número complexo ainda. Se vira!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria
     if ((get_type(et) == 1) && (et % OFST != 0))
@@ -485,11 +707,34 @@ int exec_cos(int et)
 // retorna a parte real de um comp
 int exec_real(int et)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
     if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função real(.) tem que ser complexo!\n", line_num+1);
 
-    int id = et % OFST;
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // comp const
     if (get_type(et) == 5)
@@ -501,13 +746,13 @@ int exec_real(int et)
     }
 
     // comp na memoria
-    if ((get_type(et) == 3) && (id != 0))
+    if ((get_type(et) == 3) && (et % OFST != 0))
     {
-        add_instr("%s %s\n", ld, v_name[id]);
+        add_instr("%s %s\n", ld, v_name[et % OFST]);
     }
 
     // comp no acc
-    if ((get_type(et) == 3) && (id == 0))
+    if ((get_type(et) == 3) && (et % OFST == 0))
     {
         add_instr("POP\n");
     }
@@ -520,12 +765,34 @@ int exec_real(int et)
 // retorna a parte imag de um comp
 int exec_imag(int et)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
     if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função imag(.) tem que ser complexo!\n", line_num+1);
 
-    int id = et % OFST;
-    int et_r, et_i;
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // comp const
     if (get_type(et) == 5)
@@ -537,14 +804,16 @@ int exec_imag(int et)
     }
 
     // comp na memoria
-    if ((get_type(et) == 3) && (id != 0))
+    if ((get_type(et) == 3) && (et%OFST != 0))
     {
+        int et_r, et_i;
         get_cmp_ets(et,&et_r,&et_i);
+
         add_instr("%s %s\n", ld, v_name[et_i%OFST]);
     }
 
     // comp no acc
-    if ((get_type(et) == 3) && (id == 0))
+    if ((get_type(et) == 3) && (et%OFST == 0))
     {
         add_instr("SET_P aux_var\n");
         add_instr("LOD   aux_var\n");
@@ -556,17 +825,39 @@ int exec_imag(int et)
 }
 
 // modulo ao quadrado de um num complexo
-// ainda nao tem um equivalente no parser (colocar)
-// mas é usado internamente em oper.c
-int exec_sqr2(int et)
+int exec_mod2(int et)
 {
-    int type = get_type(et);
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
+    if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função mod2(.) tem que ser complexo!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     int etr, eti;
 
-    // se for uma constante ---------------------------------------------------
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
-    if (type == 5)
+    // se for uma constante ---------------------------------------------------
+    if (get_type(et) == 5)
     {
         get_cmp_cst(et ,&etr,&eti);     // pega o et de cada constante float
         etr  = oper_mult(etr, etr);     // parte real ao quadrado
@@ -575,8 +866,7 @@ int exec_sqr2(int et)
     }
 
     // se estiver na memoria --------------------------------------------------
-
-    if ((type == 3) && (et % OFST != 0))
+    if ((get_type(et) == 3) && (et % OFST != 0))
     {
         get_cmp_ets(et ,&etr,&eti);     // pega o et de cada constante float
         etr  = oper_mult(etr, etr);     // parte real ao quadrado
@@ -585,8 +875,7 @@ int exec_sqr2(int et)
     }
 
     // se estiver no acumulador -----------------------------------------------
-
-    if ((type == 3) && (et % OFST == 0))
+    if ((get_type(et) == 3) && (et % OFST == 0))
     {
         add_instr("PSH\n");             // parte imag fica no acc e pilha
         oper_mult(2*OFST,2*OFST );      // multiplica acc com pilha
@@ -601,16 +890,40 @@ int exec_sqr2(int et)
         etr = 2*OFST;                   // saida tem q ser et estendido pra float no acc
     }
 
-    return etr; // 2*OFST?
+    return 2*OFST;
 }
 
 // calcula a fase (em radianos) de um num complexo
 int exec_fase(int et)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se eh comp
     if (get_type(et) < 3) fprintf (stderr, "Erro na linha %d: argumento da função fase(.) tem que ser complexo!\n", line_num+1);
 
-    int id = et % OFST;
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+    
     int et_r, et_i;
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // comp const
     if (get_type(et) == 5)
@@ -620,17 +933,17 @@ int exec_fase(int et)
     }
 
     // comp na memoria
-    if ((get_type(et) == 3) && (id != 0))
+    if ((get_type(et) == 3) && (et%OFST != 0))
     {
         get_cmp_ets(et,&et_i,&et_r);
         oper_divi  (et_r,et_i);
     }
 
     // comp no acc
-    if ((get_type(et) == 3) && (id == 0))
+    if ((get_type(et) == 3) && (et%OFST == 0))
     {
-        id   = exec_id("aux_var");
-        et_i = 2*OFST + id;
+        int id = exec_id("aux_var");
+        et_i   = 2*OFST + id;
 
         add_instr("SET_P %s\n", v_name[id]);
         oper_divi(et_i,2*OFST);
@@ -645,10 +958,42 @@ int exec_fase(int et)
 // junta doi numeros reais pra fazer um complexo
 int exec_comp(int etr, int eti)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se etr foi declarada
+    if (etr%OFST != 0 && v_type[etr%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[etr%OFST], fname));
+
+    // checa se eti foi declarada
+    if (eti%OFST != 0 && v_type[eti%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[eti%OFST], fname));
+    
+    // checa se etr eh uma variavel
+    if (etr%OFST != 0 && v_isar[etr%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[etr%OFST], fname));
+
+    // checa se et eh uma variavel
+    if (eti%OFST != 0 && v_isar[eti%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[eti%OFST], fname));
+
+    // checa se eh comp
     if (get_type(etr) > 2 || get_type(eti > 2)) fprintf (stderr, "Erro na linha %d: argumentos da função complex(.,.) não podem ser complexos!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etr%OFST != 0) v_used[etr%OFST] = 1;
+    if (eti%OFST != 0) v_used[eti%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
 
     char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
     char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     // int na memoria e int na memoria
     if ((get_type(etr) == 1) && (etr % OFST != 0) && (get_type(eti) == 1) && (eti % OFST != 0))
@@ -770,9 +1115,12 @@ int exec_comp(int etr, int eti)
 
 // ----------------------------------------------------------------------------
 // funcoes especiais para trabalho com vetores --------------------------------
+// nao cria funcoes no stdlib diretamente -------------------------------------
+// ao inves disso, usa notacao de Dirac nos statments -------------------------
 // ----------------------------------------------------------------------------
 
-// multiplicacao entre dois vetores
+// multiplicacao entre dois vetores, ex: <a|b>
+// essa rotina gera um exp
 int exec_vtv(int id1, int id2)
 {
     // ------------------------------------------------------------------------
@@ -798,16 +1146,25 @@ int exec_vtv(int id1, int id2)
     if (v_type[id1] == 3 || v_type[id2] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra número complexo ainda. Se vira!\n", line_num+1);
     
     // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    v_used[id1] = 1;
+    v_used[id2] = 1;
+
+    // ------------------------------------------------------------------------
     // prepara variaveis locais -----------------------------------------------
     // ------------------------------------------------------------------------
 
-    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"); else strcpy(ld ,"P_LOD");
-
     int N = v_size[id1];
+
+    char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
     // ------------------------------------------------------------------------
     // implementa o produto entre vetores -------------------------------------
     // ------------------------------------------------------------------------
+
+    // implementar para todas as combinacoes
 
     // int com int
     if ((v_type[id1] == 1) && (v_type[id2] == 1))
@@ -841,7 +1198,7 @@ int exec_vtv(int id1, int id2)
     return v_type[id1]*OFST;
 }
 
-// multiplicacao de matriz por vetor
+// multiplicacao de matriz por vetor, ex: A # |B|b>;
 void exec_Mv(int idy, int idM, int idv)
 {
     // ------------------------------------------------------------------------
@@ -854,23 +1211,29 @@ void exec_Mv(int idy, int idM, int idv)
     // checa se idM foi declarada
     if (v_type[idM] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idM], fname));
     
-    // checa se idy foi declarada
+    // checa se idv foi declarada
     if (v_type[idv] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idv], fname));
     
     // checa se os tipos sao os mesmos
-    if (v_type[idy] != v_type[idM] || v_type[idy] != v_type[idv])
-    {
-        fprintf(stderr, "Erro na linha %d: as variáveis tem que ser do mesmo tipo!\n", line_num+1);
-    }
+    if (v_type[idy] != v_type[idM] || v_type[idy] != v_type[idv]) fprintf(stderr, "Erro na linha %d: as variáveis tem que ser do mesmo tipo!\n", line_num+1);
 
     // checa se nao eh comp
-    if (v_type[idy] == 3 || v_type[idM] == 3 || v_type[idv] == 3)
-    {
-        fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
-    }
+    if (v_type[idy] == 3 || v_type[idM] == 3 || v_type[idv] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
 
     // checa se idy eh um vetor
     if (v_isar[idy] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idy], fname));
+
+    // checa se idM eh uma matriz
+    if (v_isar[idM] != 2) fprintf(stderr, "Erro na linha %d: %s não é uma matriz!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa se idv eh um vetor
+    if (v_isar[idv] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa tamanho entre saida e matriz
+    if (v_size[idy] != v_size[idM]) fprintf(stderr, "Erro na linha %d: o número de linhas de %s não bate com o tamanho de %s!\n", line_num+1, rem_fname(v_name[idM], fname), rem_fname(v_name[idy], fname));
+
+    // checa tamanho entre matriz e vetor
+    if (v_size[idv] != v_siz2[idM]) fprintf(stderr, "Erro na linha %d: o número de colunas de %s não bate com o tamanho de %s!\n", line_num+1, rem_fname(v_name[idM], fname), rem_fname(v_name[idv], fname));
 
     // ------------------------------------------------------------------------
     // atualiza status das variaveis ------------------------------------------
@@ -889,6 +1252,8 @@ void exec_Mv(int idy, int idM, int idv)
     // ------------------------------------------------------------------------
     // implementa o produto entre matriz e vetor ------------------------------
     // ------------------------------------------------------------------------
+
+    // implementar combinacoes sob demanda apenas
 
     // int com int
     if ((v_type[idM] == 1) && (v_type[idv] == 1))
@@ -929,129 +1294,629 @@ void exec_Mv(int idy, int idM, int idv)
     }
 }
 
-// multiplicacao do vetor por uma constante
+// multiplicacao de constante por vetor, ex: a # c|b>;
 void exec_cv(int idy, int et, int idv)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idy foi declarada
+    if (v_type[idy] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idy], fname));
+    
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+    
+    // checa se idv foi declarada
+    if (v_type[idv] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idv], fname));
+    
+    // checa se os tipos sao os mesmos
+    if (v_type[idy] != get_type(et) || v_type[idy] != v_type[idv]) fprintf(stderr, "Erro na linha %d: as variáveis tem que ser do mesmo tipo!\n", line_num+1);
+    
+    // checa se nao eh comp
+    if (v_type[idy] == 3 || get_type(et) == 3 || v_type[idv] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idy eh um vetor
+    if (v_isar[idy] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idy], fname));
+
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[et%OFST], fname));
+
+    // checa se idv eh um vetor
+    if (v_isar[idv] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa tamanho entre vetores
+    if (v_size[idy] != v_size[idv]) fprintf(stderr, "Erro na linha %d: os vetores têm tamanhos diferentes! Você é uma pessoa confusa.\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+                      v_used[idv    ] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[idv];
 
-    char g[64];
-    if (et%OFST==0)
-    {
-        add_instr("SET aux_var\n");
-        strcpy(g,"aux_var");
-    }
-    else strcpy(g,v_name[et%OFST]);
+    char g[64]; if (et%OFST==0) strcpy(g,"aux_var"); else strcpy(g,v_name[et%OFST]);
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST==0) add_instr("SET aux_var\n");
+
+    // implementar combinacoes sob demanda
 
     for (int i = 0; i < N; i++)
     {
         add_instr("LOD_V %s %d\n", v_name[idv], i);
-        add_instr(   "F_MLT %s\n", g);
+
+        // int com int
+        if (v_type[idy] == 1)
+        {
+            add_instr("MLT %s\n", g);
+        }
+
+        // float com float
+        if (v_type[idy] == 2)
+        {
+            add_instr("F_MLT %s\n", g);
+        }
+
         add_instr("SET_V %s %d\n", v_name[idy], i);
     }
 }
 
-// soma ponderada no segundo vetor
+// soma ponderada no segundo vetor, ex: a # |b> + c|d>;
+// fiz mais pra usar no RLS mesmo
 void exec_apcb(int idy, int ida, int etc, int idb)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idy foi declarada
+    if (v_type[idy] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idy], fname));
+
+    // checa se ida foi declarada
+    if (v_type[ida] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[ida], fname));
+    
+    // checa se etc foi declarada
+    if (etc%OFST != 0 && v_type[etc%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+    
+    // checa se idb foi declarada
+    if (v_type[idb] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idb], fname));
+    
+    // checa se os tipos sao os mesmos
+    if (v_type[idy] != v_type[ida] || v_type[idy] != get_type(etc) || v_type[idy] != v_type[idb]) fprintf(stderr, "Erro na linha %d: as variáveis têm que ser do mesmo tipo!\n", line_num+1);
+    
+    // checa se nao eh comp
+    if (v_type[idy] == 3 || v_type[ida] == 3 || get_type(etc) == 3 || v_type[idb] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idy eh um vetor
+    if (v_isar[idy] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idy], fname));
+
+    // checa se ida eh um vetor
+    if (v_isar[ida] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[ida], fname));
+
+    // checa se et eh uma variavel
+    if (etc%OFST != 0 && v_isar[etc%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // checa se idb eh um vetor
+    if (v_isar[idb] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idb], fname));
+
+    // checa tamanho entre vetores
+    if (v_size[idy] != v_size[ida]) fprintf(stderr, "Erro na linha %d: os vetores têm tamanhos diferentes! Você é uma pessoa confusa.\n", line_num+1);
+
+    // checa tamanho entre vetores
+    if (v_size[idy] != v_size[idb]) fprintf(stderr, "Erro na linha %d: os vetores têm tamanhos diferentes! Você é uma pessoa confusa.\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+                       v_used[ida     ] = 1;
+    if (etc%OFST != 0) v_used[etc%OFST] = 1;
+                       v_used[idb     ] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[idy];
 
-    char g[64];
-    if (etc%OFST==0)
-    {
-        add_instr("SET aux_var\n");
-         strcpy(g,"aux_var");
-    }
-    else strcpy(g,v_name[etc%OFST]);
+    char g[64]; if (etc%OFST==0) strcpy(g,"aux_var"); else strcpy(g,v_name[etc%OFST]);
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST==0) add_instr("SET aux_var\n");
 
     for (int i = 0; i < N; i++)
     {
-        add_instr(  "LOD_V %s %d\n", v_name[idb], i);
-        add_instr(     "F_MLT %s\n", g);
-        add_instr("F_ADD_V %s %d\n", v_name[ida], i);
-        add_instr(  "SET_V %s %d\n", v_name[idy], i);
+        add_instr("LOD_V %s %d\n", v_name[idb], i);
+
+        // int
+        if (v_type[idy] == 1)
+        {
+            add_instr("MLT %s\n", g);
+            add_instr("ADD_V %s %d\n", v_name[ida], i);
+        }
+
+        // float
+        if (v_type[idy] == 2)
+        {
+            add_instr("F_MLT %s\n", g);
+            add_instr("F_ADD_V %s %d\n", v_name[ida], i);
+        }
+
+        add_instr("SET_V %s %d\n", v_name[idy], i);
     }
 }
 
-// produto externo entre dois vetores
+// produto externo entre dois vetores, ex: A # |a><b|;
 void exec_vvt(int idM, int ida, int idb)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idM foi declarada
+    if (v_type[idM] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa se ida foi declarada
+    if (v_type[ida] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[ida], fname));
+    
+    // checa se idb foi declarada
+    if (v_type[idb] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idb], fname));
+    
+    // checa se os tipos sao os mesmos
+    if (v_type[idM] != v_type[ida] || v_type[idM] != v_type[idb]) fprintf(stderr, "Erro na linha %d: as variáveis têm que ser do mesmo tipo!\n", line_num+1);
+    
+    // checa se nao eh comp
+    if (v_type[idM] == 3 || v_type[ida] == 3 || v_type[idb] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idM eh uma matriz
+    if (v_isar[idM] != 2) fprintf(stderr, "Erro na linha %d: %s nem matriz é, abensoado!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa se ida eh um vetor
+    if (v_isar[ida] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[ida], fname));
+
+    // checa se idb eh um vetor
+    if (v_isar[idb] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idb], fname));
+
+    // checa tamanho entre elementos
+    if (v_size[idM] != v_siz2[idM] || v_size[idM] != v_size[ida] || v_size[idM] != v_size[idb]) fprintf(stderr, "Erro na linha %d: as dimensões não batem. Você é uma pessoa confusa!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    v_used[ida] = 1;
+    v_used[idb] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[ida];
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < N; j++)
         {
-            add_instr(  "LOD_V %s %d\n", v_name[ida],     i);
-            add_instr("F_MLT_V %s %d\n", v_name[idb],     j);
-            add_instr(  "SET_V %s %d\n", v_name[idM], N*j+i);
+            add_instr("LOD_V %s %d\n", v_name[ida], i);
+
+            // int
+            if (v_type[idM] == 1)
+            {
+                add_instr("MLT_V %s %d\n", v_name[idb], j);
+            }
+
+            // float
+            if (v_type[idM] == 2)
+            {
+                add_instr("F_MLT_V %s %d\n", v_name[idb], j);
+            }
+
+            add_instr("SET_V %s %d\n", v_name[idM], N*j+i);
         }
     }
 }
 
-// subtracao de matriz com produto externo
+// subtracao de matriz com produto externo, ex: A # B - |a><b|;
+// esse eu fiz mais por causa do RLS mesmo
 void exec_Mmvvt(int idA, int idB, int ida, int idb)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idA foi declarada
+    if (v_type[idA] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idA], fname));
+
+    // checa se idA foi declarada
+    if (v_type[idB] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idB], fname));
+    
+    // checa se ida foi declarada
+    if (v_type[ida] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[ida], fname));
+
+    // checa se idb foi declarada
+    if (v_type[idb] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idb], fname));
+    
+    // checa se os tipos sao os mesmos
+    if (v_type[idA] != v_type[idB] || v_type[idA] != v_type[ida] || v_type[idA] != v_type[idb]) fprintf(stderr, "Erro na linha %d: as variáveis têm que ser do mesmo tipo!\n", line_num+1);
+    
+    // checa se nao eh comp
+    if (v_type[idA] == 3 || v_type[idB] == 3 || v_type[ida] == 3 || v_type[idb] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idA eh uma matriz
+    if (v_isar[idA] != 2) fprintf(stderr, "Erro na linha %d: %s nem matriz é, abensoado!\n", line_num+1, rem_fname(v_name[idA], fname));
+
+    // checa se idB eh uma matriz
+    if (v_isar[idB] != 2) fprintf(stderr, "Erro na linha %d: %s nem matriz é, abensoado!\n", line_num+1, rem_fname(v_name[idB], fname));
+
+    // checa se ida eh um vetor
+    if (v_isar[ida] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[ida], fname));
+
+    // checa se idb eh um vetor
+    if (v_isar[idb] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idb], fname));
+
+    // checa tamanho entre elementos
+    if (v_size[idA] != v_siz2[idA] || v_size[idA] != v_size[idB] || v_size[idA] != v_siz2[idB] || v_size[idA] != v_size[ida] || 
+        v_size[idA] != v_size[idb]) fprintf(stderr, "Erro na linha %d: as dimensões não batem. Você é uma pessoa confusa!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    v_used[idB] = 1;
+    v_used[ida] = 1;
+    v_used[idb] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[ida];
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
 
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < N; j++)
         {
-            add_instr(  "LOD_V %s %d\n", v_name[ida],     i);
-            add_instr("F_MLT_V %s %d\n", v_name[idb],     j);
-            add_instr("F_NEG\n");
-            add_instr("F_ADD_V %s %d\n", v_name[idB], N*j+i);
-            add_instr(  "SET_V %s %d\n", v_name[idA], N*j+i);
+            add_instr("LOD_V %s %d\n", v_name[ida], i);
+
+            // int
+            if (v_type[idA] == 1)
+            {
+                add_instr("MLT_V %s %d\n", v_name[idb],     j);
+                add_instr("NEG\n");
+                add_instr("ADD_V %s %d\n", v_name[idB], N*j+i);
+            }
+
+            // float
+            if (v_type[idA] == 2)
+            {
+                add_instr("F_MLT_V %s %d\n", v_name[idb],     j);
+                add_instr("F_NEG\n");
+                add_instr("F_ADD_V %s %d\n", v_name[idB], N*j+i);
+            }
+
+            add_instr("SET_V %s %d\n", v_name[idA], N*j+i);
         }
     }
 }
 
-// produto entre constante e matriz
+// produto entre constante e matriz, ex: A # c|B|;
 void exec_cM(int idA, int etc, int idM)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idA foi declarada
+    if (v_type[idA] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idA], fname));
+
+    // checa se etc foi declarada
+    if (etc%OFST != 0 && v_type[etc%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+    
+    // checa se idM foi declarada
+    if (v_type[idM] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa se os tipos sao os mesmos
+    if (v_type[idA] != get_type(etc) || v_type[idA] != v_type[idM]) fprintf(stderr, "Erro na linha %d: as variáveis têm que ser do mesmo tipo!\n", line_num+1);
+    
+    // checa se nao eh comp
+    if (v_type[idA] == 3 || get_type(etc) == 3 || v_type[idM] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idA eh uma matriz
+    if (v_isar[idA] != 2) fprintf(stderr, "Erro na linha %d: %s nem matriz é, abensoado!\n", line_num+1, rem_fname(v_name[idA], fname));
+
+    // checa se etc eh uma variavel
+    if (etc%OFST != 0 && v_isar[etc%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // checa se idM eh uma matriz
+    if (v_isar[idM] != 2) fprintf(stderr, "Erro na linha %d: %s nem matriz é, abensoado!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa tamanho entre elementos
+    if (v_size[idA] != v_size[idM] || v_siz2[idA] != v_siz2[idM]) fprintf(stderr, "Erro na linha %d: as dimensões não batem. Você é uma pessoa confusa!\n", line_num+1);
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST != 0) v_used[etc%OFST] = 1;
+                       v_used[idM     ] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[idM];
     int M = v_siz2[idM];
 
-    char g[64];
-    if (etc%OFST==0)
-    {
-        add_instr("SET aux_var\n");
-         strcpy(g,"aux_var");
-    }
-    else strcpy(g,v_name[etc%OFST]);
+    char g[64]; if (etc%OFST==0) strcpy(g,"aux_var"); else strcpy(g,v_name[etc%OFST]);
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST==0) add_instr("SET aux_var\n");
 
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < M; j++)
         {
             add_instr("LOD_V %s %d\n", v_name[idM], M*i+j);
-            add_instr("F_MLT %s\n", g);
+
+            // int
+            if (v_type[idA] == 1) add_instr("MLT %s\n", g);
+
+            // float
+            if (v_type[idA] == 2) add_instr("F_MLT %s\n", g);
+            
             add_instr("SET_V %s %d\n", v_name[idA], M*i+j);
         }
     }
 }
 
-// gera matriz identidade
-void exec_eye(int idM)
+// gera matriz identidade com constante, ex: A # c|I|;
+void exec_cI(int idM, int etc)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idM foi declarada
+    if (v_type[idM] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa se etc foi declarada
+    if (etc%OFST != 0 && v_type[etc%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+    
+    // checa se os tipos sao os mesmos
+    if (v_type[idM] != get_type(etc)) fprintf(stderr, "Erro na linha %d: as variáveis têm que ser do mesmo tipo!\n", line_num+1);
+    
+    // checa se nao eh comp
+    if (v_type[idM] == 3 || get_type(etc) == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idM eh uma matriz
+    if (v_isar[idM] != 2) fprintf(stderr, "Erro na linha %d: %s nem matriz é, abensoado!\n", line_num+1, rem_fname(v_name[idM], fname));
+
+    // checa se etc eh uma variavel
+    if (etc%OFST != 0 && v_isar[etc%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST != 0) v_used[etc%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[idM];
 
-    // otimizar para nao ficar dando load toda hora
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST!=0) add_instr("LOD %s\n",v_name[etc%OFST]);
+
     for (int i = 0; i < N; i++)
     {
         for (int j = 0; j < N; j++)
         {
-            if (i == j) add_instr("LOD 1.0\n"); else add_instr("LOD 0.0\n");
-            add_instr("SET_V %s %d\n", v_name[idM], N*i+j);
+            if (i == j) add_instr("SET_V %s %d\n", v_name[idM], N*i+j);
+        }
+    }
+
+    // int
+    if (v_type[idM] == 1) add_instr("LOD 0\n");
+
+    // float
+    if (v_type[idM] == 2) add_instr("LOD 0.0\n");
+    
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            if (i != j) add_instr("SET_V %s %d\n", v_name[idM], N*i+j);
         }
     }
 }
 
-// gera vetor de zeros
+// gera vetor de zeros, ex: a # |0>;
 void exec_v0(int idv)
 {
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idv foi declarada
+    if (v_type[idv] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa se nao eh comp
+    if (v_type[idv] == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idv eh um vetor
+    if (v_isar[idv] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
     int N = v_size[idv];
 
-    add_instr("LOD 0.0\n");
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // int
+    if (v_type[idv] == 1) add_instr("LOD 0\n");
+
+    // float
+    if (v_type[idv] == 2) add_instr("LOD 0.0\n");
+
     for (int i = 0; i < N; i++) add_instr("SET_V %s %d\n", v_name[idv], i);
+}
+
+// le vetor de entrada com peso c, ex: a # c|in(0)>;
+void exec_cvin(int idv, int etc, int idp)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idv foi declarada
+    if (v_type[idv] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa se etc foi declarada
+    if (etc%OFST != 0 & v_type[etc%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // checa se nao eh comp
+    if (v_type[idv] == 3 || get_type(etc) == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idv eh um vetor
+    if (v_isar[idv] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa se etc eh uma variavel
+    if (etc%OFST != 0 && v_isar[etc%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST != 0) v_used[etc%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    int N = v_size[idv];
+
+    char g[64]; if (etc%OFST==0) strcpy(g,"aux_var"); else strcpy(g,v_name[etc%OFST]);
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST==0) add_instr("SET aux_var\n");
+
+    for (int i = 0; i < N; i++)
+    {
+        add_instr("INN %s\n", v_name[idp]);
+
+        // int
+        if (v_type[idv] == 1)
+        {
+            add_instr("MLT %s\n",g);
+        }
+
+        // float
+        if (v_type[idv] == 2)
+        {
+            add_instr("I2F\n;");
+            add_instr("F_MLT %s\n",g);
+        }
+
+        add_instr("SET_V %s %d\n", v_name[idv], i);
+    }
+}
+
+// escreve vetor pra saida com peso c, ex: out(0, c|a>);
+void exec_vout(int idp, int etc, int idv)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se idv foi declarada
+    if (v_type[idv] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa se etc foi declarada
+    if (etc%OFST != 0 & v_type[etc%OFST] == 0) fprintf(stderr, "Erro na linha %d: tem que declarar %s primeiro!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // checa se nao eh comp
+    if (v_type[idv] == 3 || get_type(etc) == 3) fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1);
+    
+    // checa se idv eh um vetor
+    if (v_isar[idv] != 1) fprintf(stderr, "Erro na linha %d: %s nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[idv], fname));
+
+    // checa se etc eh uma variavel
+    if (etc%OFST != 0 && v_isar[etc%OFST] > 0) fprintf(stderr, "Erro na linha %d: não é assim que se usa %s!\n", line_num+1, rem_fname(v_name[etc%OFST], fname));
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST != 0) v_used[etc%OFST] = 1;
+                       v_used[idv     ] = 1;
+    
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    int N = v_size[idv];
+
+    char g[64]; if (etc%OFST==0) strcpy(g,"aux_var"); else strcpy(g,v_name[etc%OFST]);
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etc%OFST==0) add_instr("SET aux_var\n");
+
+    for (int i = 0; i < N; i++)
+    {
+        add_instr("LOD_V %s %d\n", v_name[idv], i);
+
+        // int
+        if (v_type[idv] == 1)
+        {
+            add_instr("MLT %s\n",g);
+        }
+
+        // float
+        if (v_type[idv] == 2)
+        {
+            add_instr("F_MLT %s\n", g);
+            add_instr("F2I\n");
+        }
+
+        add_instr("OUT %s\n", v_name[idp]);
+    }
 }

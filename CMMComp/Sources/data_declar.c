@@ -21,7 +21,7 @@
 int type_tmp; // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l)
 
 // ----------------------------------------------------------------------------
-// declaracoes ----------------------------------------------------------------
+// declaracoes padrao ---------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 // declara variavel (sem ser array)
@@ -123,20 +123,6 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     }
 }
 
-// declara array 1d como um produto entre matriz e vetor
-void declar_Mv(int id_name, int id_N, int id_M, int id_v)
-{
-    declar_arr_1d(id_name,id_N,  -1);
-    exec_Mv      (id_name,id_M,id_v);
-}
-
-// declara array 1d como um produto entre constante e vetor
-void declar_cv(int id_name, int id_N, int id_c, int id_v)
-{
-    declar_arr_1d(id_name,id_N,  -1);
-    exec_cv      (id_name,id_c,id_v);
-}
-
 // declara array 2D
 void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
 {
@@ -210,4 +196,24 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // cria uma variavel auxiliar pra guardar o tamanho da dimensao x
     add_instr("LOD %s\n",           v_name[id_x  ]);
     add_instr("SET  %s_arr_size\n", v_name[id_var]);
+}
+
+// ----------------------------------------------------------------------------
+// declaracoes de array com inicializacao em notacao de Dirac -----------------
+// ----------------------------------------------------------------------------
+
+// ir adicionando sob demanda
+
+// declara array 1d como um produto entre matriz e vetor, ex: float A[4,4] # |B|a>;
+void declar_Mv(int id_name, int id_N, int id_M, int id_v)
+{
+    declar_arr_1d(id_name,id_N,  -1);
+    exec_Mv      (id_name,id_M,id_v);
+}
+
+// declara array 1d como um produto entre constante e vetor, ex: float a[4] # c|a>;
+void declar_cv(int id_name, int id_N, int id_c, int id_v)
+{
+    declar_arr_1d(id_name,id_N,  -1);
+    exec_cv      (id_name,id_c,id_v);
 }

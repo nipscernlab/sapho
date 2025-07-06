@@ -140,7 +140,7 @@ void instr_out(char *va)
     o_used[atoi(va)] = 1;
 }
 
-// gera instrucao com endereco va_name + va
+// gera instrucao com endereco va_name + va (pseudo instrucao)
 void instr_oft(char *va)
 {
     // escreve a nova instrucao
@@ -234,7 +234,7 @@ void eval_opcode(int op, int next_state, char *text, char *nome)
     // 19: operando eh endereco da memoria de instrucao
     // 20: operando eh endereco de entrada
     // 21: operando eh endereco de saida
-    // 22: operando eh enderecamento indireto fixo
+    // 22: operando eh enderecamento indireto fixo (pseudo instrucao)
     state = next_state;
 
     // nao tem operando, ja pode escrever a instrucao

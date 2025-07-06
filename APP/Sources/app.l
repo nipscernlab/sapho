@@ -145,10 +145,13 @@ LINHA          \n
  "S_SRS"   eval_opcode( 0); // shift right aritmetico com pilha
 
    "NOP"   eval_opcode( 0); // no operation
+
+   /* pseudo instrucoes */
    
    "LOD_V" eval_opcode(22); //   LOD com offset constante
  "P_LOD_V" eval_opcode(22); // P_LOD com offset constante
    "SET_V" eval_opcode(22); //   SET com offset constante
+   "ADD_V" eval_opcode(22); //   ADD com offset constante
  "F_ADD_V" eval_opcode(22); // F_ADD com offset constante
    "MLT_V" eval_opcode(22); //   MLT com offset constante
  "F_MLT_V" eval_opcode(22); // F_MLT com offset constante

@@ -191,6 +191,7 @@ void add_instr(char *inst, ...)
     
     // coloca mais um clock internamente na de-normalizacao em ponto flutuante
     if (pipeln > 7 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_ADD_V", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_GRE"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_GRE"  , str)) add_instr("NOP\n");
@@ -199,6 +200,7 @@ void add_instr(char *inst, ...)
 
     // espera mais um clock para terminar o processo de de-normalizacao em ponto flutuante
     if (pipeln > 4 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 4 && find_opc( "F_ADD_V", str)) add_instr("NOP\n");
     if (pipeln > 4 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 4 && find_opc( "F_GRE"  , str)) add_instr("NOP\n");
     if (pipeln > 4 && find_opc("SF_GRE"  , str)) add_instr("NOP\n");
@@ -210,6 +212,7 @@ void add_instr(char *inst, ...)
     if (pipeln > 5 && find_opc(   "I2F_M", str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc( "P_I2F_M", str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 5 && find_opc( "F_ADD_V", str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 5 && find_opc( "F_MLT_V", str)) add_instr("NOP\n");
@@ -222,6 +225,7 @@ void add_instr(char *inst, ...)
     if (pipeln > 7 && find_opc(   "I2F_M", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "P_I2F_M", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc( "F_ADD_V", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_MLT_V", str)) add_instr("NOP\n");
@@ -244,6 +248,7 @@ void add_instr(char *inst, ...)
 
     // espera mais um clock para terminar algumas operacoes aritmeticas
     if (pipeln > 3 && find_opc( "F_ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 3 && find_opc( "F_ADD_V", str)) add_instr("NOP\n");
     if (pipeln > 3 && find_opc("SF_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 6 && find_opc(   "MLT"  , str)) add_instr("NOP\n");
     if (pipeln > 6 && find_opc(   "MLT_V", str)) add_instr("NOP\n");
@@ -277,6 +282,7 @@ void add_instr(char *inst, ...)
     if (pipeln > 7 && find_opc(   "NRM_M", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "P_NRM_M", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc(   "ADD"  , str)) add_instr("NOP\n");
+    if (pipeln > 7 && find_opc(   "ADD_V", str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "S_ADD"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc( "F_GRE"  , str)) add_instr("NOP\n");
     if (pipeln > 7 && find_opc("SF_GRE"  , str)) add_instr("NOP\n");
