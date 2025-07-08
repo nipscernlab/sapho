@@ -11,46 +11,46 @@
 #PIPELN 3
 
 comp data[8];
-comp  wpv[3];
+comp  wpv[4]; // N/2
 
-void fft(int n)
+void fft(int N)
 {
-    int j,k,istep,m;
-
-    comp w,temp;
+    comp temp;
 
     int mmax = 1;
-    int ind  = 0;
 
-    while (mmax < n)
+    while (mmax < N)
     {
-        istep = mmax*2;
-        w = 1.0 + 0.0i;
-        m = 0;
+        int istep = mmax*2;
+        int    m  = 0;
+        int  ind  = 0;
+        int sind  = 0;
         while (m < mmax)
         {
-            k = m;
-            while (k < n)
+            int k = m;
+            while (k < N)
             {
-                j       = k+mmax;
-                temp    = w*data[j);
+                int j   = k+mmax;
+                temp    = wpv[sind]*data[j);
                 data[j) =   data[k) - temp;
                 data[k) =   data[k) + temp;
                 k       = k+istep;
+                ind++;
             }
-            w = w*wpv[ind];
+            sind = ind;
             m++;
         }
-        ind++;
         mmax = istep;
     }
 }
 
 void main()
 {
-    wpv[0] = -1.0 + 0.0i;
-    wpv[1] =  0.0 + 1.0i;
-    wpv[2] =  0.7071067811 + 0.7071067811i;
+    // divide 0 a pi em N/2 partes
+    wpv[0] =  1.0 + 0.0i;
+    wpv[1] =  0.7071067811 + 0.7071067811i;
+    wpv[2] =  0.0 + 1.0i;
+    wpv[3] = -0.7071067811 + 0.7071067811i;
 
     data[0] = 1.0+0.0i;
     data[1] = 2.0+0.0i;
