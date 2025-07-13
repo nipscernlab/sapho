@@ -92,7 +92,7 @@ void mac_end()
 // valor a ser usado na convergencia dos funcoes aritmeticas iterativas
 // o inum pega uma string com o numero inteiro equivalente
 // o fnum pega uma string com o proprio numero float
-void epsilon_taylor(char *fnum)
+void epsilon_taylor()
 {
     // acha o dobro do menor valor possivel em float
     double numf = 2.0*pow(2, nbmant-1)*pow(2,-pow(2,nbexpo-1));
@@ -101,20 +101,9 @@ void epsilon_taylor(char *fnum)
     numf = numf * 3.1415926535897932 * 3.1415926535897932 * 3.0;
     // se a precisao for grande, usa o padrao
     if     (numf < 0.0000001) numf = 0.0000001;
-    sprintf(fnum, "%.7f",     numf);
-}
-
-// cria um novo arquivo e copia o conteudo
-void copy_file(char *n_in, char *n_out)
-{
-    FILE *f_in  = fopen(n_in , "r");
-    FILE *f_out = fopen(n_out, "w");
-
-    char a;
-    do {a = fgetc(f_in); if (a != EOF) fputc(a, f_out);} while (a != EOF);
-
-    fclose(f_in );
-    fclose(f_out);
+    char fnum[64]; sprintf(fnum, "%.7f",  numf);
+    // escreve a variavel no arquivo de log
+    fprintf(f_log, "epsilon_taylor %s\n", fnum);
 }
 
 // concatena conteudo do arquivo read no arquivo write
@@ -130,40 +119,6 @@ void fcat2end(char *n_read, char *n_write)
     fclose(f_out);
 }
 
-// concatena, no inicio, conteudo do arquivo app no arquivo orig
-void fcat2begin(char *n_orig, char *n_app)
-{
-    char swap [1024];
-    sprintf(swap , "%s/%s", dir_tmp, "swap.txt");
-
-    copy_file(n_orig,  swap);
-    copy_file(n_app ,n_orig);
-    fcat2end (swap  ,n_orig);
-}
-
-// deve ser incluido no comeco do arquivo asm (para contas em ponto flutuante)
-void header_float(char *fasm, char *pc_sim_mem)
-{
-    f_asm = fopen(fasm      , "w");
-    f_lin = fopen(pc_sim_mem, "w");
-
-    add_sinst(0, "// Gera variaveis auxiliares --------------------------------------------------\n\n");
-
-    // NOP deve ser a primeira instrucao no endereco zero da memoria
-    add_sinst(-1,"NOP\n");
-
-    // epsilon para convergencia de funcoes iterativas
-    char numf[64];
-    epsilon_taylor(numf);
-    add_sinst(-1, "LOD %s\n", numf);
-    add_sinst(-1, "SET epsilon_taylor\n\n");
-
-    add_sinst(0, "// Codigo assembly original ---------------------------------------------------\n\n");
-
-    fclose(f_asm);
-    fclose(f_lin);
-}
-
 // ----------------------------------------------------------------------------
 // gerenciamento de macros pre-definidas --------------------------------------
 // ----------------------------------------------------------------------------
@@ -177,7 +132,7 @@ int fatan = 0; // se vai precisar de macro pra arco tangente
 int fsqrt = 0; // se vai precisar de macro pra raiz quadrada
 int fsin  = 0; // se vai precisar de macro pra seno
 
-// adiciona uma macro pre-definida --------------------------------------------
+// adiciona flag de uma macro pre-definida ------------------------------------
 
 void mac_add(char *name)
 {
@@ -189,64 +144,60 @@ void mac_add(char *name)
     else if (strcmp(name, "fsin" ) == 0) fsin  = 1; // seno de float
 }
 
-// gera as macros pre-definidas no arquivo assembler --------------------------
+// copia as macros pre-definidas no final arquivo assembler -------------------
 
-void mac_gera(char *fasm)
+void mac_copy(char *fasm)
 {
-    // se nao tiver nada pra fazer, sai!
+    // se nao tiver nada pra fazer, sai! --------------------------------------
+
     if (!(idiv || imod || finv || fsqrt || fatan || fsin)) return;
 
-    char tasm[1024]; // arquivo temporario para o asm
-    char tmem[1024]; // arquivo temporario para a tabela de memoria
-    char fmem[1024]; // arquivo final para a tabela de memoria
+    // cria constantes especiais (quando necessario ) -------------------------
 
-    sprintf(tasm, "%s/%s", dir_tmp, "tasm.txt");
-    sprintf(tmem, "%s/%s", dir_tmp, "tmem.txt");
-    sprintf(fmem, "%s/pc_%s_mem.txt", dir_tmp, prname);
+    if (fsqrt || fatan || fsin) epsilon_taylor();
 
-    // cria os cabecalhos pra float -------------------------------------------
+    // copia o que precisa no final do asm ------------------------------------
 
-    if (finv || fsqrt || fatan || fsin) header_float(tasm,tmem);
-
-    // coloca os cabecalhos no inicio dos arquivos ----------------------------
-
-    fcat2begin(fasm,tasm);
-    fcat2begin(fmem,tmem);
-
-    // coloca o resto que precisa no final do asm -----------------------------
+    char tasm[1024]; sprintf(tasm, "%s/%s", dir_tmp, "tasm.txt");
 
     if (idiv)
     {
+        printf("Info: adding assembly macro for fixed-point division by software.\n");
         sprintf(tasm, "%s/int_div_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (imod)
     {
+        printf("Info: adding assembly macro for module operation by software.\n");
         sprintf(tasm, "%s/int_mod_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (finv)
     {
+        printf("Info: adding assembly macro for float-point division by software.\n");
         sprintf(tasm, "%s/float_inv_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (fsqrt)
     {
+        printf("Info: adding assembly macro for root square computation.\n");
         sprintf(tasm, "%s/float_sqrt_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (fatan)
     {
+        printf("Info: adding assembly macro for arc-tangent computation.\n");
         sprintf(tasm, "%s/float_atan_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }
 
     if (fsin)
     {
+        printf("Info: adding assembly macro for sin computation.\n");
         sprintf(tasm, "%s/float_sin_pl%d.asm", dir_macro, pipeln);
         fcat2end(tasm,fasm);
     }

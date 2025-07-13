@@ -25,7 +25,7 @@ int push_lab(int typ)
 
     if (lab_cnt == LABMAX)
     {
-        fprintf (stderr, "Erro: Aumente o número de Labels permitidos (if, while). Atual = %d\n", LABMAX);
+        fprintf (stderr, "Erro: aumente o número de Labels permitidos (if, while). Atual = %d\n", LABMAX);
         return 0;
     }
 

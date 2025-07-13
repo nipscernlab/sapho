@@ -19,13 +19,13 @@ void ass_set(int id, int et)
     // testa se ja foi declarada pra poder dar uma atribuicao
     if (v_type[id] == 0)
     {
-        fprintf (stderr, "Erro na linha %d: se você declarar a variável %s eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: se você declarar a variável '%s' eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
     }
 
     // testa se eh um array que esqueceram o indice
     if (v_isar[id] > 0)
     {
-        fprintf (stderr, "Erro na linha %d: %s é um array. Cadê o índice?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: '%s' é um array. Cadê o índice?\n", line_num+1, rem_fname(v_name[id], fname));
     }
 
     // ------------------------------------------------------------------------
@@ -53,7 +53,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("F2I_M %s\n", v_name[et % OFST]);
         add_instr("SET %s\n"  , v_name[id       ]);
@@ -63,8 +63,8 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
-        
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+
         // tentar fazer uma instrucao que faz f2i do acumulador e seta na memoria ao mesmo tempo (FIAS)
         add_instr("F2I\n");
         add_instr("SET %s\n", v_name[id]);
@@ -107,7 +107,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("I2F_M %s\n", v_name[et%OFST]);
         add_instr("SET %s\n"  , v_name[id     ]);
@@ -117,7 +117,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("I2F\n");
         add_instr("SET %s\n", v_name[id]);
@@ -176,7 +176,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("I2F_M %s\n", v_name[et%OFST]);
         add_instr("SET %s\n"  , v_name[id     ]);
@@ -189,7 +189,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("I2F\n");
         add_instr("SET %s\n"  , v_name[id]);
@@ -202,7 +202,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("LOD %s\n" , v_name[et%OFST]);
         add_instr("SET %s\n" , v_name[id     ]);
@@ -215,7 +215,7 @@ void ass_set(int id, int et)
 
     if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("SET %s\n"  , v_name[id]);
 
@@ -267,13 +267,13 @@ void ass_array(int id, int et, int fft)
     // testa se ja foi declarada pra poder dar uma atribuicao
     if (v_type[id] == 0)
     {
-        fprintf (stderr, "Erro na linha %d: se você declarar a variável %s eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: se você declarar a variável '%s' eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
     }
 
     // checagem entre array e nao-array
     if (v_isar[id] == 0)
     {
-        fprintf (stderr, "Erro na linha %d: %s não é um array.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: '%s' não é um array.\n", line_num+1, rem_fname(v_name[id], fname));
     }
 
     // ------------------------------------------------------------------------
@@ -303,7 +303,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("P_F2I_M %s\n", v_name[et%OFST]);
         add_instr("%s %s\n", set_type, v_name[id]);
@@ -313,7 +313,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 1) && (get_type(et) == 2) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é int, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("F2I\n");
         add_instr("%s %s\n", set_type, v_name[id]);
@@ -358,7 +358,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("P_I2F_M %s\n", v_name[et%OFST]);
         add_instr("%s %s\n", set_type, v_name[id]);
@@ -368,7 +368,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 2) && (get_type(et) == 1) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é float, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("I2F\n");
         add_instr("%s %s\n", set_type, v_name[id]);
@@ -427,7 +427,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("SET aux_var\n");
         add_instr("P_I2F_M %s\n", v_name[et%OFST]);
@@ -442,7 +442,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 3) && (get_type(et) == 1) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe int.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("I2F\n"                   );
         add_instr("SET_P aux_var\n"         );
@@ -459,7 +459,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
 
         add_instr("SET   aux_var\n"         );
         add_instr("P_LOD %s\n"  , v_name[et%OFST]);
@@ -474,7 +474,7 @@ void ass_array(int id, int et, int fft)
 
     if ((v_type[id] == 3) && (get_type(et) == 2) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: variável %s é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stdout, "Atenção na linha %d: variável '%s' é comp, mas recebe float.\n", line_num+1, rem_fname(v_name[id], fname));
         
         add_instr("SET_P aux_var\n"         );
         add_instr("SET   aux_var2\n"        );

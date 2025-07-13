@@ -98,9 +98,9 @@ void instr_ula(char *va, int is_const)
     // se for a primeira vez que a var aparece, faz o cadastro
     if (var_find(va) == -1)
     {
-        var_add(va, is_const);                             // adiciona variavel na tabela
-        fprintf(f_data, "%s\n", itob(var_val(va),nubits)); // adiciona variavel na mem de dados
-        sim_reg(va);                                       // registra variavel no simulador (se for do usuario)
+        var_add(va, is_const);                              // adiciona variavel na tabela
+        fprintf(f_data, "%s\n", itob(var_val(va), nubits)); // adiciona variavel na mem de dados
+        sim_reg(va);                                        // registra variavel no simulador (se for do usuario)
     }
 
     // escreve a nova instrucao
@@ -182,13 +182,13 @@ int out_used(int i)
 // executado antes de iniciar o lexer
 void eval_init(int clk, int clk_n, int s_typ)
 {
-    char aux[256];
-
     // reseta indices de I/O usados -------------------------------------------
 
     for (int i = 0; i < 256; i++) {i_used[i] = 0; o_used[i] = 0;}
 
     // pega parametros no arquivo app_log.txt ---------------------------------
+
+    char aux[256];
 
     eval_get("app_log.txt","prname", prname);                     // nome do processador
     eval_get("app_log.txt","n_ins" ,    aux); n_ins  = atoi(aux); // numero de instrucoes adicionadas
@@ -197,21 +197,31 @@ void eval_init(int clk, int clk_n, int s_typ)
     eval_get("app_log.txt","nbmant",    aux); nbmant = atoi(aux); // numero de bits da mantissa
     eval_get("app_log.txt","nbexpo",    aux); nbexpo = atoi(aux); // numero de bits da mantissa
     
+    // se tiver interrupcao, pega o endereco dela
     if (eval_get("app_log.txt","itr_addr", aux) == 1) itr_addr = atoi(aux); // endereco de interrupcao
 
-    lab_reg(); // registra labels do arquivo de log
+    lab_reg(); // registra labels encontrados no arquivo app_log.txt
 
-    // executa a inicializacao ------------------------------------------------
+    // determina num de bits de endereco para o operando (depois do mnemonico)
+    // depende de quem eh maior, mem de dado ou de instr ----------------------
 
-    // num de bits de endereco para o operando (depois do mnemonico)
-    // depende de quem eh maior, mem de dado ou de instr
     nbopr = (n_ins > n_dat) ? ceil(log2(n_ins)) : ceil(log2(n_dat));
     
-    // abre os arquivos .mif
+    // abre os arquivos .mif --------------------------------------------------
+
     sprintf(aux, "%s/Hardware/%s_data.mif", proc_dir, prname); f_data  = fopen(aux, "w");
     sprintf(aux, "%s/Hardware/%s_inst.mif", proc_dir, prname); f_instr = fopen(aux, "w");
 
-    // inicializa rotinas pra simulacao com o iverilog
+    // insere variaveis auxiliares na memoria de dados (se houver) ------------
+
+    if (eval_get("cmm_log.txt","epsilon_taylor", aux) == 1)
+    {
+        var_add("epsilon_taylor", 0);                     // adiciona variavel float na tabela
+        fprintf(f_data, "%s\n", itob(f2mf(aux), nubits)); // adiciona variavel na mem de dados
+    }
+
+    // inicializa rotinas pra simulacao com o iverilog ------------------------
+
     sim_init(clk, clk_n, s_typ);
 }
 

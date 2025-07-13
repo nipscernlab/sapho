@@ -65,5 +65,5 @@ int var_find(char *val)
 }
 
 void var_inc(int   val){v_count += val             ;} // incrementa o tamanho da memoria (para arrays)
-int  var_val(char *var){return v_val[var_find(var)];} // retorna o valor da variavel
+int  var_val(char *var){return v_val[var_find(var)];} // retorna o valor  da variavel
 int  var_cnt(         ){return v_count             ;} // retorna o numero de variaveis

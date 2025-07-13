@@ -20,7 +20,7 @@ FLNUM  (0|[1-9]+[0-9]*)\.?[0-9]*
 CONUM  [-]*{WS}*{FLNUM}{WS}*[+|-]{WS}*{FLNUM}{WS}*[i]
 
 STRIN  \"(\\.|[^\\"])*\"
-CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
+CARES  [-+*()=#;:,\]\[{}<>~!%/&^|⟩]
 BLOCO  "/*"((\*+[^/*])|([^*]))*\**"*/"
 COMEN  "//"[^\n]*
 
@@ -84,8 +84,10 @@ COMEN  "//"[^\n]*
 
 "++"          return PPLUS;
 
+"⟩"           return BRA;
+"⟨"           return KET;
 "|I|"         return EYE;
-"|0>"         return VZERO;
+"|0⟩"         return VZERO;
 
 "comp"       {type_tmp = 3; yylval.ival = 3; return TYPE;}
 "float"      {type_tmp = 2; yylval.ival = 2; return TYPE;}

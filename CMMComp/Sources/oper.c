@@ -2808,7 +2808,7 @@ int oper_lin(int et)
 int oper_lanor(int et1, int et2, int type)
 {
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
-    fprintf(stderr, "Erro na linha %d: Operação lógica, só entre números inteiros!\n", line_num+1);
+    fprintf(stderr, "Erro na linha %d: operação lógica, só entre números inteiros!\n", line_num+1);
 
     int etr, eti;
 
@@ -2937,7 +2937,7 @@ int oper_bitw(int et1, int et2, int type)
 int oper_shift(int et1, int et2, int type)
 {
     if (get_type(et1) == 2)
-        fprintf(stderr, "Erro na linha %d: deslocamento de bit em variáel float? Você é uma pessoa confusa!\n", line_num+1);
+        fprintf(stderr, "Erro na linha %d: deslocamento de bit em variável float? Você é uma pessoa confusa!\n", line_num+1);
 
     if (get_type(et1) > 2)
         fprintf(stderr, "Erro na linha %d: como você quer que eu desloque bits de um número complexo? Viajou?\n", line_num+1);

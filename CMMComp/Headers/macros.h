@@ -11,5 +11,5 @@ void mac_end();                                // ponto de termino da macro
 
 // uso de macros pre-definidas ------------------------------------------------
 
-void mac_add (char *name);                     // adiciona uma macro pre-definida
-void mac_gera(char *fasm);                     // adiciona todo o codigo necessario no .asm
+void mac_add (char *name);                     // adiciona flag de uma macro pre-definida
+void mac_copy(char *fasm);                     // copia as macros pre-definidas no final arquivo assembler

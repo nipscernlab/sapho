@@ -27,16 +27,21 @@ int type_tmp; // para pegar o tipo quando uma variavel eh declarada (ver c2asm.l
 // declara variavel (sem ser array)
 void declar_var(int id)
 {
-    if (v_type[id] != 0) // variavel ja existe
+    // checa consistencia -----------------------------------------------------
+
+    if (v_type[id] != 0)
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id], fname));
-        return;
+        fprintf(stderr, "Erro na linha %d: a variável '%s' já existe. Vai tomar um Ω³!\n", line_num+1, rem_fname(v_name[id], fname));
     }
+
+    // atualiza status da variavel --------------------------------------------
 
     v_type[id] = type_tmp;               // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
     v_asgn[id] = strcmp(fname,"") == 0;  // variavel global deve ser marcada como assigned
     v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
+
+    // declara variavel no arquivo de log -------------------------------------
 
     char func[256];
     if (strcmp(fname,"")==0) strcpy(func, "global"); else strcpy(func, fname);
@@ -47,7 +52,8 @@ void declar_var(int id)
     fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
     }
 
-    // declara parte imaginaria da veriavel complexa
+    // declara parte imaginaria se for comp -----------------------------------
+    
     if (type_tmp > 2)
     {
         int idi     = get_img_id(id);
@@ -63,7 +69,7 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
 {
     if (v_type[id_var] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        fprintf (stderr, "Erro na linha %d: a variável '%s' já existe. Vai tomar um Ω³!\n", line_num+1, rem_fname(v_name[id_var], fname));
         return;
     }
 
@@ -133,7 +139,7 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
 
     if (v_type[id_var] != 0) // variavel ja existe
     {
-        fprintf (stderr, "Erro na linha %d: puts, a variável %s já existe, tá doido?\n", line_num+1, rem_fname(v_name[id_var], fname));
+        fprintf (stderr, "Erro na linha %d: a variável '%s' já existe. Vai tomar um Ω³!\n", line_num+1, rem_fname(v_name[id_var], fname));
         return;
     }
 

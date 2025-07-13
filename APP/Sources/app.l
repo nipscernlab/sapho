@@ -5,13 +5,14 @@
 INNUM  [-+]?[0-9]+
 FLNUM  [-+]?(0|[1-9]+[0-9]*)\.?[0-9]*
 
-VARIA    [a-zA-Z][a-zA-Z0-9_]*
-LABEL   @[a-zA-Z][a-zA-Z0-9_]*
-STRIN   \"(\\.|[^\\"])*\"
+VARIA   [a-zA-Z][a-zA-Z0-9_]*
+LABEL  @[a-zA-Z][a-zA-Z0-9_]*
+STRIN  \"(\\.|[^\\"])*\"
 
-COMEN    "//"[^\n]*
-EMPTY        [ \t]
-LINHA          \n
+COMEN  "//"[^\n]*
+EMPTY  [ \t]
+LINHA  \n
+CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 
 %%
 
@@ -19,6 +20,13 @@ LINHA          \n
 "#NUBITS"  eval_direct( 2); // num de bits da ULA
 "#NBMANT"  eval_direct( 3); // num de bits da mantissa
 "#NBEXPO"  eval_direct( 4); // num de bits do expoente
+"#NDSTAC"  ;                // precisa ser identificado pra nao dar erro
+"#SDEPTH"  ;                // mesma coisa pra todos ai embaixo
+"#NUIOIN"  ;
+"#NUIOOU"  ;
+"#NUGAIN"  ;
+"#FFTSIZ"  ;
+"#PIPELN"  ;
 
 "#array"   eval_direct(12); // array normal
 "#arrays"  eval_direct(14); // array com arquivo de inicializacao
@@ -166,6 +174,7 @@ LINHA          \n
 {COMEN}
 {EMPTY}
 {LINHA}
+{CARES}
 
 .;
 %%

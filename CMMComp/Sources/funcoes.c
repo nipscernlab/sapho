@@ -100,7 +100,7 @@ void par_check(int et)
 
     if ((t_fun == 1) && (t_cal == 2) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("%s %s\n", ld, v_name[et%OFST]);
         add_instr("F2I\n");
@@ -110,7 +110,7 @@ void par_check(int et)
 
     if ((t_fun == 1) && (t_cal == 2) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo float para int no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("F2I\n");
     }
@@ -119,7 +119,7 @@ void par_check(int et)
 
     if ((t_fun == 1) && (t_cal == 5))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         get_cmp_cst(et,&etr,&eti);
 
@@ -131,7 +131,7 @@ void par_check(int et)
 
     if ((t_fun == 1) && (t_cal == 3) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("%s %s\n", ld, v_name[et%OFST]);
         add_instr("F2I\n");
@@ -141,7 +141,7 @@ void par_check(int et)
 
     if ((t_fun == 1) && (t_cal == 3) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo comp para int no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("POP\n");
         add_instr("F2I\n");
@@ -151,7 +151,7 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 1) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
         
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
     }
@@ -160,8 +160,8 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 1) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
-        
+        fprintf(stdout, "Atenção na linha %d: convertendo int para float no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
+
         add_instr("I2F\n");
     }
 
@@ -183,7 +183,7 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 5))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         get_cmp_cst(et,&etr,&eti);
 
@@ -194,7 +194,7 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 3) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("%s %s\n", ld, v_name[et%OFST]);
     }
@@ -203,7 +203,7 @@ void par_check(int et)
 
     if ((t_fun == 2) && (t_cal == 3) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo comp para float no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("POP\n");
     }
@@ -212,7 +212,7 @@ void par_check(int et)
 
     if ((t_fun == 3) && (t_cal == 1) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
         
         add_instr("%s %s\n", i2f, v_name[et%OFST]);
         add_instr("P_LOD 0.0\n");
@@ -222,7 +222,7 @@ void par_check(int et)
 
     if ((t_fun == 3) && (t_cal == 1) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo int para comp no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
         
         add_instr("I2F\n");
         add_instr("P_LOD 0.0\n");
@@ -232,7 +232,7 @@ void par_check(int et)
 
     if ((t_fun == 3) && (t_cal == 2) && (et % OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("%s %s\n", ld, v_name[et%OFST]);
         add_instr("P_LOD 0.0\n");
@@ -242,7 +242,7 @@ void par_check(int et)
 
     if ((t_fun == 3) && (t_cal == 2) && (et % OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função %s.\n", line_num+1, index, v_name[fun_id]);
+        fprintf(stdout, "Atenção na linha %d: convertendo float para comp no parâmetro %d da função '%s'.\n", line_num+1, index, v_name[fun_id]);
 
         add_instr("P_LOD 0.0\n");
     }
@@ -378,7 +378,7 @@ void declar_ret(int et, int ret)
     // int com float var
     if ((left_type == 7) && (get_type(et) == 2) && (et%OFST!=0))
     {
-        fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função %s? Dá-lhe código!\n", line_num+1, v_name[fun_parse]);
+        fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função '%s'? Dá-lhe código!\n", line_num+1, v_name[fun_parse]);
 
         add_instr("F2I_M %s\n", v_name[et%OFST]);
     }
@@ -386,7 +386,7 @@ void declar_ret(int et, int ret)
     // int com float acc
     if ((left_type == 7) && (get_type(et) == 2) && (et%OFST==0))
     {
-        fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função %s? Dá-lhe código!\n", line_num+1, v_name[fun_parse]);
+        fprintf(stdout, "Atenção na linha %d: vai converter float para int no retorno da função '%s'? Dá-lhe código!\n", line_num+1, v_name[fun_parse]);
         add_instr("F2I\n");
     }
 
@@ -608,14 +608,14 @@ void vcall(int id)
     // posso usar funcao com chamada void tb, por isso testar tudo aqui
     if  (v_type[id] < 6)
     {
-        fprintf(stderr, "Erro na linha %d: cadê essa função %s?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stderr, "Erro na linha %d: cadê essa função '%s'?\n", line_num+1, rem_fname(v_name[id], fname));
         return;
     }
 
     // checa numero de parametros
     if (get_npar(p_test) != get_npar(v_fpar[id])) // p_test tem a lista de par na chamada e v_fpar na declaracao
     {
-        fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função %s.\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função '%s'.\n", line_num+1, rem_fname(v_name[id], fname));
     }
 
     add_instr("CAL %s\n", v_name[id]);
@@ -629,18 +629,18 @@ int fcall(int id)
 {
     if (v_type[id] == 6)
     {
-        fprintf (stderr, "Erro na linha %d: olha lá a funcao %s, você vai ver que ela nao retorna nada.\n", line_num+1, v_name[id]);
+        fprintf (stderr, "Erro na linha %d: olha lá a funcao '%s', você vai ver que ela nao retorna nada.\n", line_num+1, v_name[id]);
         return 0;
     }
     else if (v_type[id] < 6)
     {
-        fprintf (stderr, "Erro na linha %d: A função %s tá onde?\n", line_num+1, rem_fname(v_name[id], fname));
+        fprintf (stderr, "Erro na linha %d: A função '%s' tá onde?\n", line_num+1, rem_fname(v_name[id], fname));
         return 0;
     }
 
     if (get_npar(p_test) != get_npar(v_fpar[id]))
     {
-        fprintf(stderr, "Erro na linha %d: lista de parâmetros da função %s difere da original.\n", line_num+1, v_name[id]);
+        fprintf(stderr, "Erro na linha %d: lista de parâmetros da função '%s' difere da original.\n", line_num+1, v_name[id]);
         return 0;
     }
 

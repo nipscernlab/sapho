@@ -78,7 +78,7 @@ void  yyerror(char const *s);
 %token SHIFTL SHIFTR SSHIFTR                                           // deslocamento de bits
 %token GREQU LESEQ EQU DIF LAN LOR                                     // operadores logicos de dois simbolos
 %token PPLUS                                                           // operador ++. pode ser usado pra reduzir exp e tb pra assignments
-%token EYE VZERO                                                       // notacao de Dirac (algebra linear)
+%token BRA KET EYE VZERO                                               // notacao de Dirac (algebra linear)
 
 // tokens terminais -----------------------------------------------------------
 
@@ -154,8 +154,8 @@ declar : TYPE id_list                               ';'
        | TYPE ID '[' INUM ']'              STRING   ';' {declar_arr_1d($2,$4,$6    );}
        | TYPE ID '[' INUM ']' '[' INUM ']' STRING   ';' {declar_arr_2d($2,$4,$7,$9 );}
          // declaracao de array com inicializaco por notacao de Dirac (sob demanda)
-       | TYPE ID '[' INUM ']' '#' '|' ID '|' ID '>' ';' {declar_Mv    ($2,$4,$8,$10);}
-       | TYPE ID '[' INUM ']' '#'    exp '|' ID '>' ';' {declar_cv    ($2,$4,$7,$9 );}
+       | TYPE ID '[' INUM ']' '#' '|' ID '|' ID BRA ';' {declar_Mv    ($2,$4,$8,$10);}
+       | TYPE ID '[' INUM ']' '#'    exp '|' ID BRA ';' {declar_cv    ($2,$4,$7,$9 );}
 
 id_list : IID | id_list ',' IID
 
@@ -224,7 +224,7 @@ exp_list :                                                           // pode ser
 // Standard library -----------------------------------------------------------
 
 std_out  : OUT  '(' INUM ',' exp ')' ';'            {exec_out ($3,$5   );} // saida de dados
-sdt_vout : OUT  '(' INUM ',' exp '|' ID '>' ')' ';' {exec_vout($3,$5,$7);} // saida de dados com notaaca de Dirac
+sdt_vout : OUT  '(' INUM ',' exp '|' ID BRA ')' ';' {exec_vout($3,$5,$7);} // saida de dados com notaaca de Dirac
 std_in   : INN  '(' INUM ')'                   {$$ = exec_in  ($3      );} // entrada de dados
 std_pst  : PST  '(' exp  ')'                   {$$ = exec_pst ($3      );} // funcao pset(x)      -> zera se negativo
 std_abs  : ABS  '(' exp  ')'                   {$$ = exec_abs ($3      );} // funcao  abs(x)      -> valor absoluto de x
@@ -287,15 +287,15 @@ assignment : ID  '=' exp ';'                          {ass_set($1,$3);}
            | ID  '[' exp ']' '[' exp ']' '='          {arr_2d_index($1, $3,$6);}
                      exp ';'                          {ass_array   ($1,$10, 0);}
            // algebra linear com notacao de Dirac (stdlib implementado como um assign virtual)
-           | ID '#' '|' ID '|' ID '>' ';'                     {exec_Mv   ($1,$4,$6    );} // A # |B|a>
-           | ID '#' exp '|' ID '>' ';'                        {exec_cv   ($1,$3,$5    );} // a # c|b>
-           | ID '#' '|' ID '>' '+' exp '|' ID '>' ';'         {exec_apcb ($1,$4,$7,$9 );} // a # |b> + c|d>
-           | ID '#' '|' ID '>' '<'  ID '|' ';'                {exec_vvt  ($1,$4,$7    );} // A # |a><b|
-           | ID '#' '|' ID '|' '-' '|' ID '>' '<'  ID '|' ';' {exec_Mmvvt($1,$4,$8,$11);} // A # B - |a><b|
-           | ID '#' exp '|' ID '|' ';'                        {exec_cM   ($1,$3,$5    );} // A # c|B|
-           | ID '#' exp EYE ';'                               {exec_cI   ($1,$3       );} // A # c|I|
-           | ID '#' VZERO ';'                                 {exec_v0   ($1          );} // a # |0>
-           | ID '#' exp '|' INN '(' INUM ')' '>' ';'          {exec_cvin ($1,$3,$7    );} // a # |in(0)>
+           | ID '#'     '|' ID '|' ID BRA ';'                    {exec_Mv   ($1,$4,$6    );} // A # |B|a>
+           | ID '#' exp '|' ID BRA ';'                           {exec_cv   ($1,$3,$5    );} // a # c|b>
+           | ID '#'     '|' ID BRA '+' exp '|' ID BRA ';'        {exec_apcb ($1,$4,$7,$9 );} // a # |b> + c|d>
+           | ID '#'     '|' ID BRA KET  ID '|' ';'               {exec_vvt  ($1,$4,$7    );} // A # |a><b|
+           | ID '#'     '|' ID '|' '-' '|' ID BRA KET ID '|' ';' {exec_Mmvvt($1,$4,$8,$11);} // A # B - |a><b|
+           | ID '#' exp '|' ID '|' ';'                           {exec_cM   ($1,$3,$5    );} // A # c|B|
+           | ID '#' exp     EYE ';'                              {exec_cI   ($1,$3       );} // A # c|I|
+           | ID '#'         VZERO ';'                            {exec_v0   ($1          );} // a # |0>
+           | ID '#' exp '|' INN '(' INUM ')' BRA ';'             {exec_cvin ($1,$3,$7    );} // a # |in(0)>
 
 // expressoes -----------------------------------------------------------------
 
@@ -355,7 +355,7 @@ exp:       terminal                           {$$ = $1;}
          | exp  LESEQ  exp                    {$$ = oper_leeq ($1,$3  );}
          | exp  DIF    exp                    {$$ = oper_dife ($1,$3  );}
          // algebra linear com retorno exp (notacao de Dirac)
-         | '<' ID '|' ID '>'                  {$$ = exec_vtv ($2,$4);}
+         | KET ID '|' ID BRA                  {$$ = exec_vtv ($2,$4);}
 
 // terminais usados em reducao pra expressoes ---------------------------------
 
@@ -381,5 +381,5 @@ int main(int argc, char *argv[])
 // erro de sintaxes do bison
 void yyerror (char const *s)
 {
-    fprintf (stderr, "Pô, presta atenção na sintaxe da linha %d!\n", line_num+1);
+    fprintf (stderr, "Erro de sintaxe na linha %d. Você é uma pessoa confusa!\n", line_num+1);
 }

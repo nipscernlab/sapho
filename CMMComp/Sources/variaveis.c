@@ -69,14 +69,14 @@ void check_var()
         {
             // checa se eh ou nao global
             if (strcmp(v_name[v_fnid[i]], "") == 0)
-                fprintf (stdout, "Atenção: variável global %s não está sendo usada. Economize memória!\n", v_name[i]);
+                fprintf (stdout, "Atenção: variável global '%s' não está sendo usada. Economize memória!\n", v_name[i]);
             else
-                fprintf (stdout, "Atenção: variável %s na função %s não está sendo usada. Economize memória!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
+                fprintf (stdout, "Atenção: variável '%s' na função '%s' não está sendo usada. Economize memória!\n", rem_fname(v_name[i], v_name[v_fnid[i]]), v_name[v_fnid[i]]);
         }
 
         // checa se a funcao foi declarada e nao foi usada
         if (((v_type[i] == 5) || (v_type[i] == 6) || (v_type[i] == 7)) && v_used[i] == 0)
-            fprintf (stdout, "Atenção: função %s não está sendo usada. Economize memória!\n", v_name[i]);
+            fprintf (stdout, "Atenção: função '%s' não está sendo usada. Economize memória!\n", v_name[i]);
     }
 }
 
@@ -96,7 +96,7 @@ char* rem_fname(char *var, char *fname)
 int exec_id(char *text)
 {
     if (strcmp(text,"i") == 0)
-        fprintf (stderr, "Erro na linha %d: símbolo i é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1);
+        fprintf (stderr, "Erro na linha %d: símbolo 'i' é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1);
 
     char var_name[64];
 

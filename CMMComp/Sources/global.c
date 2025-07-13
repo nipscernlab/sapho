@@ -65,20 +65,17 @@ void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d
 {
     // pega os argumentos -----------------------------------------------------
 
-    char cmm_file[1024];
-    char asm_file[1024];
-
-    sprintf(cmm_file, "%s/Software/%s"    , d_proc, f_name); // arquivo .cmm de entrada
-    sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname); // arquivo .asm de saida
+    char cmm_file[1024]; sprintf(cmm_file, "%s/Software/%s"    , d_proc, f_name); // nome do arquivo .cmm de entrada
+    char asm_file[1024]; sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname); // nome do arquivo .asm de saida
 
     yyin  = fopen(cmm_file, "r"); // abre arquivo .cmm
     f_asm = fopen(asm_file, "w"); // cria arquivo .asm
 
-    sprintf(dir_soft , "%s/Software", d_proc ); // pega o diretorio software
+    sprintf(dir_soft , "%s/Software", d_proc ); // pega o diretorio Software
     strcpy (dir_macro,                d_macro); // pega o diretorio Macro
     strcpy (dir_tmp  ,                d_tmp  ); // pega o diretorio Tmp
 
-    // cria arquivos auxiliares -------------------------------------------------
+    // cria arquivos auxiliares -----------------------------------------------
 
     char path[1024];
 
@@ -101,7 +98,7 @@ void parse_end(char *prname, char *d_proc)
 
     char asm_file[1024]; sprintf(asm_file, "%s/Software/%s.asm", d_proc, prname);
 
-	mac_gera(asm_file);
+	mac_copy(asm_file);
 
 	// checa consistencia de todas as variaveis e funcoes -----------------------
   

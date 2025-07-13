@@ -208,6 +208,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
                 fprintf(f_veri, "   if (req_in == %d) in_sim_%d = in;\n", (int)pow(2,i),i);
                 fprintf(f_veri, "   req_in_sim_%d = req_in == %d;\n",  i, (int)pow(2,i),i);
             }
+            else printf("Atenção: porta de entrada %d não está sendo usada. Gastando hardware à toa!\n", i);
         }
         if (nuioin > 0) fprintf(f_veri, "end\n");
     }
@@ -223,6 +224,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
                 fprintf(f_veri, "   if (out_en == %d) out_sig_%d <= out;\n", (int)pow(2,i),i);
                 fprintf(f_veri, "   out_en_sim_%d = out_en == %d;\n",     i, (int)pow(2,i),i);
             }
+            else printf("Atenção: porta de saída %d não está sendo usada. Gastando hardware à toa!\n", i);
         }
         if (nuioou > 0) fprintf(f_veri, "end\n\n");
     }

@@ -10,16 +10,21 @@
 INNUM  [-+]?[0-9]+
 FLNUM  [-+]?(0|[1-9]+[0-9]*)\.?[0-9]*
 
-VARIA    [a-zA-Z][a-zA-Z0-9_]*
-LABEL   @[a-zA-Z][a-zA-Z0-9_]*
-STRIN   \"(\\.|[^\\"])*\"
+VARIA   [a-zA-Z][a-zA-Z0-9_]*
+LABEL  @[a-zA-Z][a-zA-Z0-9_]*
+STRIN  \"(\\.|[^\\"])*\"
 
-COMEN    "//"[^\n]*
-EMPTY        [ \t]
-LINHA          \n
+COMEN  "//"[^\n]*
+EMPTY  [ \t]
+LINHA  \n
+CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 
 %%
 
+"#PRNAME"  ;                                       // precisa ser identificado pra nao dar erro
+"#NUBITS"  ;                                       // mesma coisa pra todos ai embaixo
+"#NBMANT"  ;
+"#NBEXPO"  ;
 "#NDSTAC"  eval_direct( 5);                        // tamanho da pilha de dados
 "#SDEPTH"  eval_direct( 6);                        // tamanho da pilha de subrotinas
 "#NUIOIN"  eval_direct( 7);                        // quantidade de portas de entrada
@@ -174,6 +179,7 @@ LINHA          \n
 {COMEN}
 {EMPTY}
 {LINHA}
+{CARES}
 
 .;
 %%
