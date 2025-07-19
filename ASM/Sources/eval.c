@@ -76,8 +76,8 @@ int eval_get(char *fname, char *var, char *val)
     char path[1024];
     sprintf(path, "%s/%s", temp_dir, fname);
     FILE *input =          fopen(path  , "r");
-    if   (input == NULL) fprintf(stderr, "Erro: cadê o arquivo %s?\n", path);
-    
+    if   (input == NULL) {fprintf(stderr, "Erro: cadê o arquivo %s?\n", path); exit(EXIT_FAILURE);}
+
     char linha[1001];
     char nome [128 ];
     while (fgets (linha,sizeof(linha),input)) if (sscanf(linha,"%s %s", nome, val) == 2) if (strcmp(nome,var) == 0)
@@ -294,7 +294,7 @@ void eval_finish()
 
     // checa consistencia do ponto flutuante ----------------------------------
 
-    if (nubits != nbmant+nbexpo+1) fprintf(stderr, "Erro: inconsistência no ponto flutuante. Tem que ser NUBITS = NBMANT + NBEXPO + 1.\n");
+    if (nubits != nbmant+nbexpo+1) {fprintf(stderr, "Erro: inconsistência no ponto flutuante. Tem que ser NUBITS = NBMANT + NBEXPO + 1.\n"); exit(EXIT_FAILURE);}
 
     // finaliza simulacao -----------------------------------------------------
 

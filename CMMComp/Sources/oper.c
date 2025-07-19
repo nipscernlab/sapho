@@ -4,6 +4,7 @@
 
 // includes globais
 #include <string.h>
+#include <stdlib.h>
 
 // includes locais
 #include "..\Headers\t2t.h"
@@ -2079,7 +2080,7 @@ int oper_divi(int et1, int et2)
 int oper_mod(int et1, int et2)
 {
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
-        fprintf(stderr, "Erro na linha %d: qual o sentido de calcular o resto da divisão sem ser com número inteiro? Vai se tratar!\n", line_num+1);
+        {fprintf(stderr, "Erro na linha %d: qual o sentido de calcular o resto da divisão sem ser com número inteiro? Vai se tratar!\n", line_num+1); exit(EXIT_FAILURE);}
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
@@ -2808,7 +2809,10 @@ int oper_lin(int et)
 int oper_lanor(int et1, int et2, int type)
 {
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
-    fprintf(stderr, "Erro na linha %d: operação lógica, só entre números inteiros!\n", line_num+1);
+    {
+        fprintf(stderr, "Erro na linha %d: operação lógica, só entre números inteiros!\n", line_num+1);
+        exit(EXIT_FAILURE);
+    }
 
     int etr, eti;
 
@@ -2860,7 +2864,7 @@ int oper_lanor(int et1, int et2, int type)
 int oper_inv(int et)
 {
     if (get_type(et) > 1)
-        fprintf(stderr, "Erro na linha %d: uso incorreto do operador '~'. Tem que passar tipo int. Viajou?\n", line_num+1);
+        {fprintf(stderr, "Erro na linha %d: uso incorreto do operador '~'. Tem que passar tipo int. Viajou?\n", line_num+1); exit(EXIT_FAILURE);}
 
     int etr, eti;
 
@@ -2887,7 +2891,10 @@ int oper_inv(int et)
 int oper_bitw(int et1, int et2, int type)
 {
     if ((get_type(et1) > 1) || (get_type(et2) > 1))
+    {
         fprintf(stderr, "Erro na linha %d: qual o sentido de fazer operações bitwise sem ser com número inteiro? Vai se tratar!\n", line_num+1);
+        exit(EXIT_FAILURE);
+    }
 
     char op[16];
     switch (type)
@@ -2937,13 +2944,13 @@ int oper_bitw(int et1, int et2, int type)
 int oper_shift(int et1, int et2, int type)
 {
     if (get_type(et1) == 2)
-        fprintf(stderr, "Erro na linha %d: deslocamento de bit em variável float? Você é uma pessoa confusa!\n", line_num+1);
+        {fprintf(stderr, "Erro na linha %d: deslocamento de bit em variável float? Você é uma pessoa confusa!\n", line_num+1); exit(EXIT_FAILURE);}
 
     if (get_type(et1) > 2)
-        fprintf(stderr, "Erro na linha %d: como você quer que eu desloque bits de um número complexo? Viajou?\n", line_num+1);
+        {fprintf(stderr, "Erro na linha %d: como você quer que eu desloque bits de um número complexo? Viajou?\n", line_num+1); exit(EXIT_FAILURE);}
 
     if (get_type(et2) > 2)
-        fprintf(stderr, "Erro na linha %d: usando comp pra deslocar bits? Você é uma pessoa confusa!\n", line_num+1);
+        {fprintf(stderr, "Erro na linha %d: usando comp pra deslocar bits? Você é uma pessoa confusa!\n", line_num+1); exit(EXIT_FAILURE);}
 
 
     char op[16];

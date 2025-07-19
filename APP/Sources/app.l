@@ -187,6 +187,8 @@ int main(int argc, char *argv[])
 	  fclose(yyin);               // fecha o arquivo .asm
     eval_finish();              // finaliza o arquivo de log
 
+    printf("Sucesso: já sei a quantidade de memória! Vamo vê agora quais circuitos você precisa...\n");
+
     return 0;
 }
 

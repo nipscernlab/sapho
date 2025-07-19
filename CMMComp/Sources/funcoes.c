@@ -4,6 +4,7 @@
 
 // includes globais
 #include <string.h>
+#include <stdlib.h>
 
 // includes locais
 #include "..\Headers\t2t.h"
@@ -350,7 +351,7 @@ void declar_ret(int et, int ret)
 {
     // checa se eh funcao mesmo, ou void por engano
     if (v_type[fun_parse] == 6)
-        fprintf (stderr, "Erro na linha %d: valor de retorno em função void? viajou!\n", line_num+1);
+        {fprintf (stderr, "Erro na linha %d: valor de retorno em função void? viajou!\n", line_num+1); exit(EXIT_FAILURE);}
 
     // testa se esta dentro de um if/else
     if ((get_if() > 0) && (v_type[fun_parse] != 6))
@@ -551,7 +552,7 @@ void func_ret(int id) // id -> id da funcao atual
 {
     // checa se a funcao teve a instrucao return x;
     if ((v_type[id] != 6) && (ret_ok == 0))
-        fprintf (stderr, "Erro na função %s: cadê o retorno pra essa função?\n", v_name[id]);
+        {fprintf (stderr, "Erro na função %s: cadê o retorno pra essa função?\n", v_name[id]); exit(EXIT_FAILURE);}
 
     if (strcmp(v_name[id], "main") == 0) // se eh funcao main ...
     {
@@ -573,7 +574,7 @@ void void_ret()
 {
     // checa se eh void mesmo, ou funcao por engano
     if (v_type[fun_parse] != 6)
-        fprintf (stderr, "Erro na linha %d: cadê o valor de retorno da função?\n", line_num+1);
+        {fprintf (stderr, "Erro na linha %d: cadê o valor de retorno da função?\n", line_num+1); exit(EXIT_FAILURE);}
 
     if ((strcmp(fname, "main") == 0) && (mainok == 0)) // se eh funcao main e soh tem ela ...
          add_sinst(-3, "@fim JMP fim\n");              // ai nao usa RET, pula pro fim
@@ -609,13 +610,14 @@ void vcall(int id)
     if  (v_type[id] < 6)
     {
         fprintf(stderr, "Erro na linha %d: cadê essa função '%s'?\n", line_num+1, rem_fname(v_name[id], fname));
-        return;
+        exit(EXIT_FAILURE);
     }
 
     // checa numero de parametros
     if (get_npar(p_test) != get_npar(v_fpar[id])) // p_test tem a lista de par na chamada e v_fpar na declaracao
     {
         fprintf(stderr, "Erro na linha %d: olha lá direito quantos parâmetros tem a função '%s'.\n", line_num+1, rem_fname(v_name[id], fname));
+        exit(EXIT_FAILURE);
     }
 
     add_instr("CAL %s\n", v_name[id]);
@@ -630,18 +632,18 @@ int fcall(int id)
     if (v_type[id] == 6)
     {
         fprintf (stderr, "Erro na linha %d: olha lá a funcao '%s', você vai ver que ela nao retorna nada.\n", line_num+1, v_name[id]);
-        return 0;
+        exit(EXIT_FAILURE);
     }
     else if (v_type[id] < 6)
     {
         fprintf (stderr, "Erro na linha %d: A função '%s' tá onde?\n", line_num+1, rem_fname(v_name[id], fname));
-        return 0;
+        exit(EXIT_FAILURE);
     }
 
     if (get_npar(p_test) != get_npar(v_fpar[id]))
     {
         fprintf(stderr, "Erro na linha %d: lista de parâmetros da função '%s' difere da original.\n", line_num+1, v_name[id]);
-        return 0;
+        exit(EXIT_FAILURE);
     }
 
     add_instr("CAL %s\n",v_name[id]);

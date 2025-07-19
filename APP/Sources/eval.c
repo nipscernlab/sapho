@@ -36,7 +36,7 @@ void eval_init(char *path)
 
     f_log = fopen(file, "w");
 
-    if (f_log == NULL) fprintf(stderr, "Erro: não deu pra criar o arquivo %s/app_log.txt.\n", path);
+    if (f_log == NULL) {fprintf(stderr, "Erro: não deu pra criar o arquivo %s/app_log.txt.\n", path); exit(EXIT_FAILURE);}
 }
 
 // executado quando uma diretiva eh encontrada
@@ -51,6 +51,7 @@ void eval_itrad()
 {
     // instrucao atual eh cadastrada como ponto de interrupcao
     fprintf(f_log, "itr_addr %d\n", n_ins);
+     printf("Info: implementing interruption handling.\n");
 }
 
 // executado quando um novo opcode eh encontrado
@@ -104,5 +105,7 @@ void eval_finish()
     fclose (f_log);
 
     // checa se da pra criar a memoria de dados
-    if (var_cnt() <= 2) fprintf(stderr, "Erro: esse processador não serve pra nada. Você não tem nada útil pra fazer não?\n");
+    if (var_cnt() <= 2) {fprintf(stderr, "Erro: esse processador não serve pra nada. Você não tem nada útil pra fazer não?\n"); exit(EXIT_FAILURE);}
+
+    printf("Info: %d instructions and %d variables were found.\n", n_ins, var_cnt());
 }

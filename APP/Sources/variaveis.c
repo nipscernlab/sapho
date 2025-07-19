@@ -41,7 +41,7 @@ void var_add(char *va, int size)
         v_count += size;
     }
 
-    if (v_count > NVARMAX) fprintf(stderr, "Erro: número de variáveis > %d", NVARMAX);
+    if (v_count > NVARMAX) {fprintf(stderr, "Erro: número de variáveis > %d", NVARMAX); exit(EXIT_FAILURE);}
 }
 
 // retorna o numero de variaveis

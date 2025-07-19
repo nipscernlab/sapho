@@ -44,7 +44,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     int nbioou = (nuioou > 1) ? (int)ceil(log2(nuioou)) : 1;
 
     // o comeco eh padrao ....
-    fprintf(f_veri, "module %s (\n", prname);
+    fprintf(f_veri, "module %s (\n\n", prname);
     fprintf(f_veri, "input  clk, rst,\n");
 
     // verifica se precisa adicionar barramento de entrada in
@@ -125,6 +125,9 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // ------------------------------------------------------------------------
 
     for (int i = 0; i < opc_cnt(); i++) fprintf(f_veri, ".%s(1),\n", opc_get(i));
+
+    // essa conta ta aproximada, mas é melhor que nada
+    printf("Info: using %d%% of the Assembly Instruction Set.\n", opc_cnt()*100/92);
 
     // ------------------------------------------------------------------------
     // finalizacao da instancia do processador --------------------------------
@@ -343,6 +346,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
 void hdl_tb_file(int itr_addr)
 {
+    printf("Info: try test bench %s_tb.v on Simulation folder.\n", prname);
+
     // ------------------------------------------------------------------------
     // cria o arquivo .v ------------------------------------------------------
     // ------------------------------------------------------------------------
@@ -354,48 +359,34 @@ void hdl_tb_file(int itr_addr)
     FILE *f_veri = fopen(tmp,"w");
 
     // ------------------------------------------------------------------------
-    // cabecalho e sinais globais ---------------------------------------------
+    // cabecalho --------------------------------------------------------------
     // ------------------------------------------------------------------------
+
+    fprintf(f_veri, "`timescale 1ns/1ps\n\n", prname);
+    fprintf(f_veri,    "module %s_tb();\n\n", prname);
+    
+    // ------------------------------------------------------------------------
+    // geracao de clock e reset -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    fprintf(f_veri, "// geracao de clock e reset ---------------------------------------------------\n\n");
 
     double T = 1000.0/sim_clk(); // periodo do clock em ns (clk frq em MHz)
 
-    fprintf(f_veri,          "`timescale 1ns/1ps\n\n", prname);
-    fprintf(f_veri,             "module %s_tb();\n\n", prname);
-    fprintf(f_veri,                 "reg clk, rst;\n"        );
-    fprintf(f_veri,             "integer i,prog;\n\n"        );
+    // variaveis de clock e reset
+    fprintf(f_veri, "reg clk, rst;\n\n");
 
-    // ------------------------------------------------------------------------
-    // inicializacao (reset, progress e $finish) ------------------------------
-    // ------------------------------------------------------------------------
-
-    fprintf(f_veri, "initial begin\n\n");
-    // necessario pro iverilog criar o .vcd
-    fprintf(f_veri, "    $dumpfile(\"%s_tb.vcd\");\n", prname);
-    fprintf(f_veri, "    $dumpvars(0,%s_tb);\n\n"    , prname);
+    // inicio do initial
+    fprintf(f_veri, "initial begin\n");
     // inicializa clock e da um reset
-    fprintf(f_veri, "    clk = 0;\n"  );
-    fprintf(f_veri, "    rst = 1;\n"  );
-    fprintf(f_veri, "    #%f;\n",    T);
-    fprintf(f_veri, "    rst = 0;\n\n");
-    // barra de progressao
-    fprintf(f_veri, "    prog = $fopen(\"progress.txt\", \"w\");\n");
-    fprintf(f_veri, "    for (i = 10; i <= 100; i = i + 10) begin\n");
-    fprintf(f_veri, "        #%f;\n"  , T*sim_clk_num()/10          );
-    fprintf(f_veri, "        $display(\"Progress: \%\%0d\%\%\%\% complete\", i);\n");
-    fprintf(f_veri, "        $fdisplay(prog,\"%%0d\",i);\n");
-    fprintf(f_veri, "        $fflush(prog);\n");
-    fprintf(f_veri, "    end\n");
-    // fecha o arquivo de progresso
-    fprintf(f_veri, "    $fclose(prog);\n");
-    // termina a simulacao
-    fprintf(f_veri, "    $finish;\n\n");
+    fprintf(f_veri, "    clk = 0;\n");
+    fprintf(f_veri, "    rst = 1;\n");
+    fprintf(f_veri, "    #%f;\n",  T);
+    fprintf(f_veri, "    rst = 0;\n");
     // fim do initial
     fprintf(f_veri, "end\n\n");
 
-    // ------------------------------------------------------------------------
     // geracao do clock -------------------------------------------------------
-    // ------------------------------------------------------------------------
-
     fprintf(f_veri, "always #%f clk = ~clk;\n\n", T/2.0);
 
     // ------------------------------------------------------------------------
@@ -566,6 +557,31 @@ void hdl_tb_file(int itr_addr)
         }
     }
     if (opc_out()) fprintf(f_veri, "end\n\n");
+
+    // ------------------------------------------------------------------------
+    // geracao do progress e $finish ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    fprintf(f_veri, "// barra de progresso e finish ------------------------------------------------\n\n");
+
+    fprintf(f_veri, "integer progress, chrys;\n");
+    fprintf(f_veri, "initial begin\n\n");
+    // necessario pro iverilog criar o .vcd
+    fprintf(f_veri, "    $dumpfile(\"%s_tb.vcd\");\n", prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb);\n\n"    , prname);
+    // barra de progressao
+    fprintf(f_veri, "    progress = $fopen(\"progress.txt\", \"w\");\n" );
+    fprintf(f_veri, "    for (chrys = 10; chrys <= 100; chrys = chrys + 10) begin\n");
+    fprintf(f_veri, "        #%f;\n"  , T*sim_clk_num()/10          );
+    fprintf(f_veri, "        $fdisplay(progress,\"%%0d\",chrys);\n");
+    fprintf(f_veri, "        $fflush(progress);\n");
+    fprintf(f_veri, "    end\n\n");
+    // fecha o arquivo de progresso
+    fprintf(f_veri, "    $fclose(progress);\n");
+    // termina a simulacao
+    fprintf(f_veri, "    $finish;\n\n");
+    // fim do initial
+    fprintf(f_veri, "end\n\n");
 
     // ------------------------------------------------------------------------
     // finaliza arquivo -------------------------------------------------------

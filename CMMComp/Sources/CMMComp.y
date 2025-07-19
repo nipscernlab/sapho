@@ -43,6 +43,8 @@
 
 %{
 
+#include <stdlib.h>
+
 #include "..\Headers\itr.h"         // tratamento de interrupcao
 #include "..\Headers\oper.h"        // operacoes da ULA
 #include "..\Headers\stdlib.h"      // biblioteca padrao do sapho
@@ -375,6 +377,9 @@ int main(int argc, char *argv[])
     yyparse   ();                                            // aqui a magica acontece!!
     parse_end (argv[2], argv[3]);                            // finaliza o parser
 
+    // mensagem final
+    printf("Sucesso: compilou! Agora é só descobrir por que não funciona.\n");
+
     return 0;
 }
 
@@ -382,4 +387,5 @@ int main(int argc, char *argv[])
 void yyerror (char const *s)
 {
     fprintf (stderr, "Erro de sintaxe na linha %d. Você é uma pessoa confusa!\n", line_num+1);
+    exit(EXIT_FAILURE);
 }

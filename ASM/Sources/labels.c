@@ -6,6 +6,7 @@
 
 // includes globais
 #include <string.h>
+#include <stdlib.h>
 #include  <stdio.h>
 
 // includes locais
@@ -30,6 +31,7 @@ void add_label(char *la, int val)
     if (l_count == NLABMAX)
     {
         fprintf(stderr, "Erro: número de labels > %d", NLABMAX);
+        exit(EXIT_FAILURE);
     }
     else
     {

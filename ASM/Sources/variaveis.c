@@ -31,7 +31,7 @@ void var_add(char *var, int is_const)
     if (v_count == NVARMAX)
     {
         fprintf(stderr, "Erro: número de variáveis > %d", NVARMAX);
-        return;
+        exit(EXIT_FAILURE);
     }
 
     // transforma char *var pra int val
@@ -64,6 +64,6 @@ int var_find(char *val)
 	return ind;
 }
 
-void var_inc(int   val){v_count += val             ;} // incrementa o tamanho da memoria (para arrays)
-int  var_val(char *var){return v_val[var_find(var)];} // retorna o valor  da variavel
-int  var_cnt(         ){return v_count             ;} // retorna o numero de variaveis
+void var_inc (int   val){v_count += val             ;} // incrementa o tamanho da memoria (para arrays)
+int  var_val (char *var){return v_val[var_find(var)];} // retorna o valor  da variavel
+int  var_cnt (         ){return v_count             ;} // retorna o numero de variaveis

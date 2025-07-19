@@ -25,10 +25,16 @@ int mac_using = 0; // se estiver lendo uma macro, nao deve escrever o assembler 
 
 // nao deixa o parser escrever no arquivo assembler ---------------------------
 // ao inves disso, copia o codigo de uma macro
+// id_num eh o terceiro argumento da macro, que deve ser o numero de instrucoes
+// tirar essa necessidade de passar o id_num, pois o numero de instrucoes eh fixo
 void mac_use(int ids, int global, int id_num)
 {
+    // checa consistencia -----------------------------------------------------
+
     if (mac_using == 1)
-        fprintf(stderr, "Erro na linha %d: tá chamando uma macro dentro da outra. você é uma pessoa confusa!\n", line_num+1);
+        {fprintf(stderr, "Erro na linha %d: tá chamando uma macro dentro da outra. você é uma pessoa confusa!\n", line_num+1); exit(EXIT_FAILURE);}
+
+    printf("Info: replacing C± code by user macro %s at line %d.\n", v_name[ids], line_num+1);
 
     // se for global, tem q ver se tem que chamar a funcao main ainda ---------
 
@@ -60,7 +66,7 @@ void mac_use(int ids, int global, int id_num)
     FILE *f_macro;
     char a;
         f_macro  =    fopen  (mac_name, "r");
-    if (f_macro == 0) fprintf(stderr, "Erro na linha %d: cadê a macro %s? Tinha que estar na pasta Software!\n", line_num+1, file_name);
+    if (f_macro == 0){fprintf(stderr, "Erro na linha %d: cadê a macro %s? Tinha que estar na pasta Software!\n", line_num+1, file_name); exit(EXIT_FAILURE);}
 	do {      a  =    fgetc  (f_macro); if (a != EOF) fputc(a,f_asm);} while (a != EOF);
                       fputc  ('\n',f_asm);
 	                  fclose (f_macro);
@@ -81,8 +87,8 @@ void mac_use(int ids, int global, int id_num)
 
 void mac_end()
 {
-    if (mac_using == 0) fprintf(stderr, "Erro na linha %d: não estou achando o começo da macro\n", line_num+1);
-        mac_using  = 0;
+    if (mac_using == 0) {fprintf(stderr, "Erro na linha %d: não estou achando o começo da macro\n", line_num+1); exit(EXIT_FAILURE);}
+    mac_using = 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -104,6 +110,8 @@ void epsilon_taylor()
     char fnum[64]; sprintf(fnum, "%.7f",  numf);
     // escreve a variavel no arquivo de log
     fprintf(f_log, "epsilon_taylor %s\n", fnum);
+
+    printf("Info: precision on iterative non-linear functions -> %s\n", fnum);
 }
 
 // concatena conteudo do arquivo read no arquivo write

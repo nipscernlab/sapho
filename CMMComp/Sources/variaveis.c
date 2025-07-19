@@ -47,7 +47,7 @@ void add_var(char *var)
     if (v_count == NVARMAX)
     {
         fprintf (stderr, "Erro: Aumente o número de variáveis permitidas. Atual = %d\n", NVARMAX);
-        exit(1);
+        exit(EXIT_FAILURE);
     }
     else
     {
@@ -59,8 +59,8 @@ void add_var(char *var)
 // checa quais variaveis e funcoes foram usadas (no final do parse)
 void check_var()
 {
-    if (mainok == 0) fprintf (stderr, "Erro: cadê a função main()?\n");
-    
+    if (mainok == 0) {fprintf (stderr, "Erro: cadê a função main()?\n"); exit(EXIT_FAILURE);}
+
     // varre toda a tabela de variaveis
     for (int i = 0; i < v_count; i++)
     {
@@ -96,7 +96,7 @@ char* rem_fname(char *var, char *fname)
 int exec_id(char *text)
 {
     if (strcmp(text,"i") == 0)
-        fprintf (stderr, "Erro na linha %d: símbolo 'i' é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1);
+        {fprintf (stderr, "Erro na linha %d: símbolo 'i' é reservado para indicar a parte imaginária de uma constante complexa.\n", line_num+1); exit(EXIT_FAILURE);}
 
     char var_name[64];
 
@@ -122,7 +122,7 @@ int exec_num(char *text)
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((f < s) && (f != 0))
-        fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1)));
+       {fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1))); exit(EXIT_FAILURE);}
 
     if (find_var(text) == -1) add_var(text);
 

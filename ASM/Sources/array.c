@@ -91,8 +91,8 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
     rem_aspas(f_name);
     char path[2048];      sprintf(path  , "%s/Software/%s", proc_dir, f_name);
     FILE *f_file =          fopen(path  , "r");
-    if   (f_file == NULL) fprintf(stderr, "Erro: não rolou de abrir o arquivo %s!!\n", path);
-   
+    if   (f_file == NULL)  {fprintf(stderr, "Erro: não rolou de abrir o arquivo %s!!\n", path); exit(EXIT_FAILURE);}
+
     // agora le o arquivo -----------------------------------------------------
 
     int  val;
@@ -110,7 +110,7 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
             if (linha_e_inteiro(linha))
                 val = atoi(linha);
             else
-                fprintf(stderr, "Erro: a linha %d do arquivo %s não é um inteiro válido!\n", i, f_name); 
+                {fprintf(stderr, "Erro: a linha %d do arquivo %s não é um inteiro válido!\n", i, f_name); exit(EXIT_FAILURE);}
         }
 
         // se for tipo float
@@ -119,7 +119,7 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
             if (linha_e_float(linha))
                 val = f2mf(linha);
             else
-                fprintf(stderr, "Erro: a linha %d do arquivo %s não é um float válido!\n", i, f_name); 
+                {fprintf(stderr, "Erro: a linha %d do arquivo %s não é um float válido!\n", i, f_name); exit(EXIT_FAILURE);}
         }
 
         // se for a parte real de um comp
@@ -131,7 +131,7 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
                 val = f2mf(real);
             }
             else
-                fprintf(stderr, "Erro: a linha %d do arquivo %s não é um comp válido!\n", i, f_name); 
+                {fprintf(stderr, "Erro: a linha %d do arquivo %s não é um comp válido!\n", i, f_name); exit(EXIT_FAILURE);}
         }
 
         // se for a parte imaginaria de um comp
@@ -157,9 +157,12 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
 
     // se tem menos dados do que o necessario, gera um erro
     if ((i < tam) && (fil_typ != 4))
-        fprintf(stderr, "Erro: tá faltando %d linhas no arquivo %s!\n", tam-i, f_name);
+        {fprintf(stderr, "Erro: tá faltando %d linhas no arquivo %s!\n", tam-i, f_name); exit(EXIT_FAILURE);}
 
     fclose(f_file);
+
+    // informa que o array foi preenchido corretamente
+    printf("Info: filling array with %d values read from file %s.\n", tam, f_name);
 }
 
 // ----------------------------------------------------------------------------

@@ -4,7 +4,8 @@
 
 #define LABMAX 99999
 
-#include <stdio.h>
+#include  <stdio.h>
+#include <stdlib.h>
 
 // ----------------------------------------------------------------------------
 // variaveis locais -----------------------------------------------------------
@@ -26,7 +27,7 @@ int push_lab(int typ)
     if (lab_cnt == LABMAX)
     {
         fprintf (stderr, "Erro: aumente o número de Labels permitidos (if, while). Atual = %d\n", LABMAX);
-        return 0;
+        exit(EXIT_FAILURE);
     }
 
     lab_stk[stk_ind] = lab_cnt;

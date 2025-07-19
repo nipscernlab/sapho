@@ -2,6 +2,8 @@
 // rotinas para implementacao de saltos ---------------------------------------
 // ----------------------------------------------------------------------------
 
+#include <stdlib.h>
+
 #include "..\Headers\t2t.h"
 #include "..\Headers\oper.h"
 #include "..\Headers\labels.h"
@@ -116,7 +118,8 @@ void while_stmt()
 void exec_break()
 {
     // checa se o break esta dentro de um while
-    if (get_while() == 0) fprintf(stderr, "Erro na linha %d: esse brake aí tá perdido!\n",  line_num+1);
+    if (get_while() == 0) {fprintf(stderr, "Erro na linha %d: esse brake aí tá perdido!\n", line_num+1); exit(EXIT_FAILURE);}
+
     add_instr("JMP L%dend\n", get_while());
 }
 
@@ -228,7 +231,10 @@ void switch_break()
 void exec_switch(int et)
 {
     if (switching == 1)
-    fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Você é uma pessoa confusa!\n",  line_num+1);
+    {
+        fprintf(stderr, "Erro na linha %d: um switch/case dentro de outro? Você é uma pessoa confusa!\n", line_num+1);
+        exit(EXIT_FAILURE);
+    }
 
     // acha a variavel switch_exp (lexer) -------------------------------------
 

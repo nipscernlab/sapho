@@ -30,7 +30,9 @@ int  pipeln  =  3; // nivel de pipeline
 // verifica o nivel de pileline antes de setar
 void set_ppln(int nivel)
 {
-    if (nivel < 3 || nivel > 8) fprintf(stderr, "Erro: nível de pipeline inválido. Deve ser entre 3 e 8.\n");
+    if (nivel < 3 || nivel > 8) {fprintf(stderr, "Erro: nível de pipeline inválido. Deve ser entre 3 e 8.\n"); exit(EXIT_FAILURE);}
+
+    if (nivel > 3) printf("Info: setting pipeline level to %d.\n", nivel);
 
     pipeln = nivel;
 }

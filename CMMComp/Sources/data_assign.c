@@ -4,6 +4,7 @@
 
 // includes globais
 #include <string.h>
+#include <stdlib.h>
 #include  <stdio.h>
 
 // includes locais
@@ -20,12 +21,14 @@ void ass_set(int id, int et)
     if (v_type[id] == 0)
     {
         fprintf (stderr, "Erro na linha %d: se você declarar a variável '%s' eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
+        exit(EXIT_FAILURE);
     }
 
     // testa se eh um array que esqueceram o indice
     if (v_isar[id] > 0)
     {
         fprintf (stderr, "Erro na linha %d: '%s' é um array. Cadê o índice?\n", line_num+1, rem_fname(v_name[id], fname));
+        exit(EXIT_FAILURE);
     }
 
     // ------------------------------------------------------------------------
@@ -268,12 +271,14 @@ void ass_array(int id, int et, int fft)
     if (v_type[id] == 0)
     {
         fprintf (stderr, "Erro na linha %d: se você declarar a variável '%s' eu agradeço.\n", line_num+1, rem_fname(v_name[id], fname));
+        exit(EXIT_FAILURE);
     }
 
     // checagem entre array e nao-array
     if (v_isar[id] == 0)
     {
         fprintf (stderr, "Erro na linha %d: '%s' não é um array.\n", line_num+1, rem_fname(v_name[id], fname));
+        exit(EXIT_FAILURE);
     }
 
     // ------------------------------------------------------------------------
