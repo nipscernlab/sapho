@@ -54,3 +54,4 @@ void exec_cI   (int idM, int etc);                   // gera matriz identidade
 void exec_v0   (int idv);                            // gera vetor de zeros
 void exec_cvin (int idv, int etc, int idp);          // le vetor de entrada
 void exec_vout (int idp, int etc, int idv);          // escreve vetor pra saida
+void exec_shift(int ida, int etb, int idc);          // shift register no vetor a (a tem q ser igual a c)

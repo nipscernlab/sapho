@@ -196,7 +196,7 @@ int main(int argc, char *argv[])
 	fclose(yyin);                                         // fecha o arquivo .asm
 	eval_finish();                                        // executa finalizacao do assembler
 
-  printf("Sucesso: arquivo %s.v gerado! O processador tá pronto pra uso.\n", prname);
+  printf("Sucesso: o processador tá pronto pra uso.\n");
 
   return 0;
 }

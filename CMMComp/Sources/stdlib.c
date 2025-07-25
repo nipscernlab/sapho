@@ -1942,3 +1942,95 @@ void exec_vout(int idp, int etc, int idv)
         add_instr("OUT %s\n", v_name[idp]);
     }
 }
+
+// executa um shift register no vetor com o valor dado a esquerda, ex: a # b -> |c>;
+// a e c tem que ser os mesmos vetores
+// fazer um novo tipo de array para shift register?
+void exec_shift(int ida, int etb, int idc)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se ida foi declarada
+    if (v_type[ida] == 0) {fprintf(stderr, "Erro na linha %d: tem que declarar '%s' primeiro!\n", line_num+1, rem_fname(v_name[ida], fname)); exit(EXIT_FAILURE);}
+
+    // checa se etb foi declarada
+    if (etb%OFST != 0 && v_type[etb%OFST] == 0) {fprintf(stderr, "Erro na linha %d: tem que declarar '%s' primeiro!\n", line_num+1, rem_fname(v_name[etb%OFST], fname)); exit(EXIT_FAILURE);}
+
+    // checa se idc eh igual a ida
+    if (idc != ida) {fprintf(stderr, "Erro na linha %d: só dá pra fazer shift de um vetor nele mesmo, abensoado!\n", line_num+1); exit(EXIT_FAILURE);}
+    
+    // checa se nao eh comp
+    if (v_type[ida] == 3 || get_type(etb) == 3) {fprintf(stderr, "Erro na linha %d: não implementei isso pra números complexos ainda. Se vira!\n", line_num+1); exit(EXIT_FAILURE);}
+
+    // checa se sao tipos iguais
+    //if (v_type[ida] != v_type[etb%OFST]) {fprintf(stderr, "Erro na linha %d: as variáveis têm que ser do mesmo tipo!\n", line_num+1); exit(EXIT_FAILURE);}
+    
+    // checa se ida eh um vetor
+    if (v_isar[ida] != 1) {fprintf(stderr, "Erro na linha %d: '%s' nem vetor é, abensoado!\n", line_num+1, rem_fname(v_name[ida], fname)); exit(EXIT_FAILURE);}
+
+    // checa se etb eh uma variavel
+    if (etb%OFST != 0 && v_isar[etb%OFST] > 0) {fprintf(stderr, "Erro na linha %d: não é assim que se usa '%s'!\n", line_num+1, rem_fname(v_name[etb%OFST], fname)); exit(EXIT_FAILURE);}
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (etb%OFST != 0) v_used[etb%OFST] = 1;
+    
+    // ------------------------------------------------------------------------
+    // prepara variaveis locais -----------------------------------------------
+    // ------------------------------------------------------------------------
+
+    int N = v_size[ida];
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    printf("Info: Dirac notation for shift register in vector %s detected at line %d.\n", v_name[ida], line_num+1);
+
+    // ida int e etb int na memoria
+    if (v_type[ida] == 1 && get_type(etb) == 1 && etb%OFST != 0)
+    {
+        for (int i = N-1; i > 0; i--)
+        {
+            add_instr("LOD_V %s %d\n", v_name[ida], i-1);
+            add_instr("SET_V %s %d\n", v_name[ida], i);
+        }
+
+        add_instr("LOD %s\n", v_name[etb%OFST]);
+        add_instr("SET %s\n", v_name[ida]);
+    }
+
+    // ida float e etb int no acc
+    if (v_type[ida] == 2 && get_type(etb) == 1 && etb%OFST == 0)
+    {
+        add_instr("SET aux_var\n");
+
+        for (int i = N-1; i > 0; i--)
+        {
+            add_instr("LOD_V %s %d\n", v_name[ida], i-1);
+            add_instr("SET_V %s %d\n", v_name[ida], i);
+        }
+
+        add_instr("I2F_M aux_var\n");
+        add_instr("SET %s\n", v_name[ida]);
+    }
+
+    // ida float e etb float no acc
+    if (v_type[ida] == 2 && get_type(etb) == 2 && etb%OFST == 0)
+    {
+        add_instr("SET aux_var\n");
+
+        for (int i = N-1; i > 0; i--)
+        {
+            add_instr("LOD_V %s %d\n", v_name[ida], i-1);
+            add_instr("SET_V %s %d\n", v_name[ida], i);
+        }
+
+        add_instr("LOD aux_var\n");
+        add_instr("SET %s\n", v_name[ida]);
+    }
+}

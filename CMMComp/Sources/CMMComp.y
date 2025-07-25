@@ -39,6 +39,7 @@
       a # |0>;          -> zera todos os elementos do vetor a
       a # c|in(x)>;     -> preenche vetor a com leitura da porta x ponderado por c
       out(x,c|a>);      -> OUT no vetor a ponderado por c
+      a # c -> |a>;     -> shift register
 */
 
 %{
@@ -200,7 +201,7 @@ stmt_case:        declar     // declaracoes de variaveis
          |    while_stmt     // loop while
          |  if_else_stmt     // if/else
          |       std_out     // stdlib de output de dados
-         |      sdt_vout     // output de dados com notacao de Dirac
+         |      std_vout     // output de dados com notacao de Dirac
          |     void_call     // chamada de subrotina
          |   return_call     // retorno de funcao
          |       mac_use     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
@@ -226,7 +227,6 @@ exp_list :                                                           // pode ser
 // Standard library -----------------------------------------------------------
 
 std_out  : OUT  '(' INUM ',' exp ')' ';'            {exec_out ($3,$5   );} // saida de dados
-sdt_vout : OUT  '(' INUM ',' exp '|' ID BRA ')' ';' {exec_vout($3,$5,$7);} // saida de dados com notaaca de Dirac
 std_in   : INN  '(' INUM ')'                   {$$ = exec_in  ($3      );} // entrada de dados
 std_pst  : PST  '(' exp  ')'                   {$$ = exec_pst ($3      );} // funcao pset(x)      -> zera se negativo
 std_abs  : ABS  '(' exp  ')'                   {$$ = exec_abs ($3      );} // funcao  abs(x)      -> valor absoluto de x
@@ -241,6 +241,7 @@ std_imag : IMAG '(' exp  ')'                   {$$ = exec_imag($3      );} // fu
 std_comp : COMP '(' exp  ',' exp ')'           {$$ = exec_comp($3,$5   );} // funcao complex(x,y) -> cria um comp apartir de 2 reais
 std_fase : FASE '(' exp  ')'                   {$$ = exec_fase($3      );} // funcao fase(x)      -> pega a fase de um comp
 std_mod2 : MOD2 '(' exp  ')'                   {$$ = exec_mod2($3      );} // funcao mod2(x)      -> pega o modulo ao quadrado de um comp
+std_vout : OUT  '(' INUM ',' exp '|' ID BRA ')' ';' {exec_vout($3,$5,$7);} // saida de dados com notacao de Dirac
 
 // if/else --------------------------------------------------------------------
 
@@ -298,6 +299,7 @@ assignment : ID  '=' exp ';'                          {ass_set($1,$3);}
            | ID '#' exp     EYE ';'                              {exec_cI   ($1,$3       );} // A # c|I|
            | ID '#'         VZERO ';'                            {exec_v0   ($1          );} // a # |0>
            | ID '#' exp '|' INN '(' INUM ')' BRA ';'             {exec_cvin ($1,$3,$7    );} // a # |in(0)>
+           | ID '#' exp '-' '>' '|' ID BRA ';'                   {exec_shift($1,$3,$7    );} // a # c -> |a>
 
 // expressoes -----------------------------------------------------------------
 

@@ -57,6 +57,32 @@ int find_opc(const char *opc, const char *str)
     return 0;
 }
 
+// Substitui ⟨ por < e ⟩ por >
+// para mostrar no gtkwave
+void substituir_braket(char *str)
+{
+    unsigned char *src = (unsigned char *)str;
+    unsigned char *dst = (unsigned char *)str;
+
+    while (*src)
+    {
+        // ⟨ = 0xE2 0x9F 0xA8
+        if (src[0] == 0xE2 && src[1] == 0x9F && src[2] == 0xA8)
+        {
+            *dst++ = '<';
+            src += 3;
+        }
+        // ⟩ = 0xE2 0x9F 0xA9
+        else if (src[0] == 0xE2 && src[1] == 0x9F && src[2] == 0xA9)
+        {
+            *dst++ = '>';
+            src += 3;
+        }
+        else *dst++ = *src++;
+    }
+    *dst = '\0';
+}
+
 // ----------------------------------------------------------------------------
 // funcoes de inicio e termino do parse ---------------------------------------
 // ----------------------------------------------------------------------------
@@ -128,6 +154,7 @@ void parse_end(char *prname, char *d_proc)
     int cnt = 1;
     while(fgets(texto, 1001, input) != NULL)
     {
+        substituir_braket(texto);
         sprintf(linha, "%d %s", cnt++, texto);
         fputs(linha, output);
         memset(texto, 0, sizeof(char) * 1001);

@@ -325,7 +325,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     if (sim_multi()==0)
     {
     fprintf(f_veri, "always @ (posedge clk) if (valr10 == %d) begin\n", sim_get_fim());
-    fprintf(f_veri, "$display(\"Fim do programa!\");\n");
+    fprintf(f_veri, "$display(\"Info: end of program!\");\n");
     fprintf(f_veri, "$finish;\n");
     fprintf(f_veri, "end\n\n");
     }

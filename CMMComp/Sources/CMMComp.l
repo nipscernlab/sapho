@@ -6,7 +6,6 @@
 #include "..\Headers\variaveis.h"
 #include "..\Headers\data_declar.h"
 
-void yyerror     (char *);
 int  conta_linhas(char *texto); // para comentarios em bloco
 
 %}

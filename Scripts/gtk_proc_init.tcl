@@ -32,6 +32,8 @@ proc addFac {facname dataFormat color alias tradutor filter} {
 # adiciona uma variavel de acordo com o tipo de dado
 proc addVar {padrao tipo dataFormat filter} {
     set var_typ [listFac $padrao]
+
+    puts "Info: found [llength $var_typ] $tipo type variables."
     
     for {set i 0} {$i < [llength $var_typ] } {incr i} {
         set facname [lindex $var_typ $i]
@@ -43,6 +45,8 @@ proc addVar {padrao tipo dataFormat filter} {
 }
 
 # Pega infos do processador ---------------------------------------------------
+
+puts "Info: running standard GTKWave file..."
 
 set    fileID [open "tcl_infos.txt" r]
 gets  $fileID tmp_dir
@@ -65,7 +69,12 @@ gtkwave::/Edit/Insert_Comment {I/O ****************}
 set req_in  [listFac "req_in_sim"]
 set entrada [listFac "in_sim"    ]
 
+puts "Info: found [llength $req_in] input ports in use."
+
 for {set i 0} {$i < [llength $req_in] } {incr i} {
+
+    puts "Info: adding signals for input port $i."
+
     addFac [list [lindex $req_in  $i]] "Binary"         "Yellow" "req_in $i" "" ""
     addFac [list [lindex $entrada $i]] "Signed_Decimal" "Yellow" "input  $i" "" ""
 }
@@ -75,7 +84,12 @@ for {set i 0} {$i < [llength $req_in] } {incr i} {
 set out_en [listFac "out_en_sim"]
 set saida  [listFac "out_sig"   ]
 
+puts "Info: found [llength $out_en] output ports in use."
+
 for {set i 0} {$i < [llength $out_en] } {incr i} {
+
+    puts "Info: adding signals for output port $i."
+
     addFac [list [lindex $out_en $i]] "Binary"         "Yellow" "out_en $i" "" ""
     addFac [list [lindex $saida  $i]] "Signed_Decimal" "Yellow" "output $i" "" ""
 }
@@ -83,6 +97,8 @@ for {set i 0} {$i < [llength $out_en] } {incr i} {
 # Separador de Instrucoes -----------------------------------------------------
 
 gtkwave::/Edit/Insert_Comment {Instructions *******}
+
+puts "Info: adding Assembly and C± instructions."
 
 # Assembly --------------------------------------------------------------------
 
@@ -95,6 +111,8 @@ addFac [getFac "proc.linetabs"] "Signed_Decimal" "Violet" "C+-" "$tmp_dir/trad_c
 # Separador de Variaveis ------------------------------------------------------
 
 gtkwave::/Edit/Insert_Comment {Variables **********}
+
+puts "Info: adding variables..."
 
 # Tipo int --------------------------------------------------------------------
 
@@ -112,3 +130,5 @@ addVar "proc.comp_me3" "comp" "Binary" "$bin_dir/comp2gtkw.exe"
 
 gtkwave::/Time/Zoom/Zoom_Best_Fit
 gtkwave::/View/Left_Justified_Signals
+
+puts "Sucesso: sinais e variáveis adicionados corretamente."
