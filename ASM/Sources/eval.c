@@ -73,9 +73,8 @@ int  nbopr;             // num de bits de operando
 int eval_get(char *fname, char *var, char *val)
 {
     // abre o arquivo de log
-    char path[1024];
-    sprintf(path, "%s/%s", temp_dir, fname);
-    FILE *input =          fopen(path  , "r");
+    char path[1024]; sprintf(path, "%s/%s", temp_dir, fname);
+    FILE *input = fopen(path , "r");
     if   (input == NULL) {fprintf(stderr, "Erro: cadê o arquivo %s?\n", path); exit(EXIT_FAILURE);}
 
     char linha[1001];
@@ -98,9 +97,9 @@ void instr_ula(char *va, int is_const)
     // se for a primeira vez que a var aparece, faz o cadastro
     if (var_find(va) == -1)
     {
-        var_add(va, is_const);                              // adiciona variavel na tabela
-        fprintf(f_data, "%s\n", itob(var_val(va), nubits)); // adiciona variavel na mem de dados
-        sim_reg(va);                                        // registra variavel no simulador (se for do usuario)
+        var_add (va, is_const);                              // adiciona variavel na tabela
+        fprintf (f_data, "%s\n", itob(var_val(va), nubits)); // adiciona variavel na mem de dados
+        sim_regi(va);                                        // registra variavel no simulador (se for do usuario)
     }
 
     // escreve a nova instrucao
@@ -138,6 +137,13 @@ void instr_out(char *va)
     sim_add(opc_name,va);
     // cadastra o indice da saida usada
     o_used[atoi(va)] = 1;
+}
+
+// cadastra declaracao de arrays
+void instr_arr(char *va)
+{
+         var_add(va ,0); // adiciona array na tabela
+    sim_regi_arr(va   ); // registra array no simulador (procura infos no cmm_log.txt)
 }
 
 // gera instrucao com endereco va_name + va (pseudo instrucao)
@@ -269,9 +275,9 @@ void eval_opernd(char *va, int is_const)
         case  9: nugain =  atoi(va);                   state =  0; break; // valor da normalizacao
         case 10: fftsiz =  atoi(va);                   state =  0; break; // num de bits pra inverter na fft
         case 11: pipeln =  atoi(va);                   state =  0; break; // nivel de pipeline
-        case 12: var_add       (va ,0);                state = 13; break; // achou um array sem inicializacao
+        case 12: instr_arr     (va);                   state = 13; break; // achou um array sem inicializacao
         case 13: arr_add  (atoi(va),0     ,"",f_data); state =  0; break; // declara  array sem inicializacao
-        case 14: var_add       (va ,0);                state = 15; break; // achou um array com inicializacao
+        case 14: instr_arr     (va);                   state = 15; break; // achou um array com inicializacao
         case 15: arr_typ = atoi(va);                   state = 16; break; // pega o tipo de array
         case 16: arr_tam = atoi(va);                   state = 17; break; // pega o tamanho do array com arquivo
         case 17: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)

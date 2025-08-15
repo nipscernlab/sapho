@@ -30,6 +30,7 @@ char dir_soft [1024]; // diretorio Software
 int  acc_ok   = 0;    // 0 -> acc vazio (use LOD)  , 1 -> acc carregado (use P_LOD)
 int  line_num = 0;    // numero da linha sendo parseada
 int  num_ins  = 0;    // numero de instrucoes do parse
+int  sim_arr  = 0;    // diz se simula ou nao array
 
 // ----------------------------------------------------------------------------
 // funcoes auxiliares ---------------------------------------------------------
@@ -87,7 +88,7 @@ void substituir_braket(char *str)
 // funcoes de inicio e termino do parse ---------------------------------------
 // ----------------------------------------------------------------------------
 
-void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d_tmp)
+void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d_tmp, char *d_array)
 {
     // pega os argumentos -----------------------------------------------------
 
@@ -100,6 +101,8 @@ void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d
     sprintf(dir_soft , "%s/Software", d_proc ); // pega o diretorio Software
     strcpy (dir_macro,                d_macro); // pega o diretorio Macro
     strcpy (dir_tmp  ,                d_tmp  ); // pega o diretorio Tmp
+
+    sim_arr = strcmp(d_array, "1") == 0;
 
     // cria arquivos auxiliares -----------------------------------------------
 

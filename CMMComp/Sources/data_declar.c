@@ -42,17 +42,6 @@ void declar_var(int id)
     v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
-    // declara variavel no arquivo de log -------------------------------------
-
-    // salva a funcao a qual ela pertence
-    char func[256]; if (strcmp(fname,"")==0) strcpy(func, "global"); else strcpy(func, fname);
-
-    fprintf(f_log, "%s %s %d\n"  , func, rem_fname(v_name[id], fname), type_tmp);
-    if (type_tmp == 3) // se for comp, declara parte imaginaria
-    {
-    fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
-    }
-
     // declara parte imaginaria se for comp -----------------------------------
     
     if (type_tmp > 2)
@@ -63,16 +52,29 @@ void declar_var(int id)
         v_asgn[idi] = 0;
         v_fnid[idi] = find_var(fname);
     }
+
+    // registra variavel no arquivo de log ------------------------------------
+
+    // salva a funcao a qual ela pertence
+    char func[256]; if (strcmp(fname,"")==0) strcpy(func, "global"); else strcpy(func, fname);
+    // salva os dados no arquivo log
+    fprintf(f_log, "%s %s %d\n", func, rem_fname(v_name[id], fname), type_tmp);
+    // se for comp, salva parte imaginaria tambem
+    if (type_tmp == 3) fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
 }
 
 // declara array 1D
 void declar_arr_1d(int id_var, int id_arg, int id_fname)
 {
+    // checa consistencia -----------------------------------------------------
+
     if (v_type[id_var] != 0) // variavel ja existe
     {
         fprintf (stderr, "Erro na linha %d: a variável '%s' já existe. Vai tomar um Ω³!\n", line_num+1, rem_fname(v_name[id_var], fname));
         exit(EXIT_FAILURE);
     }
+
+    // atualiza status do array -----------------------------------------------
 
     v_type[id_var] = type_tmp;               // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
     v_used[id_var] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
@@ -81,7 +83,20 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     v_asgn[id_var] = 1;                      // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     v_size[id_var] = atoi(v_name[id_arg]);   // guarda o tamanho do array
 
+    // registra array no arquivo de log ---------------------------------------
+
     int type = type_tmp;
+
+    // salva a funcao a qual ela pertence
+    char func[256]; if (strcmp(fname,"")==0) strcpy(func, "global"); else strcpy(func, fname);
+    // salva os dados no arquivo de log
+    if (sim_arr == 1)
+    {
+                       fprintf(f_log, "%s %s   %d %s\n", func, rem_fname(v_name[id_var], fname), type_tmp, v_name[id_arg]);
+        if (type == 3) fprintf(f_log, "%s %s_i %d %s\n", func, rem_fname(v_name[id_var], fname), type_tmp, v_name[id_arg]);
+    }
+
+    // executa ----------------------------------------------------------------
 
     // tipo int, sem arquivo
     if ((type == 1) && (id_fname == -1))

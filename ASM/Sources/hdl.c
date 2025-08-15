@@ -239,10 +239,12 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     fprintf(f_veri, "// variaveis ------------------------------------------------------------------\n\n");
 
     // cria um registrador para cada variavel encontrada
-    for (int i = 0; i < sim_cnt(); i++)
+    for (int i = 0; i < sim_cont(); i++)
     {
+        // se for float, ja coloca os 16 bits que indicam nbmant e nbexpo
         if (sim_type(i) == 2)
             fprintf(f_veri, "reg [16+%d-1:0] %s=0;\n", nubits, sim_name(i));
+        // se for int/comp nao precisa dos bits extras (o comp vai ser colocado depois)
         else
             fprintf(f_veri, "reg [%d-1:0] %s=0;\n"   , nubits, sim_name(i));
     }
@@ -250,7 +252,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // inicia o always para registrar as variaveis
     fprintf(f_veri, "\nalways @ (posedge clk) begin\n");
     // registra cada variavel, dependendo do endereco de cada uma
-    for (int i = 0; i < sim_cnt(); i++)
+    for (int i = 0; i < sim_cont(); i++)
     {
         if (sim_type(i) == 2)
             fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,out};\n", sim_addr(i), sim_name(i), nbmant, nbexpo);
@@ -262,11 +264,11 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // se a variavel for comp ...
     // junta a parte real e imag em uma variavel do dobro de tamanho
     char ni[64],nj[64],im[64];
-    for (int i = 0; i < sim_cnt(); i++)
+    for (int i = 0; i < sim_cont(); i++)
     {
         if (sim_type(i) == 3)
         {
-            for (int j = 0; j < sim_cnt(); j++)
+            for (int j = 0; j < sim_cont(); j++)
             {
                 strcpy(ni,sim_name(i));
                 strcpy(nj,sim_name(j));
@@ -276,6 +278,63 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
                 sprintf(im, "%s_i", ni);
                 if (strcmp(nj,im) == 0)
                     fprintf(f_veri,"wire [16+%d*2-1:0] comp_%s = {8'd%d, 8'd%d, %s, %s};\n", nubits, sim_name(i), nbmant, nbexpo, sim_name(i), sim_name(j));
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // cadastra arrays do usuario para simulacao ------------------------------
+    // ------------------------------------------------------------------------
+
+    if (sim_cont_arr()>0)
+    fprintf(f_veri, "\n// arrays ---------------------------------------------------------------------\n\n");
+
+    // cria um registrador para cada variavel do array
+    for (int i = 0; i < sim_cont_arr(); i++)
+    {
+        for (int j = 0; j < sim_size_arr(i); j++)
+        {
+            // se for float, ja coloca os 16 bits que indicam nbmant e nbexpo
+            if (sim_type_arr(i) == 2)
+                fprintf(f_veri, "reg [16+%d-1:0] %s%04d=0;\n", nubits, sim_name_arr(i), j);
+            // se for int/comp nao precisa dos bits extras (o comp vai ser colocado depois)
+            else
+                fprintf(f_veri, "reg [%d-1:0] %s%04d=0;\n"   , nubits, sim_name_arr(i), j);
+        }
+    }
+
+    // inicia o always para registrar as variaveis do array
+    if (sim_cont_arr()>0) fprintf(f_veri, "\nalways @ (posedge clk) begin\n");
+    // registra cada variavel, dependendo do endereco de cada uma
+    for (int i = 0; i < sim_cont_arr(); i++)
+    {
+        for (int j = 0; j < sim_size_arr(i); j++)
+        {
+            if (sim_type_arr(i) == 2)
+                fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s%04d <= {8'd%d,8'd%d,out};\n", sim_addr_arr(i)+j, sim_name_arr(i), j, nbmant, nbexpo);
+            else
+                fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s%04d <= out;\n"              , sim_addr_arr(i)+j, sim_name_arr(i), j);
+        }
+    }
+    if (sim_cont_arr()>0) fprintf(f_veri, "end\n\n");
+
+    // se a variavel for comp ...
+    // junta a parte real e imag em uma variavel do dobro de tamanho
+    for (int i = 0; i < sim_cont_arr(); i++)
+    {
+        if (sim_type_arr(i) == 3)
+        {
+            for (int j = 0; j < sim_cont_arr(); j++)
+            {
+                strcpy(ni,sim_name_arr(i));
+                strcpy(nj,sim_name_arr(j));
+                ni[strlen(ni)-3] = '\0';
+                nj[strlen(nj)-3] = '\0';
+
+                sprintf(im, "%s_i", ni);
+                if (strcmp(nj,im) == 0)
+                    for (int k = 0; k < sim_size_arr(i); k++)
+                        fprintf(f_veri,"wire [16+%d*2-1:0] comp_%s%04d = {8'd%d, 8'd%d, %s%04d, %s%04d};\n", nubits, sim_name_arr(i), k, nbmant, nbexpo, sim_name_arr(i), k, sim_name_arr(j), k);
             }
         }
     }
@@ -325,8 +384,8 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     if (sim_multi()==0)
     {
     fprintf(f_veri, "always @ (posedge clk) if (valr10 == %d) begin\n", sim_get_fim());
-    fprintf(f_veri, "$display(\"Info: end of program!\");\n");
-    fprintf(f_veri, "$finish;\n");
+    fprintf(f_veri, "   $display(\"Info: end of program!\");\n");
+    fprintf(f_veri, "   $finish;\n");
     fprintf(f_veri, "end\n\n");
     }
 

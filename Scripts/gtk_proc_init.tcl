@@ -46,7 +46,7 @@ proc addVar {padrao tipo dataFormat filter} {
 
 # Pega infos do processador ---------------------------------------------------
 
-puts "Info: running standard GTKWave file..."
+puts "Info: running standard GTKWave configuration..."
 
 set    fileID [open "tcl_infos.txt" r]
 gets  $fileID tmp_dir
@@ -114,21 +114,147 @@ gtkwave::/Edit/Insert_Comment {Variables **********}
 
 puts "Info: adding variables..."
 
-# Tipo int --------------------------------------------------------------------
+# Variavel tipo int -----------------------------------------------------------
 
 addVar "proc.me1" "int" "Signed_Decimal" ""
 
-# Tipo float ------------------------------------------------------------------
+# Variavel tipo float ---------------------------------------------------------
 
 addVar "proc.me2" "float" "Binary" "$bin_dir/float2gtkw.exe"
 
-# Tipo comp -------------------------------------------------------------------
+# Variavel tipo comp ----------------------------------------------------------
 
 addVar "proc.comp_me3" "comp" "Binary" "$bin_dir/comp2gtkw.exe"
+
+# Array tipo int --------------------------------------------------------------
+
+array set grupos_int {}
+
+# pega todos os arryas tipo comp e separa em grupos
+for {set i 0} {$i < [gtkwave::getNumFacs]} {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    if {[string match "*arr_me1*" $facname] &&
+        [regexp {^(.*?)(\d{4})\[\d+:\d+\]$} $facname -> base _]} {
+        
+        lappend grupos_int($base) $facname
+    }
+}
+
+# adiciona cada array encontrado
+foreach base_int [lsort [array names grupos_int]] {
+    
+    # adiciona array no gtkwave e da highlight
+    gtkwave::addSignalsFromList $grupos_int($base_int)
+
+    # tradutor
+    gtkwave::/Edit/Data_Format/Signed_Decimal
+
+    # pega funcao e nome do array
+    regexp {_f_(.*?)_v_} $base_int -> funcao
+    regexp {_v_(.*?)_e_} $base_int -> var
+
+    # cria grupo no gtkwave e tira o highlight
+    gtkwave::/Edit/Create_Group "int $var in $funcao"
+    gtkwave::/Edit/Toggle_Group_Open|Close
+    gtkwave::/Edit/UnHighlight_All
+
+    # muda o nome de cada indice do array
+    set i 0
+    foreach sinal $grupos_int($base_int) {
+        gtkwave::highlightSignalsFromList $sinal
+        gtkwave::/Edit/Alias_Highlighted_Trace "$var $i"
+        incr i
+    }
+}
+
+# Array tipo float ------------------------------------------------------------
+
+array set grupos_float {}
+
+# pega todos os arryas tipo float e separa em grupos
+for {set i 0} {$i < [gtkwave::getNumFacs]} {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    if {[string match "*arr_me2*" $facname] &&
+        [regexp {^(.*?)(\d{4})\[\d+:\d+\]$} $facname -> base _]} {
+
+        lappend grupos_float($base) $facname
+    }
+}
+
+# adiciona cada array encontrado
+foreach base_float [lsort [array names grupos_float]] {
+
+    # adiciona array no gtkwave e da highlight
+    gtkwave::addSignalsFromList $grupos_float($base_float)
+
+    # tradutor
+    gtkwave::/Edit/Data_Format/Binary
+    gtkwave::installProcFilter [gtkwave::setCurrentTranslateProc $bin_dir/float2gtkw.exe]
+
+    # pega funcao e nome do array
+    regexp {_f_(.*?)_v_} $base_float -> funcao
+    regexp {_v_(.*?)_e_} $base_float -> var
+
+    # cria grupo no gtkwave e tira o highlight
+    gtkwave::/Edit/Create_Group "float $var in $funcao"
+    gtkwave::/Edit/Toggle_Group_Open|Close
+    gtkwave::/Edit/UnHighlight_All
+
+    # muda o nome de cada indice do array
+    set i 0
+    foreach sinal $grupos_float($base_float) {
+        gtkwave::highlightSignalsFromList $sinal
+        gtkwave::/Edit/Alias_Highlighted_Trace "$var $i"
+        incr i
+    }
+}
+
+# Array tipo comp -------------------------------------------------------------
+
+array set grupos_comp {}
+
+# pega todos os arryas tipo comp e separa em grupos_comp
+for {set i 0} {$i < [gtkwave::getNumFacs]} {incr i} {
+    set facname [gtkwave::getFacName $i]
+
+    if {[string match "*comp_arr_me3*" $facname] &&
+        [regexp {^(.*?)(\d{4})\[\d+:\d+\]$} $facname -> base_comp _]} {
+        
+        lappend grupos_comp($base_comp) $facname
+    }
+}
+
+# adiciona cada array encontrado
+foreach base_comp [lsort [array names grupos_comp]] {
+    
+    # adiciona array no gtkwave e da highlight
+    gtkwave::addSignalsFromList $grupos_comp($base_comp)
+
+    # tradutor
+    gtkwave::/Edit/Data_Format/Binary
+    gtkwave::installProcFilter [gtkwave::setCurrentTranslateProc $bin_dir/comp2gtkw.exe]
+
+    # pega funcao e nome do array
+    regexp {_f_(.*?)_v_} $base_comp -> funcao
+    regexp {_v_(.*?)_e_} $base_comp -> var
+
+    # cria grupo no gtkwave e tira o highlight
+    gtkwave::/Edit/Create_Group "comp $var in $funcao"
+    gtkwave::/Edit/Toggle_Group_Open|Close
+    gtkwave::/Edit/UnHighlight_All
+
+    # muda o nome de cada indice do array
+    set i 0
+    foreach sinal $grupos_comp($base_comp) {
+        gtkwave::highlightSignalsFromList $sinal
+        gtkwave::/Edit/Alias_Highlighted_Trace "$var $i"
+        incr i
+    }
+}
 
 # Visualizacao ----------------------------------------------------------------
 
 gtkwave::/Time/Zoom/Zoom_Best_Fit
 gtkwave::/View/Left_Justified_Signals
-
-puts "Sucesso: sinais e variáveis adicionados corretamente."

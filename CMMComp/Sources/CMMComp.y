@@ -375,9 +375,9 @@ terminal : INUM                               {$$ = num2exp($1,1);}
 // ponto de inicio do programa
 int main(int argc, char *argv[])
 {
-    parse_init(argv[1], argv[2], argv[3], argv[4], argv[5]); // inicializa o parser e as variaveis globais
-    yyparse   ();                                            // aqui a magica acontece!!
-    parse_end (argv[2], argv[3]);                            // finaliza o parser
+    parse_init(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6]); // inicializa o parser e as variaveis globais
+    yyparse   ();                                                     // aqui a magica acontece!!
+    parse_end (argv[2], argv[3]);                                     // finaliza o parser
 
     // mensagem final
     printf("Sucesso: compilou! Agora é só descobrir por que não funciona.\n");

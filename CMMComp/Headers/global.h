@@ -24,13 +24,14 @@ extern char dir_tmp  [1024];     // diretorio Temp
 extern int  acc_ok  ;            // 0 -> acc vazio (use LOD), 1 -> acc carregado (use P_LOD)
 extern int  line_num;            // numero da linha sendo parseada
 extern int  num_ins ;            // numero de instrucoes parseadas (sem macros finais)
+extern int  sim_arr ;            // diz se simula ou nao array
 
 // ----------------------------------------------------------------------------
 // funcoes de interface -------------------------------------------------------
 // ----------------------------------------------------------------------------
 
 // inicio e fim do parse
-void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d_tmp);
+void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d_tmp, char *d_array);
 void parse_end (char *prname, char *d_proc);
 
 // cadastra as instrucoes assembly
