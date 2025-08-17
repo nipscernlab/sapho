@@ -183,6 +183,9 @@ echo #### Roda o GTKWave
 
 echo %TMP_PRO%>tcl_infos.txt
 echo %BIN_DIR%>>tcl_infos.txt
+echo %SCR_DIR%>>tcl_infos.txt
+
+copy %SCR_DIR%\empty.vcd %TMP_PRO%
 
 if exist %SIMU_DIR%\%GTKW% (
     %GTKWAVE% --rcvar "hide_sst on" --dark %SIMU_DIR%\%GTKW%      --script=%SCR_DIR%\pos_gtkw.tcl

@@ -182,6 +182,9 @@ echo %INST_LIST%> tcl_infos.txt
 echo %PROC_TYPE%>>tcl_infos.txt
 echo %TMP_DIR%>>  tcl_infos.txt
 echo %BIN_DIR%>>  tcl_infos.txt
+echo %SCR_DIR%>>  tcl_infos.txt
+
+copy %SCR_DIR%\empty.vcd %TMP_DIR%
 
 if exist %TOPL_DIR%\%GTKW% (
     %GTKWAVE% --rcvar "hide_sst on" --dark %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
