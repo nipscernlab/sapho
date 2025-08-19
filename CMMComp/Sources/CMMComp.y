@@ -7,6 +7,7 @@
     - tipo de dados comp (para números complexos) : ex: comp a = 3+4i;
 
     - StdLib      in(.)  : leitura de dados externos
+    - StdLib     fin(.)  : leitura de dados externos (convertendo pra float)
     - StdLib     out(.,.): escrita pra fora do processador
     - StdLib    norm(.)  : função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
     - StdLib  sign(.,.)  : retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
@@ -73,7 +74,7 @@ void  yyerror(char const *s);
 
 %token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH PIPELN                // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
-%token INN OUT                                                         // stdlib (I/O)
+%token INN FIN OUT                                                     // stdlib (I/O)
 %token NRM PST ABS SGN                                                 // stdlib (funcoes especiais)
 %token SQRT ATAN SIN COS                                               // stdlib (funcoes nao lineares)
 %token REAL IMAG COMP FASE MOD2                                        // stdlib (num complexos)
@@ -111,7 +112,7 @@ void  yyerror(char const *s);
 // reducoes que precisam gerar um exp (et)
 %type <ival> par_list
 %type <ival> func_call
-%type <ival> std_in
+%type <ival> std_in std_fin
 %type <ival> std_pst std_abs std_sign std_nrm
 %type <ival> std_sqrt std_atan std_sin std_cos
 %type <ival> std_real std_imag std_comp std_fase std_mod2
@@ -228,6 +229,7 @@ exp_list :                                                           // pode ser
 
 std_out  : OUT  '(' INUM ',' exp ')' ';'            {exec_out ($3,$5   );} // saida de dados
 std_in   : INN  '(' INUM ')'                   {$$ = exec_in  ($3      );} // entrada de dados
+std_fin  : FIN  '(' INUM ')'                   {$$ = exec_fin ($3      );} // entrada de dados (convertendo pra float)
 std_pst  : PST  '(' exp  ')'                   {$$ = exec_pst ($3      );} // funcao pset(x)      -> zera se negativo
 std_abs  : ABS  '(' exp  ')'                   {$$ = exec_abs ($3      );} // funcao  abs(x)      -> valor absoluto de x
 std_sign : SGN  '(' exp  ',' exp ')'           {$$ = exec_sign($3,$5   );} // funcao sign(x,y)    -> pega o sinal de x e coloca em y
@@ -310,6 +312,7 @@ exp:       terminal                           {$$ = $1;}
          | ID '[' exp ']' '[' exp ']'         {$$ = arr_2d2exp($1,$3,$6);}
          // std library que retorna valores
          | std_in                             {$$ = $1;}
+         | std_fin                            {$$ = $1;}
          | std_pst                            {$$ = $1;}
          | std_abs                            {$$ = $1;}
          | std_sign                           {$$ = $1;}

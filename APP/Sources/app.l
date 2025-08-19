@@ -47,7 +47,9 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
    "POP"   eval_opcode( 0); // retira dado da pilha
 
    "INN"   eval_opcode(20); // entrada de dados
+ "F_INN"   eval_opcode(20); // entrada de dados em ponto flutuante
  "P_INN"   eval_opcode(20); // PUSH + INN
+"PF_INN"   eval_opcode(20); // PUSH + F_INN
    "OUT"   eval_opcode(21); // saida de dados
 
    "JMP"   eval_opcode(19); // salto incondicional

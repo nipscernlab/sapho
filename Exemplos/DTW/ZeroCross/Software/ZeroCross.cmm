@@ -61,7 +61,7 @@ void main()
     //}
     //else
     //{
-        sinal_entrada = in(1);
+        sinal_entrada = fin(1);
         
         if(sinal_entrada == 0)
         {

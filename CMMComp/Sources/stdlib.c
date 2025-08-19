@@ -21,7 +21,7 @@
 // entrada e saida ------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-// input ex: x = in(0);
+// input ex: int x = in(0);
 int exec_in(int id)
 {
     if (atoi(v_name[id]) >= nuioin) {fprintf(stderr, "Erro na linha %d: não tem porta de entrada %s não!\n", line_num+1, v_name[id]); exit(EXIT_FAILURE);}
@@ -31,6 +31,18 @@ int exec_in(int id)
     acc_ok = 1;  // diz que o acc agora tem um valor carregado
 
     return OFST;
+}
+
+// input ex: float x = fin(0);
+int exec_fin(int id)
+{
+    if (atoi(v_name[id]) >= nuioin) {fprintf(stderr, "Erro na linha %d: não tem porta de entrada %s não!\n", line_num+1, v_name[id]); exit(EXIT_FAILURE);}
+
+    if (acc_ok == 0) add_instr("F_INN %s\n", v_name[id]); else add_instr("PF_INN %s\n", v_name[id]);
+
+    acc_ok = 1;  // diz que o acc agora tem um valor carregado
+
+    return 2*OFST;
 }
 
 // output ex: out(0,x);
@@ -1858,18 +1870,17 @@ void exec_cvin(int idv, int etc, int idp)
 
     for (int i = 0; i < N; i++)
     {
-        add_instr("INN %s\n", v_name[idp]);
-
         // int
         if (v_type[idv] == 1)
         {
+            add_instr("INN %s\n", v_name[idp]);
             add_instr("MLT %s\n",g);
         }
 
         // float
         if (v_type[idv] == 2)
         {
-            add_instr("I2F\n");
+            add_instr("F_INN %s\n", v_name[idp]);
             add_instr("F_MLT %s\n",g);
         }
 

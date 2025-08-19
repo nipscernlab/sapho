@@ -42,6 +42,7 @@ COMEN  "//"[^\n]*
 "#INTERPOINT" return ITRADD;
 
 "in"          return INN;
+"fin"         return FIN;
 "out"         return OUT;
 
 "norm"        return NRM;

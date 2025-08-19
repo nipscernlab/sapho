@@ -823,7 +823,7 @@ void opc_add(char *mne)
 // verifica se tem instrucao INN
 int opc_inn()
 {
-	return (find_opc("INN") != -1) | (find_opc("P_INN") != -1);
+	return (find_opc("INN") != -1) | (find_opc("P_INN") != -1) | (find_opc("F_INN") != -1) | (find_opc("PF_INN") != -1);
 }
 
 // verifica se tem instrucao OUT
