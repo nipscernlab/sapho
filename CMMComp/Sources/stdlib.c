@@ -89,7 +89,7 @@ void exec_out(int id, int et)
     // float var
     if ((get_type(et) == 2) && (et%OFST!=0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+        fprintf(stdout, "Atenção na linha %d: se não quiser esse warning, use 'fout'.\n", line_num+1);
 
         if (acc_ok == 0) add_instr("F2I_M %s\n", v_name[et%OFST]); else add_instr("P_F2I_M %s\n", v_name[et%OFST]);
     }
@@ -97,8 +97,68 @@ void exec_out(int id, int et)
     // float acc
     if ((get_type(et) == 2) && (et%OFST==0))
     {
-        fprintf(stdout, "Atenção na linha %d: convertendo o dado pra inteiro antes de sair do processador\n", line_num+1);
+        fprintf(stdout, "Atenção na linha %d: se não quiser esse warning, use 'fout'.\n", line_num+1);
 
+        add_instr("F2I\n");
+    }
+
+    add_instr("OUT %s\n", v_name[id]);
+
+    acc_ok = 0; // libera acc    
+}
+
+// output ex: fout(0,x);
+void exec_fout(int id, int et)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et foi declarada
+    if (et%OFST != 0 && v_type[et%OFST] == 0) {fprintf(stderr, "Erro na linha %d: tem que declarar '%s' primeiro!\n", line_num+1, rem_fname(v_name[et%OFST], fname)); exit(EXIT_FAILURE);}
+
+    // checa se eh comp
+    if (get_type(et) > 2) {fprintf (stderr, "Erro na linha %d: primeiro seleciona qual informação desse número complexo você quer!\n", line_num+1); exit(EXIT_FAILURE);}
+
+    // checa se et eh uma variavel
+    if (et%OFST != 0 && v_isar[et%OFST] > 0) {fprintf(stderr, "Erro na linha %d: não é assim que se usa '%s'!\n", line_num+1, rem_fname(v_name[et%OFST], fname)); exit(EXIT_FAILURE);}
+
+    // checa range de porta
+    if (atoi(v_name[id]) >= nuioou) {fprintf(stderr, "Erro na linha %d: não tem porta de saída %s não!\n", line_num+1, v_name[id]); exit(EXIT_FAILURE);}
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et%OFST != 0) v_used[et%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // int var
+    if ((get_type(et) == 1) && (et%OFST!=0))
+    {
+        fprintf(stdout, "Atenção na linha %d: se não quiser esse warning, use 'out'.\n", line_num+1);
+
+        if (acc_ok == 0) add_instr("LOD %s\n", v_name[et%OFST]); else add_instr("P_LOD %s\n", v_name[et%OFST]);
+    }
+
+    // int acc
+    if ((get_type(et) == 1) && (et%OFST==0))
+    {
+        fprintf(stdout, "Atenção na linha %d: se não quiser esse warning, use 'out'.\n", line_num+1);
+    }
+
+    // float var
+    if ((get_type(et) == 2) && (et%OFST!=0))
+    {
+        if (acc_ok == 0) add_instr("F2I_M %s\n", v_name[et%OFST]); else add_instr("P_F2I_M %s\n", v_name[et%OFST]);
+    }
+
+    // float acc
+    if ((get_type(et) == 2) && (et%OFST==0))
+    {
         add_instr("F2I\n");
     }
 

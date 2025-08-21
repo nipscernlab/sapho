@@ -44,6 +44,7 @@ COMEN  "//"[^\n]*
 "in"          return INN;
 "fin"         return FIN;
 "out"         return OUT;
+"fout"        return FOUT;
 
 "norm"        return NRM;
 "pset"        return PST;

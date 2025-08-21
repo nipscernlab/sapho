@@ -8,9 +8,10 @@
 // entrada e saida ------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-int  exec_in (int et);            //  input de dados
-int  exec_fin(int et);            //  input de dados (convertendo pra float)
-void exec_out(int et1, int et2);  // output de dados
+int  exec_in  (int et);           //  input de dados
+int  exec_fin (int et);           //  input de dados (convertendo pra float)
+void exec_out (int et1, int et2); // output de dados
+void exec_fout(int et1, int et2); // output de dados (convertendo pra float)
 
 // ----------------------------------------------------------------------------
 // funcoes especiais que evitam codigo ----------------------------------------

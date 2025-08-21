@@ -9,6 +9,7 @@
     - StdLib      in(.)  : leitura de dados externos
     - StdLib     fin(.)  : leitura de dados externos (convertendo pra float)
     - StdLib     out(.,.): escrita pra fora do processador
+    - StdLib    fout(.,.): escrita pra fora do processador (convertendo pra float)
     - StdLib    norm(.)  : função que divide o argumento pela constante dada por #NUGAIN (evita usar o circuito de divisão da ULA)
     - StdLib  sign(.,.)  : retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
     - StdLib    pset(.)  : função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
@@ -74,7 +75,7 @@ void  yyerror(char const *s);
 
 %token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH PIPELN                // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
-%token INN FIN OUT                                                     // stdlib (I/O)
+%token INN FIN OUT FOUT                                                // stdlib (I/O)
 %token NRM PST ABS SGN                                                 // stdlib (funcoes especiais)
 %token SQRT ATAN SIN COS                                               // stdlib (funcoes nao lineares)
 %token REAL IMAG COMP FASE MOD2                                        // stdlib (num complexos)
@@ -202,6 +203,7 @@ stmt_case:        declar     // declaracoes de variaveis
          |    while_stmt     // loop while
          |  if_else_stmt     // if/else
          |       std_out     // stdlib de output de dados
+         |      std_fout     // stdlib de output de dados (convertendo pra float)
          |      std_vout     // output de dados com notacao de Dirac
          |     void_call     // chamada de subrotina
          |   return_call     // retorno de funcao
@@ -228,6 +230,7 @@ exp_list :                                                           // pode ser
 // Standard library -----------------------------------------------------------
 
 std_out  : OUT  '(' INUM ',' exp ')' ';'            {exec_out ($3,$5   );} // saida de dados
+std_fout : FOUT '(' INUM ',' exp ')' ';'            {exec_fout($3,$5   );} // saida de dados (convertendo pra float)
 std_in   : INN  '(' INUM ')'                   {$$ = exec_in  ($3      );} // entrada de dados
 std_fin  : FIN  '(' INUM ')'                   {$$ = exec_fin ($3      );} // entrada de dados (convertendo pra float)
 std_pst  : PST  '(' exp  ')'                   {$$ = exec_pst ($3      );} // funcao pset(x)      -> zera se negativo
