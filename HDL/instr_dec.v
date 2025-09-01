@@ -476,7 +476,7 @@ endgenerate
 
 // junta as logicas para ula_op
 generate if (PIPELN>3) begin // NOP
-always @ (posedge clk) if (opcode != 7'd94) ula_op <= {b5,b4,b3,b2,b1,b0};
+always @ (posedge clk) if (opcode != 7'd96) ula_op <= {b5,b4,b3,b2,b1,b0};
 end else begin
 always @ (posedge clk)                      ula_op <= {b5,b4,b3,b2,b1,b0};
 end endgenerate

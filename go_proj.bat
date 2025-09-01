@@ -174,7 +174,7 @@ endlocal
 del f_list.txt
 del xcopy.txt
 
-%VVP% %PROJET%.vvp -fst
+start /b cmd /c %VVP% %PROJET%.vvp
 
 :: Roda o GtkWave -------------------------------------------------------------
 
@@ -184,12 +184,12 @@ echo %TMP_DIR%>>  tcl_infos.txt
 echo %BIN_DIR%>>  tcl_infos.txt
 echo %SCR_DIR%>>  tcl_infos.txt
 
-copy %SCR_DIR%\empty.vcd %TMP_DIR%>%TMP_DIR%\xcopy.txt
+copy %SCR_DIR%\fix.vcd %TMP_DIR%>%TMP_DIR%\xcopy.txt
 
 if exist %TOPL_DIR%\%GTKW% (
-    %GTKWAVE% --rcvar "hide_sst on" --dark %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
+    start /b cmd /c %GTKWAVE% --rcvar "hide_sst on" --dark %TOPL_DIR%\%GTKW% --script=%SCR_DIR%\pos_gtkw.tcl
 ) else (
-    %GTKWAVE% --rcvar "hide_sst on" --dark %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl
+    start /b cmd /c %GTKWAVE% --rcvar "hide_sst on" --dark %TMP_DIR%\%TB%.vcd --script=%SCR_DIR%\gtk_proj_init.tcl
 )
 
 cd %ROOT_DIR%

@@ -129,7 +129,7 @@ reg [NBITS-1:0] mem [DEPTH-1:0];
 
 // Stack Pointer
 
-reg  [NADDR-1:0] pointer = 0;
+reg  [NADDR-1:0] pointer = 0; // ideal para monitoramento
 wire [NADDR-1:0] pmaisum = pointer + um;
 wire [NADDR-1:0] pmenoum = pointer - um;
 
@@ -143,6 +143,14 @@ end
 
 always @ (posedge clk) if (push) mem[pointer] <= in;
 assign                     out = mem[pmenoum];
+
+// Flags
+`ifdef __ICARUS__ // ----------------------------------------------------------
+reg             fl_full = 0;
+reg [NADDR-1:0] fl_max  = 0;                   // estourou o ponteiro
+always @ (*) if ((pointer >= DEPTH) || (pmaisum-pointer != 1)) fl_full <= 1'b1;
+always @ (*) if ( pointer > fl_max                           ) fl_max  <= pointer;
+`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -273,7 +281,7 @@ assign out = (req_inr) ? ior : acc;
 
 endmodule
 
-// enderecamento indireto -----------------------------------------------------
+// Enderecamento indireto -----------------------------------------------------
 
 module rel_addr
 #(
@@ -714,11 +722,11 @@ instr_dec #(.PIPELN  ( PIPELN ),
 
 wire              sp_push = id_dsp_push;
 wire              sp_pop  = id_dsp_pop;
-wire [NUBITS-1:0] sp_in, stack_data;
+wire [NUBITS-1:0] sp_in, sp_data;
 
 stack #(.NADDR($clog2(DDEPTH)),
         .DEPTH(DDEPTH),
-        .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, stack_data);
+        .NBITS(NUBITS)) sp(clk, rst, sp_push, sp_pop, sp_in, sp_data);
 
 // Controles de entrada da ULA ------------------------------------------------
 
@@ -727,7 +735,7 @@ wire [NUBITS-1:0] ula_data_in2;
 wire [NUBITS-1:0] uic_acc;
 
 // entrada in1
-ula_in1_ctrl #(.NUBITS(NUBITS),.NBOPCO(NBOPCO)) uic1 (clk, id_dsp_pop, mem_data_rd, stack_data, ula_data_in1);
+ula_in1_ctrl #(.NUBITS(NUBITS),.NBOPCO(NBOPCO)) uic1 (clk, id_dsp_pop, mem_data_rd, sp_data, ula_data_in1);
 
 // entrada in2
 generate if (INN | P_INN | F_INN | PF_INN)
@@ -744,6 +752,7 @@ ula #(.PIPELN (PIPELN ),
       .NBMANT (NBMANT ),
       .NBEXPO (NBEXPO ),
       .NUGAIN (NUGAIN ),
+	  .NBOPCO (NBOPCO),
         .ADD  (  ADD   |  S_ADD  ),
 	  .F_ADD  (F_ADD   | SF_ADD  ),
         .MLT  (  MLT   |  S_MLT  ),
@@ -787,7 +796,7 @@ ula #(.PIPELN (PIPELN ),
         .EQU  (  EQU   |  S_EQU  ),
         .SHL  (  SHL   |  S_SHL  ),
         .SHR  (  SHR   |  S_SHR  ),
-        .SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op, ula_data_in1, ula_data_in2, ula_out);
+        .SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op, id_opcode, ula_data_in1, ula_data_in2, ula_out);
 
 assign sp_in = ula_out;
 
@@ -812,7 +821,7 @@ generate
 		           .FFTSIZ(FFTSIZ),
 		           .ILI(ILI),.ISI(ISI)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
 		                                   ula_out,
-		                                   if_operand[MDATAW-1:0], stack_data[MDATAW-1:0],
+		                                   if_operand[MDATAW-1:0], sp_data[MDATAW-1:0],
 		                                   mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);
 	end else begin
 		assign mem_wr      = id_wr;

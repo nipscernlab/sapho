@@ -122,18 +122,23 @@ endmodule
 
 // iguala o expoente de dois numeros -----------------------------------------
 // pra algumas operacoes que pedem mant. na mesma ordem de grandeza. ex: F_ADD
+// o pipeline deixou esse codigo muito confuso (rever)
 
 module ula_denorm
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
-	parameter EXP    =  8
+	parameter EXP    =  8,
+	parameter NBOPCO = 7
 )(
-	 input                        clk,
-	 input            [MAN+EXP:0] in1, in2,
-	output reg signed [EXP-1  :0] e_out,
-	output reg signed [MAN    :0] sm1_out, sm2_out
+	 input                         clk,
+	 input            [MAN+EXP :0] in1, in2,
+	 input            [NBOPCO-1:0] opc,
+	output reg signed [EXP-1   :0] e_out,
+	output reg signed [MAN     :0] sm1_out, sm2_out
 );
+
+// registra entradas ----------------------------------------------------------
 
 reg [MAN+EXP:0] in1r;
 reg [MAN+EXP:0] in2r;
@@ -146,6 +151,8 @@ end else begin : gen_no_pipe
 	always @ (*) in2r = in2;
 end endgenerate
 
+// desempacota as entradas registradas ----------------------------------------
+
 wire                  s1_in = in1r[MAN+EXP      ]; 
 wire                  s2_in = in2r[MAN+EXP      ]; 
 wire signed [EXP-1:0] e1_in = in1r[MAN+EXP-1:MAN];
@@ -153,10 +160,13 @@ wire signed [EXP-1:0] e2_in = in2r[MAN+EXP-1:MAN];
 wire        [MAN-1:0] m1_in = in1r[MAN    -1:0  ];
 wire        [MAN-1:0] m2_in = in2r[MAN    -1:0  ];
 
+// calcula o shift ------------------------------------------------------------
+// o expoente menor shifta para igualar ao maior ------------------------------
+
 wire signed [EXP:0] eme    =  e1_in-e2_in;
-wire                ege    =          eme   [EXP];
-wire        [EXP:0] shift2 = (ege) ?        {EXP+1{1'b0}} : eme;
-wire        [EXP:0] shift1 = (ege) ? -eme : {EXP+1{1'b0}};
+wire                ege    =  eme     [EXP];
+wire        [EXP:0] shift2 = (ege) ?  {EXP+1{1'b0}} : eme;
+wire        [EXP:0] shift1 = (ege) ? -eme           : {EXP+1{1'b0}};
 
 reg                  eger  ;
 reg signed [EXP-1:0] e1_inr;
@@ -172,10 +182,27 @@ end else begin : gen_no_pipe2
 	always @ (*) e2_inr = e2_in;
 end endgenerate
 
+// o expoente final eh o maior ------------------------------------------------
+
 always @ (*) e_out <= (eger) ? e2_inr : e1_inr;
+
+// shifta pra direita a mantissa com exp menor --------------------------------
 
 wire [MAN-1:0] m1_out = m1_in >> shift1;
 wire [MAN-1:0] m2_out = m2_in >> shift2;
+
+// Flags
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+reg [NBOPCO-1:0] opcr ; always @ (posedge clk) opcr <= opc;
+reg [NBOPCO-1:0] opcrr; generate if (PIPELN > 7) always @ (posedge clk) opcrr <= opcr; else	always @ (*) opcrr = opcr; endgenerate
+
+//          F_ADD          SF_ADD             se o shift a direita zerou a mantissa
+wire nan = (opcrr == 21 || opcrr == 22) && (((m1_in != 0) && (m1_out == 0)) || ((m2_in != 0) && (m2_out == 0)));
+
+`endif // ---------------------------------------------------------------------
+
+// finaliza -------------------------------------------------------------------
 
 reg           s1_inr ;
 reg           s2_inr ;
@@ -976,6 +1003,7 @@ module ula
 	parameter                     NBMANT = 23,
 	parameter                     NBEXPO =  8,
 	parameter signed [NUBITS-1:0] NUGAIN = 64,
+	parameter                     NBOPCO =  7,
 
 	// operacoes aritmeticas de dois parametros
 	parameter   ADD   = 0,
@@ -1039,6 +1067,7 @@ module ula
 (
 	input		               clk,
 	input         [       5:0] op,
+	input         [NBOPCO-1:0] opc,
 	input  signed [NUBITS-1:0] in1, in2,
 	output signed [NUBITS-1:0] out
 );
@@ -1048,7 +1077,7 @@ module ula
 wire signed [NBEXPO-1:0] e_out;             // expoente  normalizado
 wire signed [NBMANT  :0] sm1_out, sm2_out;  // mantissas normalizadas
 
-generate if (F_ADD | F_GRE | F_LES) ula_denorm #(PIPELN,NBMANT,NBEXPO) denorm(clk, in1, in2, e_out, sm1_out, sm2_out); endgenerate
+generate if (F_ADD | F_GRE | F_LES) ula_denorm #(PIPELN,NBMANT,NBEXPO,NBOPCO) denorm(clk, in1, in2, opc, e_out, sm1_out, sm2_out); endgenerate
 
 // ADD ------------------------------------------------------------------------
 

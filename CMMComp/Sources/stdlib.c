@@ -1448,6 +1448,8 @@ void exec_cv(int idy, int et, int idv)
 
         add_instr("SET_V %s %d\n", v_name[idy], i);
     }
+
+    acc_ok = 0;
 }
 
 // soma ponderada no segundo vetor, ex: a # |b> + c|d>;
@@ -1538,6 +1540,8 @@ void exec_apcb(int idy, int ida, int etc, int idb)
 
         add_instr("SET_V %s %d\n", v_name[idy], i);
     }
+
+    acc_ok = 0;
 }
 
 // produto externo entre dois vetores, ex: A # |a><b|;
@@ -1778,6 +1782,8 @@ void exec_cM(int idA, int etc, int idM)
             add_instr("SET_V %s %d\n", v_name[idA], M*i+j);
         }
     }
+
+    acc_ok = 0;
 }
 
 // gera matriz identidade com constante, ex: A # c|I|;
@@ -1845,6 +1851,8 @@ void exec_cI(int idM, int etc)
             if (i != j) add_instr("SET_V %s %d\n", v_name[idM], N*i+j);
         }
     }
+
+    acc_ok = 0;
 }
 
 // gera vetor de zeros, ex: a # |0>;
@@ -1946,6 +1954,8 @@ void exec_cvin(int idv, int etc, int idp)
 
         add_instr("SET_V %s %d\n", v_name[idv], i);
     }
+
+    acc_ok = 0;
 }
 
 // escreve vetor pra saida com peso c, ex: out(0, c|a>);
@@ -2012,6 +2022,8 @@ void exec_vout(int idp, int etc, int idv)
 
         add_instr("OUT %s\n", v_name[idp]);
     }
+
+    acc_ok = 0;
 }
 
 // executa um shift register no vetor com o valor dado a esquerda, ex: a # b -> |c>;
@@ -2104,4 +2116,6 @@ void exec_shift(int ida, int etb, int idc)
         add_instr("LOD aux_var\n");
         add_instr("SET %s\n", v_name[ida]);
     }
+
+    acc_ok = 0;
 }

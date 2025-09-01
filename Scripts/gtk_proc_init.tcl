@@ -102,7 +102,6 @@ puts "Info: running standard GTKWave configuration..."
 set    fileID [open "tcl_infos.txt" r]
 gets  $fileID tmp_dir
 gets  $fileID bin_dir
-gets  $fileID scr_dir
 close $fileID
 
 # Insere sinais basicos -------------------------------------------------------
@@ -173,11 +172,27 @@ addArrs "int"   "arr_me1"       "Signed_Decimal" ""
 addArrs "float" "arr_me2"       "Binary"         "$bin_dir/float2gtkw.exe"
 addArrs "comp"  "comp_arr_me3"  "Binary"         "$bin_dir/comp2gtkw.exe"
 
+# Separador de Flags ----------------------------------------------------------
+
+gtkwave::/Edit/Insert_Comment {Flags **************}
+
+puts "Info: adding flags..."
+
+addVar [getVar "core.sp.pointer"] "Analog/Step" "Normal" "Data Stack Level"  "" ""
+addVar [getVar "core.sp.fl_max" ] "Decimal"     "Normal" "Data Stack Max"    "" ""
+#addVar [getVar "core.sp.fl_full"] "Binary"      "Normal" "Data Stack Overflow" "" ""
+
+addVar [getVar "isp.pointer"] "Analog/Step" "Normal" "Inst Stack Level"  "" ""
+addVar [getVar "isp.fl_max" ] "Decimal"     "Normal" "Inst Stack Max"    "" ""
+#addVar [getVar "isp.fl_full"] "Binary"      "Normal" "Inst Stack Overflow" "" ""
+
+addVar [getVar "denorm.nan"] "Binary" "Normal" "NAN" "" ""
+
 # Visualizacao ----------------------------------------------------------------
 
 gtkwave::/Time/Zoom/Zoom_Best_Fit
 gtkwave::/View/Left_Justified_Signals
 
 # engana bug -> cria uma aba vazia no gtkwave. refresh soh funciona assim com o GTK3
-gtkwave::/File/Open_New_Tab "$scr_dir/empty.gtkw"
+gtkwave::loadFile "fix.vcd"
 gtkwave::setTabActive 0
