@@ -122,14 +122,13 @@ endmodule
 
 // iguala o expoente de dois numeros -----------------------------------------
 // pra algumas operacoes que pedem mant. na mesma ordem de grandeza. ex: F_ADD
-// o pipeline deixou esse codigo muito confuso (rever)
 
 module ula_denorm
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
 	parameter EXP    =  8,
-	parameter NBOPCO = 7
+	parameter NBOPCO =  7
 )(
 	 input                         clk,
 	 input            [MAN+EXP :0] in1, in2,
@@ -138,7 +137,7 @@ module ula_denorm
 	output reg signed [MAN     :0] sm1_out, sm2_out
 );
 
-// registra entradas ----------------------------------------------------------
+// registra entradas dependendo do nivel de pipeline --------------------------
 
 reg [MAN+EXP:0] in1r;
 reg [MAN+EXP:0] in2r;
@@ -146,9 +145,9 @@ reg [MAN+EXP:0] in2r;
 generate if (PIPELN>7) begin
 	always @ (posedge clk) in1r <= in1;
 	always @ (posedge clk) in2r <= in2;
-end else begin : gen_no_pipe
-	always @ (*) in1r = in1;
-	always @ (*) in2r = in2;
+end else begin
+	always @ (*)           in1r  = in1;
+	always @ (*)           in2r  = in2;
 end endgenerate
 
 // desempacota as entradas registradas ----------------------------------------
@@ -163,26 +162,29 @@ wire        [MAN-1:0] m2_in = in2r[MAN    -1:0  ];
 // calcula o shift ------------------------------------------------------------
 // o expoente menor shifta para igualar ao maior ------------------------------
 
-wire signed [EXP:0] eme    =  e1_in-e2_in;
-wire                ege    =  eme     [EXP];
-wire        [EXP:0] shift2 = (ege) ?  {EXP+1{1'b0}} : eme;
-wire        [EXP:0] shift1 = (ege) ? -eme           : {EXP+1{1'b0}};
+wire signed [EXP:0] eme    =  e1_in-e2_in;                           // subtracao e1-e2
+wire                ege    =  eme     [EXP];                         // guarda o sinal da subtracao
+wire        [EXP:0] shift2 = (ege) ?  {EXP+1{1'b0}} : eme;           // shift da entrada 2
+wire        [EXP:0] shift1 = (ege) ? -eme           : {EXP+1{1'b0}}; // shift da entrada 1
 
+// pega o expoente final ------------------------------------------------------
+
+// registra as variaveis antes de acordo com o pipeline
 reg                  eger  ;
 reg signed [EXP-1:0] e1_inr;
 reg signed [EXP-1:0] e2_inr;
 
-generate if (PIPELN>4) begin : gen_pipe2
+generate if (PIPELN>4) begin
 	always @ (posedge clk) eger   <= ege;
 	always @ (posedge clk) e1_inr <= e1_in;
 	always @ (posedge clk) e2_inr <= e2_in;
-end else begin : gen_no_pipe2
-	always @ (*) eger   = ege;
-	always @ (*) e1_inr = e1_in;
-	always @ (*) e2_inr = e2_in;
+end else begin
+	always @ (*)           eger    = ege;
+	always @ (*)          e1_inr   = e1_in;
+	always @ (*)          e2_inr   = e2_in;
 end endgenerate
 
-// o expoente final eh o maior ------------------------------------------------
+// o expoente final eh o maior
 
 always @ (*) e_out <= (eger) ? e2_inr : e1_inr;
 
@@ -191,18 +193,45 @@ always @ (*) e_out <= (eger) ? e2_inr : e1_inr;
 wire [MAN-1:0] m1_out = m1_in >> shift1;
 wire [MAN-1:0] m2_out = m2_in >> shift2;
 
-// Flags
+// flags do processo de shift -------------------------------------------------
+
 `ifdef __ICARUS__ // ----------------------------------------------------------
+
+// registra a operacao da ula, de acordo com o nivel de pileline --------------
 
 reg [NBOPCO-1:0] opcr ; always @ (posedge clk) opcr <= opc;
 reg [NBOPCO-1:0] opcrr; generate if (PIPELN > 7) always @ (posedge clk) opcrr <= opcr; else	always @ (*) opcrr = opcr; endgenerate
 
-//          F_ADD          SF_ADD             se o shift a direita zerou a mantissa
+// verifica se o shift a direita zerou a mantissa -----------------------------
+
+// soh estou usando pra soma em ponto flutuante
+//          F_ADD          SF_ADD
 wire nan = (opcrr == 21 || opcrr == 22) && (((m1_in != 0) && (m1_out == 0)) || ((m2_in != 0) && (m2_out == 0)));
+
+// calcule os residuos perdidos com o shift a direita -------------------------
+
+// primeiro calcula o shift somente para as operacoes de soma em pf
+integer shift;
+always @ (*) begin
+	if ((opcrr == 21 || opcrr == 22)) begin
+		if (shift1 > shift2)
+			shift = (m1_in == 0) ? 0 : shift1;
+		else
+			shift = (m2_in == 0) ? 0 : shift2;
+	end else begin
+		shift = 0;
+	end
+end
+
+// pega o menor expoente
+integer e_low; always @ (*) e_low = (eger) ? e1_inr :  e2_inr ;
+
+// calcula o residuo              erro do shift   ganho depende do menor expoente
+real delta; always @ (*) delta = (2**shift - 1) * $pow(2,e_low);
 
 `endif // ---------------------------------------------------------------------
 
-// finaliza -------------------------------------------------------------------
+// calula as mantissas de acordo com o nivel de pipeline ----------------------
 
 reg           s1_inr ;
 reg           s2_inr ;
@@ -280,7 +309,7 @@ assign out = {out_s, out_e, out_m};
 
 endmodule
 
-// multiplexador das operacoes que igualam a mantissa de dois numeros ---------
+// multiplexador das operacoes que precisam de normalizacao -------------------
 
 module norm_mux
 #(
@@ -339,14 +368,24 @@ endmodule
 module ula_add
 #(
 	parameter   PIPELN =  3,
-	parameter   NUBITS = 32
+	parameter   NUBITS = 32,
+	parameter   NBOPCO =  6
 )(
-	 input                  clk,
-	 input     [NUBITS-1:0] in1, in2,
-	output reg [NUBITS-1:0] out 
+	 input                         clk,
+	 input            [NBOPCO-1:0] opc,
+	 input     signed [NUBITS-1:0] in1, in2,
+	output reg signed [NUBITS-1:0] out 
 );
 
 generate if (PIPELN>7) always @ (posedge clk) out <= in1 + in2; else always @ (*) out = in1 + in2; endgenerate
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+wire signed [NUBITS:0] soma = in1+in2;
+reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
+wire overflow = ((opcr == 19) || (opcr == 20)) && (in1[NUBITS-1] == in2[NUBITS-1]) && (soma[NUBITS-1] != in1[NUBITS-1]);
+
+`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -1083,7 +1122,7 @@ generate if (F_ADD | F_GRE | F_LES) ula_denorm #(PIPELN,NBMANT,NBEXPO,NBOPCO) de
 
 wire signed [NUBITS-1:0] add;
 
-generate if (ADD) ula_add #(PIPELN,NUBITS) my_add(clk, in1, in2, add); else assign add = {NUBITS{1'bx}}; endgenerate
+generate if (ADD) ula_add #(PIPELN,NUBITS,NBOPCO) my_add(clk, opc, in1, in2, add); else assign add = {NUBITS{1'bx}}; endgenerate
 
 // F_ADD ----------------------------------------------------------------------
 

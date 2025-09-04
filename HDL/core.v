@@ -146,10 +146,15 @@ assign                     out = mem[pmenoum];
 
 // Flags
 `ifdef __ICARUS__ // ----------------------------------------------------------
+
 reg             fl_full = 0;
-reg [NADDR-1:0] fl_max  = 0;                   // estourou o ponteiro
+reg [NADDR-1:0] fl_max  = 0; // estourou o ponteiro
+integer         pointeri;
+
+always @ (*)      pointeri = pointer;
 always @ (*) if ((pointer >= DEPTH) || (pmaisum-pointer != 1)) fl_full <= 1'b1;
-always @ (*) if ( pointer > fl_max                           ) fl_max  <= pointer;
+always @ (*) if ( pointer >  fl_max                          ) fl_max  <= pointer;
+
 `endif // ---------------------------------------------------------------------
 
 endmodule
