@@ -223,10 +223,21 @@ always @ (*) begin
 	end
 end
 
-// pega o menor expoente
-integer e_low; always @ (*) e_low = (eger) ? e1_inr :  e2_inr ;
-// calcula o erro de arredondamento
-real delta; always @ (*) delta = ((2**shift - 1) & shift) * $pow(2,e_low);
+real    delta;
+integer a,b,c;
+always @ (*) begin
+	if (shift1 > shift2) begin
+		a =  m1_in;
+		b = (m1_in >> shift) << shift;
+		c =  e1_in; 
+	end else begin
+		a =  m2_in;
+		b = (m2_in >> shift) << shift;
+		c =  e2_in;
+	end
+
+	delta = (shift != 0) ? a*$pow(2,c) - b*$pow(2,c) : 0;
+end
 
 `endif // ---------------------------------------------------------------------
 
@@ -832,11 +843,13 @@ module ula_f2i
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
-	parameter EXP    =  8
+	parameter EXP    =  8,
+	parameter NBOPCO =  7
 )(
-	input                         clk,
-	input             [MAN+EXP:0] in,
-	output reg signed [MAN+EXP:0] out
+	input                          clk, mem,
+	input             [NBOPCO-1:0] opc,
+	input             [MAN+EXP :0] in,
+	output reg signed [MAN+EXP :0] out
 );
 
 reg           s;
@@ -860,6 +873,19 @@ generate if (PIPELN>5)
 always @ (posedge clk) out <= (e[EXP-1]) ? sm >>> shift : sm << shift; else
 always @ (*)           out  = (e[EXP-1]) ? sm >>> shift : sm << shift;
 endgenerate
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
+
+integer e1; always @ (*) e1 = $signed(e);
+integer e2 = MAN+EXP;
+real a; always @ (*) a = m*$pow(2,e1);
+real b; always @ (*) b =   $pow(2,e2)-1;
+
+wire overflow = (((opcr == 61) & ~mem) | (((opcr == 62) | (opcr == 63)) & mem)) & (a > b);
+
+`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -1385,13 +1411,13 @@ generate if (I2F_M) ula_i2f #(NBMANT,NBEXPO) my_i2fm(in1[NBMANT-1:0], i2fm); els
 
 wire signed [NUBITS-1:0] f2i;
 
-generate if (F2I) ula_f2i #(PIPELN,NBMANT,NBEXPO) my_f2i (clk, in2, f2i); else assign f2i = {NUBITS{1'bx}}; endgenerate
+generate if (F2I) ula_f2i #(PIPELN,NBMANT,NBEXPO,NBOPCO) my_f2i (clk, 1'b0, opc, in2, f2i); else assign f2i = {NUBITS{1'bx}}; endgenerate
 
 // F2I_M ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] f2im;
 
-generate if (F2I_M) ula_f2i #(PIPELN,NBMANT,NBEXPO) my_f2im (clk, in1, f2im); else assign f2im = {NUBITS{1'bx}}; endgenerate
+generate if (F2I_M) ula_f2i #(PIPELN,NBMANT,NBEXPO,NBOPCO) my_f2im (clk, 1'b1, opc, in1, f2im); else assign f2im = {NUBITS{1'bx}}; endgenerate
 
 // AND ------------------------------------------------------------------------
 
