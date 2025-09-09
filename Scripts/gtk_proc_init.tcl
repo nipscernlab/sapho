@@ -210,23 +210,63 @@ gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Overflow"
 
 # Adder -----------------------------------------------------------------------
 
-set lista_flags [list [getVar "denorm.delta"] [getVar "denorm.nan"] [getVar "my_add.overflow"]]
+set lista_flags [list [getVar "denorm.delta"] [getVar "my_fadd.delta"] [getVar "my_fmlt.delta"] [getVar "my_fdiv.delta"] [getVar "denorm.nan"] [getVar "my_add.overflow"] [getVar "my_fadd.overflow"] [getVar "my_mlt.overflow"] [getVar "my_fmlt.overflow"] [getVar "my_div.overflow"] [getVar "ula_norm.overflow"] [getVar "my_fdiv.overflow"] [getVar "my_mod.overflow"]]
 gtkwave::addSignalsFromList $lista_flags
-gtkwave::/Edit/Create_Group "Adder"
+gtkwave::/Edit/Create_Group "ULA"
 gtkwave::/Edit/Toggle_Group_Open|Close
 gtkwave::/Edit/UnHighlight_All
 
 gtkwave::highlightSignalsFromList [getVar "denorm.delta"]
 gtkwave::/Edit/Data_Format/Analog/Step
-gtkwave::/Edit/Alias_Highlighted_Trace "Precision lost"
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (denorm)"
+
+gtkwave::highlightSignalsFromList [getVar "my_fadd.delta"]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (fadd)"
+
+gtkwave::highlightSignalsFromList [getVar "my_fmlt.delta"]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (fmlt)"
+
+gtkwave::highlightSignalsFromList [getVar "my_fdiv.delta"]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (fdiv)"
 
 gtkwave::highlightSignalsFromList [getVar "denorm.nan"]
 gtkwave::/Edit/Data_Format/Binary
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounded to zero"
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounded to zero (denorm)"
 
 gtkwave::highlightSignalsFromList [getVar "my_add.overflow"]
 gtkwave::/Edit/Data_Format/Binary
-gtkwave::/Edit/Alias_Highlighted_Trace "Overflow"
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (add)"
+
+gtkwave::highlightSignalsFromList [getVar "my_fadd.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (fadd)"
+
+gtkwave::highlightSignalsFromList [getVar "my_mlt.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (mlt)"
+
+gtkwave::highlightSignalsFromList [getVar "my_fmlt.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (fmlt)"
+
+gtkwave::highlightSignalsFromList [getVar "my_div.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (div)"
+
+gtkwave::highlightSignalsFromList [getVar "ula_norm.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (norm)"
+
+gtkwave::highlightSignalsFromList [getVar "my_fdiv.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (fdiv)"
+
+gtkwave::highlightSignalsFromList [getVar "my_mod.overflow"]
+gtkwave::/Edit/Data_Format/Binary
+gtkwave::/Edit/Alias_Highlighted_Trace "Overflow (mod)"
 
 # Visualizacao ----------------------------------------------------------------
 

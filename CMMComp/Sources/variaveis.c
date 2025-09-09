@@ -118,7 +118,7 @@ int exec_id(char *text)
 int exec_num(char *text)
 {
     float f = (atof(text) < 0) ? -atof(text) : atof(text); // valor absoluto do num, em float
-    float s =  pow(2,nbmant-1)*pow(2,-pow(2,nbexpo-1));    // menor valor permitido pra float = 2^(m-1)*2^(-(2^(e-1)))
+    float s =  pow(2,-pow(2,nbexpo-1));                    // menor valor permitido pra float = 2^(-(2^(e-1)))
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((f < s) && (f != 0))

@@ -46,8 +46,8 @@ unsigned int f2mf(char *va)
 
     // checa se o numero eh menor que o menor float permitido -----------------
 
-    float r = (f < 0) ? -f : f;                        // valor absoluto do num, em float
-    float q = pow(2,nbmant-1)*pow(2,-pow(2,nbexpo-1)); // menor valor permitido pra float = 2^(m-1)*2^(-(2^(e-1)))
+    float r = (f < 0) ? -f : f;        // valor absoluto do num, em float
+    float q = pow(2,-pow(2,nbexpo-1)); // menor valor permitido pra float = 2^(-(2^(e-1)))
 
     // se o numero for menor do que o menor permitido pra float, printa um erro
     if ((r < q) && (r != 0))

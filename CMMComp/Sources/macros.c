@@ -301,8 +301,8 @@ void mac_copy(char *fasm)
 /*float my_sqrt(float num)
 {
     float x = num;
-    float epslon = 0.000008;  // menor numero possivel = 2^(m-1)*2^(-(2^(e-1)))
-                              // para m = 16 e = 6, o num eh: 0.000007629...
+    float epslon = 0.000008;  // menor numero possivel = 2^(-(2^(e-1)))
+                              // para m = 16 e = 6, o num eh: 0.000007629... (ta errado)
     while (1)
     {
         float raiz = 0.5 * (x+num/x);
