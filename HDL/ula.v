@@ -127,12 +127,10 @@ module ula_denorm
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
-	parameter EXP    =  8,
-	parameter NBOPCO =  7
+	parameter EXP    =  8
 )(
 	 input                         clk,
 	 input            [MAN+EXP :0] in1, in2,
-	 input            [NBOPCO-1:0] opc,
 	output reg signed [EXP-1   :0] e_out,
 	output reg signed [MAN     :0] sm1_out, sm2_out
 );
@@ -192,54 +190,6 @@ always @ (*) e_out <= (eger) ? e2_inr : e1_inr;
 
 wire [MAN-1:0] m1_out = m1_in >> shift1;
 wire [MAN-1:0] m2_out = m2_in >> shift2;
-
-// flags do processo de shift -------------------------------------------------
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-// registra a operacao da ula, de acordo com o nivel de pileline --------------
-
-reg [NBOPCO-1:0] opcr ; always @ (posedge clk) opcr <= opc;
-reg [NBOPCO-1:0] opcrr; generate if (PIPELN > 7) always @ (posedge clk) opcrr <= opcr; else	always @ (*) opcrr = opcr; endgenerate
-
-// verifica se o shift a direita zerou a mantissa -----------------------------
-
-// soh estou usando pra soma em ponto flutuante
-//          F_ADD          SF_ADD
-wire nan = (opcrr == 21 || opcrr == 22) && (((m1_in != 0) && (m1_out == 0)) || ((m2_in != 0) && (m2_out == 0)));
-
-// calcule os residuos perdidos com o shift a direita -------------------------
-
-// primeiro calcula o shift somente para as operacoes de soma em pf
-integer shift;
-always @ (*) begin
-	if ((opcrr == 21 || opcrr == 22)) begin
-		if (shift1 > shift2)
-			shift = (m1_in == 0) ? 0 : shift1;
-		else
-			shift = (m2_in == 0) ? 0 : shift2;
-	end else begin
-		shift = 0;
-	end
-end
-
-real    delta;
-integer a,b,c;
-always @ (*) begin
-	if (shift1 > shift2) begin
-		a =  m1_in;
-		b = (m1_in >> shift) << shift;
-		c =  e1_in; 
-	end else begin
-		a =  m2_in;
-		b = (m2_in >> shift) << shift;
-		c =  e2_in;
-	end
-
-	delta = (shift != 0) ? a*$pow(2,c) - b*$pow(2,c) : 0;
-end
-
-`endif // ---------------------------------------------------------------------
 
 // calcula as mantissas de acordo com o nivel de pipeline ---------------------
 
@@ -1245,7 +1195,9 @@ module ula
 (
 	input		               clk,
 	input         [       5:0] op,
+	//`ifdef __ICARUS__ // ----------------------------------------------------------
 	input         [NBOPCO-1:0] opc, // por causa do pipeline, precisa usar o opcode completo
+	//`endif // ---------------------------------------------------------------------
 	input  signed [NUBITS-1:0] in1, in2,
 	output signed [NUBITS-1:0] out
 );
@@ -1255,7 +1207,7 @@ module ula
 wire signed [NBEXPO-1:0] e_out;             // expoente  normalizado
 wire signed [NBMANT  :0] sm1_out, sm2_out;  // mantissas normalizadas
 
-generate if (F_ADD | F_GRE | F_LES) ula_denorm #(PIPELN,NBMANT,NBEXPO,NBOPCO) denorm(clk, in1, in2, opc, e_out, sm1_out, sm2_out); endgenerate
+generate if (F_ADD | F_GRE | F_LES) ula_denorm #(PIPELN,NBMANT,NBEXPO) denorm(clk, in1, in2, e_out, sm1_out, sm2_out); endgenerate
 
 // ADD ------------------------------------------------------------------------
 
@@ -1556,5 +1508,76 @@ ula_mux #(NUBITS) ula_mux (.op (op ),
                            .srs(srs),
                            .smx(smx),
                            .out(out));
+
+// ----------------------------------------------------------------------------
+// flags (simulacao) ----------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+`ifdef __ICARUS__ // ----------------------------------------------------------
+
+// desabilita flags quando nao esta operando ----------------------------------
+
+reg valid; always @ (posedge clk) valid <= opc != 7'd96; // opcode 96 = NOP
+
+// desempacota as entradas pra float ------------------------------------------
+
+wire                        s_in1 =           in1[NBMANT+NBEXPO         ] ; // sinal    de in1
+wire                        s_in2 =           in2[NBMANT+NBEXPO         ] ; // sinal    de in2
+integer e_in1; always @ (*) e_in1 =   $signed(in1[NBMANT+NBEXPO-1:NBMANT]); // expoente de in1
+integer e_in2; always @ (*) e_in2 =   $signed(in2[NBMANT+NBEXPO-1:NBMANT]); // expoente de in2
+integer m_in1; always @ (*) m_in1 = $unsigned(in1[NBMANT       -1:0     ]); // mantissa de in1
+integer m_in2; always @ (*) m_in2 = $unsigned(in2[NBMANT       -1:0     ]); // mantissa de in2
+
+// obtem os valores reais das entradas ----------------------------------------
+
+integer sm_in1; always @ (*) sm_in1 = (s_in1) ? -m_in1 : m_in1; // mantissa de in1 com sinal
+integer sm_in2; always @ (*) sm_in2 = (s_in2) ? -m_in2 : m_in2; // mantissa de in2 com sinal
+
+real r_in1; always @ (*) r_in1 = sm_in1*$pow(2,e_in1); // valor real de in1
+real r_in2; always @ (*) r_in2 = sm_in2*$pow(2,e_in2); // valor real de in2
+
+// soma (pra float) -----------------------------------------------------------
+
+integer  ne ; always @ (*)  ne  = (e_in1 > e_in2) ? e_in1+1 : e_in2+1;              // expoente   normalizado
+integer  nm1; always @ (*)  nm1 = (e_in1 > e_in2) ? m_in1 : m_in1 >> (e_in2-e_in1); // mantissa 1 normalizada
+integer  nm2; always @ (*)  nm2 = (e_in1 > e_in2) ? m_in2 >> (e_in1-e_in2) : m_in2; // mantissa 2 normalizada
+integer snm1; always @ (*) snm1 = (s_in1) ? -nm1 : nm1;                             // mantissa 1 normalizada com sinal
+integer snm2; always @ (*) snm2 = (s_in2) ? -nm2 : nm2;                             // mantissa 2 normalizada com sinal
+integer snm ; always @ (*)  snm = (snm1 + snm2)/2;                                  // mantissa soma com sinal
+
+real    s_cf; always @ (*) s_cf =  snm*$pow(2,ne);                                  // soma calculada
+real    s_rf; always @ (*) s_rf =  r_in1 + r_in2;                                   // soma real
+
+real delta_s; always @ (*) delta_s = (op == 3) ? s_rf - s_cf : 0;                   // diferenca entre as somas
+
+// multiplicacao (pra float) --------------------------------------------------
+
+integer   se; always @ (*) se = e_in1 + e_in2 + NBMANT;           // expoente somado
+wire        [NBMANT*2-1:0] mm = m_in1 * m_in2;                    // mantissa sem sinal multiplicada
+wire        [NBMANT  -1:0] ms = mm[2*NBMANT-1:NBMANT];            // mantissa shiftada
+wire signed [NBMANT    :0] mb = (s_in1 != s_in2) ? -ms : ms;      // mantissa com sinal
+
+real m_cf; always @ (*) m_cf =  mb*$pow(2,se);                    // multiplicacao calculada
+real m_rf; always @ (*) m_rf =  r_in1 * r_in2;                    // multiplicacao real
+
+real delta_m; always @ (*) delta_m = (op == 5) ? m_rf - m_cf : 0; // diferenca entre as multiplicacoes
+
+// divisao (pra float) --------------------------------------------------------
+
+integer   de; always @ (*) de  = e_in1 - e_in2 - NBMANT;          // expoente subtraido
+wire		[NBMANT*2-1:0] me1 = m_in1 << NBMANT;                 // mantissa 1 extendida
+wire        [NBMANT  -1:0] dm  = me1 / m_in2;                     // mantissa sem sinal dividida
+wire signed [NBMANT    :0] db  = (s_in1 != s_in2) ? -dm : dm;     // mantissa com sinal
+
+real d_cf; always @ (*) d_cf =  db*$pow(2,de);                    // divisao calculada
+real d_rf; always @ (*) d_rf =  r_in1 / r_in2;	                  // divisao real
+
+real delta_d; always @ (*) delta_d = (op == 7) ? d_rf - d_cf : 0; // diferenca entre as divisoes
+
+// erro de arredondamento -----------------------------------------------------
+
+real delta; always @ (*) delta = (valid) ? delta_s + delta_m + delta_d : 0; // soma dos erros
+
+`endif // ---------------------------------------------------------------------
 
 endmodule

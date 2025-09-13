@@ -210,31 +210,15 @@ gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Overflow"
 
 # Adder -----------------------------------------------------------------------
 
-set lista_flags [list [getVar "denorm.delta"] [getVar "my_fadd.delta"] [getVar "my_fmlt.delta"] [getVar "my_fdiv.delta"] [getVar "denorm.nan"] [getVar "my_add.overflow"] [getVar "my_fadd.overflow"] [getVar "my_mlt.overflow"] [getVar "my_fmlt.overflow"] [getVar "my_div.overflow"] [getVar "ula_norm.overflow"] [getVar "my_fdiv.overflow"] [getVar "my_mod.overflow"] [getVar "my_f2i.overflow"] [getVar "my_f2im.overflow"]]
+set lista_flags [list [getVar "ula.delta"] [getVar "my_add.overflow"] [getVar "my_fadd.overflow"] [getVar "my_mlt.overflow"] [getVar "my_fmlt.overflow"] [getVar "my_div.overflow"] [getVar "ula_norm.overflow"] [getVar "my_fdiv.overflow"] [getVar "my_mod.overflow"] [getVar "my_f2i.overflow"] [getVar "my_f2im.overflow"]]
 gtkwave::addSignalsFromList $lista_flags
 gtkwave::/Edit/Create_Group "ULA"
 gtkwave::/Edit/Toggle_Group_Open|Close
 gtkwave::/Edit/UnHighlight_All
 
-gtkwave::highlightSignalsFromList [getVar "denorm.delta"]
+gtkwave::highlightSignalsFromList [getVar "ula.delta"]
 gtkwave::/Edit/Data_Format/Analog/Step
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (denorm)"
-
-gtkwave::highlightSignalsFromList [getVar "my_fadd.delta"]
-gtkwave::/Edit/Data_Format/Analog/Step
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (fadd)"
-
-gtkwave::highlightSignalsFromList [getVar "my_fmlt.delta"]
-gtkwave::/Edit/Data_Format/Analog/Step
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (fmlt)"
-
-gtkwave::highlightSignalsFromList [getVar "my_fdiv.delta"]
-gtkwave::/Edit/Data_Format/Analog/Step
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (fdiv)"
-
-gtkwave::highlightSignalsFromList [getVar "denorm.nan"]
-gtkwave::/Edit/Data_Format/Binary
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounded to zero (denorm)"
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error"
 
 gtkwave::highlightSignalsFromList [getVar "my_add.overflow"]
 gtkwave::/Edit/Data_Format/Binary
