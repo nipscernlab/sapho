@@ -801,11 +801,11 @@ ula #(.PIPELN (PIPELN ),
         .EQU  (  EQU   |  S_EQU  ),
         .SHL  (  SHL   |  S_SHL  ),
         .SHR  (  SHR   |  S_SHR  ),
-		//`ifdef __ICARUS__ // --------------------------------------------------
+		`ifdef __ICARUS__ // --------------------------------------------------
         .SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op, id_opcode, ula_data_in1, ula_data_in2, ula_out);
-		//`else // --------------------------------------------------------------
-		//.SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op,            ula_data_in1, ula_data_in2, ula_out);
-		//`endif // -------------------------------------------------------------
+		`else // --------------------------------------------------------------
+		.SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op,            ula_data_in1, ula_data_in2, ula_out);
+		`endif // -------------------------------------------------------------
 
 assign sp_in = ula_out;
 

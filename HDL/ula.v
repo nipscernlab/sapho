@@ -238,12 +238,9 @@ endmodule
 module ula_norm
 #(
 	parameter MAN    = 23,
-	parameter EXP    =  8,
-	parameter NBOPCO =  7
+	parameter EXP    =  8
 )(
-	 input              clk,
 	 input [MAN+EXP :0] in,
-	 input [NBOPCO-1:0] opc,
 	output [MAN+EXP :0] out
 );
 
@@ -270,18 +267,6 @@ endgenerate
 
 assign out = {out_s, out_e, out_m};
 
-// flags do processo de shift -------------------------------------------------
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr ; always @ (posedge clk) opcr <= opc;
-
-integer a; always @ (*) a = exp;
-integer b; always @ (*) b = sh;
-wire overflow = (opcr == 21 | opcr == 22 | opcr == 25 | opcr == 26 | opcr == 29 | opcr == 30 | opcr == 61 | opcr == 62 | opcr == 63) & (out_m != 0) & (a-b < -$pow(2,EXP-1));
-
-`endif // ---------------------------------------------------------------------
-
 endmodule
 
 // multiplexador das operacoes que precisam de normalizacao -------------------
@@ -291,12 +276,10 @@ module norm_mux
 	parameter PIPELN =  3,
 	parameter NUBITS = 32,
 	parameter NBMANT = 23,
-	parameter NBEXPO =  8,
-	parameter NBOPCO =  7
+	parameter NBEXPO =  8
 )(
 	 input                  clk ,
 	 input     [       5:0] op  ,
-	 input     [NBOPCO-1:0] opc,
 	 input     [NUBITS-1:0] fadd,
 	 input     [NUBITS-1:0] fmlt,
 	 input     [NUBITS-1:0] fdiv,
@@ -325,7 +308,7 @@ end else begin
 	always @ (*)           mux_out  = imux_out;
 end endgenerate
 
-ula_norm #(NBMANT,NBEXPO,NBOPCO) ula_norm (clk, mux_out, opc, un_out);
+ula_norm #(NBMANT,NBEXPO) ula_norm (mux_out, un_out);
 
 // saida
 generate if (PIPELN>7) begin
@@ -345,25 +328,14 @@ endmodule
 module ula_add
 #(
 	parameter PIPELN =  3,
-	parameter NUBITS = 32,
-	parameter NBOPCO =  6
+	parameter NUBITS = 32
 )(
 	 input                         clk,
-	 input            [NBOPCO-1:0] opc,
 	 input     signed [NUBITS-1:0] in1, in2,
 	output reg signed [NUBITS-1:0] out 
 );
 
 generate if (PIPELN>7) always @ (posedge clk) out <= in1 + in2; else always @ (*) out = in1 + in2; endgenerate
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-wire signed [NUBITS  :0] soma = in1+in2;
-reg         [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-// detecta overflow na soma de inteiros
-wire overflow = ((opcr == 19) || (opcr == 20)) && (in1[NUBITS-1] == in2[NUBITS-1]) && (soma[NUBITS-1] != in1[NUBITS-1]);
-
-`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -373,11 +345,9 @@ module ula_fadd
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
-	parameter EXP    =  8,
-	parameter NBOPCO =  7
+	parameter EXP    =  8
 )(
 	input                      clk,
-	input         [NBOPCO-1:0] opc,
 	input  signed [EXP-1   :0] e_in,
 	input  signed [MAN     :0] sm1_in, sm2_in,                // ja entra com um bit a mais de sinal
 	output reg    [MAN+EXP :0] out
@@ -392,20 +362,6 @@ wire        [MAN-1:0] m_out = m       [MAN:1];                // esse shift eh p
 
 generate if (PIPELN>3) always @ (posedge clk) out <= {s_out, e_out, m_out}; else always @ (*) out = {s_out, e_out, m_out}; endgenerate
 
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-// detecta se perdeu o bit menos significativo
-wire lost = ((opcr == 21) || (opcr == 22)) && (m[0] == 1);
-// calcula o erro de arredondamento
-real delta; always @ (*) delta = $pow(2,e_in) * lost;
-
-// testa overflow
-wire overflow = ((opcr == 21) || (opcr == 22)) && (e_out == -$pow(2,EXP-1));
-
-`endif // ---------------------------------------------------------------------
-
 endmodule
 
 // MLT - multiplicacao em ponto-fixo ------------------------------------------
@@ -413,25 +369,14 @@ endmodule
 module ula_mlt
 #(
 	parameter PIPELN =  3,
-	parameter NUBITS = 32,
-	parameter NBOPCO =  7
+	parameter NUBITS = 32
 )(
-	 input                  clk, 
-	 input     [NBOPCO-1:0] opc,
+	 input                  clk,
 	 input     [NUBITS-1:0] in1, in2,
 	output reg [NUBITS-1:0] out 
 );
 
 generate if (PIPELN>6) always @ (posedge clk) out <= in1 * in2; else always @ (*) out = in1 * in2; endgenerate
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-wire signed [2*NUBITS-1:0] full_product = in1*in2;
-wire overflow = ((opcr == 23) | (opcr == 24)) & (full_product[2*NUBITS-1:NUBITS] != {NUBITS{full_product[NUBITS-1]}});
-
-`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -441,11 +386,9 @@ module ula_fmlt
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
-	parameter EXP    =  8,
-	parameter NBOPCO =  7
+	parameter EXP    =  8
 )(
-	 input                  clk, 
-	 input     [NBOPCO-1:0] opc,
+	 input                  clk,
 	 input     [MAN+EXP :0] in1, in2,
 	output reg [MAN+EXP :0] out
 );
@@ -492,46 +435,19 @@ always @ (posedge clk) if (m_out != {{MAN{1'b0}}}) out <= {s_out, e_out, m_out};
 always @ (*)           if (m_out != {{MAN{1'b0}}}) out <= {s_out, e_out, m_out}; else out <= {1'b0, 1'b1, {{EXP-1{1'b0}}}, {{MAN{1'b0}}}};
 endgenerate
 
-// flags ----------------------------------------------------------------------
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-// testa overflow
-wire [EXP+1:0] we = e1+e2+MAN;
-wire overflow = ((opcr == 25) | (opcr == 26)) & (mult != 0) & (we[EXP+1:EXP-1] != {3{we[EXP-1]}});
-
-// calcula o erro de arredondamento
-integer ex; always @ (*) ex = e1+e2;
-real delta; always @ (*) delta = ((opcr == 25) || (opcr == 26)) ? mult[MAN-1:0] * $pow(2,ex) : 0;
-
-`endif // ---------------------------------------------------------------------
-
 endmodule
 
 // DIV - divisao em ponto-fixo ------------------------------------------------
 
 module ula_div
 #(
-	parameter NUBITS = 32,
-	parameter NBOPCO =  7
+	parameter NUBITS = 32
 )(
-	 input                     clk,
 	 input signed [NUBITS-1:0] in1, in2,
-	 input        [NBOPCO-1:0] opc,
 	output signed [NUBITS-1:0] out 
 );
 
 assign out = in1 / in2;
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-wire overflow = ((opcr == 27) | (opcr == 28)) & (in2 == 0);
-
-`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -540,12 +456,9 @@ endmodule
 module ula_fdiv
 #(
 	parameter MAN    = 23,
-	parameter EXP    =  8,
-	parameter NBOPCO =  7
+	parameter EXP    =  8
 )(
-	 input              clk,
 	 input [MAN+EXP :0] in1, in2,
-	 input [NBOPCO-1:0] opc,
 	output [MAN+EXP :0] out
 );
 
@@ -565,52 +478,19 @@ wire        [MAN-1:0] m_out = div      [MAN-1:0];
 
 assign out = {s_out, e_out, m_out};
 
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-// overflow
-
-integer a; always @ (*) a = e1 - e2 - MAN+1;
-wire ovf1 = ((opcr == 29) | (opcr == 30)) & (m2 == 0);
-wire ovf2 = ((opcr == 29) | (opcr == 30)) & ((a >= $pow(2,EXP-1)) | (a < -$pow(2,EXP-1)));
-wire overflow = ovf1 | ovf2;
-
-// erro de arredondamento
-
-integer ex; always @ (*) ex = e1-e2;
-real delta;
-always @ (*) begin
-	delta = ((opcr == 29) || (opcr == 30)) ? m1*$pow(2,ex)/m2 - m_out*$pow(2,e_out) : 0;
-	if (delta < 0) delta = -delta;
-end
-
-`endif // ---------------------------------------------------------------------
-
 endmodule
 
 // MOD - resto da divisao -----------------------------------------------------
 
 module ula_mod
 #(
-	parameter NUBITS = 32,
-	parameter NBOPCO =  7
+	parameter NUBITS = 32
 )(
-	 input                     clk,
 	 input signed [NUBITS-1:0] in1, in2,
-	 input        [NBOPCO-1:0] opc,
 	output signed [NUBITS-1:0] out 
 );
 
 assign out = in1 % in2;
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-wire overflow = ((opcr == 31) | (opcr == 32)) & (in2 == 0);
-
-`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -793,11 +673,9 @@ module ula_f2i
 #(
 	parameter PIPELN =  3,
 	parameter MAN    = 23,
-	parameter EXP    =  8,
-	parameter NBOPCO =  7
+	parameter EXP    =  8
 )(
-	input                          clk, mem,
-	input             [NBOPCO-1:0] opc,
+	input                          clk,
 	input             [MAN+EXP :0] in,
 	output reg signed [MAN+EXP :0] out
 );
@@ -823,19 +701,6 @@ generate if (PIPELN>5)
 always @ (posedge clk) out <= (e[EXP-1]) ? sm >>> shift : sm << shift; else
 always @ (*)           out  = (e[EXP-1]) ? sm >>> shift : sm << shift;
 endgenerate
-
-`ifdef __ICARUS__ // ----------------------------------------------------------
-
-reg [NBOPCO-1:0] opcr; always @ (posedge clk) opcr <= opc;
-
-integer e1; always @ (*) e1 = $signed(e);
-integer e2 = MAN+EXP;
-real a; always @ (*) a = m*$pow(2,e1);
-real b; always @ (*) b =   $pow(2,e2)-1;
-
-wire overflow = (((opcr == 61) & ~mem) | (((opcr == 62) | (opcr == 63)) & mem)) & (a > b);
-
-`endif // ---------------------------------------------------------------------
 
 endmodule
 
@@ -1195,9 +1060,9 @@ module ula
 (
 	input		               clk,
 	input         [       5:0] op,
-	//`ifdef __ICARUS__ // ----------------------------------------------------------
+	`ifdef __ICARUS__ // ----------------------------------------------------------
 	input         [NBOPCO-1:0] opc, // por causa do pipeline, precisa usar o opcode completo
-	//`endif // ---------------------------------------------------------------------
+	`endif // ---------------------------------------------------------------------
 	input  signed [NUBITS-1:0] in1, in2,
 	output signed [NUBITS-1:0] out
 );
@@ -1213,43 +1078,43 @@ generate if (F_ADD | F_GRE | F_LES) ula_denorm #(PIPELN,NBMANT,NBEXPO) denorm(cl
 
 wire signed [NUBITS-1:0] add;
 
-generate if (ADD) ula_add #(PIPELN,NUBITS,NBOPCO) my_add(clk, opc, in1, in2, add); else assign add = {NUBITS{1'bx}}; endgenerate
+generate if (ADD) ula_add #(PIPELN,NUBITS) my_add(clk, in1, in2, add); else assign add = {NUBITS{1'bx}}; endgenerate
 
 // F_ADD ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] fadd;
 
-generate if (F_ADD) ula_fadd #(PIPELN,NBMANT,NBEXPO,NBOPCO) my_fadd(clk, opc, e_out, sm1_out, sm2_out, fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
+generate if (F_ADD) ula_fadd #(PIPELN,NBMANT,NBEXPO) my_fadd(clk, e_out, sm1_out, sm2_out, fadd); else assign fadd = {NUBITS{1'bx}}; endgenerate
 
 // MLT ------------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] mlt;
 
-generate if (MLT) ula_mlt #(PIPELN,NUBITS,NBOPCO) my_mlt(clk, opc, in1, in2, mlt); else assign mlt = {NUBITS{1'bx}}; endgenerate
+generate if (MLT) ula_mlt #(PIPELN,NUBITS) my_mlt(clk, in1, in2, mlt); else assign mlt = {NUBITS{1'bx}}; endgenerate
 
 // F_MLT ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] fmlt;
 
-generate if (F_MLT) ula_fmlt #(PIPELN,NBMANT,NBEXPO,NBOPCO) my_fmlt(clk, opc, in1 ,in2 , fmlt); else assign fmlt = {NUBITS{1'bx}}; endgenerate
+generate if (F_MLT) ula_fmlt #(PIPELN,NBMANT,NBEXPO) my_fmlt(clk, in1 ,in2 , fmlt); else assign fmlt = {NUBITS{1'bx}}; endgenerate
 
 // DIV ------------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] div;
 
-generate if (DIV) ula_div #(NUBITS,NBOPCO) my_div(clk, in1, in2, opc, div); else assign div = {NUBITS{1'bx}}; endgenerate
+generate if (DIV) ula_div #(NUBITS) my_div(clk, in1, in2, div); else assign div = {NUBITS{1'bx}}; endgenerate
 
 // F_DIV ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] fdiv;
 
-generate if (F_DIV) ula_fdiv #(NBMANT,NBEXPO,NBOPCO) my_fdiv(clk, in1, in2, opc, fdiv); else assign fdiv = {NUBITS{1'bx}}; endgenerate
+generate if (F_DIV) ula_fdiv #(NBMANT,NBEXPO) my_fdiv(in1, in2, fdiv); else assign fdiv = {NUBITS{1'bx}}; endgenerate
 
 // MOD ------------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] mod;
 
-generate if (MOD) ula_mod #(NUBITS,NBOPCO) my_mod(clk, in1, in2, opc, mod); else assign mod = {NUBITS{1'bx}}; endgenerate
+generate if (MOD) ula_mod #(NUBITS) my_mod(clk, in1, in2, mod); else assign mod = {NUBITS{1'bx}}; endgenerate
 
 // SGN ------------------------------------------------------------------------
 
@@ -1363,13 +1228,13 @@ generate if (I2F_M) ula_i2f #(NBMANT,NBEXPO) my_i2fm(in1[NBMANT-1:0], i2fm); els
 
 wire signed [NUBITS-1:0] f2i;
 
-generate if (F2I) ula_f2i #(PIPELN,NBMANT,NBEXPO,NBOPCO) my_f2i (clk, 1'b0, opc, in2, f2i); else assign f2i = {NUBITS{1'bx}}; endgenerate
+generate if (F2I) ula_f2i #(PIPELN,NBMANT,NBEXPO) my_f2i (clk, in2, f2i); else assign f2i = {NUBITS{1'bx}}; endgenerate
 
 // F2I_M ----------------------------------------------------------------------
 
 wire signed [NUBITS-1:0] f2im;
 
-generate if (F2I_M) ula_f2i #(PIPELN,NBMANT,NBEXPO,NBOPCO) my_f2im (clk, 1'b1, opc, in1, f2im); else assign f2im = {NUBITS{1'bx}}; endgenerate
+generate if (F2I_M) ula_f2i #(PIPELN,NBMANT,NBEXPO) my_f2im (clk, in1, f2im); else assign f2im = {NUBITS{1'bx}}; endgenerate
 
 // AND ------------------------------------------------------------------------
 
@@ -1477,7 +1342,7 @@ generate if (SRS) ula_srs #(PIPELN,NUBITS) my_srs(clk, in1, in2, srs); else assi
 
 wire signed [NUBITS-1:0] smx;
 
-generate if (I2F | I2F_M | F_ADD | F_MLT | F_DIV) norm_mux #(PIPELN,NUBITS,NBMANT,NBEXPO,NBOPCO) norm_mux(clk, op, opc, fadd, fmlt, fdiv, i2f, i2fm, smx); else assign smx = {NUBITS{1'bx}}; endgenerate
+generate if (I2F | I2F_M | F_ADD | F_MLT | F_DIV) norm_mux #(PIPELN,NUBITS,NBMANT,NBEXPO) norm_mux(clk, op, fadd, fmlt, fdiv, i2f, i2fm, smx); else assign smx = {NUBITS{1'bx}}; endgenerate
 
 // mux principal --------------------------------------------------------------
 
@@ -1517,66 +1382,68 @@ ula_mux #(NUBITS) ula_mux (.op (op ),
 
 // desabilita flags quando nao esta operando ----------------------------------
 
-reg valid; always @ (posedge clk) valid <= opc != 7'd96; // opcode 96 = NOP
+reg valid; always @ (posedge clk) valid <= opc != 96; // opcode 96 = NOP
 
-// desempacota as entradas pra float ------------------------------------------
+// desempacota as entradas a a saida pra float --------------------------------
 
 wire                        s_in1 =           in1[NBMANT+NBEXPO         ] ; // sinal    de in1
 wire                        s_in2 =           in2[NBMANT+NBEXPO         ] ; // sinal    de in2
+wire                        s_out =           out[NBMANT+NBEXPO         ] ; // sinal    de out
 integer e_in1; always @ (*) e_in1 =   $signed(in1[NBMANT+NBEXPO-1:NBMANT]); // expoente de in1
 integer e_in2; always @ (*) e_in2 =   $signed(in2[NBMANT+NBEXPO-1:NBMANT]); // expoente de in2
+integer e_ouu; always @ (*) e_ouu =   $signed(out[NBMANT+NBEXPO-1:NBMANT]); // expoente de out
 integer m_in1; always @ (*) m_in1 = $unsigned(in1[NBMANT       -1:0     ]); // mantissa de in1
 integer m_in2; always @ (*) m_in2 = $unsigned(in2[NBMANT       -1:0     ]); // mantissa de in2
+integer m_out; always @ (*) m_out = $unsigned(out[NBMANT       -1:0     ]); // mantissa de out
 
-// obtem os valores reais das entradas ----------------------------------------
+// obtem os valores reais das entradas e da saida -----------------------------
 
 integer sm_in1; always @ (*) sm_in1 = (s_in1) ? -m_in1 : m_in1; // mantissa de in1 com sinal
 integer sm_in2; always @ (*) sm_in2 = (s_in2) ? -m_in2 : m_in2; // mantissa de in2 com sinal
+integer sm_out; always @ (*) sm_out = (s_out) ? -m_out : m_out; // mantissa de out com sinal
 
 real r_in1; always @ (*) r_in1 = sm_in1*$pow(2,e_in1); // valor real de in1
 real r_in2; always @ (*) r_in2 = sm_in2*$pow(2,e_in2); // valor real de in2
+real r_out; always @ (*) r_out = sm_out*$pow(2,e_ouu); // valor real de out
 
-// soma (pra float) -----------------------------------------------------------
+// calcula erro de arredondamento pra float -----------------------------------
 
-integer  ne ; always @ (*)  ne  = (e_in1 > e_in2) ? e_in1+1 : e_in2+1;              // expoente   normalizado
-integer  nm1; always @ (*)  nm1 = (e_in1 > e_in2) ? m_in1 : m_in1 >> (e_in2-e_in1); // mantissa 1 normalizada
-integer  nm2; always @ (*)  nm2 = (e_in1 > e_in2) ? m_in2 >> (e_in1-e_in2) : m_in2; // mantissa 2 normalizada
-integer snm1; always @ (*) snm1 = (s_in1) ? -nm1 : nm1;                             // mantissa 1 normalizada com sinal
-integer snm2; always @ (*) snm2 = (s_in2) ? -nm2 : nm2;                             // mantissa 2 normalizada com sinal
-integer snm ; always @ (*)  snm = (snm1 + snm2)/2;                                  // mantissa soma com sinal
+real delta_float;
 
-real    s_cf; always @ (*) s_cf =  snm*$pow(2,ne);                                  // soma calculada
-real    s_rf; always @ (*) s_rf =  r_in1 + r_in2;                                   // soma real
+always @ (*) begin
+	case (op)
+		3      : delta_float = (r_in1 + r_in2) - r_out; // soma
+		5      : delta_float = (r_in1 * r_in2) - r_out; // multiplicacao
+		7      : delta_float = (r_in1 / r_in2) - r_out; // divisao
+		default: delta_float = 0;
+	endcase
+end
 
-real delta_s; always @ (*) delta_s = (op == 3) ? s_rf - s_cf : 0;                   // diferenca entre as somas
+// calcula erro de arredondamento pra int -------------------------------------
 
-// multiplicacao (pra float) --------------------------------------------------
+real in1r; always @ (*) in1r = in1;
+real in2r; always @ (*) in2r = in2;
 
-integer   se; always @ (*) se = e_in1 + e_in2 + NBMANT;           // expoente somado
-wire        [NBMANT*2-1:0] mm = m_in1 * m_in2;                    // mantissa sem sinal multiplicada
-wire        [NBMANT  -1:0] ms = mm[2*NBMANT-1:NBMANT];            // mantissa shiftada
-wire signed [NBMANT    :0] mb = (s_in1 != s_in2) ? -ms : ms;      // mantissa com sinal
+real val_add; always @ (*) val_add = in1r + in2r;
+real val_mlt; always @ (*) val_mlt = in1r * in2r;
+real val_div; always @ (*) val_div = in1r / in2r;
+real val_mod; always @ (*) val_mod = in1r % in2r;
 
-real m_cf; always @ (*) m_cf =  mb*$pow(2,se);                    // multiplicacao calculada
-real m_rf; always @ (*) m_rf =  r_in1 * r_in2;                    // multiplicacao real
+real delta_int;
 
-real delta_m; always @ (*) delta_m = (op == 5) ? m_rf - m_cf : 0; // diferenca entre as multiplicacoes
-
-// divisao (pra float) --------------------------------------------------------
-
-integer   de; always @ (*) de  = e_in1 - e_in2 - NBMANT;          // expoente subtraido
-wire		[NBMANT*2-1:0] me1 = m_in1 << NBMANT;                 // mantissa 1 extendida
-wire        [NBMANT  -1:0] dm  = me1 / m_in2;                     // mantissa sem sinal dividida
-wire signed [NBMANT    :0] db  = (s_in1 != s_in2) ? -dm : dm;     // mantissa com sinal
-
-real d_cf; always @ (*) d_cf =  db*$pow(2,de);                    // divisao calculada
-real d_rf; always @ (*) d_rf =  r_in1 / r_in2;	                  // divisao real
-
-real delta_d; always @ (*) delta_d = (op == 7) ? d_rf - d_cf : 0; // diferenca entre as divisoes
-
-// erro de arredondamento -----------------------------------------------------
-
-real delta; always @ (*) delta = (valid) ? delta_s + delta_m + delta_d : 0; // soma dos erros
+always @ (*) begin
+	case (op)
+		2      : delta_int = val_add - out; // soma
+		4      : delta_int = val_mlt - out; // multiplicacao
+		6      : delta_int = val_div - out; // divisao
+		8      : delta_int = val_mod - out; // modulo
+		25     : delta_int = in2   - r_out; // int to float com acc
+		26	   : delta_int = in1   - r_out; // int to float com mem
+		27     : delta_int = r_in2   - out; // float to int com acc
+		28     : delta_int = r_in1   - out; // float to int com mem
+		default: delta_int = 0;
+	endcase
+end
 
 `endif // ---------------------------------------------------------------------
 
