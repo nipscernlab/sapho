@@ -21,7 +21,6 @@ extern int  nuioin;            // numero de portas de entrada
 extern int  nuioou;            // numero de portas de saida
 extern int  nugain;            // constante de divisao
 extern int  fftsiz;            // tamanho da fft (em bits)
-extern int  pipeln;            // se tem ou nao pipeline
 
 // funcoes globais ------------------------------------------------------------
 

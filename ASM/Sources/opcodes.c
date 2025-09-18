@@ -195,7 +195,7 @@ void opc_add(char *mne)
 			// se ainda nao tem o opcode S_DIV, escreve a info
 			if (find_opc("S_DIV") == -1)
 			{
-				printf("Info: adding to the ULA -> integer divider (not recomended for high frequency opperation - consider to increase the PIPELINE level).\n");
+				printf("Info: adding to the ULA -> integer divider (not recomended for high frequency opperation).\n");
 			}
 		}
 
@@ -204,7 +204,7 @@ void opc_add(char *mne)
 			// se ainda nao tem o opcode DIV, escreve a info
 			if (find_opc("DIV") == -1)
 			{
-				printf("Info: adding to the ULA -> integer divider (not recomended for high frequency opperation - consider to increase the PIPELINE level).\n");
+				printf("Info: adding to the ULA -> integer divider (not recomended for high frequency opperation).\n");
 			}
 		}
 
@@ -213,7 +213,7 @@ void opc_add(char *mne)
 			// se ainda nao tem o opcode SF_DIV, escreve a info
 			if (find_opc("SF_DIV") == -1)
 			{
-				printf("Info: adding to the ULA -> float-point divider (not recomended for high frequency opperation - consider to increase the PIPELINE level).\n");
+				printf("Info: adding to the ULA -> float-point divider (not recomended for high frequency opperation).\n");
 			}
 		}
 
@@ -222,7 +222,7 @@ void opc_add(char *mne)
 			// se ainda nao tem o opcode F_DIV, escreve a info
 			if (find_opc("F_DIV") == -1)
 			{
-				printf("Info: adding to the ULA -> float-point divider (not recomended for high frequency opperation - consider to increase the PIPELINE level).\n");
+				printf("Info: adding to the ULA -> float-point divider (not recomended for high frequency opperation).\n");
 			}
 		}
 
@@ -231,7 +231,7 @@ void opc_add(char *mne)
 			// se ainda nao tem o opcode S_MOD, escreve a info
 			if (find_opc("S_MOD") == -1)
 			{
-				printf("Info: adding to the ULA -> modulo computation (not recomended for high frequency opperation - consider to increase the PIPELINE level).\n");
+				printf("Info: adding to the ULA -> modulo computation (not recomended for high frequency opperation).\n");
 			}
 		}
 
@@ -240,7 +240,7 @@ void opc_add(char *mne)
 			// se ainda nao tem o opcode MOD, escreve a info
 			if (find_opc("MOD") == -1)
 			{
-				printf("Info: adding to the ULA -> modulo computation (not recomended for high frequency opperation - consider to increase the PIPELINE level).\n");
+				printf("Info: adding to the ULA -> modulo computation (not recomended for high frequency opperation).\n");
 			}
 		}
 

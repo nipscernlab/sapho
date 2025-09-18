@@ -26,7 +26,6 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 "#NUIOOU"  ;
 "#NUGAIN"  ;
 "#FFTSIZ"  ;
-"#PIPELN"  ;
 
 "#array"   eval_direct(12); // array normal
 "#arrays"  eval_direct(14); // array com arquivo de inicializacao

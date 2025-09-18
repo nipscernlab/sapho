@@ -35,7 +35,6 @@ COMEN  "//"[^\n]*
 "#NUIOOU"     return NUIOOU;
 "#NUGAIN"     return NUGAIN;
 "#FFTSIZ"     return FFTSIZ;
-"#PIPELN"     return PIPELN;
 
 "#USEMAC"     return USEMAC;
 "#ENDMAC"     return ENDMAC;

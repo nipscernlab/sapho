@@ -1122,71 +1122,31 @@ int oper_divi(int et1, int et2)
     // int var com int var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-            add_instr("DIV %s\n",     v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("%s %s\n", ld, v_name[et1%OFST]);
-            add_instr("P_LOD %s\n" , v_name[et2%OFST]);
-            add_instr("CAL int_div\n");
-        }
+        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+        add_instr("DIV %s\n",     v_name[et1%OFST]);    
     }
 
     // int var com int acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("DIV %s\n", v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("SET aux_var\n");
-            add_instr("LOD %s\n", v_name[et1%OFST]);
-            add_instr("P_LOD aux_var\n");
-            add_instr("CAL int_div\n");
-        }
+        add_instr("DIV %s\n", v_name[et1%OFST]);
     }
 
     // int var com float var
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
-            add_instr("P_LOD %s\n"   , v_name[et2%OFST]);
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("%s %s\n", i2f, v_name[et1%OFST]);
-            add_instr("P_LOD %s\n"  , v_name[et2%OFST]);
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("%s %s\n" , i2f, v_name[et1%OFST]);
+        add_instr("P_LOD %s\n"   , v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // int var com float acc
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("SET   aux_var\n");
-            add_instr("I2F_M %s\n", v_name[et1%OFST]);
-            add_instr("P_LOD aux_var\n");
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("SET   aux_var\n");
-            add_instr("I2F_M %s\n", v_name[et1%OFST]);
-            add_instr("P_LOD aux_var\n");
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("SET   aux_var\n");
+        add_instr("I2F_M %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_var\n");
+        add_instr("SF_DIV\n");
     }
 
     // int var com comp const
@@ -1258,67 +1218,31 @@ int oper_divi(int et1, int et2)
     // int acc com int var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("%s %s\n", ld, v_name[et2%OFST]);
-            add_instr("S_DIV\n");
-        }
-        else
-        {
-            add_instr("P_LOD %s\n" , v_name[et2%OFST]);
-            add_instr("CAL int_div\n");
-        }
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("S_DIV\n");
     }
 
     // int acc com int acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("S_DIV\n");
-        }
-        else
-        {
-            add_instr("CAL int_div\n");
-        }
+        add_instr("S_DIV\n");
     }
 
     // int acc com float var
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("I2F\n");
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("I2F\n");
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("I2F\n");
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // int acc com float acc
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("SET_P aux_soma\n");
-            add_instr("I2F\n");
-            add_instr("P_LOD aux_soma\n");
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("SET_P aux_soma\n");
-            add_instr("I2F\n");
-            add_instr("P_LOD aux_soma\n");
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("SET_P aux_soma\n");
+        add_instr("I2F\n");
+        add_instr("P_LOD aux_soma\n");
+        add_instr("SF_DIV\n");
     }
 
     // int acc com comp const
@@ -1403,63 +1327,28 @@ int oper_divi(int et1, int et2)
     // float var com int var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("%s %s\n", i2f, v_name[et2%OFST]);
-            add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("%s %s\n", i2f, v_name[et2%OFST]);
-            add_instr("CAL float_inv\n");
-            add_instr("F_MLT %s\n", v_name[et1%OFST]);
-        }
+        add_instr("%s %s\n", i2f, v_name[et2%OFST]);
+        add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
     }
 
     // float var com int acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("I2F\n");
-            add_instr("F_DIV %s\n", v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("I2F\n");
-            add_instr("CAL float_inv\n");
-            add_instr("F_MLT %s\n", v_name[et1%OFST]);
-        }
+        add_instr("I2F\n");
+        add_instr("F_DIV %s\n", v_name[et1%OFST]);
     }
 
     // float var com float var
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-            add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-            add_instr("CAL float_inv\n");
-            add_instr("F_MLT %s\n"  , v_name[et1%OFST]);
-        }
+        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+        add_instr("F_DIV %s\n"  , v_name[et1%OFST]);
     }
 
     // float var com float acc
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("F_DIV %s\n", v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("CAL float_inv\n");
-            add_instr("F_MLT %s\n", v_name[et1%OFST]);
-        }
+        add_instr("F_DIV %s\n", v_name[et1%OFST]);
     }
 
     // float var com comp const
@@ -1530,63 +1419,28 @@ int oper_divi(int et1, int et2)
     // float acc com int var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("P_I2F_M %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // float acc com int acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
-    {printf("entrei aqui\n");
-        if (pipeln == 3)
-        {
-            add_instr("I2F\n");
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("I2F\n");
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+    {
+        add_instr("I2F\n");
+        add_instr("SF_DIV\n");
     }
 
     // float acc com float var
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("SF_DIV\n");
     }
 
     // float acc com float acc
     if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("SF_DIV\n");
-        }
-        else
-        {
-            add_instr("CAL float_inv\n");
-            add_instr("SF_MLT\n");
-        }
+        add_instr("SF_DIV\n");
     }
 
     // float acc com comp const
@@ -2087,61 +1941,27 @@ int oper_mod(int et1, int et2)
     // int var com int var
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("%s %s\n" , ld, v_name[et2%OFST]);
-            add_instr("MOD %s\n",     v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("%s %s\n" , ld, v_name[et1%OFST]);
-            add_instr("P_LOD %s\n"  , v_name[et2%OFST]);
-            add_instr("CAL int_mod\n");
-        }
+        add_instr("%s %s\n" , ld, v_name[et2%OFST]);
+        add_instr("MOD %s\n",     v_name[et1%OFST]);
     }
 
     // int var com int acc
     if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("MOD %s\n", v_name[et1%OFST]);
-        }
-        else
-        {
-            add_instr("SET aux_var\n");
-            add_instr("LOD %s\n", v_name[et1%OFST]);
-            add_instr("P_LOD aux_var\n");
-            add_instr("CAL int_mod\n");
-        }
+        add_instr("MOD %s\n", v_name[et1%OFST]);
     }
 
     // int acc com int var
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
-            add_instr("S_MOD\n");
-        }
-        else
-        {
-            add_instr("P_LOD %s\n", v_name[et2%OFST]);
-            add_instr("CAL int_mod\n");
-        }
+        add_instr("P_LOD %s\n", v_name[et2%OFST]);
+        add_instr("S_MOD\n");
     }
 
     // int acc com int acc
     if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
-        if (pipeln == 3)
-        {
-            add_instr("S_MOD\n");
-        }
-        else
-        {
-            add_instr("CAL int_mod\n");
-        }
+        add_instr("S_MOD\n");
     }
 
     acc_ok = 1;

@@ -41,7 +41,6 @@ int  nuioin    =  1;    // numero de portas de entrada
 int  nuioou    =  1;    // numero de portas de saida
 int  nugain    = 64;    // constante de divisao
 int  fftsiz    =  8;    // tamanho da fft (em bits)
-int  pipeln    =  3;    // nivel de pipeline
 
 // ----------------------------------------------------------------------------
 // variaveis locais -----------------------------------------------------------
@@ -274,7 +273,7 @@ void eval_opernd(char *va, int is_const)
         case  8: nuioou =  atoi(va);                   state =  0; break; // numero de enderecoes de saida
         case  9: nugain =  atoi(va);                   state =  0; break; // valor da normalizacao
         case 10: fftsiz =  atoi(va);                   state =  0; break; // num de bits pra inverter na fft
-        case 11: pipeln =  atoi(va);                   state =  0; break; // nivel de pipeline
+        // 11 era pra pipeline, mas tirei
         case 12: instr_arr     (va);                   state = 13; break; // achou um array sem inicializacao
         case 13: arr_add  (atoi(va),0     ,"",f_data); state =  0; break; // declara  array sem inicializacao
         case 14: instr_arr     (va);                   state = 15; break; // achou um array com inicializacao

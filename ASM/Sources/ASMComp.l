@@ -31,7 +31,6 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 "#NUIOOU"  eval_direct( 8);                        // quantidade de portas de saida
 "#NUGAIN"  eval_direct( 9);                        // constante de divisao da funcao norm()
 "#FFTSIZ"  eval_direct(10);                        // tamanho da fft (em bits)
-"#PIPELN"  eval_direct(11);                        // se usa pipeline ou nao
 
 "#array"   eval_direct(12);                        // array normal
 "#arrays"  eval_direct(14);                        // array com arquivo de inicializacao

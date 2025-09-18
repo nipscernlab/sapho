@@ -320,7 +320,6 @@ endmodule
 
 module mem_ctrl
 #(
-	parameter PIPELN = 3,
 	parameter NUBITS = 8,
 	parameter MDATAW = 8,
 	parameter FFTSIZ = 3,
@@ -328,7 +327,6 @@ module mem_ctrl
 	parameter ISI    = 0,
 	parameter ILI    = 0
 )(
-	input               clk,
 	input               sti, ldi, fft, wr,
 	input  [NUBITS-1:0] ula,
 	input  [MDATAW-1:0] base_addr, stk_ofst,
@@ -341,12 +339,8 @@ module mem_ctrl
 assign mem_data_wr = ula;
 assign mem_wr      = wr;
 
-reg [MDATAW-1:0] ular;
-
-generate if (PIPELN>7) always @ (posedge clk) ular <= ula[MDATAW-1:0]; else always @ (*) ular = ula[MDATAW-1:0]; endgenerate
-
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ISI)) ra_rd(ldi, fft, ular    , base_addr, mem_addr_rd);
-rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst, base_addr, mem_addr_wr);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ISI)) ra_rd(ldi, fft, ula[MDATAW-1:0], base_addr, mem_addr_rd);
+rel_addr #(.MDATAW(MDATAW), .FFTSIZ(FFTSIZ), .USEFFT(ILI)) ra_wr(sti, fft, stk_ofst       , base_addr, mem_addr_wr);
 
 endmodule
 
@@ -392,7 +386,6 @@ module core
 	// -------------------------------------------------------------------------
 
 	// fluxo de dados
-	parameter  PIPELN = 3,               // Numero de ciclos de pipeline (0 = sem pipeline)
 	parameter  NBOPCO = 7,               // Numero de bits de opcode (nao mudar sem ver o instr_decoder)
 	parameter  NBOPER = 9,               // Numero de bits de operando
 	parameter  ITRADD = 0,               // Endereco da interrupcao
@@ -621,8 +614,7 @@ wire              id_dsp_push, id_dsp_pop;
 wire              id_sti, id_ldi, id_fft, id_wr;
 wire              id_req_in, id_out_en;
 
-instr_dec #(.PIPELN  ( PIPELN ),
-            .NBOPCO  ( NBOPCO ),
+instr_dec #(.NBOPCO  ( NBOPCO ),
             .MDATAW  ( MDATAW ),
 			   .LOD  (   LOD  ),
 			 .P_LOD  ( P_LOD  ),
@@ -752,8 +744,7 @@ endgenerate
 
 wire signed [NUBITS-1:0] ula_out;
 
-ula #(.PIPELN (PIPELN ),
-	  .NUBITS (NUBITS ),
+ula #(.NUBITS (NUBITS ),
       .NBMANT (NBMANT ),
       .NBEXPO (NBEXPO ),
       .NUGAIN (NUGAIN ),
@@ -801,11 +792,7 @@ ula #(.PIPELN (PIPELN ),
         .EQU  (  EQU   |  S_EQU  ),
         .SHL  (  SHL   |  S_SHL  ),
         .SHR  (  SHR   |  S_SHR  ),
-		`ifdef __ICARUS__ // --------------------------------------------------
-        .SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op, id_opcode, ula_data_in1, ula_data_in2, ula_out);
-		`else // --------------------------------------------------------------
-		.SRS  (  SRS   |  S_SRS  )) ula (clk, id_ula_op,            ula_data_in1, ula_data_in2, ula_out);
-		`endif // -------------------------------------------------------------
+		.SRS  (  SRS   |  S_SRS  )) ula (id_ula_op, ula_data_in1, ula_data_in2, ula_out);
 
 assign sp_in = ula_out;
 
@@ -824,11 +811,10 @@ wire [MDATAW-1:0] rf;
 
 generate
 	if (STI | LDI | ILI | ISI) begin
-		mem_ctrl #(.PIPELN(PIPELN),
-		           .NUBITS(NUBITS),
+		mem_ctrl #(.NUBITS(NUBITS),
 		           .MDATAW(MDATAW),
 		           .FFTSIZ(FFTSIZ),
-		           .ILI(ILI),.ISI(ISI)) ac(clk, id_sti, id_ldi, id_fft, id_wr,
+		           .ILI(ILI),.ISI(ISI)) ac(id_sti, id_ldi, id_fft, id_wr,
 		                                   ula_out,
 		                                   if_operand[MDATAW-1:0], sp_data[MDATAW-1:0],
 		                                   mem_wr, mem_addr_rd, mem_addr_wr, mem_data_wr);

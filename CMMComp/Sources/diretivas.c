@@ -21,21 +21,10 @@ int  nbmant  = 16; // numero de bits de mantissa
 int  nbexpo  =  6; // numero de bits de expoente
 int  nuioin  =  1; // numero de portas de entrada
 int  nuioou  =  1; // numero de portas de saida
-int  pipeln  =  3; // nivel de pipeline
 
 // ----------------------------------------------------------------------------
 // Controle de diretivas ------------------------------------------------------
 // ----------------------------------------------------------------------------
-
-// verifica o nivel de pileline antes de setar
-void set_ppln(int nivel)
-{
-    if (nivel < 3 || nivel > 8) {fprintf(stderr, "Erro: nível de pipeline inválido. Deve ser entre 3 e 8.\n"); exit(EXIT_FAILURE);}
-
-    if (nivel > 3) printf("Info: setting pipeline level to %d.\n", nivel);
-
-    pipeln = nivel;
-}
 
 // escreve as diretivas de compilacao no arquivo asm
 void dire_exec(char *dir, int id, int t)
@@ -53,6 +42,5 @@ void dire_exec(char *dir, int id, int t)
         case  4: nbexpo = ival ; break;
         case  7: nuioin = ival ; break;
         case  8: nuioou = ival ; break;
-        case 11: set_ppln(ival); break;
     }
 }

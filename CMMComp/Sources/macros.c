@@ -133,9 +133,6 @@ void fcat2end(char *n_read, char *n_write)
 
 // variaveis locais -----------------------------------------------------------
 
-int idiv  = 0; // se vai precisar de macro de divisao entre inteiros
-int imod  = 0; // se vai precisar de macro para resto da divisao
-int finv  = 0; // se vai precisar de macro para inerter um float
 int fatan = 0; // se vai precisar de macro pra arco tangente
 int fsqrt = 0; // se vai precisar de macro pra raiz quadrada
 int fsin  = 0; // se vai precisar de macro pra seno
@@ -144,12 +141,9 @@ int fsin  = 0; // se vai precisar de macro pra seno
 
 void mac_add(char *name)
 {
-         if (strcmp(name, "idiv" ) == 0) idiv  = 1; // divisao inteira
-    else if (strcmp(name, "imod" ) == 0) imod  = 1; // resto da divisao inteira
-    else if (strcmp(name, "finv" ) == 0) finv  = 1; // inverso de float
-    else if (strcmp(name, "fsqrt") == 0) fsqrt = 1; // raiz quadrada de float
-    else if (strcmp(name, "fatan") == 0) fatan = 1; // arco tangente de float
-    else if (strcmp(name, "fsin" ) == 0) fsin  = 1; // seno de float
+         if (strcmp(name, "fsqrt") == 0) fsqrt = 1; // raiz quadrada
+    else if (strcmp(name, "fatan") == 0) fatan = 1; // arco tangente
+    else if (strcmp(name, "fsin" ) == 0) fsin  = 1; // seno
 }
 
 // copia as macros pre-definidas no final arquivo assembler -------------------
@@ -158,7 +152,7 @@ void mac_copy(char *fasm)
 {
     // se nao tiver nada pra fazer, sai! --------------------------------------
 
-    if (!(idiv || imod || finv || fsqrt || fatan || fsin)) return;
+    if (!(fsqrt || fatan || fsin)) return;
 
     // cria constantes especiais (quando necessario ) -------------------------
 
@@ -168,45 +162,24 @@ void mac_copy(char *fasm)
 
     char tasm[1024]; sprintf(tasm, "%s/%s", dir_tmp, "tasm.txt");
 
-    if (idiv)
-    {
-        printf("Info: adding assembly macro for fixed-point division by software.\n");
-        sprintf(tasm, "%s/int_div_pl%d.asm", dir_macro, pipeln);
-        fcat2end(tasm,fasm);
-    }
-
-    if (imod)
-    {
-        printf("Info: adding assembly macro for module operation by software.\n");
-        sprintf(tasm, "%s/int_mod_pl%d.asm", dir_macro, pipeln);
-        fcat2end(tasm,fasm);
-    }
-
-    if (finv)
-    {
-        printf("Info: adding assembly macro for float-point division by software.\n");
-        sprintf(tasm, "%s/float_inv_pl%d.asm", dir_macro, pipeln);
-        fcat2end(tasm,fasm);
-    }
-
     if (fsqrt)
     {
         printf("Info: adding assembly macro for root square computation.\n");
-        sprintf(tasm, "%s/float_sqrt_pl%d.asm", dir_macro, pipeln);
+        sprintf(tasm, "%s/float_sqrt.asm", dir_macro);
         fcat2end(tasm,fasm);
     }
 
     if (fatan)
     {
         printf("Info: adding assembly macro for arc-tangent computation.\n");
-        sprintf(tasm, "%s/float_atan_pl%d.asm", dir_macro, pipeln);
+        sprintf(tasm, "%s/float_atan.asm", dir_macro);
         fcat2end(tasm,fasm);
     }
 
     if (fsin)
     {
         printf("Info: adding assembly macro for sin computation.\n");
-        sprintf(tasm, "%s/float_sin_pl%d.asm", dir_macro, pipeln);
+        sprintf(tasm, "%s/float_sin.asm", dir_macro);
         fcat2end(tasm,fasm);
     }
 }

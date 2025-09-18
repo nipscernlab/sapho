@@ -73,7 +73,7 @@ void  yyerror(char const *s);
 
 // tokens que nao tem atribuicao ----------------------------------------------
 
-%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH PIPELN                // diretivas
+%token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH                       // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
 %token INN FIN OUT FOUT                                                // stdlib (I/O)
 %token NRM PST ABS SGN                                                 // stdlib (funcoes especiais)
@@ -139,7 +139,6 @@ direct : PRNAME   ID   {dire_exec("#PRNAME",$2, 1);} // nome do processador
        | NUIOOU INUM   {dire_exec("#NUIOOU",$2, 8);} // numero de portas de saida
        | NUGAIN INUM   {dire_exec("#NUGAIN",$2, 0);} // contante de divisao (norm(.))
        | FFTSIZ INUM   {dire_exec("#FFTSIZ",$2, 0);} // tamanho da FFT (2^FFTSIZ)
-       | PIPELN INUM   {dire_exec("#PIPELN",$2,11);} // numero de pipelin do processador
 
        | USEMAC STRING INUM {mac_use($2,1,$3);}      // substitui uma parte do codico por uma macro em assembler (fora de uma funcao)
        | ENDMAC             {mac_end();}             // ponto de termino do uso da macro
