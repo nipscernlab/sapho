@@ -221,8 +221,9 @@ void eval_init(int clk, int clk_n, int s_typ)
 
     if (eval_get("cmm_log.txt","epsilon_taylor", aux) == 1)
     {
-        var_add("epsilon_taylor", 0);                     // adiciona variavel float na tabela
-        fprintf(f_data, "%s\n", itob(f2mf(aux), nubits)); // adiciona variavel na mem de dados
+        float delta;
+        var_add("epsilon_taylor", 0);                            // adiciona variavel float na tabela
+        fprintf(f_data, "%s\n", itob(f2mf(aux,&delta), nubits)); // adiciona variavel na mem de dados
     }
 
     // inicializa rotinas pra simulacao com o iverilog ------------------------

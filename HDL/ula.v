@@ -1114,7 +1114,7 @@ generate if (INV_M) ula_inv #(NUBITS) my_invm(in1, invm); else assign invm = {NU
 
 wire signed [NUBITS-1:0] lan;
 
-generate if (LAN) ula_lan #(,NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
+generate if (LAN) ula_lan #(NUBITS) my_lan(in1, in2, lan); else assign lan = {NUBITS{1'bx}}; endgenerate
 
 // LOR ------------------------------------------------------------------------
 

@@ -17,7 +17,7 @@ void dire_inter()
 {
     if (itr_ok == 1) {fprintf(stderr, "Erro na linha %d: já tem uma interrupção rolando em outro ponto antes desse!\n", line_num+1); exit(EXIT_FAILURE);}
 
-    printf("Info: interruption directive found at line %d.\n", line_num+1);
+    printf("Info: interruption directive found at line %d\n", line_num+1);
 
     add_sinst(0, "#ITRAD\n");
     itr_ok = 1;

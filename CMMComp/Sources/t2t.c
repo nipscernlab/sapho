@@ -79,10 +79,10 @@ void get_cmp_cst(int et, int *et_r, int *et_i)
     sscanf(v_name[et % OFST],"%f %f",&real,&img);
 
     sprintf(txt,"%f",real);
-    *et_r = 2*OFST + exec_num(txt);
+    *et_r = 2*OFST + exec_fnum(txt);
 
     sprintf(txt,"%f",img);
-    *et_i = 2*OFST + exec_num(txt);
+    *et_i = 2*OFST + exec_fnum(txt);
 }
 
 // gera ID estendido float pra parte real e imaginaria

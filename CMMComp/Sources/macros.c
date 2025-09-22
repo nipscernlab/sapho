@@ -34,7 +34,7 @@ void mac_use(int ids, int global, int id_num)
     if (mac_using == 1)
         {fprintf(stderr, "Erro na linha %d: tá chamando uma macro dentro da outra. você é uma pessoa confusa!\n", line_num+1); exit(EXIT_FAILURE);}
 
-    printf("Info: replacing C± code by user macro %s at line %d.\n", v_name[ids], line_num+1);
+    printf("Info: replacing C± code by user macro %s at line %d\n", v_name[ids], line_num+1);
 
     // se for global, tem q ver se tem que chamar a funcao main ainda ---------
 
@@ -111,7 +111,7 @@ void epsilon_taylor()
     // escreve a variavel no arquivo de log
     fprintf(f_log, "epsilon_taylor %s\n", fnum);
 
-    printf("Info: precision on iterative non-linear functions -> %s\n", fnum);
+    printf("Info: precision on math functions -> %s\n", fnum);
 }
 
 // concatena conteudo do arquivo read no arquivo write
@@ -164,21 +164,21 @@ void mac_copy(char *fasm)
 
     if (fsqrt)
     {
-        printf("Info: adding assembly macro for root square computation.\n");
+        printf("Info: adding assembly macro for root square computation\n");
         sprintf(tasm, "%s/float_sqrt.asm", dir_macro);
         fcat2end(tasm,fasm);
     }
 
     if (fatan)
     {
-        printf("Info: adding assembly macro for arc-tangent computation.\n");
+        printf("Info: adding assembly macro for arc-tangent computation\n");
         sprintf(tasm, "%s/float_atan.asm", dir_macro);
         fcat2end(tasm,fasm);
     }
 
     if (fsin)
     {
-        printf("Info: adding assembly macro for sin computation.\n");
+        printf("Info: adding assembly macro for sin computation\n");
         sprintf(tasm, "%s/float_sin.asm", dir_macro);
         fcat2end(tasm,fasm);
     }

@@ -126,7 +126,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     for (int i = 0; i < opc_cnt(); i++) fprintf(f_veri, ".%s(1),\n", opc_get(i));
 
     // essa conta ta aproximada, mas é melhor que nada
-    printf("Info: using %d%% of the Assembly Instruction Set.\n", opc_cnt()*100/92);
+    printf("Info: using %d%% of the Assembly Instruction Set\n", opc_cnt()*100/92);
 
     // ------------------------------------------------------------------------
     // finalizacao da instancia do processador --------------------------------
@@ -404,7 +404,7 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
 void hdl_tb_file(int itr_addr)
 {
-    printf("Info: try test bench %s_tb.v on Simulation folder.\n", prname);
+    printf("Info: try test bench %s_tb.v on Simulation folder\n", prname);
 
     // ------------------------------------------------------------------------
     // cria o arquivo .v ------------------------------------------------------

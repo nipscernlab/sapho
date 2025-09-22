@@ -1237,7 +1237,7 @@ int exec_vtv(int id1, int id2)
     // implementa o produto entre vetores -------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Inner Product detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Inner Product detected at line %d\n", line_num+1);
 
     // implementar para todas as combinacoes
 
@@ -1328,7 +1328,7 @@ void exec_Mv(int idy, int idM, int idv)
     // implementa o produto entre matriz e vetor ------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Matrix-Vector multiplication detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Matrix-Vector multiplication detected at line %d\n", line_num+1);
 
     // implementar combinacoes sob demanda apenas
 
@@ -1424,7 +1424,7 @@ void exec_cv(int idy, int et, int idv)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Constant-Vector multiplication detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Constant-Vector multiplication detected at line %d\n", line_num+1);
 
     if (et%OFST==0) add_instr("SET aux_var\n");
 
@@ -1508,7 +1508,7 @@ void exec_apcb(int idy, int ida, int etc, int idb)
     // prepara variaveis locais -----------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Vectors Sum detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Vectors Sum detected at line %d\n", line_num+1);
 
     int N = v_size[idy];
 
@@ -1595,7 +1595,7 @@ void exec_vvt(int idM, int ida, int idb)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Outer Product detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Outer Product detected at line %d\n", line_num+1);
 
     for (int i = 0; i < N; i++)
     {
@@ -1679,8 +1679,8 @@ void exec_Mmvvt(int idA, int idB, int ida, int idb)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Outer Product detected at line %d.\n", line_num+1);
-    printf("Info: Dirac notation for Matrix Sum detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Outer Product detected at line %d\n", line_num+1);
+    printf("Info: Dirac notation for Matrix Sum detected at line %d\n", line_num+1);
 
     for (int i = 0; i < N; i++)
     {
@@ -1763,7 +1763,7 @@ void exec_cM(int idA, int etc, int idM)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Constant-Matrix multiplication detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Constant-Matrix multiplication detected at line %d\n", line_num+1);
 
     if (etc%OFST==0) add_instr("SET aux_var\n");
 
@@ -1826,7 +1826,7 @@ void exec_cI(int idM, int etc)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for Constant-Matrix multiplication detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for Constant-Matrix multiplication detected at line %d\n", line_num+1);
 
     if (etc%OFST!=0) add_instr("LOD %s\n",v_name[etc%OFST]);
 
@@ -1881,7 +1881,7 @@ void exec_v0(int idv)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for zeroing vector contents detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for zeroing vector contents detected at line %d\n", line_num+1);
 
     // int
     if (v_type[idv] == 1) add_instr("LOD 0\n");
@@ -1932,7 +1932,7 @@ void exec_cvin(int idv, int etc, int idp)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for setting vector contents detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for setting vector contents detected at line %d\n", line_num+1);
 
     if (etc%OFST==0) add_instr("SET aux_var\n");
 
@@ -1999,7 +1999,7 @@ void exec_vout(int idp, int etc, int idv)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for flushing vector contents detected at line %d.\n", line_num+1);
+    printf("Info: Dirac notation for flushing vector contents detected at line %d\n", line_num+1);
 
     if (etc%OFST==0) add_instr("SET aux_var\n");
 
@@ -2072,7 +2072,7 @@ void exec_shift(int ida, int etb, int idc)
     // executa ----------------------------------------------------------------
     // ------------------------------------------------------------------------
 
-    printf("Info: Dirac notation for shift register in vector %s detected at line %d.\n", v_name[ida], line_num+1);
+    printf("Info: Dirac notation for shift register in vector %s detected at line %d\n", v_name[ida], line_num+1);
 
     // ida int e etb int na memoria
     if (v_type[ida] == 1 && get_type(etb) == 1 && etb%OFST != 0)

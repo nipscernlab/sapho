@@ -27,5 +27,6 @@ char *rem_fname(char *var, char *fname); // remove nome da funcao da variavel
 // usado no lexer para pegar variaveis e constantes ---------------------------
 
 int exec_id  (char *text);               // achou um ID
-int exec_num (char *text);               // achou uma constante
-int exec_cnum(char *text);               // achou uma constante complexa
+int exec_inum(char *text);               // achou uma constante int
+int exec_fnum(char *text);               // achou uma constante float
+int exec_cnum(char *text);               // achou uma constante comp

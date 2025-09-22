@@ -100,12 +100,12 @@ COMEN  "//"[^\n]*
              }
 			 
 {INNUM}      {
-                yylval.ival = exec_num(yytext);
+                yylval.ival = exec_inum(yytext);
                 return INUM;
              }
 			 
 {FLNUM}      {
-                yylval.ival = exec_num(yytext);
+                yylval.ival = exec_fnum(yytext);
                 return FNUM;
              }
 			 

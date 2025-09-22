@@ -35,12 +35,13 @@ void var_add(char *var, int is_const)
     }
 
     // transforma char *var pra int val
-    int val;
+    int   val;
+    float delta;
     switch(is_const)
     {
-        case 0: val = 0;         break; // nao eh constante
-        case 1: val = atoi(var); break; // constante tipo int
-        case 2: val = f2mf(var); break; // constante tipo float
+        case 0: val = 0;                break; // nao eh constante
+        case 1: val = atoi(var);        break; // constante tipo int
+        case 2: val = f2mf(var,&delta); break; // constante tipo float
     }
 
     strcpy(v_name [v_count], var);

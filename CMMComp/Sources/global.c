@@ -118,7 +118,7 @@ void parse_init(char *f_name, char *prname, char *d_proc, char *d_macro, char *d
 
 void parse_end(char *prname, char *d_proc)
 {
-    printf("Info: %d assembly instructions generated.\n", num_ins);
+    printf("Info: %d assembly instructions generated\n", num_ins);
     
     // fecha os arquivos --------------------------------------------------------
 

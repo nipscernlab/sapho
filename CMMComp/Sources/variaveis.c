@@ -114,15 +114,87 @@ int exec_id(char *text)
     return find_var(var_name);
 }
 
-// usado quando o lexer acha uma constante int ou float
-int exec_num(char *text)
+// usado quando o lexer acha uma constante int
+int exec_inum(char *text)
 {
-    float f = (atof(text) < 0) ? -atof(text) : atof(text); // valor absoluto do num, em float
-    float s =  pow(2,-pow(2,nbexpo-1));                    // menor valor permitido pra float = 2^(-(2^(e-1)))
+    // verifica limites -------------------------------------------------------
+    // nessa funcao nunca entra constante negativa
 
-    // se o numero for menor do que o menor permitido pra float, printa um erro
-    if ((f < s) && (f != 0))
-       {fprintf (stderr, "Erro na linha %d: o menor número que pode ser representado é 2^(%d)!\n", line_num+1, (int)(nbmant-1 -pow(2,nbexpo-1))); exit(EXIT_FAILURE);}
+    int max = (int) (pow(2,nbmant+nbexpo+1-1)-1);
+    int num = atoi(text);
+
+    if (num > max) {fprintf (stderr, "Erro na linha %d: o maior número inteiro que pode ser representado é %d!\n", line_num+1, max); exit(EXIT_FAILURE);}
+
+    // adiciona na tabela -----------------------------------------------------
+
+    if (find_var(text) == -1) add_var(text);
+
+    int id = find_var(text);
+
+    v_isco[id] = 1;
+
+    return id;
+}
+
+// converte float ieee 32 bits para meu float
+// tentar mudar pra converter float de 64 bits
+void f2mf(char *va, int *m, int *e)
+{
+    float f = atof(va);
+
+    if (f == 0.0) {*m = 0; *e = 0;}
+
+    int *ifl = (int*)&f;
+
+    // desempacota padrao IEEE ------------------------------------------------
+
+    *e = ((*ifl >> 23) & 0xFF) - 127 - 22;
+    *m = ((*ifl & 0x007FFFFF) + 0x00800000) >> 1;
+
+    // expoente ---------------------------------------------------------------
+
+    *e = *e + (23-nbmant);
+
+    int sh = 0;
+    while (*e < -pow(2, nbexpo-1)) {*e = *e+1; sh = sh+1;}
+
+    // mantissa ---------------------------------------------------------------
+
+    if (nbmant == 23)
+    {
+        if (*ifl & 0x00000001) *m = *m+1; // arredonda
+    }
+    else
+    {
+        sh = 23-nbmant+sh;
+        int carry = (*m >> (sh-1)) & 0x00000001; // carry de arredondamento
+        *m = *m >> sh;
+        if (carry) *m = *m+1; // arredonda
+    }
+}
+
+// usado quando o lexer acha uma constante float
+int exec_fnum(char *text)
+{
+    // verifica limites -------------------------------------------------------
+    // nunca entra o sinal negativo da constante aqui
+
+    float max = (float)((pow(2,nbmant)-1) * pow(2, pow(2,nbexpo-1)-1)); // maior valor possivel em modulo
+    float min = (float)(                    pow(2,-pow(2,nbexpo-1)  )); // menor valor possivel em modulo
+    float num = atof(text);                                             //       valor do num   em modulo
+
+    if (num < min && num != 0.0) {fprintf (stderr, "Erro na linha %d: o menor número float que pode ser representado é %f!\n", line_num+1, min); exit(EXIT_FAILURE);}
+    if (num > max)               {fprintf (stderr, "Erro na linha %d: o maior número float que pode ser representado é %f!\n", line_num+1, max); exit(EXIT_FAILURE);}
+
+    // calcula residuo --------------------------------------------------------
+
+    int   m,e; f2mf(text,&m,&e);
+    float mf = m*pow(2,e);
+    
+    float delta = mf-num;
+    if (delta != 0.0 && num != 0.0) printf("Info: constant %s on line %d aproximated to %.14f (error = %.14f)\n",text,line_num+1,mf,delta);
+
+    // adiciona na tabela -----------------------------------------------------
 
     if (find_var(text) == -1) add_var(text);
 

@@ -51,7 +51,7 @@ void eval_itrad()
 {
     // instrucao atual eh cadastrada como ponto de interrupcao
     fprintf(f_log, "itr_addr %d\n", n_ins);
-     printf("Info: implementing interruption handling.\n");
+     printf("Info: implementing interruption handling\n");
 }
 
 // executado quando um novo opcode eh encontrado
@@ -107,5 +107,5 @@ void eval_finish()
     // checa se da pra criar a memoria de dados
     if (var_cnt() <= 2) {fprintf(stderr, "Erro: esse processador não serve pra nada. Você não tem nada útil pra fazer não?\n"); exit(EXIT_FAILURE);}
 
-    printf("Info: %d instructions and %d variables were found.\n", n_ins, var_cnt());
+    printf("Info: %d instructions and %d variables were found\n", n_ins, var_cnt());
 }

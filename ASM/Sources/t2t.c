@@ -36,30 +36,13 @@ char *itob(int x, int w)
 
 // converte float ieee 32 bits para meu float
 // tentar mudar pra converter float de 64 bits
-unsigned int f2mf(char *va)
+unsigned int f2mf(char *va, float *delta)
 {
     float f = atof(va);
 
     if (f == 0.0) return 1 << (nbmant + nbexpo -1);
 
     int *ifl = (int*)&f;
-
-    // checa se o numero eh menor que o menor float permitido -----------------
-
-    float r = (f < 0) ? -f : f;        // valor absoluto do num, em float
-    float q = pow(2,-pow(2,nbexpo-1)); // menor valor permitido pra float = 2^(-(2^(e-1)))
-
-    // se o numero for menor do que o menor permitido pra float, printa um erro
-    if ((r < q) && (r != 0))
-        {fprintf (stderr, "Erro: achei %f, mas o menor número permitido é %f!\n", r, q); exit(EXIT_FAILURE);}
-
-    // checa se o numero eh maior que o maior float permitido -----------------
-
-    q = (pow(2,nbmant)-1)*pow(2,pow(2,nbexpo-1)-1);
-
-    // se o numero for maior do que o maior permitido pra float, printa um erro
-    if ((r > q) && (r != 0))
-        {fprintf (stderr, "Erro: achei %f, mas o maior número permitido é %f!\n", r, q); exit(EXIT_FAILURE);}
 
     // desempacota padrao IEEE ------------------------------------------------
 
@@ -81,8 +64,6 @@ unsigned int f2mf(char *va)
         e   = e+1;
         sh = sh+1;
     }
-    e = e & ((int)(pow(2,nbexpo)-1));
-    e = e << nbmant;
 
     // mantissa ---------------------------------------------------------------
 
@@ -97,6 +78,16 @@ unsigned int f2mf(char *va)
         m = m >> sh;
         if (carry) m = m+1; // arredonda
     }
+
+    // calcula residuo --------------------------------------------------------
     
+    float num = (atof(va)<0.0) ? -atof(va) : atof(va); // valor do numero em modulo
+    *delta = m*pow(2,e)-num;
+
+    // junta tudo -------------------------------------------------------------
+    
+    e = e & ((int)(pow(2,nbexpo)-1));
+    e = e << nbmant;
+
     return s + e + m;
 }
