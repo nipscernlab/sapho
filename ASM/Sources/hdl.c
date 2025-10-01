@@ -404,8 +404,6 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
 void hdl_tb_file(int itr_addr)
 {
-    printf("Info: try test bench %s_tb.v on Simulation folder\n", prname);
-
     // ------------------------------------------------------------------------
     // cria o arquivo .v ------------------------------------------------------
     // ------------------------------------------------------------------------
@@ -625,8 +623,53 @@ void hdl_tb_file(int itr_addr)
     fprintf(f_veri, "integer progress, chrys;\n");
     fprintf(f_veri, "initial begin\n\n");
     // necessario pro iverilog criar o .vcd
-    fprintf(f_veri, "    $dumpfile(\"%s_tb.vcd\");\n", prname);
-    fprintf(f_veri, "    $dumpvars(0,%s_tb);\n\n"    , prname);
+    fprintf(f_veri, "    $dumpfile(\"%s_tb.vcd\");\n\n", prname);
+    //fprintf(f_veri, "    $dumpvars(0,%s_tb);\n\n"    , prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.clk);\n"    , prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.rst);\n"    , prname);
+    // cadastra portas de entrada pra simulacao
+    for(int i=0; i<nuioin; i++)
+    {
+        if (inn_used(i))
+        {
+            fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.req_in_sim_%d);\n", prname,i);
+            fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.in_sim_%d);\n"    , prname,i);
+        }
+    }
+    // cadastra portas de saida pra simulacao
+    for(int i=0;i<nuioou;i++)
+    {
+        if (out_used(i))
+        {
+            fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.out_en_sim_%d);\n", prname,i);
+            fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.out_sig_%d);\n"   , prname,i);
+        }
+    }
+    // cadastra instrucoes C+- e Assembly
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.valr2);\n"    , prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.linetabs);\n" , prname);
+    // cadastra variaveis do usuario
+    for (int i = 0; i < sim_cont(); i++) fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.%s);\n" , prname, sim_name(i));
+    // cadastra arrays do usuario
+    for (int i = 0; i < sim_cont_arr(); i++)
+    {
+        for (int j = 0; j < sim_size_arr(i); j++)
+            fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.%s%04d);\n" , prname, sim_name_arr(i), j);
+    }
+    // se tiver CAL, cadastra flags da pilha de subrotinas
+    if (opc_cal())
+    {
+        fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.instr_fetch.genblk2.isp.pointeri);\n", prname, prname);
+        fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.instr_fetch.genblk2.isp.fl_max);\n"  , prname, prname);
+        fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.instr_fetch.genblk2.isp.fl_full);\n" , prname, prname);
+    }
+    // cadastra flags da pilha de dados
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.sp.pointeri);\n", prname, prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.sp.fl_max);\n"  , prname, prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.sp.fl_full);\n" , prname, prname);
+    // cadastra flags de erro de arredondamento
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.ula.delta_float);\n" , prname, prname);
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.ula.delta_int);\n\n"   , prname, prname);
     // barra de progressao
     fprintf(f_veri, "    progress = $fopen(\"progress.txt\", \"w\");\n" );
     fprintf(f_veri, "    for (chrys = 10; chrys <= 100; chrys = chrys + 10) begin\n");

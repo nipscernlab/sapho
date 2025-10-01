@@ -12,7 +12,7 @@
 // variaveis locais -----------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-int  m_count;             // contador de opcodes (parameter)
+int  m_count = 0;         // contador de opcodes (parameter)
 char m_name[NMNEMAX][64]; // nome     do opcode  (parameter)
 
 // ----------------------------------------------------------------------------
@@ -821,13 +821,8 @@ void opc_add(char *mne)
 }
 
 // verifica se tem instrucao INN
-int opc_inn()
-{
-	return (find_opc("INN") != -1) | (find_opc("P_INN") != -1) | (find_opc("F_INN") != -1) | (find_opc("PF_INN") != -1);
-}
-
+int opc_inn() {return (find_opc("INN") != -1) | (find_opc("P_INN") != -1) | (find_opc("F_INN") != -1) | (find_opc("PF_INN") != -1);}
 // verifica se tem instrucao OUT
-int opc_out()
-{
-	return find_opc("OUT") != -1;
-}
+int opc_out() {return  find_opc("OUT") != -1;}
+// verifica se tem instrucao CAL
+int opc_cal() {return  find_opc("CAL") != -1;}

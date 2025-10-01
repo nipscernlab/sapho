@@ -106,8 +106,8 @@ close $fileID
 
 # Insere sinais basicos -------------------------------------------------------
 
-set clk      [getVar "core.clk" ]
-set rst      [getVar "core.rst" ]
+set clk      [getVar "clk"]
+set rst      [getVar "rst"]
 
 gtkwave::addSignalsFromList [list $clk $rst]
 
@@ -117,8 +117,8 @@ gtkwave::/Edit/Insert_Comment {I/O ****************}
 
 # Sinais de entrada -----------------------------------------------------------
 
-set req_in  [listVar "req_in_sim"]
-set entrada [listVar "in_sim"    ]
+set req_in  [listVar "proc.req_in_sim"]
+set entrada [listVar "proc.in_sim"    ]
 
 puts "Info: found [llength $req_in] input ports in use"
 
@@ -132,8 +132,8 @@ for {set i 0} {$i < [llength $req_in] } {incr i} {
 
 # Sinais de saida -------------------------------------------------------------
 
-set out_en [listVar "out_en_sim"]
-set saida  [listVar "out_sig"   ]
+set out_en [listVar "proc.out_en_sim"]
+set saida  [listVar "proc.out_sig"   ]
 
 puts "Info: found [llength $out_en] output ports in use"
 
@@ -208,21 +208,21 @@ gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Max"
 gtkwave::highlightSignalsFromList [getVar "isp.fl_full"]
 gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Overflow"
 
-# Adder -----------------------------------------------------------------------
+# ULA -------------------------------------------------------------------------
 
-set lista_flags [list [getVar "ula.delta_float"] [getVar "ula.delta_int"]]
+set lista_flags [list [getVar "ula.delta_int"] [getVar "ula.delta_float"]]
 gtkwave::addSignalsFromList $lista_flags
 gtkwave::/Edit/Create_Group "ULA"
 gtkwave::/Edit/Toggle_Group_Open|Close
 gtkwave::/Edit/UnHighlight_All
 
-gtkwave::highlightSignalsFromList [getVar "ula.delta_float"]
-gtkwave::/Edit/Data_Format/Analog/Step
-gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (float)"
-
 gtkwave::highlightSignalsFromList [getVar "ula.delta_int"]
 gtkwave::/Edit/Data_Format/Analog/Step
 gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (int)"
+
+gtkwave::highlightSignalsFromList [getVar "ula.delta_float"]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (float)"
 
 # Visualizacao ----------------------------------------------------------------
 
