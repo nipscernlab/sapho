@@ -1,5 +1,5 @@
 // ----------------------------------------------------------------------------
-// rotinas para uso no lexer --------------------------------------------------
+// rotinas para uso durante a analise lexica do codigo em assembly ------------
 // ----------------------------------------------------------------------------
 
 // includes globais
@@ -59,7 +59,7 @@ void eval_opcode(int next_state)
 {
     // proximo estado depende do tipo de opcode:
     // 0 : nao tem operando
-    // 17: operando eh endereco da memoria de daddos
+    // 17: operando eh endereco da memoria de dados
     // 18: operando eh endereco da memoria de instrucao
     state = next_state;
 
@@ -100,6 +100,7 @@ void eval_label(char *va)
 // executado depois do lexer
 void eval_finish()
 {
+    // termina arquivo de log
     fprintf(f_log, "n_ins %d\n", n_ins    );
     fprintf(f_log, "n_dat %d\n", var_cnt());
     fclose (f_log);

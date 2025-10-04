@@ -2,6 +2,11 @@
 // implementa declaracao de variaveis -----------------------------------------
 // ----------------------------------------------------------------------------
 
+/*
+TODO:
+1- pensar em mais inicializacoes uteis com notacao de Dirac
+*/
+
 // includes globais
 #include <string.h>
 #include <stdlib.h>

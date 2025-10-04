@@ -38,9 +38,9 @@ void dire_exec(char *dir, int id, int t)
     switch(t)
     {
         case  1: strcpy (prname,v_name[id]); break;
-        case  3: nbmant = ival ; break;
-        case  4: nbexpo = ival ; break;
-        case  7: nuioin = ival ; break;
-        case  8: nuioou = ival ; break;
+        case  3: nbmant = ival             ; break;
+        case  4: nbexpo = ival             ; break;
+        case  7: nuioin = ival             ; break;
+        case  8: nuioou = ival             ; break;
     }
 }

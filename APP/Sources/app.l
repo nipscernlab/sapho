@@ -156,6 +156,7 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
    "NOP"   eval_opcode( 0); // no operation
 
    /* pseudo instrucoes */
+   /* evita enderecamento indireto */
    
    "LOD_V" eval_opcode(22); //   LOD com offset constante
  "P_LOD_V" eval_opcode(22); // P_LOD com offset constante
@@ -183,7 +184,7 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 int main(int argc, char *argv[])
 {
 	  yyin = fopen(argv[1], "r"); // primeiro argumento eh o arquivo .asm de entrada
-    eval_init(argv[2]);         // segundo  argumento eh o caminho pro arquivo de log
+    eval_init   (argv[2]);      // segundo  argumento eh o caminho pro arquivo de log
     yylex();                    // executa o lexer
 	  fclose(yyin);               // fecha o arquivo .asm
     eval_finish();              // finaliza o arquivo de log

@@ -40,11 +40,7 @@ int get_npar(int par)
     int t_fun = par;
     int n_par = 0;
 
-    while (t_fun != 0)
-    {
-        t_fun = t_fun/10;
-        n_par++;
-    }
+    while (t_fun != 0) {t_fun = t_fun/10; n_par++;}
 
     return n_par;
 }

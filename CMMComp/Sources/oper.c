@@ -139,13 +139,13 @@ int oper_soma(int et1, int et2)
         add_instr("P_LOD  %s\n" , v_name[eti%OFST]);
     }
 
-    // int var com comp acc
+    // int var com comp acc (AST vai reduzir isso)
     if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
     {
-        add_instr("SET_P aux_var\n");
-        add_instr("P_I2F_M %s\n", v_name[et1%OFST]);
-        add_instr("SF_ADD\n");
-        add_instr("P_LOD aux_var\n");
+        add_instr("SET_P aux_var\n");                 // salva parte imaginaria temporariamente e da pop na parte real
+        add_instr("P_I2F_M %s\n", v_name[et1%OFST]);  // empurra a parte real pra pilha e pega o int ja convertendo pra float
+        add_instr("SF_ADD\n");                        // soma acc com pilha
+        add_instr("P_LOD aux_var\n");                 // joga o resultado pra pilha ao mesmo tempo que pega de volta o imag
     }
 
     // int acc com int var
@@ -167,7 +167,7 @@ int oper_soma(int et1, int et2)
         add_instr("F_ADD %s\n", v_name[et2%OFST]);
     }
 
-    // int acc com float acc
+    // int acc com float acc (AST vai reduzir isso)
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
     {
         add_instr("SET_P aux_var\n");
@@ -196,7 +196,7 @@ int oper_soma(int et1, int et2)
         add_instr("P_LOD %s\n", v_name[eti%OFST]);
     }
 
-    // int acc com comp acc
+    // int acc com comp acc (AST vai reduzir isso)
     if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
     {
         add_instr("SET_P aux_var\n" );
@@ -253,7 +253,7 @@ int oper_soma(int et1, int et2)
         add_instr("P_LOD %s\n" , v_name[eti%OFST]);
     }
 
-    // float var com comp acc
+    // float var com comp acc (AST vai reduzir isso)
     if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
     {
         add_instr("SET_P aux_var\n");

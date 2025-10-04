@@ -161,6 +161,7 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
    "NOP"   eval_opcode(96, 0, yytext,    ""     ); // no operation
 
    /* pseudo instrucoes */
+   /* evita enderecamento indireto */
 
    "LOD_V" eval_opcode( 0,22, yytext,    "LOD"  ); //   LOD com offset constante
  "P_LOD_V" eval_opcode( 1,22, yytext,  "P_LOD"  ); // P_LOD com offset constante

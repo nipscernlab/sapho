@@ -2,6 +2,12 @@
 // funcoes e variaveis pra criacao e utilizacao de macros ---------------------
 // ----------------------------------------------------------------------------
 
+/*
+TODO:
+1- implementar mais funcoes nao-lineares
+2- ver no TCC do Tiago Falcao qual metodo eh melhor pra cada caso
+*/
+
 // includes globais
 #include <math.h>
 #include <stdio.h>
@@ -187,88 +193,6 @@ void mac_copy(char *fasm)
 // ----------------------------------------------------------------------------
 // backup do codigo em c+- das macros pre-definidas ---------------------------
 // ----------------------------------------------------------------------------
-
-// divisao para int (int_div.asm)
-/*int divide(int num, int den)
-{
-    int sig = sign(num,1)*den;
-
-    num = abs(num);
-    den = abs(den);
-
-    int result = 0;
-
-    int shift  = 0;
-    int dens   = den;
-    while ((dens > 0) && (dens <= num))
-    {
-        shift++;
-        dens = den << shift;
-    }
-
-    shift = shift -  1;
-    while  (shift >= 0)
-    {
-        dens = den << shift;
-        if (dens <= num)
-        {
-            num = num - dens;
-            result = result + (1 << shift);
-        }
-        shift = shift-1;
-    }
-
-    return sign(sig, result);
-}*/
-
-// resto da divisao por inteiros (int_mod.asm)
-/*int int_mod(int a, int b)
-{
-    return a-(a/b)*b;
-}*/
-
-// inverso de um float (float_inv.asm)
-/*float float_inv(float x)
-{
-    float s = sign(x, 1.0);
-    x = abs(x);
-
-    int k = 0;
-    while (x > 1.5)
-    {
-        x = x * 0.5;
-        k++;
-    }
-
-    while (x < 0.5)
-    {
-        x = x * 2.0;
-        k = k-1;
-    }
-
-    float y = 1.0;
-
-    int m = 0;
-    while (m < 6)
-    {
-        y = y*(2.0 - x*y);
-        m++;
-    }
-
-    while (k > 0)
-    {
-        y = y*0.5;
-        k = k-1;
-    }
-
-    while (k < 0)
-    {
-        y = y*2.0;
-        k++;
-    }
-
-    return y*s;
-}*/
 
 // raiz quadrada para float (macro float_sqrt.asm)
 /*float my_sqrt(float num)

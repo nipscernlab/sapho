@@ -1,0 +1,24 @@
+#PRNAME ArcTan
+#NUBITS 32
+#NDSTAC 5
+#SDEPTH 5
+#NUIOIN 1
+#NUIOOU 1
+#NBMANT 23
+#NBEXPO 8
+#NUGAIN 128
+
+void main() 
+{
+    float x[1000] "dominio.txt";
+    float a[1000] "arctan.txt";
+    float y,e;
+
+    int j=0;
+    while (j < 1000)
+    {
+        y = atan(x[j]);
+        e = a[j] - y;
+        j++;
+    }
+}

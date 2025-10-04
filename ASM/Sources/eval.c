@@ -168,17 +168,8 @@ int get_n_ins()
     return atoi(aux);
 }
 
-// diz se a porta de entrada i foi usada
-int inn_used(int i)
-{
-    return i_used[i];
-}
-
-// diz se a porta de saida i foi usada
-int out_used(int i)
-{
-    return o_used[i];
-}
+int inn_used(int i) {return i_used[i];} // diz se a porta de entrada i foi usada
+int out_used(int i) {return o_used[i];} // diz se a porta de saida   i foi usada
 
 // ----------------------------------------------------------------------------
 // funcoes de evolucao do lexer -----------------------------------------------

@@ -180,6 +180,58 @@ addArrs $proc "int"   "arr_me1"        "Signed_Decimal" ""
 addArrs $proc "float" "arr_me2"        "Binary"         "$bin_dir/float2gtkw.exe"
 addArrs $proc "comp"  "comp_arr_me3"   "Binary"         "$bin_dir/comp2gtkw.exe"
 
+# Separador de Flags ----------------------------------------------------------
+
+gtkwave::/Edit/Insert_Comment {Flags **************}
+
+puts "Info: adding flags..."
+
+# Stack -----------------------------------------------------------------------
+
+set lista_flags [list [getVar "core.sp.pointeri" $proc] [getVar "core.sp.fl_max" $proc] [getVar "core.sp.fl_full" $proc] [getVar "isp.pointeri" $proc] [getVar "isp.fl_max" $proc] [getVar "isp.fl_full" $proc]]
+gtkwave::addSignalsFromList $lista_flags
+gtkwave::/Edit/Create_Group "Stack"
+gtkwave::/Edit/Toggle_Group_Open|Close
+gtkwave::/Edit/UnHighlight_All
+
+gtkwave::highlightSignalsFromList [getVar "core.sp.pointeri" $proc]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Data Stack Pointer"
+
+gtkwave::highlightSignalsFromList [getVar "core.sp.fl_max" $proc]
+gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Alias_Highlighted_Trace "Data Stack Max"
+
+gtkwave::highlightSignalsFromList [getVar "core.sp.fl_full" $proc]
+gtkwave::/Edit/Alias_Highlighted_Trace "Data Stack Overflow"
+
+gtkwave::highlightSignalsFromList [getVar "isp.pointeri" $proc]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Pointer"
+
+gtkwave::highlightSignalsFromList [getVar "isp.fl_max" $proc]
+gtkwave::/Edit/Data_Format/Decimal
+gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Max"
+
+gtkwave::highlightSignalsFromList [getVar "isp.fl_full" $proc]
+gtkwave::/Edit/Alias_Highlighted_Trace "Inst Stack Overflow"
+
+# ULA -------------------------------------------------------------------------
+
+set lista_flags [list [getVar "ula.delta_int" $proc] [getVar "ula.delta_float" $proc]]
+gtkwave::addSignalsFromList $lista_flags
+gtkwave::/Edit/Create_Group "ULA"
+gtkwave::/Edit/Toggle_Group_Open|Close
+gtkwave::/Edit/UnHighlight_All
+
+gtkwave::highlightSignalsFromList [getVar "ula.delta_int" $proc]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (int)"
+
+gtkwave::highlightSignalsFromList [getVar "ula.delta_float" $proc]
+gtkwave::/Edit/Data_Format/Analog/Step
+gtkwave::/Edit/Alias_Highlighted_Trace "Rounding Error (float)"
+
 # Fim do loop de processadores ------------------------------------------------
 
 puts "Info: finished configuring processor '$proc'"

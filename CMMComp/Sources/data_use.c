@@ -2,6 +2,11 @@
 // rotinas para reducao exp ---------------------------------------------------
 // ----------------------------------------------------------------------------
 
+/*
+TODO:
+1- rever os operadores de incremento ++
+*/
+
 // includes globais
 #include  <stdio.h>
 #include <stdlib.h>

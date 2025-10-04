@@ -2,12 +2,12 @@
 // tabela de variaveis --------------------------------------------------------
 // ----------------------------------------------------------------------------
 
-#define NVARMAX 999999 // mudar pra array dinamico
-
 // includes globais
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define NVARMAX 999999 // mudar pra array dinamico
 
 int  v_count = 0;
 char v_name[NVARMAX][512];
@@ -22,10 +22,8 @@ int var_find(char *val)
 	int ind = -1;
 
 	for (int i = 0; i < v_count; i++)
-		if (strcmp(val, v_name[i]) == 0)
-		{
-			ind = i; break;
-		}
+		if (strcmp(val, v_name[i]) == 0) {ind = i; break;}
+        
 	return ind;
 }
 

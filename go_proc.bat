@@ -28,13 +28,16 @@ rmdir %TESTE_DIR% /s /q
 :: Parametros definidos pelo usuario do SAPHO para compilacao -----------------
 
 :: nome da pasta do projeto
-set PROJET=RLS
+set PROJET=Math
+::set PROJET=RLS
 ::set PROJET=FFT
 :: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
-set PROC=proc_rls
+set PROC=ArcTan
+::set PROC=proc_rls
 ::set PROC=proc_fft
 :: nome do arquivo cmm em que o processador esta definido
-set FNAM=proc_rls.cmm
+set FNAM=ArcTan.cmm
+::set FNAM=proc_rls.cmm
 ::set FNAM=proc_fft.cmm
 :: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
 :: se nao achar, usa simulacao padrao
@@ -44,7 +47,7 @@ set GTKW=teste.gtkw
 :: frequencia de operacao do processador em MHz
 set FRE_CLK=100
 :: numero de clocks a ser simulado
-set NUM_CLK=30000
+set NUM_CLK=500000
 
 :: Parametros que o SAPHO tem que saber ---------------------------------------
 
@@ -132,7 +135,7 @@ echo #### Roda o compilador CMM
 
 cd %BIN_DIR%
 
-CMMComp.exe %FNAM% %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO% 1
+CMMComp.exe %FNAM% %PROC% %PROC_DIR% %MAC_DIR% %TMP_PRO% 0
 
 :: Executa o Assembler pre-processor ------------------------------------------
 

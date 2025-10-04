@@ -2,6 +2,11 @@
 // rotinas para implementacao de saltos ---------------------------------------
 // ----------------------------------------------------------------------------
 
+/*
+TODO:
+1- revisar switch case
+*/
+
 #include <stdlib.h>
 
 #include "..\Headers\t2t.h"

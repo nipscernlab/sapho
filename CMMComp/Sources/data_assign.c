@@ -2,6 +2,12 @@
 // implementa instrucoes de assign --------------------------------------------
 // ----------------------------------------------------------------------------
 
+/*
+TODO:
+1- rever os operadores de incremento ++
+2- AST vai economizar muito codigo com comp
+*/
+
 // includes globais
 #include <string.h>
 #include <stdlib.h>
