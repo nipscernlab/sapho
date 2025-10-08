@@ -314,8 +314,6 @@ void exec_switch(int et)
     // finaliza ---------------------------------------------------------------
 
     acc_ok     = 0;
-    v_asgn[id] = 1;
-
     switching  = 1;
     case_cnt   = 0;
     swit_cnt++;

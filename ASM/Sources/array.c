@@ -289,7 +289,13 @@ void arr_add(int size, int type, char *f_name, FILE *f_data)
     var_inc(size-1);
     // se nao tem arquivo, preenche com zero
     if (strcmp(f_name, "") == 0)
-        for (int i = 0; i < size; i++) fprintf(f_data, "%s\n", itob(0,nubits));
+        for (int i = 0; i < size; i++)
+        {
+            if (type > 1)
+                fprintf(f_data, "%s\n", itob(f2mf("0.0",NULL), nubits)); // se for float ou comp, inicializa com 0.0
+            else
+                fprintf(f_data, "%s\n", itob(0,nubits));                 // se for int, inicializa com 0
+        }
     else
         fill_mem(f_name, size, type, f_data);
 }

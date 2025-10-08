@@ -54,10 +54,18 @@ proc addArrs {tipo padrao dataFormat tradutor} {
     for {set i 0} {$i < [gtkwave::getNumFacs]} {incr i} {
         set facname [gtkwave::getFacName $i]
 
-        if {[string match "*$padrao*" $facname] &&
-            [regexp {^(.*?)(\d{4})\[\d+:\d+\]$} $facname -> base _]} {
+        if {[string compare $tipo "float"] == 0} {
+            if {[string match "*$padrao*" $facname] &&
+                [regexp {^(.*?)(\d{4})$} $facname -> base _]} {
         
-            lappend grupos($base) $facname
+                lappend grupos($base) $facname
+            }
+        } else {
+            if {[string match "*$padrao*" $facname] &&
+                [regexp {^(.*?)(\d{4}\[\d+:\d+\])$} $facname -> base _]} {
+        
+                lappend grupos($base) $facname
+            }
         }
     }
 
@@ -166,10 +174,10 @@ gtkwave::/Edit/Insert_Comment {Variables **********}
 puts "Info: adding variables..."
 
 addVars "int"   "proc.me1"      "Signed_Decimal" ""
-addVars "float" "proc.me2"      "Binary"         "$bin_dir/float2gtkw.exe"
+addVars "float" "proc.me2"      "BitsToReal"     ""
 addVars "comp"  "proc.comp_me3" "Binary"         "$bin_dir/comp2gtkw.exe"
 addArrs "int"   "arr_me1"       "Signed_Decimal" ""
-addArrs "float" "arr_me2"       "Binary"         "$bin_dir/float2gtkw.exe"
+addArrs "float" "arr_me2"       "BitsToReal"     ""
 addArrs "comp"  "comp_arr_me3"  "Binary"         "$bin_dir/comp2gtkw.exe"
 
 # Separador de Flags ----------------------------------------------------------

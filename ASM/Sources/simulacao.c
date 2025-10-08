@@ -185,7 +185,7 @@ void sim_finish (       ){fclose(f_tran);} // fecha arquivo de traducao
 
 // procura, no arquivo de log, se eh uma variavel declarada no codigo .cmm
 // se sim, cadastra ela para mostrar no simulador
-void sim_regi(char *va)
+int sim_regi(char *va)
 {
     int  tipo;
     int  is_global;
@@ -201,6 +201,8 @@ void sim_regi(char *va)
         s_type[s_count] = tipo;
         s_count++;
     }
+
+    return tipo;
 }
 
 // procura, no arquivo cmm_log.txt, se eh um array declarado no codigo .cmm
@@ -222,6 +224,27 @@ void sim_regi_arr(char *va)
         s_size_arr[s_count_arr] = size;
         s_count_arr++;
     }
+}
+
+// pega conteudo da memoria
+void sim_mem(int addr, char *val)
+{
+    char aux[256]; sprintf(aux, "%s/Hardware/%s_data.mif", proc_dir, prname);
+    FILE *f_data = fopen(aux, "r");
+
+    int i = 0;
+    while (fgets(aux,sizeof(aux),f_data))
+    {
+        if (i == addr)
+        {
+            aux[strcspn(aux, "\r\n")] = 0; // remove newline characters
+            strcpy(val, aux);
+            break;
+        }
+        i++;
+    }
+
+    fclose(f_data);
 }
 
 char* sim_name    (int i){return s_name    [i];} // pega nome     da variavel

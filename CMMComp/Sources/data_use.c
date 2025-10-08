@@ -41,10 +41,6 @@ int id2exp(int id)
     if (v_type[id] == 0)
         {fprintf (stderr, "Erro na linha %d: mané, declara a variável '%s' direito!\n", line_num+1, rem_fname(v_name[id], fname)); exit(EXIT_FAILURE);}
 
-    // Testa se a variavel ja recebeu um valor
-    if (v_asgn[id] == 0)
-        fprintf (stdout, "Atenção na linha %d: como você quer usar '%s' se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
-
     // Se for um array, esqueceram o indice
     if (v_isar[id] > 0)
         {fprintf (stderr, "Erro na linha %d: cadê o índice de array da variável '%s'?\n", line_num+1, rem_fname(v_name[id], fname)); exit(EXIT_FAILURE);}

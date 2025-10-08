@@ -267,7 +267,6 @@ void ass_set(int id, int et)
     }
 
     acc_ok     = 0;  // liberou o acc
-    v_asgn[id] = 1;  // variavel recebeu um valor
 }
 
 // assign em array, ex x[i] = y;
@@ -544,7 +543,6 @@ void ass_array(int id, int et, int fft)
     }
 
     acc_ok     = 0;  // liberou o acc
-    v_asgn[id] = 1;  // variavel recebeu um valor
 }
 
 // assign com operador ++

@@ -9,6 +9,7 @@
 #include   <math.h>
 
 // includes locais
+#include "..\Headers\t2t.h"
 #include "..\Headers\eval.h"
 #include "..\Headers\opcodes.h"
 #include "..\Headers\simulacao.h"
@@ -237,15 +238,37 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
 
     fprintf(f_veri, "// variaveis ------------------------------------------------------------------\n\n");
 
+    int has_float = 0;
     // cria um registrador para cada variavel encontrada
     for (int i = 0; i < sim_cont(); i++)
     {
-        // se for float, ja coloca os 16 bits que indicam nbmant e nbexpo
+        // se for int, usa o tipo de dado reg na simulacao
+        if (sim_type(i) == 1)
+        {
+            fprintf(f_veri, "reg [%d:0] %s = 0;\n", nubits-1, sim_name(i));
+        }
+
+        // se for float, usa o tipo de dado real na simulacao
         if (sim_type(i) == 2)
-            fprintf(f_veri, "reg [16+%d-1:0] %s=0;\n", nubits, sim_name(i));
-        // se for int/comp nao precisa dos bits extras (o comp vai ser colocado depois)
-        else
-            fprintf(f_veri, "reg [%d-1:0] %s=0;\n"   , nubits, sim_name(i));
+        {
+            // se for a primeira variavel float, cria os auxiliares
+            if (has_float == 0)
+            {
+                has_float = 1;
+                fprintf(f_veri, "integer sm_me2; always @ (*) sm_me2 = (out[%d]) ? -out[%d:0] : out[%d:0];\n", nbmant+nbexpo  , nbmant-1, nbmant-1);
+                fprintf(f_veri, "integer  e_me2; always @ (*)  e_me2 = $signed(out[%d:%d]);\n"               , nbmant+nbexpo-1, nbmant);
+            }
+            // cria a variavel real com valor inicial 0.0
+            fprintf(f_veri, "real %s = 0.0;\n", sim_name(i));
+        }
+
+        // se for comp, usa tipo de dado reg na simulacao
+        if (sim_type(i) > 2)
+        {
+            // esta funcionando com dx, mas deveria ser o equivalente de 0.0 em binario
+            // testar com itob(f2mf("0.0",NULL), nubits)
+            fprintf(f_veri, "reg [%d:0] %s = %d'dx;\n", nubits-1, sim_name(i), nubits-1);
+        }
     }
     
     // inicia o always para registrar as variaveis
@@ -253,20 +276,21 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
     // registra cada variavel, dependendo do endereco de cada uma
     for (int i = 0; i < sim_cont(); i++)
     {
-        if (sim_type(i) == 2)
-            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= {8'd%d,8'd%d,out};\n", sim_addr(i), sim_name(i), nbmant, nbexpo);
-        else
-            fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= out;\n"              , sim_addr(i), sim_name(i));
+        if (sim_type(i) == 1) fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= out;\n"                   , sim_addr(i), sim_name(i));
+        if (sim_type(i) == 2) fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= sm_me2*$pow(2.0,e_me2);\n", sim_addr(i), sim_name(i));
+        if (sim_type(i) >  2) fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s <= out;\n"                   , sim_addr(i), sim_name(i));  
     }
     fprintf(f_veri, "end\n\n");
 
     // se a variavel for comp ...
     // junta a parte real e imag em uma variavel do dobro de tamanho
     char ni[64],nj[64],im[64];
+    int has_comp = 0;
     for (int i = 0; i < sim_cont(); i++)
     {
         if (sim_type(i) == 3)
         {
+            has_comp = 1;
             for (int j = 0; j < sim_cont(); j++)
             {
                 strcpy(ni,sim_name(i));
@@ -281,24 +305,46 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
         }
     }
 
+    if (has_comp == 1) fprintf(f_veri, "\n");
+
     // ------------------------------------------------------------------------
     // cadastra arrays do usuario para simulacao ------------------------------
     // ------------------------------------------------------------------------
 
     if (sim_cont_arr()>0)
-    fprintf(f_veri, "\n// arrays ---------------------------------------------------------------------\n\n");
+    fprintf(f_veri, "// arrays ---------------------------------------------------------------------\n\n");
 
     // cria um registrador para cada variavel do array
     for (int i = 0; i < sim_cont_arr(); i++)
     {
         for (int j = 0; j < sim_size_arr(i); j++)
         {
-            // se for float, ja coloca os 16 bits que indicam nbmant e nbexpo
+            // pega o valor no arquivo .mif
+            char val[256]; sim_mem(sim_addr_arr(i)+j, val);
+
+            // se for int, usa o tipo de dado reg na simulacao
+            if (sim_type_arr(i) == 1)
+            {
+                fprintf(f_veri, "reg [%d-1:0] %s%04d=%d'b%s;\n", nubits, sim_name_arr(i), j, nubits, val);
+            }
+
+            // se for float, usa tipo de dado real na simulacao
             if (sim_type_arr(i) == 2)
-                fprintf(f_veri, "reg [16+%d-1:0] %s%04d=0;\n", nubits, sim_name_arr(i), j);
-            // se for int/comp nao precisa dos bits extras (o comp vai ser colocado depois)
-            else
-                fprintf(f_veri, "reg [%d-1:0] %s%04d=0;\n"   , nubits, sim_name_arr(i), j);
+            {
+                if (has_float == 0)
+                {
+                    has_float = 1;
+                    fprintf(f_veri, "integer sm_me2; always @ (*) sm_me2 = (out[%d]) ? -out[%d:0] : out[%d:0];\n", nbmant+nbexpo  , nbmant-1, nbmant-1);
+                    fprintf(f_veri, "integer  e_me2; always @ (*)  e_me2 = $signed(out[%d:%d]);\n"               , nbmant+nbexpo-1, nbmant);
+                }
+                fprintf(f_veri, "real %s%04d = %f;\n", sim_name_arr(i), j, mf2f(val));
+            }
+
+            // se for comp usa tipo reg na simulacao
+            if (sim_type_arr(i) > 2)
+            {
+                fprintf(f_veri, "reg [%d-1:0] %s%04d=%d'b%s;\n", nubits, sim_name_arr(i), j, nubits, val);
+            }
         }
     }
 
@@ -310,9 +356,9 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
         for (int j = 0; j < sim_size_arr(i); j++)
         {
             if (sim_type_arr(i) == 2)
-                fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s%04d <= {8'd%d,8'd%d,out};\n", sim_addr_arr(i)+j, sim_name_arr(i), j, nbmant, nbexpo);
+                fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s%04d <= sm_me2*$pow(2.0,e_me2);\n", sim_addr_arr(i)+j, sim_name_arr(i), j);
             else
-                fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s%04d <= out;\n"              , sim_addr_arr(i)+j, sim_name_arr(i), j);
+                fprintf(f_veri, "   if (mem_addr_wr == %d && mem_wr) %s%04d <= out;\n"                   , sim_addr_arr(i)+j, sim_name_arr(i), j);
         }
     }
     if (sim_cont_arr()>0) fprintf(f_veri, "end\n\n");
@@ -338,18 +384,17 @@ void hdl_vv_file(int n_ins, int n_dat, int nbopr, int itr_addr)
         }
     }
 
+    if (sim_cont_arr()>0) fprintf(f_veri, "\n");
+
     // ------------------------------------------------------------------------
     // interface com istrucoes cmm e asm --------------------------------------
     // ------------------------------------------------------------------------
 
-    fprintf(f_veri, "\n// instrucoes -----------------------------------------------------------------\n\n");
+    fprintf(f_veri, "// instrucoes -----------------------------------------------------------------\n\n");
 
     // cria 10 registradores para retardar a instrucao @fim
     int nreg = 10;
-    for (int i = 0; i < nreg; i++)
-    {
-        fprintf(f_veri, "reg [%d-1:0] valr%d=0;\n", nubits, i+1);
-    }
+    for (int i = 0; i < nreg; i++) fprintf(f_veri, "reg [%d:0] valr%d=0;\n", nubits-1, i+1);
     fprintf(f_veri, "\n");
 
     int num_ins = get_n_ins();
@@ -627,7 +672,9 @@ void hdl_tb_file(int itr_addr)
     //fprintf(f_veri, "    $dumpvars(0,%s_tb);\n\n"    , prname);
     fprintf(f_veri, "    $dumpvars(0,%s_tb.clk);\n"    , prname);
     fprintf(f_veri, "    $dumpvars(0,%s_tb.rst);\n"    , prname);
-    // cadastra portas de entrada pra simulacao
+
+    // cadastra portas de entrada pra simulacao -------------------------------
+
     for(int i=0; i<nuioin; i++)
     {
         if (inn_used(i))
@@ -636,7 +683,9 @@ void hdl_tb_file(int itr_addr)
             fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.in_sim_%d);\n"    , prname,i);
         }
     }
-    // cadastra portas de saida pra simulacao
+
+    // cadastra portas de saida pra simulacao ---------------------------------
+
     for(int i=0;i<nuioou;i++)
     {
         if (out_used(i))
@@ -645,44 +694,81 @@ void hdl_tb_file(int itr_addr)
             fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.out_sig_%d);\n"   , prname,i);
         }
     }
-    // cadastra instrucoes C+- e Assembly
+
+    // cadastra instrucoes C+- e Assembly -------------------------------------
+
     fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.valr2);\n"    , prname);
     fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.linetabs);\n" , prname);
-    // cadastra variaveis do usuario
-    for (int i = 0; i < sim_cont(); i++) fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.%s);\n" , prname, sim_name(i));
-    // cadastra arrays do usuario
+
+    // cadastra variaveis do usuario ------------------------------------------
+
+    for (int i = 0; i < sim_cont(); i++)
+    {
+        if (sim_type(i) == 3)
+        {
+            // tenho que pegar o nome da variavel que eh a parte real do complexo
+            // e juntar com a palavra "comp_" pra achar o nome correto
+            // pra isso, checa primeiro se nao eh a parte imaginaria (nao termina com "_i_e_")
+            if (strcmp(sim_name(i)+strlen(sim_name(i))-5,"_i_e_") != 0)
+                fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.comp_%s);\n" , prname, sim_name(i));
+        }
+        else    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.%s);\n"      , prname, sim_name(i));
+    }
+
+    // cadastra arrays do usuario ---------------------------------------------
+
     for (int i = 0; i < sim_cont_arr(); i++)
     {
-        for (int j = 0; j < sim_size_arr(i); j++)
-            fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.%s%04d);\n" , prname, sim_name_arr(i), j);
+        // se for complexo, pega so a variavel que é a parte real
+        // pra compor o nome final com "comp_"
+        if (sim_type_arr(i) == 3)
+        {
+            // checa primeiro se nao eh a parte imaginaria (nao termina com "_i_e_")
+            if (strcmp(sim_name_arr(i)+strlen(sim_name_arr(i))-5,"_i_e_") != 0)
+                for (int j = 0; j < sim_size_arr(i); j++)
+                    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.comp_%s%04d);\n" , prname, sim_name_arr(i), j);
+        }
+        else
+        {
+            for (int j = 0; j < sim_size_arr(i); j++)
+                fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.%s%04d);\n" , prname, sim_name_arr(i), j);
+        }
     }
-    // se tiver CAL, cadastra flags da pilha de subrotinas
+
+    // se tiver CAL, cadastra flags da pilha de subrotinas --------------------
+
     if (opc_cal())
     {
         fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.instr_fetch.genblk2.isp.pointeri);\n", prname, prname);
         fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.instr_fetch.genblk2.isp.fl_max);\n"  , prname, prname);
         fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.instr_fetch.genblk2.isp.fl_full);\n" , prname, prname);
     }
-    // cadastra flags da pilha de dados
+
+    // cadastra flags da pilha de dados ---------------------------------------
+
     fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.sp.pointeri);\n", prname, prname);
     fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.sp.fl_max);\n"  , prname, prname);
     fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.sp.fl_full);\n" , prname, prname);
-    // cadastra flags de erro de arredondamento
+
+    // cadastra flags de erro de arredondamento -------------------------------
+
     fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.ula.delta_float);\n" , prname, prname);
-    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.ula.delta_int);\n\n"   , prname, prname);
-    // barra de progressao
+    fprintf(f_veri, "    $dumpvars(0,%s_tb.proc.p_%s.core.ula.delta_int);\n\n" , prname, prname);
+
+    // barra de progressao ----------------------------------------------------
+
     fprintf(f_veri, "    progress = $fopen(\"progress.txt\", \"w\");\n" );
     fprintf(f_veri, "    for (chrys = 10; chrys <= 100; chrys = chrys + 10) begin\n");
     fprintf(f_veri, "        #%f;\n"  , T*sim_clk_num()/10          );
     fprintf(f_veri, "        $fdisplay(progress,\"%%0d\",chrys);\n");
     fprintf(f_veri, "        $fflush(progress);\n");
     fprintf(f_veri, "    end\n\n");
-    // fecha o arquivo de progresso
     fprintf(f_veri, "    $fclose(progress);\n");
-    // termina a simulacao
+
+    // termina a simulacao ----------------------------------------------------
+
     fprintf(f_veri, "    $finish;\n\n");
-    // fim do initial
-    fprintf(f_veri, "end\n\n");
+    fprintf(f_veri, "end\n\n"); // fim do initial
 
     // ------------------------------------------------------------------------
     // finaliza arquivo -------------------------------------------------------

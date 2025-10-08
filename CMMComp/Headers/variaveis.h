@@ -9,7 +9,6 @@
 extern char v_name[NVARMAX][512];        // nome da variavel ou funcao
 extern int  v_type[NVARMAX];             // 0 -> nao identificada, 1 -> int, 2 -> float, 3 -> comp, 5 -> comp const
 extern int  v_used[NVARMAX];             // se o ID ja foi usado
-extern int  v_asgn[NVARMAX];             // se variavel ja recebeu algum valor
 extern int  v_fpar[NVARMAX];             // se ID eh uma funcao, diz a lista de parametros
 extern int  v_fnid[NVARMAX];             // ID da funcao a qual a variavel pertence
 extern int  v_isar[NVARMAX];             // se variavel eh um array

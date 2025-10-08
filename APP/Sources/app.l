@@ -27,7 +27,7 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 "#NUGAIN"  ;
 "#FFTSIZ"  ;
 
-"#array"   eval_direct(12); // array normal
+"#array"   eval_direct(11); // array normal
 "#arrays"  eval_direct(14); // array com arquivo de inicializacao
 
 "#ITRAD"   eval_itrad (  ); // ponto de endereco da interrupcao

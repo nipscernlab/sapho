@@ -43,7 +43,6 @@ void declar_var(int id)
     // atualiza status da variavel --------------------------------------------
 
     v_type[id] = type_tmp;               // o tipo da variavel esta em type_tmp (ver no flex quando acha int, float ou comp)
-    v_asgn[id] = strcmp(fname,"") == 0;  // variavel global deve ser marcada como assigned
     v_used[id] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id] = find_var(fname);        // guarda em que funcao ela esta
 
@@ -54,7 +53,6 @@ void declar_var(int id)
         int idi     = get_img_id(id);
         v_type[idi] = 4; // usar tipo 4 pra parte imaginaria
         v_used[idi] = 0;
-        v_asgn[idi] = 0;
         v_fnid[idi] = find_var(fname);
     }
 
@@ -65,7 +63,7 @@ void declar_var(int id)
     // salva os dados no arquivo log
     fprintf(f_log, "%s %s %d\n", func, rem_fname(v_name[id], fname), type_tmp);
     // se for comp, salva parte imaginaria tambem
-    if (type_tmp == 3) fprintf(f_log, "%s %s_i %d\n", func, rem_fname(v_name[id], fname), type_tmp);
+    if (type_tmp == 3) fprintf(f_log, "%s %s_i 3\n", func, rem_fname(v_name[id], fname));
 }
 
 // declara array 1D
@@ -85,7 +83,6 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     v_used[id_var] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id_var] = find_var(fname);        // guarda em que funcao ela esta
     v_isar[id_var] = 1;                      // variavel eh array 1D
-    v_asgn[id_var] = 1;                      // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     v_size[id_var] = atoi(v_name[id_arg]);   // guarda o tamanho do array
 
     // registra array no arquivo de log ---------------------------------------
@@ -106,38 +103,37 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
     // tipo int, sem arquivo
     if ((type == 1) && (id_fname == -1))
     {
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s 1 %s\n", v_name[id_var], v_name[id_arg]);
     }
 
     // tipo int, com arquivo
     if ((type == 1) && (id_fname != -1))
     {
-        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s 1 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
         printf("Info: array initialization with file %s for variable '%s' at line %d\n", v_name[id_fname], rem_fname(v_name[id_var],fname), line_num+1);
     }
 
     // tipo float, sem arquivo
     if ((type == 2) && (id_fname == -1))
     {
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s 2 %s\n", v_name[id_var], v_name[id_arg]);
     }
 
     // tipo float, com arquivo
     if ((type == 2) && (id_fname != -1))
     {
-        add_sinst(0, "#arrays %s %d %s %s\n", v_name[id_var], type, v_name[id_arg], v_name[id_fname]);
+        add_sinst(0, "#arrays %s 2 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
         printf("Info: array initialization with file %s for variable '%s' at line %d\n", v_name[id_fname], rem_fname(v_name[id_var],fname), line_num+1);
     }
 
     // tipo comp, sem arquivo
     if ((type == 3) && (id_fname == -1))
     {
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s 3 %s\n", v_name[id_var], v_name[id_arg]);
         id_var = get_img_id(id_var);
-        add_sinst(0, "#array %s %s\n", v_name[id_var], v_name[id_arg]);
+        add_sinst(0, "#array %s 4 %s\n", v_name[id_var], v_name[id_arg]);
 
         v_isar[id_var] = 1; // variavel eh array 1D
-        v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     }
 
     // tipo comp, com arquivo
@@ -148,7 +144,6 @@ void declar_arr_1d(int id_var, int id_arg, int id_fname)
         add_sinst(0, "#arrays %s 4 %s %s\n", v_name[id_var], v_name[id_arg], v_name[id_fname]);
 
         v_isar[id_var] = 1; // variavel eh array 1D
-        v_asgn[id_var] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 
         printf("Info: array initialization with file %s for variable '%s' at line %d\n", v_name[id_fname], rem_fname(v_name[id_var],fname), line_num+1);
     }
@@ -172,7 +167,6 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     v_used[id_var] = 0;                      // acabou de ser declarada, entao ainda nao foi usada
     v_fnid[id_var] = find_var(fname);        // guarda em que funcao ela esta
     v_isar[id_var] = 2;                      // variavel eh array 2D
-    v_asgn[id_var] = 1;                      // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     v_size[id_var] = atoi(v_name[id_x]);     // guarda o tamanho da dimensao i
     v_siz2[id_var] = atoi(v_name[id_y]);     // guarda o tamanho da dimensao j
 
@@ -181,38 +175,37 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
     // tipo int, sem arquivo
     if ((type == 1) && (id_fname == -1))
     {
-        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s 1 %d\n", v_name[id_var], size);
     }
 
     // tipo int, com arquivo
     if ((type == 1) && (id_fname != -1))
     {
-        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s 1 %d %s\n", v_name[id_var], size, v_name[id_fname]);
         printf("Info: array initialization with file %s for variable '%s' at line %d\n", v_name[id_fname], rem_fname(v_name[id_var],fname), line_num+1);
     }
 
     // tipo float, sem arquivo
     if ((type == 2) && (id_fname == -1))
     {
-        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s 2 %d\n", v_name[id_var], size);
     }
 
     // tipo float, com arquivo
     if ((type == 2) && (id_fname != -1))
     {
-        add_sinst(0, "#arrays %s %d %d %s\n", v_name[id_var], type, size, v_name[id_fname]);
+        add_sinst(0, "#arrays %s 2 %d %s\n", v_name[id_var], size, v_name[id_fname]);
         printf("Info: array initialization with file %s for variable '%s' at line %d\n", v_name[id_fname], rem_fname(v_name[id_var],fname), line_num+1);
     }
 
     // tipo comp, sem arquivo
     if ((type == 3) && (id_fname == -1))
     {
-        add_sinst(0, "#array %s %d\n", v_name[id_var], size);
+        add_sinst(0, "#array %s 3 %d\n", v_name[id_var], size);
         idi = get_img_id(id_var);
-        add_sinst(0, "#array %s %d\n", v_name[idi], size);
+        add_sinst(0, "#array %s 4 %d\n", v_name[idi], size);
 
         v_isar[idi] = 2; // variavel eh array 2D
-        v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
     }
 
     // tipo comp, com arquivo
@@ -223,7 +216,6 @@ void declar_arr_2d(int id_var, int id_x, int id_y, int id_fname)
         add_sinst(0, "#arrays %s 4 %d %s\n", v_name[idi], size, v_name[id_fname]);
 
         v_isar[idi] = 2; // variavel eh array 2D
-        v_asgn[idi] = 1; // array ja comeca como assigned (pois eh dificil de checar indice a indice)
 
         printf("Info: array initialization with file %s for variable '%s' at line %d\n", v_name[id_fname], rem_fname(v_name[id_var],fname), line_num+1);
     }

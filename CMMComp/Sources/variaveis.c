@@ -15,7 +15,6 @@
 
 int  v_count = 0;          // guarda o tamanho da tabela
 char v_name[NVARMAX][512]; // nome da variavel ou funcao
-int  v_asgn[NVARMAX];      // se variavel ja recebeu algum valor
 int  v_isar[NVARMAX];      // se variavel eh um array
 int  v_type[NVARMAX];      // 0 -> nao identificada, 1 -> int, 2 -> float
 int  v_fnid[NVARMAX];      // ID da funcao a qual a variavel pertence
@@ -182,9 +181,10 @@ int exec_fnum(char *text)
     float max = (float)((pow(2,nbmant)-1) * pow(2, pow(2,nbexpo-1)-1)); // maior valor possivel em modulo
     float min = (float)(                    pow(2,-pow(2,nbexpo-1)  )); // menor valor possivel em modulo
     float num = atof(text);                                             //       valor do num   em modulo
+    float abs = (num < 0.0) ? -num : num;                               //       valor do num   em modulo
 
-    if (num < min && num != 0.0) {fprintf (stderr, "Erro na linha %d: o menor número float que pode ser representado é %f!\n", line_num+1, min); exit(EXIT_FAILURE);}
-    if (num > max)               {fprintf (stderr, "Erro na linha %d: o maior número float que pode ser representado é %f!\n", line_num+1, max); exit(EXIT_FAILURE);}
+    if (abs < min && abs != 0.0) {fprintf (stderr, "Erro na linha %d: o menor número float que pode ser representado é %f!\n", line_num+1, min); exit(EXIT_FAILURE);}
+    if (abs > max)               {fprintf (stderr, "Erro na linha %d: o maior número float que pode ser representado é %f!\n", line_num+1, max); exit(EXIT_FAILURE);}
 
     // calcula residuo --------------------------------------------------------
 

@@ -96,9 +96,14 @@ void instr_ula(char *va, int is_const)
     // se for a primeira vez que a var aparece, faz o cadastro
     if (var_find(va) == -1)
     {
-        var_add (va, is_const);                              // adiciona variavel na tabela
-        fprintf (f_data, "%s\n", itob(var_val(va), nubits)); // adiciona variavel na mem de dados
-        sim_regi(va);                                        // registra variavel no simulador (se for do usuario)
+        var_add (va, is_const);                                       // adiciona variavel na tabela
+        int type = sim_regi(va);                                      // registra variavel no simulador (se for do usuario)
+
+        // se for uma variavel float, inicializa com zero
+        if (!is_const && type > 1)
+            fprintf (f_data, "%s\n", itob(f2mf("0.0",NULL), nubits)); // adiciona variavel na mem de dados
+        else
+            fprintf (f_data, "%s\n", itob(var_val(va     ), nubits)); // adiciona variavel na mem de dados
     }
 
     // escreve a nova instrucao
@@ -265,9 +270,9 @@ void eval_opernd(char *va, int is_const)
         case  8: nuioou =  atoi(va);                   state =  0; break; // numero de enderecoes de saida
         case  9: nugain =  atoi(va);                   state =  0; break; // valor da normalizacao
         case 10: fftsiz =  atoi(va);                   state =  0; break; // num de bits pra inverter na fft
-        // 11 era pra pipeline, mas tirei
-        case 12: instr_arr     (va);                   state = 13; break; // achou um array sem inicializacao
-        case 13: arr_add  (atoi(va),0     ,"",f_data); state =  0; break; // declara  array sem inicializacao
+        case 11: instr_arr     (va);                   state = 12; break; // achou um array sem inicializacao
+        case 12: arr_typ = atoi(va);                   state = 13; break; // pega o tipo de array
+        case 13: arr_add  (atoi(va),arr_typ,"",f_data); state =  0; break; // declara  array sem inicializacao
         case 14: instr_arr     (va);                   state = 15; break; // achou um array com inicializacao
         case 15: arr_typ = atoi(va);                   state = 16; break; // pega o tipo de array
         case 16: arr_tam = atoi(va);                   state = 17; break; // pega o tamanho do array com arquivo

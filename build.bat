@@ -23,7 +23,6 @@ del %BLD_DIR%\bin\appcomp.exe
 del %BLD_DIR%\bin\asmcomp.exe
 del %BLD_DIR%\bin\cmmcomp.exe
 del %BLD_DIR%\bin\comp2gtkw.exe
-del %BLD_DIR%\bin\float2gtkw.exe
 
 :: limpa \HDL
 del %BLD_DIR%\HDL\*.* /q
@@ -79,10 +78,8 @@ del  ASMComp.c
 
 cd %SRC_DIR%\Scripts
 
-%GCC% -o float2gtkw.exe float2gtkw.c
 %GCC% -o comp2gtkw.exe comp2gtkw.c
 
-move float2gtkw.exe %BLD_DIR%\bin
 move comp2gtkw.exe  %BLD_DIR%\bin
 
 :: ----------------------------------------------------------------------------

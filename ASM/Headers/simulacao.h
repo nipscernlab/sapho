@@ -18,11 +18,12 @@ void  sim_finish ();                                // fecha arquivo de traducao
 
 // acoes com variaveis do usuario ---------------------------------------------
 
-void  sim_regi   (char *va);                        // registra         variavel
+int   sim_regi   (char *va);                        // registra         variavel
 char* sim_name   (int    i);                        // pega nome     da variavel
 int   sim_addr   (int    i);                        // pega endereco da variavel
 int   sim_type   (int    i);                        // pega tipo     da variavel
 int   sim_cont   (        );                        // pega numero   de variaveis registradas
+void  sim_mem    (int addr, char *var);             // pega conteudo da memoria
 
 // acoes com arrays do usuario ---------------------------------------------
 

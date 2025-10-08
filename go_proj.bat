@@ -113,10 +113,8 @@ del ASMComp.c
 
 cd %SCR_DIR%
 
-%GCC% -o float2gtkw.exe float2gtkw.c
 %GCC% -o comp2gtkw.exe comp2gtkw.c
 
-move float2gtkw.exe %BIN_DIR%>%TMP_DIR%\xcopy.txt
 move comp2gtkw.exe  %BIN_DIR%>%TMP_DIR%\xcopy.txt
 
 :: Executa o compilador CMM ---------------------------------------------------

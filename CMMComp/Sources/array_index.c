@@ -715,10 +715,6 @@ int arr_1d2exp(int id, int et, int fft)
     if (v_type[id] == 0)
         {fprintf (stderr, "Erro na linha %d: mané, declara a variável '%s' direito!\n", line_num+1, rem_fname(v_name[id], fname)); exit(EXIT_FAILURE);}
 
-    // testa se a variavel ja recebeu um valor
-    if (v_asgn[id] == 0)
-        fprintf (stdout, "Atenção na linha %d: como você quer usar '%s' se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
-
     // tem que ver se eh array mesmo
     if (v_isar[id] == 0)
         {fprintf (stderr, "Erro na linha %d: '%s' não é array não, abensoado!\n", line_num+1, rem_fname(v_name[id], fname)); exit(EXIT_FAILURE);}
@@ -907,10 +903,6 @@ int arr_2d2exp(int id, int et1, int et2)
     // testa se a variavel ja foi declarada
     if (v_type[id] == 0)
         {fprintf (stderr, "Erro na linha %d: mané, declara a variável '%s' direito!\n", line_num+1, rem_fname(v_name[id], fname)); exit(EXIT_FAILURE);}
-
-    // testa se a variavel ja recebeu um valor
-    if (v_asgn[id] == 0)
-        fprintf (stdout, "Atenção na linha %d: como você quer usar '%s' se você nem deu um valor ainda?\n", line_num+1, rem_fname(v_name[id], fname));
 
     // tem que ver se eh array 2D mesmo
     if (v_isar[id] == 0)

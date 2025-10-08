@@ -321,9 +321,6 @@ int declar_par(int type, int id)
 {
     declar_var(id); // nao pode passar array como parametro de funcao
 
-    // parametro deve ser visto como variavel ja assigned
-    v_asgn[id] = 1;
-
     // armazena informacao sobre o tipo de dado de todos os parametro em um unico numero
     v_fpar[fun_parse] = v_fpar[fun_parse]*10 + type;
 

@@ -91,3 +91,35 @@ unsigned int f2mf(char *va, float *delta)
 
     return s + e + m;
 }
+
+// converte meu float (em ascii) para float
+float mf2f(char *ifl)
+{
+    // sinal ------------------------------------------------------------------
+
+    int s = ifl[0] == '1';
+
+    // expoente ---------------------------------------------------------------
+
+    char exb[64]; for (int i=0;i<nbexpo;i++) exb[i] = ifl[i+1]; exb[nbexpo]=0;
+
+    int es = exb[0] == '1';
+    if (es) for (int i=0;i<nbexpo;i++) exb[i] = (exb[i] == '1') ? '0' : '1';
+
+    char *endp;
+    int e = strtol(exb,&endp,2);
+    if (es) e = -(e+1);
+
+    // mantissa ---------------------------------------------------------------
+
+    char mab[64]; for (int i=0;i<nbmant;i++) mab[i] = ifl[nbexpo+1+i]; mab[nbmant]=0;
+
+    int  m = strtol(mab,&endp,2);
+
+    // gera o float -----------------------------------------------------------
+
+    float  f = m * pow(2,e);
+    if (s) f = -f;
+
+    return f;
+}

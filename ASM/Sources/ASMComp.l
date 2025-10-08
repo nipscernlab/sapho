@@ -32,7 +32,7 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 "#NUGAIN"  eval_direct( 9);                        // constante de divisao da funcao norm()
 "#FFTSIZ"  eval_direct(10);                        // tamanho da fft (em bits)
 
-"#array"   eval_direct(12);                        // array normal
+"#array"   eval_direct(11);                        // array normal
 "#arrays"  eval_direct(14);                        // array com arquivo de inicializacao
 
 "#ITRAD"                  ;                        // ponto de endereco da interrupcao
