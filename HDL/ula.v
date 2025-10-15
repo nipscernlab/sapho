@@ -822,11 +822,11 @@ endmodule
 
 module ula_srs
 #(
-	parameter NUBITS = 32
+	parameter      NUBITS = 32
 )(
-	 input     signed [NUBITS-1:0] in1,
-	 input            [NUBITS-1:0] in2,
-	output reg signed [NUBITS-1:0] out 
+	 input signed [NUBITS-1:0] in1,
+	 input        [NUBITS-1:0] in2,
+	output signed [NUBITS-1:0] out 
 );
 
 assign out = in1 >>> in2;

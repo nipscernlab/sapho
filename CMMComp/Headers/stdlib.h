@@ -21,6 +21,7 @@ int  exec_sign(int et1, int et2); // pega o sinal do primeiro argumento e coloca
 int  exec_abs (int et);           // valor absoluto
 int  exec_pst (int et);           // zera se for negativo
 int  exec_norm(int et);           // divisao por constante
+void exec_copy(int et1, int id2); // copia o valor do primeiro argumento para o segundo (sem check de tipos)
 
 // ----------------------------------------------------------------------------
 // funcoes aritmeticas --------------------------------------------------------

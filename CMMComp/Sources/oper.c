@@ -2710,44 +2710,45 @@ int oper_inv(int et)
 // portas logicas de duas entradas (& | ^)
 int oper_bitw(int et1, int et2, int type)
 {
-    if ((get_type(et1) > 1) || (get_type(et2) > 1))
+    if (get_type(et1) > 2 || get_type(et2) > 2)
     {
-        fprintf(stderr, "Erro na linha %d: qual o sentido de fazer operações bitwise sem ser com número inteiro? Vai se tratar!\n", line_num+1);
+        fprintf(stderr, "Erro na linha %d: como você quer que eu faça operações bitwise com um número complexo? Viajou?\n", line_num+1);
         exit(EXIT_FAILURE);
     }
-
+    
     char op[16];
+
     switch (type)
     {
         case  0: strcpy(op, "AND"); break;
-        case  1: strcpy(op, "ORR" ); break;
+        case  1: strcpy(op, "ORR"); break;
         case  2: strcpy(op, "XOR"); break;
     }
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
-    // int var com int var
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+    // var com var
+    if ((et1%OFST != 0) && (et2%OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
-    // int var com int acc
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+    // var com acc
+    if ((et1%OFST != 0) && (et2%OFST == 0))
     {
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
-    // int acc com int var
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+    // acc com var
+    if ((et1%OFST == 0) && (et2%OFST != 0))
     {
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
         add_instr("S_%s\n", op);
     }
 
-    // int acc com int acc
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+    // acc com acc
+    if ((et1%OFST == 0) && (et2%OFST == 0))
     {
         add_instr("S_%s\n", op);
     }
@@ -2763,17 +2764,14 @@ int oper_bitw(int et1, int et2, int type)
 
 int oper_shift(int et1, int et2, int type)
 {
-    if (get_type(et1) == 2)
-        {fprintf(stderr, "Erro na linha %d: deslocamento de bit em variável float? Você é uma pessoa confusa!\n", line_num+1); exit(EXIT_FAILURE);}
-
     if (get_type(et1) > 2)
         {fprintf(stderr, "Erro na linha %d: como você quer que eu desloque bits de um número complexo? Viajou?\n", line_num+1); exit(EXIT_FAILURE);}
 
     if (get_type(et2) > 2)
         {fprintf(stderr, "Erro na linha %d: usando comp pra deslocar bits? Você é uma pessoa confusa!\n", line_num+1); exit(EXIT_FAILURE);}
 
-
     char op[16];
+
     switch (type)
     {
         case  0: strcpy(op, "SHL"); break;
@@ -2785,63 +2783,65 @@ int oper_shift(int et1, int et2, int type)
 
     char ld[10]; if (acc_ok == 0) strcpy(ld,"LOD"); else strcpy(ld,"P_LOD");
 
-    // int var com int var
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+    // int/float var com int var
+    if ((et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
-    // int var com int acc
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+    // int/float var com int acc
+    if ((et1%OFST != 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
-    // int var com float var
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0))
+    // int/float var com float var
+    if ((et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá em float. Aí você me quebra!\n", line_num+1);
 
         add_instr("%s %s\n", ld, v_name[et2%OFST]);
         add_instr("F2I\n");
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
-    // int var com float acc
-    if ((get_type(et1) == 1) && (et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
+    // int/float var com float acc
+    if ((et1%OFST != 0) && (get_type(et2) == 2) && (et2%OFST == 0))
     {
+        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá em float. Aí você me quebra!\n", line_num+1);
+
         add_instr("F2I\n");
         add_instr("%s %s\n", op, v_name[et1%OFST]);
     }
 
-    // int acc com int var
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
+    // int/float acc com int var
+    if ((et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST != 0))
     {
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
         add_instr("S_%s\n", op);
     }
 
-    // int acc com int acc
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
+    // int/float acc com int acc
+    if ((et1%OFST == 0) && (get_type(et2) == 1) && (et2%OFST == 0))
     {
         add_instr("S_%s\n", op);
     }
 
-    // int acc com float var
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0))
+    // int/float acc com float var
+    if ((et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST != 0))
     {
-        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá em float. Aí você me quebra!\n", line_num+1);
 
         add_instr("P_LOD %s\n", v_name[et2%OFST]);
         add_instr("F2I\n");
         add_instr("S_%s\n", op);
     }
 
-    // int acc com float acc
-    if ((get_type(et1) == 1) && (et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST == 0))
+    // int/float acc com float acc
+    if ((et1%OFST == 0) && (get_type(et2) == 2) && (et2%OFST == 0))
     {
-        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá dando float. Aí você me quebra!\n", line_num+1);
+        fprintf(stdout, "Atenção na linha %d: o segundo operando do shift tá em float. Aí você me quebra!\n", line_num+1);
         
         add_instr("F2I\n");
         add_instr("S_%s\n", op);

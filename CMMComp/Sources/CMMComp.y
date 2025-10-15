@@ -14,6 +14,7 @@
     - StdLib  sign(.,.)  : retorna o segundo argumento com o sinal do primeiro (evita muito codigo, faz ele aí pra vc ver)
     - StdLib    pset(.)  : função que retorna zero se o argumento for negativo (evita if(x<0) x = 0;)
     - StdLib     abs(.)  : função que retorna o valor absoluto (evita if(x<0) x = -x;). Se for complexo, retorna o módulo
+    - StdLib    copy(.,.): copia o valor do primeiro argumento para o segundo (sem check de tipos)
     - StdLib    sqrt(.)  : retorna raiz quadrada. Gera um float
     - StdLib    atan(.)  : retorna o arco-tg. Gera um float
     - StdLib     sin(.)  : retorna o seno       de um numero
@@ -76,7 +77,7 @@ void  yyerror(char const *s);
 %token PRNAME NUBITS NBMANT NBEXPO NDSTAC SDEPTH                       // diretivas
 %token NUIOIN NUIOOU NUGAIN USEMAC ENDMAC FFTSIZ ITRADD                // diretivas
 %token INN FIN OUT FOUT                                                // stdlib (I/O)
-%token NRM PST ABS SGN                                                 // stdlib (funcoes especiais)
+%token NRM PST ABS SGN COPY                                            // stdlib (funcoes especiais)
 %token SQRT ATAN SIN COS                                               // stdlib (funcoes nao lineares)
 %token REAL IMAG COMP FASE MOD2                                        // stdlib (num complexos)
 %token WHILE IF THEN ELSE SWITCH CASE DEFAULT RET BREAK                // saltos
@@ -204,6 +205,7 @@ stmt_case:        declar     // declaracoes de variaveis
          |       std_out     // stdlib de output de dados
          |      std_fout     // stdlib de output de dados (convertendo pra float)
          |      std_vout     // output de dados com notacao de Dirac
+         |      std_copy     // copia o valor do primeiro argumento para o segundo (sem check de tipos)
          |     void_call     // chamada de subrotina
          |   return_call     // retorno de funcao
          |       mac_use     // diz que vai usar uma macro passada como parametro ate achar um ENDMAC
@@ -236,6 +238,7 @@ std_pst  : PST  '(' exp  ')'                   {$$ = exec_pst ($3      );} // fu
 std_abs  : ABS  '(' exp  ')'                   {$$ = exec_abs ($3      );} // funcao  abs(x)      -> valor absoluto de x
 std_sign : SGN  '(' exp  ',' exp ')'           {$$ = exec_sign($3,$5   );} // funcao sign(x,y)    -> pega o sinal de x e coloca em y
 std_nrm  : NRM  '(' exp  ')'                   {$$ = exec_norm($3      );} // funcao norm(x)      -> divide x pela constante NUGAIN
+std_copy : COPY '(' exp  ',' ID  ')' ';'       {     exec_copy($3,$5   );} // funcao copy(x,y)    -> copia o valor de x para y (sem check de tipos)
 std_sqrt : SQRT '(' exp  ')'                   {$$ = exec_sqrt($3      );} // funcao sqrt(x)      -> raiz quadrada
 std_atan : ATAN '(' exp  ')'                   {$$ = exec_atan($3      );} // funcao atan(x)      -> arctg
 std_sin  : SIN  '(' exp  ')'                   {$$ = exec_sin ($3      );} // funcao  sin(x)      -> seno de x

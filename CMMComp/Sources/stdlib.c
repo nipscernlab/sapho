@@ -501,6 +501,48 @@ int exec_norm(int et)
     return OFST;
 }
 
+void exec_copy(int et1, int id2)
+{
+    // ------------------------------------------------------------------------
+    // checa consistencia -----------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // checa se et1 foi declarada
+    if (et1%OFST != 0 && v_type[et1%OFST] == 0) {fprintf(stderr, "Erro na linha %d: tem que declarar '%s' primeiro!\n", line_num+1, rem_fname(v_name[et1%OFST], fname)); exit(EXIT_FAILURE);}
+
+    // checa se et1 eh uma variavel
+    if (et1%OFST != 0 && v_isar[et1%OFST] > 0) {fprintf(stderr, "Erro na linha %d: não é assim que se usa '%s'!\n", line_num+1, rem_fname(v_name[et1%OFST], fname)); exit(EXIT_FAILURE);}
+
+    // checa se id2 foi declarada
+    if (v_type[id2] == 0) {fprintf(stderr, "Erro na linha %d: tem que declarar '%s' primeiro!\n", line_num+1, rem_fname(v_name[id2], fname)); exit(EXIT_FAILURE);}
+
+    // checa se id2 eh uma variavel
+    if (v_isar[id2] > 0) {fprintf(stderr, "Erro na linha %d: não é assim que se usa '%s'!\n", line_num+1, rem_fname(v_name[id2], fname)); exit(EXIT_FAILURE);}
+
+    // ------------------------------------------------------------------------
+    // atualiza status das variaveis ------------------------------------------
+    // ------------------------------------------------------------------------
+
+    if (et1%OFST != 0) v_used[et1%OFST] = 1;
+
+    // ------------------------------------------------------------------------
+    // executa ----------------------------------------------------------------
+    // ------------------------------------------------------------------------
+
+    // de var para var
+    if (et1%OFST != 0)
+    {
+        add_instr("LOD %s\n", v_name[et1%OFST]);
+        add_instr("SET %s\n", v_name[id2]     );
+    }
+
+    // de acc para var
+    if (et1%OFST == 0)
+    {
+        add_instr("SET %s\n", v_name[id2]     );
+    }
+}
+
 // ----------------------------------------------------------------------------
 // funcoes nao-lineares -------------------------------------------------------
 // ----------------------------------------------------------------------------

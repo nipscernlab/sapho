@@ -8,26 +8,27 @@
 #NBEXPO 8
 #NUGAIN 128
 
-float my_sqrt(float num, float x)
+float my_sqrt(float num)
 {
-    float epslon = 0.00001;
-    int cnt = 0;
-    while (1)
-    {
-        float raiz = 0.5 * (x+num/x);
-        if (abs(x - raiz) < epslon) break;
-        x = raiz;
-        cnt++;
-    }
+    if (num == 0.0) return 0.0;
+    
+    int v = (((num << 1) >>> 24) + 22) >>> 1;         // pega o expoente
+        v = ((((v-22) << 23) + (1 << 22)) << 1) >> 1; // monta o float
 
-    return raiz;
+    float x; copy(v,x);
+
+    x = 0.5 * (x+num/x);
+    x = 0.5 * (x+num/x);
+    x = 0.5 * (x+num/x);
+    x = 0.5 * (x+num/x);
+
+    return x;
 }
 
 void main() 
 {
     float x[1000] "sqrt_x.txt";
     float a[1000] "sqrt_y.txt";
-    float g[1000] "sqrt_guess.txt";
     float y,t,e;
 
     int j=0;
@@ -42,7 +43,7 @@ void main()
     j=0;
     while (j < 1000)
     {
-        y = my_sqrt(x[j],g[j]);
+        y = my_sqrt(x[j]);
         t = a[j];
         e = t - y;
         j++;

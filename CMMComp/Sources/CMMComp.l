@@ -49,6 +49,7 @@ COMEN  "//"[^\n]*
 "pset"        return PST;
 "abs"         return ABS;
 "sign"        return SGN;
+"copy"        return COPY;
 
 "sqrt"        return SQRT;
 "atan"        return ATAN;
