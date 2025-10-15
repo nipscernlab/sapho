@@ -1,0 +1,50 @@
+#PRNAME Sqrt
+#NUBITS 32
+#NDSTAC 5
+#SDEPTH 5
+#NUIOIN 1
+#NUIOOU 1
+#NBMANT 23
+#NBEXPO 8
+#NUGAIN 128
+
+float my_sqrt(float num, float x)
+{
+    float epslon = 0.00001;
+    int cnt = 0;
+    while (1)
+    {
+        float raiz = 0.5 * (x+num/x);
+        if (abs(x - raiz) < epslon) break;
+        x = raiz;
+        cnt++;
+    }
+
+    return raiz;
+}
+
+void main() 
+{
+    float x[1000] "sqrt_x.txt";
+    float a[1000] "sqrt_y.txt";
+    float g[1000] "sqrt_guess.txt";
+    float y,t,e;
+
+    int j=0;
+    while (j < 1000)
+    {
+        y = sqrt(x[j]);
+        t = a[j];
+        e = t - y;
+        j++;
+    }
+
+    j=0;
+    while (j < 1000)
+    {
+        y = my_sqrt(x[j],g[j]);
+        t = a[j];
+        e = t - y;
+        j++;
+    }
+}

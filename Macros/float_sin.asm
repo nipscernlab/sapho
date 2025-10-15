@@ -21,15 +21,12 @@
 @L1end_sin    LOD   sin_x          // float termo = x;
               SET   sin_termo
 
-              LOD   sin_x          // float x2 = x * x;
-            F_MLT   sin_x
+              SET   sin_resultado  // float resultado = termo;
+
+            F_MLT   sin_x          // float x2 = x * x;
               SET   sin_x2
 
-              LOD   sin_termo      // float resultado = termo;
-              SET   sin_resultado
-
-              LOD   sin_x2         // float tolerancia = epslon/x2;
-            F_DIV   epsilon_taylor
+            F_DIV   epsilon_taylor // float tolerancia = epslon/x2;
               SET   sin_tolerancia
 
               LOD   3              // int indiceX = 3;
