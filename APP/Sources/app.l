@@ -153,7 +153,10 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
    "SRS"   eval_opcode(18); // shift right aritmetico com memoria
  "S_SRS"   eval_opcode( 0); // shift right aritmetico com pilha
 
+   /* instrucoes especiais */
+
    "NOP"   eval_opcode( 0); // no operation
+ "F_ROT"   eval_opcode( 0); // potencia de 2 mais proxima da raiz (com ACC)
 
    /* pseudo instrucoes */
    /* evita enderecamento indireto */

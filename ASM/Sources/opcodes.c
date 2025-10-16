@@ -811,6 +811,15 @@ void opc_add(char *mne)
 			}
 		}
 
+		if (strcmp(mne, "F_ROT") == 0)
+		{
+			// se ainda nao tem o opcode F_ROT, escreve a info
+			if (find_opc("F_ROT") == -1)
+			{
+				printf("Info: ULA resource -> root-square approximation for float\n");
+			}
+		}
+
 		// --------------------------------------------------------------------
 		// depois cadastra o opcode novo --------------------------------------
 		// --------------------------------------------------------------------

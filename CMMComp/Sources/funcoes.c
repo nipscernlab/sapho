@@ -347,8 +347,8 @@ void declar_ret(int et, int ret)
         {fprintf (stderr, "Erro na linha %d: valor de retorno em função void? viajou!\n", line_num+1); exit(EXIT_FAILURE);}
 
     // testa se esta dentro de um if/else
-    if ((get_if() > 0) && (v_type[fun_parse] != 6))
-        fprintf(stdout, "Cuidado na linha %d: usar return dentro de if/else pode dar pau, caso você esqueça em algum lugar!\n", line_num+1);
+    //if ((get_if() > 0) && (v_type[fun_parse] != 6))
+        //fprintf(stdout, "Cuidado na linha %d: usar return dentro de if/else pode dar pau, caso você esqueça em algum lugar!\n", line_num+1);
 
     // ------------------------------------------------------------------------
     // checa todas as combinacoes ---------------------------------------------

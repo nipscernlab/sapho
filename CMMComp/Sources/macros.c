@@ -162,7 +162,7 @@ void mac_copy(char *fasm)
 
     // cria constantes especiais (quando necessario ) -------------------------
 
-    if (fsqrt || fatan || fsin) epsilon_taylor();
+    if (fatan || fsin) epsilon_taylor();
 
     // copia o que precisa no final do asm ------------------------------------
 
@@ -193,22 +193,6 @@ void mac_copy(char *fasm)
 // ----------------------------------------------------------------------------
 // backup do codigo em c+- das macros pre-definidas ---------------------------
 // ----------------------------------------------------------------------------
-
-// raiz quadrada para float (macro float_sqrt.asm)
-/*float my_sqrt(float num)
-{
-    float x = num;
-    float epslon = 0.000008;  // menor numero possivel = 2^(-(2^(e-1)))
-                              // para m = 16 e = 6, o num eh: 0.000007629... (ta errado)
-    while (1)
-    {
-        float raiz = 0.5 * (x+num/x);
-        if (fabs(x - raiz) < epslon) break;
-        x = raiz;
-    }
-
-    return raiz;
-}*/
 
 // arco-tg para float (float_atan.asm)
 /*float float_atan(float x)
