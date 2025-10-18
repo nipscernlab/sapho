@@ -9,6 +9,7 @@
 extern char proc_dir[1024];    // diretorio do processador
 extern char temp_dir[1024];    // diretorio da pasta Tmp
 extern char  hdl_dir[1024];    // diretorio da pasta HDL
+extern char  mac_dir[1024];    // diretorio da pasta Macros
 
 // guarda os valores das diretivas
 extern char prname  [128 ];    // nome do processador

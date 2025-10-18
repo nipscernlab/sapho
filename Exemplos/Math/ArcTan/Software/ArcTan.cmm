@@ -10,7 +10,7 @@
 
 float arctan_LUT(float x)
 {
-    float atan_lut[48] "Arctan_LUT.txt";
+    float atan_lut[49] "Arctan_LUT.txt";
     
     float signo = x;
     x = abs(x);
@@ -21,25 +21,15 @@ float arctan_LUT(float x)
     {
         idxf = 47.0/x;
         idx = idxf;
-        if (idx == 47)
-            return atan_lut[47];
-        else
-        {
-            x = atan_lut[idx];
-            return sign(signo, 1.57079632679 - (x + (atan_lut[idx+1] - x) * (idxf - idx)));
-        }
+        x = atan_lut[idx];
+        return sign(signo, 1.57079632679 - (x + (atan_lut[idx+1] - x) * (idxf - idx)));
     }
     else
     {
         idxf = 47.0*x;
         idx = idxf;
-        if (idx == 47)
-            return atan_lut[47];
-        else
-        {
-            x = atan_lut[idx];
-            return sign(signo, x + (atan_lut[idx+1] - x) * (idxf - idx));
-        }
+        x = atan_lut[idx];
+        return sign(signo, x + (atan_lut[idx+1] - x) * (idxf - idx));
     }
 }
 

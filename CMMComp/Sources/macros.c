@@ -162,7 +162,7 @@ void mac_copy(char *fasm)
 
     // cria constantes especiais (quando necessario ) -------------------------
 
-    if (fatan || fsin) epsilon_taylor();
+    if (fatan) epsilon_taylor();
 
     // copia o que precisa no final do asm ------------------------------------
 

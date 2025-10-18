@@ -33,14 +33,14 @@ set PROJET=Math
 ::set PROJET=FFT
 :: nome do tipo de processador a ser simulado (uma sub-pasta do projeto)
 ::set PROC=ArcTan
-::set PROC=Seno
-set PROC=Sqrt
+set PROC=Seno
+::set PROC=Sqrt
 ::set PROC=proc_rls
 ::set PROC=proc_fft
 :: nome do arquivo cmm em que o processador esta definido
 ::set FNAM=ArcTan.cmm
-::set FNAM=Seno.cmm
-set FNAM=Sqrt.cmm
+set FNAM=Seno.cmm
+::set FNAM=Sqrt.cmm
 ::set FNAM=proc_rls.cmm
 ::set FNAM=proc_fft.cmm
 :: test_bench (sem .v) a ser simulado (tem que estar na pasta Simulation)
@@ -153,7 +153,7 @@ echo #### Roda o Assembler
 
 set ASM_FILE=%SOFT_DIR%\%PROC%.asm
 
-ASM.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
+ASM.exe %ASM_FILE% %PROC_DIR% %HDL_DIR% %MAC_DIR% %TMP_PRO% %FRE_CLK% %NUM_CLK% 0
 
 :: Gera o testbench com o Icarus ----------------------------------------------
 

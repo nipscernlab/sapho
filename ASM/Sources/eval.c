@@ -29,6 +29,7 @@
 char proc_dir[1024];    // diretorio do processador
 char temp_dir[1024];    // diretorio da pasta Tmp
 char  hdl_dir[1024];    // diretorio da pasta HDL
+char  mac_dir[1024];    // diretorio da pasta Macros
 
 // guarda os valores das diretivas
 char prname   [128];    // nome do processador
@@ -264,25 +265,25 @@ void eval_opernd(char *va, int is_const)
 {
     switch (state)
     {
-        case  5: ddepth =  atoi(va);                   state =  0; break; // tamanho da pilha de dados
-        case  6: sdepth =  atoi(va);                   state =  0; break; // tamanho da pilha de instrucoes
-        case  7: nuioin =  atoi(va);                   state =  0; break; // numero de enderecoes de entrada
-        case  8: nuioou =  atoi(va);                   state =  0; break; // numero de enderecoes de saida
-        case  9: nugain =  atoi(va);                   state =  0; break; // valor da normalizacao
-        case 10: fftsiz =  atoi(va);                   state =  0; break; // num de bits pra inverter na fft
-        case 11: instr_arr     (va);                   state = 12; break; // achou um array sem inicializacao
-        case 12: arr_typ = atoi(va);                   state = 13; break; // pega o tipo de array
+        case  5: ddepth =  atoi(va);                    state =  0; break; // tamanho da pilha de dados
+        case  6: sdepth =  atoi(va);                    state =  0; break; // tamanho da pilha de instrucoes
+        case  7: nuioin =  atoi(va);                    state =  0; break; // numero de enderecoes de entrada
+        case  8: nuioou =  atoi(va);                    state =  0; break; // numero de enderecoes de saida
+        case  9: nugain =  atoi(va);                    state =  0; break; // valor da normalizacao
+        case 10: fftsiz =  atoi(va);                    state =  0; break; // num de bits pra inverter na fft
+        case 11: instr_arr     (va);                    state = 12; break; // achou um array sem inicializacao
+        case 12: arr_typ = atoi(va);                    state = 13; break; // pega o tipo de array
         case 13: arr_add  (atoi(va),arr_typ,"",f_data); state =  0; break; // declara  array sem inicializacao
-        case 14: instr_arr     (va);                   state = 15; break; // achou um array com inicializacao
-        case 15: arr_typ = atoi(va);                   state = 16; break; // pega o tipo de array
-        case 16: arr_tam = atoi(va);                   state = 17; break; // pega o tamanho do array com arquivo
-        case 17: arr_add  (arr_tam,arr_typ,va,f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
-        case 18: instr_ula     (va,is_const);          state =  0; break; // operacoes com a ULA
-        case 19: instr_salto   (va);                   state =  0; break; // operacoes de salto
-        case 20: instr_inn     (va);                   state =  0; break; // operacoes de entrada
-        case 21: instr_out     (va);                   state =  0; break; // operacoes de saida
-        case 22: strcpy(va_name,va);                   state = 23; break; // prepara   ofsset constante
-        case 23: instr_oft     (va);                   state =  0; break; // instr com offset constante
+        case 14: instr_arr     (va);                    state = 15; break; // achou um array com inicializacao
+        case 15: arr_typ = atoi(va);                    state = 16; break; // pega o tipo de array
+        case 16: arr_tam = atoi(va);                    state = 17; break; // pega o tamanho do array com arquivo
+        case 17: arr_add  (arr_tam,arr_typ,va, f_data); state =  0; break; // preenche memoria com valor do arquivo (zero se nao tem arquivo)
+        case 18: instr_ula     (va,is_const);           state =  0; break; // operacoes com a ULA
+        case 19: instr_salto   (va);                    state =  0; break; // operacoes de salto
+        case 20: instr_inn     (va);                    state =  0; break; // operacoes de entrada
+        case 21: instr_out     (va);                    state =  0; break; // operacoes de saida
+        case 22: strcpy(va_name,va);                    state = 23; break; // prepara   ofsset constante
+        case 23: instr_oft     (va);                    state =  0; break; // instr com offset constante
     }
 }
 

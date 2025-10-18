@@ -193,10 +193,11 @@ int main(int argc, char *argv[])
 {
 	strcpy(proc_dir,argv[2]);                             // path da pasta do projeto
 	strcpy( hdl_dir,argv[3]);                             // path da pasta HDL
-	strcpy(temp_dir,argv[4]);                             // path da pasta Temp
+  strcpy( mac_dir,argv[4]);                             // path da pasta Macros
+	strcpy(temp_dir,argv[5]);                             // path da pasta Temp
 
   yyin = fopen(argv[1], "r");                           // primeiro argumento eh o arquivo .asm de entrada
-	eval_init(atoi(argv[5]),atoi(argv[6]),atoi(argv[7])); // inicializa as variaveis de estado
+	eval_init(atoi(argv[6]),atoi(argv[7]),atoi(argv[8])); // inicializa as variaveis de estado
   yylex();                                              // executa o lexer
 	fclose(yyin);                                         // fecha o arquivo .asm
 	eval_finish();                                        // executa finalizacao do assembler

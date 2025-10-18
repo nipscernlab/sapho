@@ -10,20 +10,15 @@
 
 float seno_LUT(float x)
 {
-    float Seno_LUT[151] "Seno_LUT.txt";
+    float Seno_LUT[152] "Seno_LUT.txt";
     
     while (abs(x) > 3.141592653589793) x = x - sign(x, 6.283185307);
 
     float idxf = abs(x * 47.746482927568);  // 150.0/pi;
     int idx = idxf;
 
-    if (idx == 150)
-        return 0.0;
-    else
-    {
-        float v = Seno_LUT[idx];
-        return sign(x, v + (Seno_LUT[idx+1] - v) * (idxf - idx));
-    }
+    float v = Seno_LUT[idx];
+    return sign(x, v + (Seno_LUT[idx+1] - v) * (idxf - idx));
 }
 
 void main() 

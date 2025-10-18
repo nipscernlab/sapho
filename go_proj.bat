@@ -134,7 +134,7 @@ cd  %BIN_DIR%
 :: Executa o compilador Assembler ---------------------------------------------
 
 (for %%i in (%PROC_LIST%) do (
-    ASM.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i %HDL_DIR% %TMP_DIR%\%%i 0 0 1
+    ASM.exe %PROJ_DIR%\%%i\Software\%%i.asm %PROJ_DIR%\%%i %HDL_DIR% %MAC_DIR% %TMP_DIR%\%%i 0 0 1
     cp %PROJ_DIR%\%%i\Hardware\%%i.v %TMP_DIR%\%%i
 ))
 

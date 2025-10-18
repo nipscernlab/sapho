@@ -198,11 +198,18 @@ void fill_mem(char *f_name, int tam, int fil_typ, FILE *f_data)
     if (fil_typ != 4) printf("Info: filling array with %d values read from file %s\n", tam, f_name);
 
     // abre o arquivo para leitura -------------------------------------------
-
+    
     rem_aspas(f_name);
-    char path[2048];      sprintf(path  , "%s/Software/%s", proc_dir, f_name);
-    FILE *f_file =          fopen(path  , "r");
-    if   (f_file == NULL)  {fprintf(stderr, "Erro: não rolou de abrir o arquivo '%s'!!\n", path); exit(EXIT_FAILURE);}
+
+    char path[2048];
+    // verifica se é LUT na pasta Macros
+    if (f_name[0]=='$')
+        sprintf(path, "%s/%s"          , mac_dir, f_name+1);
+    else
+        sprintf(path, "%s/Software/%s", proc_dir, f_name  );
+
+    FILE *f_file =        fopen  (path  , "r");
+    if   (f_file == NULL){fprintf(stderr, "Erro: não rolou de abrir o arquivo '%s'!!\n", path); exit(EXIT_FAILURE);}
 
     // agora le o arquivo -----------------------------------------------------
 
