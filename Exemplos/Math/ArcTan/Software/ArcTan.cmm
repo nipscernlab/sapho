@@ -8,6 +8,7 @@
 #NBEXPO 8
 #NUGAIN 128
 
+//#USEMAC "atan_teste.asm" 40
 float arctan_LUT(float x)
 {
     float atan_lut[49] "Arctan_LUT.txt";
@@ -17,26 +18,24 @@ float arctan_LUT(float x)
 
     float idxf;
     int idx;
+    float v0=0.0;
     if (x > 1.0)
     {
-        idxf = 47.0/x;
-        idx = idxf;
-        x = atan_lut[idx];
-        return sign(signo, 1.57079632679 - (x + (atan_lut[idx+1] - x) * (idxf - idx)));
+        x = 1/x;
+        v0 = 1.57079632679;
     }
-    else
-    {
-        idxf = 47.0*x;
-        idx = idxf;
-        x = atan_lut[idx];
-        return sign(signo, x + (atan_lut[idx+1] - x) * (idxf - idx));
-    }
+    
+    idxf = 47.0*x;
+    idx = idxf;
+    x = atan_lut[idx];
+    return sign(signo, v0 - (x + (atan_lut[idx+1] - x) * (idxf - idx)));
 }
+//#ENDMAC
 
 void main() 
 {
-    float x[1000] "ata_x_m2_p2.txt";
-    float a[1000] "ata_y_m2_p2.txt";
+    float x[1000] "atan_x.txt";
+    float a[1000] "atan_y.txt";
     float y,t,e;
 
     int j=0;

@@ -35,8 +35,8 @@
              PF_NEG_M sin_LUT_v             // subtrai de v
              SF_ADD
 
-              P_NEG_M sin_idx               // pega a inclinacao da reta
-                I2F
+              P_I2F_M sin_idx               // pega a inclinacao da reta
+              F_NEG
               F_ADD   sin_idxf
              
              SF_MLT                         // acha o valor na reta

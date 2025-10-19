@@ -214,15 +214,6 @@ void eval_init(int clk, int clk_n, int s_typ)
     sprintf(aux, "%s/Hardware/%s_data.mif", proc_dir, prname); f_data  = fopen(aux, "w");
     sprintf(aux, "%s/Hardware/%s_inst.mif", proc_dir, prname); f_instr = fopen(aux, "w");
 
-    // insere variaveis auxiliares na memoria de dados (se houver) ------------
-
-    if (eval_get("cmm_log.txt","epsilon_taylor", aux) == 1)
-    {
-        float delta;
-        var_add("epsilon_taylor", 0);                            // adiciona variavel float na tabela
-        fprintf(f_data, "%s\n", itob(f2mf(aux,&delta), nubits)); // adiciona variavel na mem de dados
-    }
-
     // inicializa rotinas pra simulacao com o iverilog ------------------------
 
     sim_init(clk, clk_n, s_typ);

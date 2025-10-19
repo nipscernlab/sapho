@@ -938,7 +938,7 @@ module ula
 	parameter   SRS   = 0,
 	
 	// operacoes especiais
-	parameter  F_ROT  = 0)
+	parameter F_ROT  = 0)
 (
 	input         [       5:0] op,
 	input  signed [NUBITS-1:0] in1, in2,
