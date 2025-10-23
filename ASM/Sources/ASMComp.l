@@ -162,6 +162,8 @@ CARES  [-+*()=#;:,\]\[{}<>~!%/&^|]
 
    "NOP"   eval_opcode(96, 0, yytext,    ""     ); // no operation
  "F_ROT"   eval_opcode(97, 0, yytext,  "F_ROT"  ); // potencia de 2 mais proxima da raiz (com ACC)
+ "F_SU1"   eval_opcode(98,18, yytext,  "F_SU1"  ); // subtracao de ponto flutuante com memoria na entrada 1
+ "F_SU2"   eval_opcode(99,18, yytext,  "F_SU2"  ); // subtracao de ponto flutuante com memoria na entrada 2
 
    /* pseudo instrucoes */
    /* evita enderecamento indireto */

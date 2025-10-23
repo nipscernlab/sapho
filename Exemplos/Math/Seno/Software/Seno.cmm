@@ -30,7 +30,7 @@ void main()
     int j=0;
     while (j < 1000)
     {
-        y = sin(x[j]);
+        y = sin(x[j]+6.283185307);
         t = a[j];
         e = t - y;
         j++;

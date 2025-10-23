@@ -30,13 +30,13 @@
     - Array inicializável por arquivo. A memória do array já é preenchida em tempo de compilação. (ex: int x[128] "valores.txt";)
     - Array com índice invertido. Usado em FFT (ex: x[j) = exp;) os bits de i sâo invertidos.
 
-    - Statments em notacao de Dirac (algebra liear):
+    - Statments em notacao de Dirac (algebra linear):
       <a|b>             -> retorna o produto interno entre os vetores a e b
       a # |M|b>;        -> vetor a recebe o produto entre a matriz M e o vetor b
       a # c|b>;         -> vetor a recebe ganho c vezes o vetor b
       d # |a> + c|b>;   -> vetor d recebe a soma do vetor a com o vetor b ponderado por c
       A # |a><b|;       -> matriz A recebe o produto externo entre vetores a e b
-      A # |P| - |a><b|; -> matriz A receb a subtracao da matriz P pelo produto externo entre a e b
+      A # |P| - |a><b|; -> matriz A recebe a subtracao da matriz P pelo produto externo entre a e b
       A # c|B|;         -> matriz A recebe produto entre constante c e matriz B
       A # c|I|;         -> matriz A recebe matriz identidade ponderada por c
       a # |0>;          -> zera todos os elementos do vetor a

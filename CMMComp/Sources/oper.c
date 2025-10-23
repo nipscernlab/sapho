@@ -566,7 +566,426 @@ int oper_soma(int et1, int et2)
 // subtracao entre dois numeros
 int oper_subt(int et1, int et2)
 {
-    return oper_soma(et1,oper_neg(et2));
+    int etr, eti;
+
+    char ld [10]; if (acc_ok == 0) strcpy(ld ,"LOD"  ); else strcpy(ld ,"P_LOD"  );
+    char i2f[10]; if (acc_ok == 0) strcpy(i2f,"I2F_M"); else strcpy(i2f,"P_I2F_M");
+
+    // int var com int var
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int var com int acc
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int var com float var
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n", i2f, v_name[et1%OFST]);
+        add_instr("F_SU1 %s\n"  , v_name[et2%OFST]);
+    }
+
+    // int var com float acc
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int var com comp const (parece que nunca vai acontecer, mas vai que...)
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==5))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int var com comp var
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et2,&etr,&eti);
+
+        add_instr("%s %s\n", i2f, v_name[et1%OFST]);
+        add_instr("F_SU1 %s\n"  , v_name[etr%OFST]);
+        add_instr("P_LOD  %s\n" , v_name[eti%OFST]);
+    }
+
+    // int var com comp acc
+    if ((get_type(et1)==1) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int acc com int var
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int acc com int acc
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // int acc com float var
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        add_instr("I2F\n");
+        add_instr("F_SU1 %s\n", v_name[et2%OFST]);
+    }
+
+    // int acc com float acc (AST vai reduzir isso)
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        add_instr("SET_P aux_var\n");
+        add_instr("I2F\n");
+        add_instr("F_SU1 aux_var\n");
+    }
+
+    // int acc com comp const
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==5))
+    {
+        get_cmp_cst(et2,&etr,&eti);
+
+        add_instr("I2F\n");
+        add_instr("F_SU1 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // int acc com comp var
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et2,&etr,&eti);
+
+        add_instr("I2F\n");
+        add_instr("F_SU1 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // int acc com comp acc (AST vai reduzir isso)
+    if ((get_type(et1)==1) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        add_instr("SET_P aux_var\n" );
+        add_instr("SET_P aux_var1\n");
+        add_instr("I2F\n");
+        add_instr("F_SU1 aux_var1\n");
+        add_instr("P_LOD aux_var\n" );
+    }
+
+    // float var com int var
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n",i2f, v_name[et2%OFST]);
+        add_instr("F_SU2 %s\n" , v_name[et1%OFST]);
+    }
+
+    // float var com int acc
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        add_instr("I2F\n");
+        add_instr("F_SU2 %s\n", v_name[et1%OFST]);
+    }
+
+    // float var com float var
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        add_instr("%s %s\n", ld, v_name[et1%OFST]);
+        add_instr("F_SU1 %s\n" , v_name[et2%OFST]);
+    }
+
+    // float var com float acc
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        add_instr("F_SU2 %s\n", v_name[et1%OFST]);
+    }
+
+    // float var com comp const (nao tem menos comp const)
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==5))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // float var com comp var
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et2,&etr,&eti);
+
+        add_instr("%s %s\n", ld, v_name[et1%OFST]);
+        add_instr("F_SU1 %s\n" , v_name[etr%OFST]);
+        add_instr("P_LOD %s\n" , v_name[eti%OFST]);
+    }
+
+    // float var com comp acc (AST vai reduzir isso)
+    if ((get_type(et1)==2) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        add_instr("SET_P aux_var\n");
+        add_instr("F_SU2 %s\n", v_name[et1%OFST]);
+        add_instr("P_LOD aux_var\n");
+    }
+
+    // float acc com int var
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // float acc com int acc
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // float acc com float var
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        add_instr("F_SU1 %s\n", v_name[et2%OFST]);
+    }
+
+    // float acc com float acc
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // float acc com comp const
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==5))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // float acc com comp var
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et2,&etr,&eti);
+
+        add_instr("F_SU1 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // float acc com comp acc
+    if ((get_type(et1)==2) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // comp const com int var
+    if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        get_cmp_cst(et1,&etr,&eti);
+
+        add_instr("%s %s\n", i2f, v_name[et2%OFST]);
+        add_instr("F_SU2 %s\n"  , v_name[etr%OFST]);
+        add_instr("P_LOD %s\n"  , v_name[eti%OFST]);
+    }
+
+    // comp const com int acc
+    if ((get_type(et1)==5) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        get_cmp_cst(et1,&etr,&eti);
+
+        add_instr("I2F\n");
+        add_instr("F_SU2 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // comp const com float var
+    if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        get_cmp_cst(et1,&etr,&eti);
+
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("F_SU2 %s\n" , v_name[etr%OFST]);
+        add_instr("P_LOD %s\n" , v_name[eti%OFST]);
+    }
+
+    // comp const com float acc
+    if ((get_type(et1)==5) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        get_cmp_cst(et1,&etr,&eti);
+
+        add_instr("F_SU2 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // comp const com comp const
+    if ((get_type(et1)==5) && (get_type(et2)==5))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // comp const com comp var
+    if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        int et1r,et2r;
+        int et1i,et2i;
+
+        get_cmp_cst(et1,&et1r,&et1i);
+        get_cmp_ets(et2,&et2r,&et2i);
+
+        add_instr("%s %s\n", ld, v_name[et1r%OFST]);
+        add_instr("F_SU1 %s\n" , v_name[et2r%OFST]);
+
+        add_instr("P_LOD %s\n" , v_name[et1i%OFST]);
+        add_instr("F_SU1 %s\n" , v_name[et2i%OFST]);
+    }
+
+    // comp const com comp acc
+    if ((get_type(et1)==5) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        get_cmp_cst(et1,&etr,&eti);
+
+        add_instr("SET_P aux_var\n");
+        add_instr("F_SU2 %s\n", v_name[etr%OFST]);
+
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+        add_instr("F_SU1 aux_var\n");
+    }
+
+    // comp var com int var
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et1,&etr,&eti);
+
+        add_instr("%s  %s\n", i2f, v_name[et2%OFST]);
+        add_instr("F_SU2 %s\n"   , v_name[etr%OFST]);
+        add_instr("P_LOD %s\n"   , v_name[eti%OFST]);
+    }
+
+    // comp var com int acc
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        get_cmp_ets(et1,&etr,&eti);
+
+        add_instr("I2F\n");
+        add_instr("F_SU2 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // comp var com float var
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et1,&etr,&eti);
+
+        add_instr("%s %s\n", ld, v_name[et2%OFST]);
+        add_instr("F_SU2 %s\n" , v_name[etr%OFST]);
+        add_instr("P_LOD %s\n" , v_name[eti%OFST]);
+    }
+
+    // comp var com float acc
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        get_cmp_ets(et1,&etr,&eti);
+
+        add_instr("F_SU2 %s\n", v_name[etr%OFST]);
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+    }
+
+    // comp var com comp const
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==5))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // comp var com comp var
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        int et1r,et2r;
+        int et1i,et2i;
+
+        get_cmp_ets(et1,&et1r,&et1i);
+        get_cmp_ets(et2,&et2r,&et2i);
+
+        add_instr("%s %s\n", ld, v_name[et1r%OFST]);
+        add_instr("F_SU1 %s\n" , v_name[et2r%OFST]);
+
+        add_instr("P_LOD %s\n" , v_name[et1i%OFST]);
+        add_instr("F_SU1 %s\n" , v_name[et2i%OFST]);
+    }
+
+    // comp var com comp acc
+    if ((get_type(et1)==3) && (et1%OFST!=0) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        get_cmp_ets(et1,&etr,&eti);
+
+        add_instr("SET_P aux_var\n");
+        add_instr("F_SU2 %s\n", v_name[etr%OFST]);
+
+        add_instr("P_LOD %s\n", v_name[eti%OFST]);
+        add_instr("F_SU1 aux_var\n");
+    }
+
+    // comp acc com int var
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST!=0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // comp acc com int acc
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==1) && (et2%OFST==0))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // comp acc com float var
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST!=0))
+    {
+        add_instr("SET_P aux_var\n");
+        add_instr("F_SU1 %s\n", v_name[et2%OFST]);
+        add_instr("P_LOD aux_var\n");
+    }
+
+    // comp acc com float acc
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==2) && (et2%OFST==0))
+    {
+        add_instr("SET_P aux_var\n" );
+        add_instr("SET_P aux_var1\n");
+        add_instr("F_SU1 aux_var\n" );
+        add_instr("P_LOD aux_var1\n");
+    }
+
+    // comp acc com comp const
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==5))
+    {
+        return oper_soma(et1,oper_neg(et2));
+    }
+
+    // comp acc com comp var
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST!=0))
+    {
+        get_cmp_ets(et2,&etr,&eti);
+
+        add_instr("SET_P aux_var\n");
+        add_instr("F_SU1 %s\n", v_name[etr%OFST]);
+
+        add_instr("P_LOD aux_var\n");
+        add_instr("F_SU1 %s\n", v_name[eti%OFST]);
+    }
+
+    // comp acc com comp acc
+    if ((get_type(et1)==3) && (et1%OFST==0) && (get_type(et2)==3) && (et2%OFST==0))
+    {
+        add_instr("SET_P aux_var \n");
+        add_instr("SET_P aux_var1\n");
+        add_instr("SET_P aux_var2\n");
+        add_instr("F_SU1 aux_var1\n");
+
+        add_instr("P_LOD aux_var2\n");
+        add_instr("F_SU1 aux_var \n");
+    }
+
+    acc_ok = 1;
+
+    int type;
+         if ((get_type(et1) > 2) || (get_type(et2) > 2))
+         type = 3;
+    else if ((get_type(et1) > 1) || (get_type(et2) > 1))
+         type = 2;
+    else type = 1;
+
+    return type*OFST;
 }
 
 // multiplica dois numeros

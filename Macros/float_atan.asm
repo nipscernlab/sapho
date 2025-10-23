@@ -23,11 +23,9 @@
             ADD   1
             LDI   atan_lut        // pega segundo valor y na tabela
 
-         PF_NEG_M atan_x          // faz a interpolacao linear
-         SF_ADD
+          F_SU1   atan_x          // faz a interpolacao linear
           P_I2F_M atan_idx
-          F_NEG
-          F_ADD   atan_idxf
+          F_SU2   atan_idxf
          SF_MLT
           F_ADD   atan_x
 
@@ -50,11 +48,9 @@
             ADD   1
             LDI   atan_lut
             
-         PF_NEG_M atan_x
-         SF_ADD
+          F_SU1   atan_x
           P_I2F_M atan_idx
-          F_NEG
-          F_ADD   atan_idxf
+          F_SU2   atan_idxf
          SF_MLT
           F_ADD   atan_x
 
