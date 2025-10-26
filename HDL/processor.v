@@ -253,7 +253,9 @@ module processor
 	// operacoes especiais
 	parameter  F_ROT   = 0,    // potencia de 2 mais proxima da raiz (com ACC)
 	parameter  F_SU1   = 0,    // subtracao de ponto flutuante na entrada 1
-	parameter  F_SU2   = 0     // subtracao de ponto flutuante na entrada 2
+	parameter  F_SU2   = 0,    // subtracao de ponto flutuante na entrada 2
+	parameter SF_SU1   = 0,    // subtracao de ponto flutuante na entrada 1 com pilha
+	parameter SF_SU2   = 0     // subtracao de ponto flutuante na entrada 2 com pilha
 )(
 	input               clk     , rst,
 	input  [NUBITS-1:0] io_in   ,
@@ -401,7 +403,9 @@ core #(.NBOPCO ( NBOPCO ),
 	   .S_SRS  ( S_SRS  ),
 	   .F_ROT  ( F_ROT  ),
 	   .F_SU1  ( F_SU1  ),
-	   .F_SU2  ( F_SU2  )) core(clk, rst,
+	   .F_SU2  ( F_SU2  ),
+	   .SF_SU1 (SF_SU1  ),
+	   .SF_SU2 (SF_SU2  )) core(clk, rst,
                                 instr, instr_addr,
                                 mem_wr, mem_addr_rd, mem_addr_wr, mem_data_in, mem_data_out,
                                 io_in, addr_in, addr_out, req_in, out_en, itr

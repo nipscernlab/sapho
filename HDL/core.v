@@ -557,7 +557,9 @@ module core
 	// operacoes especiais
 	parameter  F_ROT   = 0,   // potencia de 2 mais proxima da raiz (com ACC)
 	parameter  F_SU1   = 0,   // subtracao de ponto flutuante na entrada 1
-	parameter  F_SU2   = 0    // subtracao de ponto flutuante na entrada 2
+	parameter  F_SU2   = 0,   // subtracao de ponto flutuante na entrada 2
+	parameter SF_SU1   = 0,	  // subtracao de ponto flutuante na entrada 1 com pilha
+	parameter SF_SU2   = 0	  // subtracao de ponto flutuante na entrada 2 com pilha
 )(
 	input               clk, rst,
 
@@ -715,7 +717,9 @@ instr_dec #(.NBOPCO  ( NBOPCO ),
 			 .S_SRS  ( S_SRS  ),
 			 .F_ROT  ( F_ROT  ),
 			 .F_SU1  ( F_SU1  ),
-			 .F_SU2  ( F_SU2  )) id(clk, rst,
+			 .F_SU2  ( F_SU2  ),
+			.SF_SU1  (SF_SU1  ),
+			.SF_SU2  (SF_SU2  )) id(clk, rst,
                                     id_opcode,
                                     id_dsp_push, id_dsp_pop,
                                     id_ula_op,
@@ -802,8 +806,8 @@ ula #(.NUBITS (NUBITS ),
         .SHR  (  SHR   |  S_SHR  ),
 		.SRS  (  SRS   |  S_SRS  ),	
 	  .F_ROT  (F_ROT             ),
-	  .F_SU1  (F_SU1             ),
-	  .F_SU2  (F_SU2             )) ula (id_ula_op, ula_data_in1, ula_data_in2, ula_out);
+	  .F_SU1  (F_SU1   | SF_SU1  ),
+	  .F_SU2  (F_SU2   | SF_SU2  )) ula (id_ula_op, ula_data_in1, ula_data_in2, ula_out);
 
 assign sp_in = ula_out;
 
