@@ -21,4 +21,4 @@ Using SAPHO, you can:
 - Simulate and analyze signal behavior with the **YAWT Wave Tracer**
 - Visualize processor structure and datapaths using the **PRISM RTL Viewer**
 
-SAPHO provides an integrated environment for **processor design, compilation, simulation, and visualization**, enabling rapid experimentation and research in hardware optimization and computer architecture.
+SAPHO provides an integrated environment for **processor design, compilation, simulation, and visualization**, enabling rapid experimentation and research in hardware optimization and computer architecture for both Windows and Linux.
