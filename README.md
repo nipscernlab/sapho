@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/icon-projects/sapho.svg"
+  <img src="https://github.com/nipscernlab/nipscernweb/blob/main/assets/icons/sapho.svg"
        alt="SAPHO Icon"
        width="160">
 </p>
