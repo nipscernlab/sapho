@@ -5,9 +5,9 @@
 </p>
 
 # SAPHO  
-**Scalable Architecture for Hardware Optimization**
+**Scalable-Architecture Processor for Hardware Optimization**
 
-**SAPHO** is a scalable hardware architecture and toolchain developed by **NIPSCERN**, designed for processor creation, experimentation, and hardware–software co-design.
+**SAPHO** is a scalable hardware architecture and toolchain developed by **NIPS-CERN**, designed for processor creation, experimentation, and hardware and software co-design.
 
 This repository distributes the **SAPHO installer**, which bundles the core components of the ecosystem, including:
 
